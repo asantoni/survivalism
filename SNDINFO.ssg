@@ -1,0 +1,13 @@
+doomzssg/fire				DMSGFIRE
+$limit doomzssg/fire 0
+$rolloff doomzssg/fire 500 1000
+
+doomzssg/dualfire			DMSGDUAL
+$limit doomzssg/dualfire 0
+$rolloff doomzssg/dualfire 800 1800
+
+doomzssg/select				DMSGSELE
+
+doomzssg/open				DMSGOPEN
+doomzssg/load				DMSGLOAD
+doomzssg/close				DMSGCLOS

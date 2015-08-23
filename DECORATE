@@ -24,3 +24,10 @@
 #include "DECORATE.CPILLAR"
 #include "DECORATE.CDOOR"
 #include "DECORATE.CFLOOR"
+
+//===================================================
+// Zedek's new shotguns
+//===================================================
+
+#include "actors/weapons/zssg.txt"					// SSG
+#include "actors/weapons/zshotgun.txt"				// Shotgun
