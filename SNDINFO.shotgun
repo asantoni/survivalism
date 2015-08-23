@@ -1,0 +1,10 @@
+//===========================================
+// PUMP SHOTGUN
+//===========================================
+
+shotty/fire					SHTYFIRE
+$limit shotty/fire 0
+
+shotty/insert				SHTYINSR
+shotty/pumpback				SHTYPUMB
+shotty/pumpfwd				SHTYPUMF

@@ -1,0 +1,151 @@
+ACTOR NeedsPump : Inventory
+{
+	Inventory.MaxAmount 1
+}
+
+//=====================================//
+// SG AMMO (Primary)
+//=====================================//
+
+ACTOR ShottyPrimary : Ammo
+{
+  // Inventory.PickupMessage "$GOTCLIP" // "Picked up a clip."
+  Inventory.Amount 1
+  Inventory.MaxAmount 8
+  Ammo.BackpackAmount 1
+  Ammo.BackpackMaxAmount 8
+  Inventory.Icon "SHELA0"
+  +IGNORESKILL
+}
+
+//=====================================//
+// PUMP SHOTTY WEAPON
+//=====================================//
+
+ACTOR DoomZShotgun : Weapon
+{
+  Weapon.SelectionOrder 1900
+  Weapon.AmmoUse 0
+  Weapon.AmmoUse2 0
+  Weapon.AmmoGive 0
+  Weapon.AmmoGive2 16
+  Weapon.AmmoType "ShottyPrimary"
+  Weapon.AmmoType2 "Shell"
+  Obituary "%o had %h chest blown open by %k's pump shotty."
+  Inventory.Pickupmessage "Picked up a Pump Shotgun."
+  Tag "Pump Shotgun"
+  States
+  {
+//--------------------------------//
+// IDLE
+//--------------------------------//
+	Ready:
+		DSID A 1 A_WeaponReady
+		Loop
+//--------------------------------//
+// SELECT / DESELECT
+//--------------------------------//
+	Deselect:
+	DESS CBA 1
+	TNT1 AAAAAAAAAAAAAAAAA 0 A_Lower
+	TNT1 A 1 A_Lower
+	Goto Deselect+3
+	
+	Select:
+	TNT1 AA 0 A_Raise
+	TNT1 A 1 A_WeaponReady
+	Goto SelectAnim
+	
+	SelectAnim:
+	TNT1 A 0 A_PlaySoundEx("deagle/deploy","SoundSlot6")
+	DSSS ABCDEFGH 1 A_WeaponReady(WRF_NOFIRE)
+	Goto Ready
+	
+	ReloadCheck:
+	TNT1 A 0 A_JumpIfInventory("ShottyPrimary",8,"Ready")
+	Goto AltFire
+	
+//--------------------------------//
+// FIRING
+//--------------------------------//
+	Fire:
+	TNT1 A 0 A_JumpIfInventory("NeedsPump",1,"PumpIt")
+	TNT1 A 0 A_JumpIfInventory("ShottyPrimary",1,"ActualFire")
+	Goto ReloadCheck
+	
+	ActualFire:
+	TNT1 A 0 A_TakeInventory("ShottyPrimary",1)
+    TNT1 A 0 A_FireBullets (2.6, 2.6, 7, 20, "BulletPuff")
+	TNT1 A 0 A_SpawnItemEx("ShakeYourAssMore",0,0,0)
+	TNT1 A 0 A_PlaySoundEx("shotty/fire","Weapon")
+	TNT1 A 0 A_GiveInventory("NeedsPump",1)
+	TNT1 A 0 A_AlertMonsters
+	
+	DSFI A 1 bright A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	DSFI BCDEFG 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	Goto Ready
+	
+	PumpIt:
+	DSFI A 0 A_JumpIfInventory("ShottyPrimary",1,1)
+	Goto Ready
+	DSFI A 0 A_TakeInventory("NeedsPump",1)
+	DSFI GH 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)	
+	DSPP ABCDEFG 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	DSPP H 0 A_PlaySoundEx("shotty/pumpback","SoundSlot6")
+	DSPP HIJKLKJ 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	DSPP H 0 A_PlaySoundEx("shotty/pumpfwd","SoundSlot6")
+	DSPP IHGFEDCBA 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+    Goto ResetItems
+//--------------------------------//
+// RELOADING
+//--------------------------------//
+	AltFire:
+	TNT1 A 0 A_JumpIfInventory("Shell",1,1)
+	Goto Ready
+	TNT1 A 0 A_JumpIfInventory("ShottyPrimary",8,"Ready")
+	Goto Reload_Start
+	
+	Reload_Start:
+	DSFI A 0 A_TakeInventory("NeedsPump",1)
+	DSR2 ABCDEFGHIJKLM 1
+	Goto Reload_Insert
+	
+	Reload_Insert:
+	TNT1 A 0 A_JumpIfInventory("Shell",1,1)
+	Goto Reload_End
+	TNT1 A 0 A_JumpIfInventory("ShottyPrimary",8,"Reload_End")
+	DSR2 NOPQ 1
+	DSR2 Q 0 A_PlaySoundEx("shotty/insert","SoundSlot6")
+	TNT1 A 0 A_TakeInventory("Shell",1)
+	TNT1 A 0 A_GiveInventory("ShottyPrimary",1)
+	DSR2 RSTUV 1
+	Loop
+	
+	Reload_End:
+	DSR2 LKJIHG 1
+	DSPP FG 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	DSPP H 0 A_PlaySoundEx("shotty/pumpback","SoundSlot6")
+	DSPP HIJKLKJ 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	DSPP H 0 A_PlaySoundEx("shotty/pumpfwd","SoundSlot6")
+	DSPP IHGFEDCBA 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH)
+	Goto Ready
+//--------------------------------//
+// INVENTORY SHIT
+//--------------------------------//
+
+	ResetItems:
+	TNT1 A 0
+	Goto Ready
+	
+	ResetItemsKnife:
+	TNT1 A 0
+	Goto SelectAnim
+
+//--------------------------------//
+// SPAWN STATE
+//--------------------------------//
+  Spawn:
+    SHOT A -1
+    Stop
+  }
+}

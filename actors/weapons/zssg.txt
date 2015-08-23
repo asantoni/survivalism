@@ -1,0 +1,131 @@
+ACTOR SSGShell : Ammo
+{
+  Inventory.PickupMessage "$GOTSHELLS" // "Picked up 4 shotgun shells."
+  Inventory.Amount 1
+  Inventory.MaxAmount 2
+  Ammo.BackpackAmount 1
+  Ammo.BackpackMaxAmount 2
+  Inventory.Icon "SHELA0"
+}
+
+ACTOR DoomZSuperShotgun : DoomWeapon
+{
+  Weapon.SelectionOrder 400
+  Weapon.AmmoUse 0
+  Weapon.AmmoGive2 8
+  Weapon.AmmoType "SSGShell"
+  Weapon.AmmoType2 "Shell"
+  Weapon.AmmoUse2 0
+  +WEAPON.ALT_AMMO_OPTIONAL
+  +WEAPON.NOAUTOFIRE
+  
+  Inventory.PickupMessage "You picked up a double-barreled shotgun."
+  Obituary "%o was blasted by %k's double-barrel shotgun."
+  Tag "DB Shotgun"
+  States
+  {
+  Ready:
+    ZSSG A 1 A_WeaponReady
+    Loop
+  Deselect:
+	ZSSS DCBA 1
+	TNT1 AAAAAAAAAAAAAAAAA 0 A_Lower
+	TNT1 A 1 A_Lower
+	Goto Deselect+4
+	
+	Select:
+	TNT1 AA 0 A_Raise
+	TNT1 A 1 A_WeaponReady
+	Goto SelectAnim
+	
+	SelectAnim:
+	ZSSS A 0 A_PlaySoundEx("doomzssg/select","SoundSlot6")
+	ZSSS ABCD 1
+	Goto Ready
+  ReloadCheck:
+	ZSSS A 0 A_JumpIfInventory("SSGShell",2,"Ready")
+	ZSSS A 0 A_JumpIfInventory("Shell",1,"ReloadAnim")
+	Goto Ready
+  ReloadAnim:
+	ZSSR ABC 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSR F 0 A_PlaySoundEx("doomzssg/open","SoundSlot6")
+	ZSSR DEF 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSR G 3 A_WeaponReady(WRF_NOFIRE)
+	ZSSR H 2 A_WeaponReady(WRF_NOFIRE)
+	ZSSR IJKLMN 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSR O 0 A_TakeInventory("Shell",1)
+	ZSSR O 0 A_GiveInventory("SSGShell",1)
+	ZSSR F 0 A_PlaySoundEx("doomzssg/load","SoundSlot6")
+	ZSSR O 3 A_WeaponReady(WRF_NOFIRE)
+	ZSSR P 2 A_WeaponReady(WRF_NOFIRE)
+	ZSSR RSTUVW 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSR A 0 A_JumpIfInventory("Shell",1,"ReloadAnim2")
+	Goto ReloadFinishOne
+  ReloadAnim2:
+	ZSSR XYZ 1 A_WeaponReady(WRF_NOFIRE)
+	ZSST ABC 1 A_WeaponReady(WRF_NOFIRE)
+	ZSST C 0 A_TakeInventory("Shell",1)
+	ZSST C 0 A_GiveInventory("SSGShell",1)
+	ZSSR F 0 A_PlaySoundEx("doomzssg/load","SoundSlot6")
+	ZSST D 3 A_WeaponReady(WRF_NOFIRE)
+	ZSST E 2 A_WeaponReady(WRF_NOFIRE)
+	ZSST FGHIJKLM 1 A_WeaponReady(WRF_NOFIRE)
+  ReloadFinish:
+	ZSSR E 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSR F 0 A_PlaySoundEx("doomzssg/close","SoundSlot6")
+	ZSSR DCBA 1 A_WeaponReady(WRF_NOFIRE)
+	Goto Ready
+	
+  ReloadFinishOne:
+	ZSST NOPQ 1 A_WeaponReady(WRF_NOFIRE)
+	Goto ReloadFinish
+	
+  Fire:
+	SHT2 A 0 A_JumpIfInventory("SSGShell",1,1)
+	Goto ReloadCheck
+	SHT2 A 0
+	SHT2 A 0 A_Recoil(5)
+	SHT2 A 0 A_TakeInventory("SSGShell",1)
+	SHT2 A 0 A_FireBullets (11.2, 7.1, 20, 3, "BulletPuff")
+	TNT1 A 0 A_SpawnItemEx("ShakeYourAss",0,0,0)
+    SHT2 A 0 A_PlaySound ("doomzssg/fire", CHAN_WEAPON)
+	SHT2 A 0 A_SetPitch(pitch-7.0)
+    ZSSG B 1 bright A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+0.5)
+	ZSSG C 3 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG D 2 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+2.0)
+    Goto Ready
+  AltFire:
+	SHT2 A 0 A_JumpIfInventory("SSGShell",2,1)
+	Goto Ready
+	SHT2 A 0
+	SHT2 A 0 A_TakeInventory("SSGShell",2)
+    SHT2 A 0 A_PlaySound ("doomzssg/dualfire", CHAN_WEAPON)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG K 2 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_Recoil(10)
+	TNT1 A 0 A_SpawnItemEx("ShakeYourAssMost",0,0,0)
+	SHT2 A 0 A_FireBullets (11.2, 7.1, 40, 5, "BulletPuff")
+	SHT2 A 0 A_SetPitch(pitch-15.0)
+    ZSSG E 1 bright A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG F 1 bright A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG G 1 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG G 1 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+1.0)
+	ZSSG G 1 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+2.0)
+	ZSSG H 1 A_WeaponReady(WRF_NOFIRE)
+	SHT2 A 0 A_SetPitch(pitch+3.0)
+	ZSSG H 1 A_WeaponReady(WRF_NOFIRE)
+	ZSSG IJK 1 A_WeaponReady(WRF_NOFIRE)
+    Goto Ready
+  Spawn:
+    SGN2 A -1
+    Stop
+  }
+}
