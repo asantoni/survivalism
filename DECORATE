@@ -24,3 +24,19 @@
 #include "DECORATE.CPILLAR"
 #include "DECORATE.CDOOR"
 #include "DECORATE.CFLOOR"
+
+//========================================
+// Berry system
+// By Zedek the Plague Doctor
+//========================================
+
+#include "actors/food/berries/b_main.txt"			// Initial plant randomizer
+#include "actors/food/berries/b_blueberry.txt"		// Blueberry
+#include "actors/food/berries/b_strawberry.txt"		// Strawberry
+#include "actors/food/berries/b_cranberry.txt"		// Cranberry
+
+// HIGH-TIER FOOD
+
+#include "actors/food/combinables/berrymash.txt"
+
+//========================================

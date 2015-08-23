@@ -1,0 +1,33 @@
+ACTOR BerryRandomizer replaces DaggerFallThing75
+{
+	-SOLID
+	+NOBLOCKMAP
+	+NOGRAVITY
+	+FLOORCLIP
+	States
+	{
+	Spawn:
+	TNT1 A 0
+	TNT1 AAAAAAAAAA 120
+	TNT1 A 0 A_Jump(255,"Blueberry","Strawberry","Cranberry")
+	Goto Blueberry
+	
+	// Blueberry plants
+	Blueberry:
+	TNT1 A 0
+	TNT1 A 0 A_SpawnItemEx("BlueberryPlant",0,0,0)
+	Stop
+	
+	// Strawberry plants
+	Strawberry:
+	TNT1 A 0
+	TNT1 A 0 A_SpawnItemEx("StrawberryPlant",0,0,0)
+	Stop
+	
+	// Strawberry plants
+	Cranberry:
+	TNT1 A 0
+	TNT1 A 0 A_SpawnItemEx("CranberryPlant",0,0,0)
+	Stop
+	}
+}
