@@ -1,0 +1,83 @@
+////////////////////////////////
+//world/watersplash
+////////////////////////////////
+
+$random world/watersplash		
+	{ world/watersplash1  
+	world/watersplash2 }
+
+world/watersplash1	dssplash
+world/watersplash2	dsspla2
+////////////////////////////////
+
+////////////////////////////////
+//world/watersplashsmall
+////////////////////////////////
+
+$random world/watersplashsmall	
+	{ world/watersplashsmall1  
+	world/watersplashsmall2 }
+
+world/watersplashsmall1	dssplsml
+world/watersplashsmall2	dssplsm2
+////////////////////////////////
+
+////////////////////////////////
+//world/sludgegloop
+////////////////////////////////
+
+$random world/sludgegloop
+	{ world/sludgegloop1  
+	world/sludgegloop2 }
+
+world/sludgegloop1	dsploosh
+world/sludgegloop2	dsploo2
+////////////////////////////////
+
+////////////////////////////////
+//world/sludgegloopsmall
+////////////////////////////////
+
+$random world/sludgegloopsmall
+	{ world/sludgegloopsmall1  
+	world/sludgegloopsmall2 }
+
+world/sludgegloopsmall1	dsplosml
+world/sludgegloopsmall2	dsplosm2
+////////////////////////////////
+
+////////////////////////////////
+//world/lavasizzle
+////////////////////////////////
+
+$random world/lavasizzle
+	{ world/lavasizzle1  
+	world/lavasizzle2 }
+
+world/lavasizzle1	dslvsiz
+world/lavasizzle2	dslvsiz3
+////////////////////////////////
+
+////////////////////////////////
+//world/lavsiz2
+////////////////////////////////
+
+$random world/lavsiz2		
+	{ world/lavsiz21  
+	world/lavsiz22 }
+
+world/lavsiz21	        dslvsiz2
+world/lavsiz22	        dslvsiz4
+////////////////////////////////
+
+////////////////////////////////
+//world/lavasizzlesmall
+////////////////////////////////
+
+$random world/lavasizzlesmall	
+	{ world/lavasizzlesmall1  
+	world/lavasizzlesmall2 }
+
+world/lavasizzlesmall1	dslavsml
+world/lavasizzlesmall2	dslavsm2
+////////////////////////////////

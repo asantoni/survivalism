@@ -1,0 +1,60 @@
+Survivalism Mapping Guide
+by Hax Murderer
+Last Updated:
+January 1st, 2015
+
+BEFORE WE BEGIN:
+- Don't place monsters.
+- Don't place loot.
+- Monsters only despawn if they lose sight of you behind a wall. You need to break up your map into different areas or at least
+  have some walls that block line of sight to keep it fun and have monsters near you always. (Hopefully with Zandro 2.0 this will change.)
+- The maximum size of a map is a "big cube that goes from -9400 to +9400 on each axis". You will get glitchy collision detection
+  and the monsters AI will bug out if you make a map that goes beyond those dimensions.
+   http://www.doomworld.com/vb/doom-editing/59463-maximum-map-dimensions/
+- The MAPINFO chunk must have an entry for your map, with ActivateOwnDeathSpecials. See MAPINFO inside doomz.pk3.
+
+
+Thing Tags
+- 555 - Respawn points (must be "Teleport Destinations")
+
+Reserved Thing Tags (DO NOT USE)
+- 554 - Rocks inside mines (automatically destroyed every few mins)
+- 555 - Respawn points
+- 99 - Construction boxes
+- 8000-8999 - Random loot ID
+- 8200 - 8399 - Baddies
+- 8400 - Monster Spawner Projectiles
+- 8401 - Seeds
+- 5900 - 5999 - Furnaces
+- 6000 - 6100 - Quest Spots
+
+Respawn Points
+- Place "Teleport Destination" actors where you want the player to be able to respawn, with tag 555.
+
+Sector Tags
+- Sectors with tag 0 will be considered "outside" and have their brightness change with the day/night cycle.
+
+
+Monster Spawner
+- Change modes by calling Script 226, with argument 1 set to:
+   - 0 - Default monsters (zombie mix)
+   - 1 - Imps
+   - 2 - Swamp mudmen
+   - 3 - Safe zone (no monsters)
+   - 4 - Shadows
+   - 5 - Forest zone
+- To put different monster in different parts of your map, use a pair of linedefs to trigger Script 220. 
+  Use action special 226 (Execute Always) to call script 220 when the player crosses each line, with Argument 1 set to whatever 
+  mode you want. (Look at the doomz2 map if this isn't clear, and feel free to copy/paste the linedefs from there.)
+- Tip: If you don't want monsters to spawn on the other side of a canyon, drop the sky ceiling a bit
+  in the middle. This will cause the monster spawner projectiles to bounce off it and not cross the canyon.
+
+
+Mines:
+- Place a MineManager thing in the middle of your mine. It will populate your mine with rocks within a radius of 640 map units
+  and refresh them every 5 minutes.
+- You don't have to make your mine narrow, it can be an open space.
+
+Quests:
+- TID 6000
+- TID 6001

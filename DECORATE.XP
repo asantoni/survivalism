@@ -1,0 +1,166 @@
+
+actor XP : Inventory
+{
+	Inventory.MaxAmount 2100000
+	//+INVENTORY.UNTOSSABLE // Zandronum 2.0 ?
+	-INVENTORY.INVBAR
+	-COUNTITEM
+	Inventory.PickupSound "XP"
+}
+
+actor XPPickup : CustomInventory
+{
+	+INVENTORY.AUTOACTIVATE
+	-COUNTITEM
+	Inventory.PickupMessage "XP"
+    Inventory.PickupSound "misc/p_pkup"
+	scale 0.5
+	States
+	{
+		Spawn:
+			SVXP ABCDEFG 2
+			loop
+		Pickup:
+			TNT1 A 0
+			TNT1 A 0 ACS_ExecuteAlways(817, 0, 100)
+			stop		
+	}
+}
+
+actor XPProgress : Inventory
+{
+	Inventory.MaxAmount 100
+}
+
+actor LevelConfetti1
+{
+	Scale 0.25
+	-SOLID
+	+NOBLOCKMAP
+	-SHOOTABLE
+	+DONTSPLASH
+	+CLIENTSIDEONLY
+	RenderStyle "Add"
+	Alpha 0.5
+	States {
+		Spawn: 
+			CONF A 16
+			Stop 
+		Crash: 
+			TNT1 A 0
+			Stop
+	}
+}
+
+actor LevelConfetti2 : LevelConfetti1 {States {Spawn: CONF B 16
+Stop }}
+actor LevelConfetti3 : LevelConfetti1 {States {Spawn: CONF C 16
+Stop }}
+actor LevelConfetti4 : LevelConfetti1 {States {Spawn: CONF D 16
+Stop }}
+actor LevelConfetti5 : LevelConfetti1 {States {Spawn: CONF E 16
+Stop }}
+actor LevelConfetti6 : LevelConfetti1 {States {Spawn: CONF F 16
+Stop }}
+
+actor XPLevel : Inventory
+{
+	//+INVENTORY.UNTOSSABLE // Zandronum 2.0 ?
+	-INVENTORY.INVBAR
+	-COUNTITEM
+	Inventory.MaxAmount 60
+}
+
+
+actor 100XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 100)stop}}
+
+actor 200XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 200)stop}}
+
+actor 300XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor 400XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 400)stop}}
+
+actor 500XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 500)stop}}
+
+actor 750XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 750)stop}}
+
+actor 900XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 900)stop}}
+
+actor 1000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 1000)stop}}
+
+actor 1200XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 1200)stop}}
+
+actor 2000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 2000)stop}}
+
+actor 3000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 3000)stop}}
+
+actor 4000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}
+
+actor 5000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 5000)stop}}
+
+actor 8000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 8000)stop}}
+
+actor 10000XP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 10000)stop}}
+
+actor ZombieKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 100)stop}}
+
+actor ZombieIncarnateKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor GhoulKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 200)stop}}
+
+actor ImpKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 125)stop}}
+
+actor NightImpKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 150)stop}}
+
+actor DemonDogKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 75)stop}}
+
+actor ShadowKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 175)stop}}
+
+actor MancubusKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor ImpWarlordKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor BaronOfHellKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 2000)stop}}
+
+actor HellKnightKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 800)stop}}
+
+actor BossKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}
+
+actor DragonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 8000)stop}}
+
+actor CyberSnakeKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 8000)stop}}
+
+actor TreeChopXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 5)stop}}
+
+actor AzazelKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 1500)stop}}

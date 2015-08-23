@@ -1,0 +1,1359 @@
+#import "doomzgame.acs"
+#import "player.acs"
+#import "math.acs"
+#import "conversation.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "quests"
+
+#libdefine MIN_EASYQUESTSPOT_TID 	6000
+#libdefine MAX_EASYQUESTSPOT_TID 	6029
+#define MIN_MEDIUMQUESTSPOT_TID 6030
+#define MAX_MEDIUMQUESTSPOT_TID 6079
+#define MIN_HARDQUESTSPOT_TID 	6080
+#define MAX_HARDQUESTSPOT_TID 	6099
+
+#define MIN_EASYQUEST_SCRIPT 620
+#define MAX_EASYQUEST_SCRIPT 623
+
+#define MIN_MEDIUMQUEST_SCRIPT 630 
+#define MAX_MEDIUMQUEST_SCRIPT 630
+
+#define MIN_HARDQUEST_SCRIPT 640
+#define MAX_HARDQUEST_SCRIPT 640
+
+//See PLAYER.ACS for HUDMSG_ID_COMPASS and HUDMSG_ID_QUEST_NAME
+
+//questScriptMode enum - See script 620 for explanations
+#define QUESTSCRIPTMODE_INITIALIZE		  0 //Set up the objective in the game world.
+#define QUESTSCRIPTMODE_CHECK_PREREQS     1 //Check if the player has all the prerequisites for the objective.
+#define QUESTSCRIPTMODE_CHECK_COMPLETE    2 //Check if an objective has been completed.
+#define QUESTSCRIPTMODE_CLEANUP     	  3 //Cleanup anything after an objective has been completed or aborted.
+#define QUESTSCRIPTMODE_ALLOWEDTIME    	  4 //How long a player has to complete an objective
+#define QUESTSCRIPTMODE_GETNEXTQUEST      5 //Get the quest script number that should follow this quest (optional)
+#define QUESTSCRIPTMODE_GETNAME      	  6 //Get the quest objective name (only used for leaf/end objectives)
+
+#libdefine NUM_AVAILABLE_QUESTS 5
+#define MAX_QUEST_DEPTH 5
+int g_activeQuestSpots[NUM_AVAILABLE_QUESTS][MAX_QUEST_DEPTH] = {
+	{ 0, 0, 0, 0, 0 }, //QuestSpots TIDs (generated automatically)
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+};
+
+int g_activeQuestScripts[NUM_AVAILABLE_QUESTS][MAX_QUEST_DEPTH] = {
+	{ 0, 0, 0, 0, 0 }, //Script IDs for actions to occur at each QuestSpot (also auto-generated)
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+};
+
+int g_activeQuestData[NUM_AVAILABLE_QUESTS][MAX_QUEST_DEPTH] = {
+	{ 0, 0, 0, 0, 0 }, //Data storage for each quest script. Most often used to store a TID of something at each step.
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0 },
+};
+
+#libdefine QUEST_EASY 		0
+#libdefine QUEST_MEDIUM 	1
+#libdefine QUEST_HARD 		2
+
+//enum corresponding to the columns below
+#libdefine QUEST_STATS_PLAYER 		0  //Player Number who has it, 
+#libdefine QUEST_STATS_TIMELEFT 	1  //Time left before the quest it expires  or gets regenerated
+#libdefine QUEST_STATS_DIFFICULTY 	2  //The difficulty of the quest
+#libdefine QUEST_STATS_EXPRTIME 	3 //Expiration time (time left until the quest regenerates if nobody has picked it)
+#libdefine QUEST_STATS_EXTRADATA 	4 //An extra data variable that can be used by the quest script (eg. to store a TID for something) - One variable per entire quest though only
+#libdefine QUEST_STATS_COMPASSDIR 	5 //TID that the compass should point towards
+int g_activeQuestStats[NUM_AVAILABLE_QUESTS][6] = {
+	{ -1, 0, QUEST_EASY, 0, 0, 0}, 
+	{ -1, 0, QUEST_EASY, 0, 0, 0},
+	{ -1, 0, QUEST_EASY, 0, 0, 0},
+	{ -1, 0, QUEST_EASY, 0, 0, 0},
+	{ -1, 0, QUEST_EASY, 0, 0, 0},
+};
+
+
+/* How should we uniquely identify the active QuestSpots? 
+
+	Easy, Medium, and Hard QuestSpots
+
+*/
+script 600 ENTER
+{
+	//Log(s:"Hello Quests
+	Delay(35);
+	ACS_ExecuteAlwayS(610, 0);
+	while (true)
+	{
+		if (CheckActorInventory("ActiveQuest", 1))
+		{
+			//int CheckInventory("
+		}
+		Delay(18);
+	}
+}
+
+//Assign a unique TID to an EasyQuestSpot
+script 601 (void)
+{	
+	//EasyQuestSpots call this function in their Spawn state in DECORATE.QUESTS
+	for (int i = MIN_EASYQUESTSPOT_TID; i <= MAX_EASYQUESTSPOT_TID; i++)
+	{
+		if (ThingCount(T_NONE, i) == 0) {
+			Thing_ChangeTID(0, i);
+			Log(s:"Assigned TID to EasyQuestSpot: ", d:i);
+			terminate;
+		}
+	}
+	Log(s:"ERROR: Too many EasyQuestSpots on this map. The max is ", d:(MAX_EASYQUESTSPOT_TID-MIN_EASYQUESTSPOT_TID));
+}
+
+//Assign a unique TID to an MediumQuestSpot
+script 602 (void)
+{
+	for (int i = MIN_MEDIUMQUESTSPOT_TID; i <= MAX_MEDIUMQUESTSPOT_TID; i++)
+	{
+		if (ThingCount(T_NONE, i) == 0) {
+			Thing_ChangeTID(0, i);
+			Log(s:"Assigned TID to MediumQuestSpot: ", d:i);
+			terminate;
+		}
+	}
+	Log(s:"ERROR: Too many MediumQuestSpots on this map. The max is ", d:(MAX_MEDIUMQUESTSPOT_TID-MIN_MEDIUMQUESTSPOT_TID));
+}
+//Assign a unique TID to a HardQuestSpot
+script 603 (void)
+{
+	for (int i = MIN_HARDQUESTSPOT_TID; i <= MAX_HARDQUESTSPOT_TID; i++)
+	{
+		if (ThingCount(T_NONE, i) == 0) {
+			Thing_ChangeTID(0, i);
+			Log(s:"Assigned TID to HardQuestSpot: ", d:i);
+			terminate;
+		}
+	}
+	Log(s:"ERROR: Too many HardQuestSpots on this map. The max is ", d:(MAX_HARDQUESTSPOT_TID-MIN_HARDQUESTSPOT_TID));
+}
+/*
+ Should reserve script 604...609 in case we need more difficulty levels
+*/
+
+//generateQuestList
+//This script generates the initial batch of 5 quests.
+script 610 (void)
+{
+	int numEasyQuestsToGenerate = random(2, NUM_AVAILABLE_QUESTS/2);
+	int numHardQuestsToGenerate = random(1, 2);
+	int numMediumQuestsToGenerate = NUM_AVAILABLE_QUESTS - numHardQuestsToGenerate - numEasyQuestsToGenerate;
+	
+	//Log(s:"Generating ", d:numEasyQuestsToGenerate, s:" easy quests.");
+	
+	for (int questIdx = 0; questIdx < NUM_AVAILABLE_QUESTS; questIdx++)
+	{
+		//Clear old quests first
+		for (int depthIdx = 0; depthIdx < MAX_QUEST_DEPTH; depthIdx++) {
+			g_activeQuestSpots[questIdx][depthIdx] = 0;
+			g_activeQuestScripts[questIdx][depthIdx] = 0;
+		}
+
+		//Generate new quests
+		if (numEasyQuestsToGenerate > 0) {
+			generateQuest(questIdx, QUEST_EASY);
+			numEasyQuestsToGenerate--;
+			continue;
+		}
+		if (numMediumQuestsToGenerate > 0) {
+			generateQuest(questIdx, QUEST_MEDIUM);
+			numMediumQuestsToGenerate--;
+			continue;
+		}
+		if (numHardQuestsToGenerate > 0) {
+			generateQuest(questIdx, QUEST_HARD);
+			numHardQuestsToGenerate--;
+			continue;
+		}
+	}
+	
+	//Print debugging info:
+	ACS_ExecuteAlways(614, 0, 0);
+}
+
+function void generateQuestRandomly(int questIdx)
+{
+	int i = random(1, 10);
+	if (i > 8) {
+		generateQuest(questIdx, QUEST_HARD);
+	} else if (i > 4) {
+		generateQuest(questIdx, QUEST_MEDIUM);
+	} else {
+		generateQuest(questIdx, QUEST_EASY);
+	}
+}
+
+
+function void generateQuest(int questIdx, int difficulty)
+{
+	g_activeQuestStats[questIdx][QUEST_STATS_DIFFICULTY] = difficulty;
+	g_activeQuestStats[questIdx][QUEST_STATS_EXPRTIME] = 5*60; //10 minutes until these quests regenerate
+	g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT] = 0; //Reset and recalculate this below
+	g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = 0; //Reset the compass direction
+	
+	int minQuestSpotTID = MIN_EASYQUESTSPOT_TID;
+	int maxQuestSpotTID = MAX_EASYQUESTSPOT_TID;
+	
+	if (difficulty == QUEST_EASY) {
+		minQuestSpotTID = MIN_EASYQUESTSPOT_TID;
+		maxQuestSpotTID = MAX_EASYQUESTSPOT_TID;
+	} else if (difficulty == QUEST_MEDIUM) {
+		minQuestSpotTID = MIN_MEDIUMQUESTSPOT_TID;
+		maxQuestSpotTID = MAX_MEDIUMQUESTSPOT_TID;
+	} else if (difficulty == QUEST_HARD) {
+		minQuestSpotTID = MIN_HARDQUESTSPOT_TID;
+		maxQuestSpotTID = MAX_HARDQUESTSPOT_TID;
+	} else {
+		Log(s:"Unknown difficulty in generateNextQuestScript()");
+	}
+	
+	int numDifficultyQuestSpotsOnMap = countQuestSpots(minQuestSpotTID, maxQuestSpotTID);
+
+	//Reset
+	int questSpotIdx = 0;
+	for (questSpotIdx = 0; questSpotIdx < MAX_QUEST_DEPTH; questSpotIdx++)	
+	{
+		g_activeQuestSpots[questIdx][questSpotIdx] = 0;
+		g_activeQuestScripts[questIdx][questSpotIdx] = 0;
+	}
+
+	int nextScript = 1;
+	for (questSpotIdx = 0; 
+		 nextScript > 0; //Loop until we hit the end of a quest branch
+		 questSpotIdx++)	
+	{
+		if (questSpotIdx >= MAX_QUEST_DEPTH) {
+			Log(s:"ERROR: Quest depth too deep! Check script ", d:nextScript);
+			return;
+		}
+		//Fill in a row of the g_availableQuests array with a list of QuestSpots
+		g_activeQuestSpots[questIdx][questSpotIdx] = random(minQuestSpotTID, minQuestSpotTID + numDifficultyQuestSpotsOnMap - 1);
+		
+		//Generate the next quest script (until this function returns 0, indicating the end of a quest branch)
+		nextScript = generateNextQuestScript(questIdx, questSpotIdx, difficulty);
+		if (nextScript <= 0) {
+			return;
+		}
+		
+		g_activeQuestScripts[questIdx][questSpotIdx] = nextScript;
+		
+		//Calculate how much time is allowed for the quest in total by summing up the allowed time for each objective
+		g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT] += 
+					ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][questSpotIdx], 
+										  QUESTSCRIPTMODE_ALLOWEDTIME,
+										  questIdx, questSpotIdx);
+
+										  //g_activeQuestSpots[questIdx][questSpotIdx],
+	}
+	
+	//Log(s:"Total time for new quest: ", d:g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT]);
+}
+
+
+function int generateNextQuestScript(int questIdx, int questSpotIdx, int difficulty)
+{
+	int nextQuestScript = 0; 
+	int sanityCounter = 0;
+	
+	int minQuestScript = MIN_EASYQUEST_SCRIPT;
+	int maxQuestScript = MAX_EASYQUEST_SCRIPT;
+	
+	if (difficulty == QUEST_EASY) {
+		minQuestScript = MIN_EASYQUEST_SCRIPT;
+		maxQuestScript = MAX_EASYQUEST_SCRIPT;
+	} else if (difficulty == QUEST_MEDIUM) {
+		minQuestScript = MIN_EASYQUEST_SCRIPT;
+		maxQuestScript = MAX_EASYQUEST_SCRIPT;
+	} else if (difficulty == QUEST_HARD) {
+		minQuestScript = MIN_HARDQUEST_SCRIPT;
+		maxQuestScript = MAX_HARDQUEST_SCRIPT;
+	} else {
+		Log(s:"Unknown difficulty in generateNextQuestScript()");
+	}
+	//Ensure we don't generate the same quest script twice within one quest
+	//(ie. we don't want repeated objectives within the same quest!)
+	do
+	{
+		bool hasScriptBeenUsedAlready = false;
+		int possibleNextQuestScript = -1;
+		//TODO: Perhaps generate the quest scripts with a probability table...
+		//		or using monte carlo...
+		
+		//Check if the previous quest script can generate the next quest script.
+		//This is used for multi-part quests (eg. Hunter's script will suggest
+		//one of several possible follow-up quest scripts.)
+		if (questSpotIdx > 0) {
+			int prevQuestSpotIdx = questSpotIdx-1;
+			nextQuestScript = ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][prevQuestSpotIdx], 
+								  QUESTSCRIPTMODE_GETNEXTQUEST,
+								  questIdx, prevQuestSpotIdx);	
+			//Always take the recommended next script
+			return nextQuestScript;
+		}
+		else //questSpotIdx==0 case
+		{
+			nextQuestScript = random(minQuestScript, maxQuestScript);
+			//DEBUG:
+			//nextQuestScript = 624;
+
+			for (int previousQuestSpotIdx = 0; previousQuestSpotIdx < questSpotIdx; previousQuestSpotIdx++)
+			{
+				//Here we're iterating over all the previous quest scripts generated within a quest
+				if (g_activeQuestScripts[questIdx][previousQuestSpotIdx] == nextQuestScript)
+				{
+					hasScriptBeenUsedAlready = true;
+				}
+			}
+			if (sanityCounter > 50) {
+				Log(s:"Warning: Not enough easy quest scripts to prevent duplicate objectives within one quest");
+				return nextQuestScript;
+			}
+			sanityCounter++;
+		}
+	} while (hasScriptBeenUsedAlready);
+	
+	return nextQuestScript;
+}
+
+
+/* Old version that supports both branched and pure-random quests
+function int generateNextEasyQuestScript(int questIdx, int questSpotIdx)
+{
+	int nextQuestScript = 0; 
+	int sanityCounter = 0;
+	
+	//Ensure we don't generate the same quest script twice within one quest
+	//(ie. we don't want repeated objectives within the same quest!)
+	do
+	{
+		bool hasScriptBeenUsedAlready = false;
+		int possibleNextQuestScript = -1;
+		//TODO: Perhaps generate the quest scripts with a probability table...
+		//		or using monte carlo...
+		
+		//Check if the previous quest script can generate the next quest script.
+		//This is used for multi-part quests (eg. Hunter's script will suggest
+		//one of several possible follow-up quest scripts.)
+		if (questSpotIdx > 0) {
+			int prevQuestSpotIdx = questSpotIdx-1;
+			possibleNextQuestScript = ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][prevQuestSpotIdx], 
+								  g_activeQuestSpots[questIdx][prevQuestSpotIdx],
+								  QUESTSCRIPTMODE_GETNEXTQUEST);	
+			//If the previous quest script is recommending a successor objective,
+			//then we're going to use that instead of randomly generating the next objective.
+			if (possibleNextQuestScript != -1) {
+				nextQuestScript = possibleNextQuestScript;
+				break;
+			}
+		}
+		
+		nextQuestScript = random(MIN_EASYQUEST_SCRIPT, MAX_EASYQUEST_SCRIPT);
+
+		for (int previousQuestSpotIdx = 0; previousQuestSpotIdx < questSpotIdx; previousQuestSpotIdx++)
+		{
+			//Here we're iterating over all the previous quest scripts generated within a quest
+			if (g_activeQuestScripts[questIdx][previousQuestSpotIdx] == nextQuestScript)
+			{
+				hasScriptBeenUsedAlready = true;
+			}
+		}
+		if (sanityCounter > 50) {
+			Log(s:"Warning: Not enough easy quest scripts to prevent duplicate objectives within one quest");
+			return nextQuestScript;
+		}
+		sanityCounter++;
+	} while (hasScriptBeenUsedAlready);
+	
+	return nextQuestScript;
+}*/
+
+function void generateMediumQuest(int questIdx)
+{
+	//TODO: Implement me
+	
+	int numMediumQuestPointsOnMap = countQuestSpots(MIN_MEDIUMQUESTSPOT_TID,MAX_MEDIUMQUESTSPOT_TID);
+}
+
+function void generateHardQuest(int questIdx)
+{
+	//TODO: Implement me
+	
+	int numHardQuestPointsOnMap = countQuestSpots(MIN_HARDQUESTSPOT_TID, MAX_HARDQUESTSPOT_TID);
+}
+
+function int countQuestSpots(int minTid, int maxTid)
+{
+	int numQuestSpots = 0;
+	for (int i = minTid; i <= maxTid; i++)
+	{
+		if (ThingCount(T_NONE, i) > 0)
+		{
+			numQuestSpots++;
+		}
+	}
+	return numQuestSpots;
+}
+
+function str getQuestName(int questIdx)
+{
+	//g_activeQuestScripts[questIdx][MAX_QUEST_DEPTH];
+	int finalObjectiveIdx = 0;
+	int objectiveIdx = 0;
+	//Find the last objective of the quest
+	for (finalObjectiveIdx = 0; finalObjectiveIdx < MAX_QUEST_DEPTH; finalObjectiveIdx++)
+	{
+		if (g_activeQuestScripts[questIdx][finalObjectiveIdx] == 0) {
+			break;
+		}
+	}
+	if (finalObjectiveIdx == 0) {
+		return "";
+	}
+	finalObjectiveIdx--;
+	return ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][finalObjectiveIdx], 
+								 QUESTSCRIPTMODE_GETNAME, questIdx, finalObjectiveIdx);
+}
+
+//Start a quest - This is the main script that orchestrates each quest!
+//@param questIdx - The index of the quest to start in the g_activeQuestSpots/Scripts array(s).
+//			(range is 0 to NUM_AVAILABLE_QUESTS)
+script 611 (int questIdx)
+{
+	if (questIdx < 0 || questIdx > NUM_AVAILABLE_QUESTS) {
+		Log(s:"Error when calling script 611: questIdx must be >= 0 and < NUM_AVAILABLE_QUESTS");
+		terminate;
+	}
+	
+	if (PlayerNumber() < 0) {
+		Log(s:"Error when calling script 611: The activator must be a player.");
+		terminate;
+	}
+	
+	if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] >= 0) {
+		Log(s:"Sorry, another player has already started that quest.");
+		ActivatorSound("menu/invalid", 127);
+		terminate;
+	}
+	
+	//Make sure the player doesn't already have another quest started
+	for (int otherQuestIdx = 0; otherQuestIdx < NUM_AVAILABLE_QUESTS; otherQuestIdx++)
+	{
+		if (g_activeQuestStats[otherQuestIdx][QUEST_STATS_PLAYER] == PlayerNumber()) {
+			Log(s:"Sorry, you already have a quest started. Please finish your current quest first.");
+			ActivatorSound("menu/invalid", 127);
+			terminate;
+		}
+	}
+
+	//Lock the quest and claim it as the player's.
+	g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] = PlayerNumber();
+
+	//Play the quest started music
+	ACS_ExecuteAlways(116, 0);
+
+	/*
+	TakeActorInventory(0, "QuestSpot1TID", 0x7FFFFFFF);
+	TakeActorInventory(0, "QuestSpot2TID", 0x7FFFFFFF);
+	TakeActorInventory(0, "QuestSpot3TID", 0x7FFFFFFF);
+	TakeActorInventory(0, "QuestSpot4TID", 0x7FFFFFFF);
+	TakeActorInventory(0, "QuestSpot5TID", 0x7FFFFFFF);
+	Delay(1); //Inventory Sync delay
+	GiveActorInventory(0, "QuestSpot1TID", g_activeQuestSpots[questIdx][0]);
+	GiveActorInventory(0, "QuestSpot2TID", g_activeQuestSpots[questIdx][1]);
+	GiveActorInventory(0, "QuestSpot3TID", g_activeQuestSpots[questIdx][2]);
+	GiveActorInventory(0, "QuestSpot4TID", g_activeQuestSpots[questIdx][3]);
+	GiveActorInventory(0, "QuestSpot5TID", g_activeQuestSpots[questIdx][4]);
+	*/
+	
+	bool stepComplete = false;
+	
+	for (int questSpotIdx = 0; questSpotIdx < MAX_QUEST_DEPTH; questSpotIdx++)
+	{
+		Log(s:"active quest script: ", d:g_activeQuestScripts[questIdx][questSpotIdx]);
+		Log(s:"active quest spot: ", d:g_activeQuestSpots[questIdx][questSpotIdx]);
+		//If we've 
+		if (g_activeQuestScripts[questIdx][questSpotIdx] == 0) {
+			break;
+		}
+
+		//Execute the script that's associated with each map spot in the script
+		Log(s:"In 611 and trying to initialize with:", d:g_activeQuestScripts[questIdx][questSpotIdx]);
+		ACS_ExecuteAlways(g_activeQuestScripts[questIdx][questSpotIdx], 0,
+						  QUESTSCRIPTMODE_INITIALIZE, questIdx, questSpotIdx);
+
+		/*
+		ACS_ExecuteAlways(g_activeQuestScripts[questIdx][questSpotIdx], 0,
+						  g_activeQuestSpots[questIdx][questSpotIdx],
+						  QUESTSCRIPTMODE_INITIALIZE, questIdx);
+		*/
+		stepComplete = false; //Reset
+		do {
+			Delay(35); 
+			
+			//Check if the quest has been cancelled/aborted...
+			if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] == -1) {
+				ACS_ExecuteAlways(103, 0, PlayerNumber(), -1, 0); //Clear clientside HUD variables
+				terminate;
+			}
+					
+			//g_activeQuestData[questIdx][questSpotIdx]
+			//Pass some variables back to the client(s) so it can be rendererd
+			//in the HUD in multiplayer games. (We're executing a CLIENTSIDE script.)
+			ACS_ExecuteAlways(103, 0, g_activeQuestStats[questIdx][QUEST_STATS_PLAYER], 
+									g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT],
+									g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR]);
+									
+			//Log(s:"Server says quest player is: ", d:g_activeQuestStats[questIdx][QUEST_STATS_PLAYER]);
+			//Log(s:"Server says compass dir TID is: ", d:g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR]);
+			
+			//Check if the step/objective has been completed once a second...
+			//Log(s:"Checking if quest is complete with script: ", d:g_activeQuestScripts[questIdx][questSpotIdx]);
+			//Log(s:"The quest spot idx is: ", d:questSpotIdx);
+			stepComplete = 
+				ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][questSpotIdx],
+								      QUESTSCRIPTMODE_CHECK_COMPLETE, questIdx, questSpotIdx);
+			//Log(s:"Step complete: ", d:stepComplete);
+
+			
+		} while (stepComplete == false);
+		
+		ActivatorSound("quest/objective", 127);
+		//Run any cleanup that the quest script needs.
+		/*
+		ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][questSpotIdx],
+							  g_activeQuestSpots[questIdx][questSpotIdx],
+							  QUESTSCRIPTMODE_CLEANUP, questIdx);
+		*/
+		
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = 0; //Reset the compass direction
+	}
+	
+	//Wait 2 seconds
+	Delay(70);
+	
+	ACS_ExecuteAlways(612, 0, "Quest completed!", 1);
+	
+	//Play the quest completed music
+	ACS_ExecuteAlways(117, 0);
+	
+	//Wait 2 seconds
+	Delay(70);
+	
+	//Run the cleanup scripts for each quest objective
+	for (questSpotIdx = 0; questSpotIdx < MAX_QUEST_DEPTH; questSpotIdx++)
+	{
+		//Log(s:"active quest script: ", d:g_activeQuestScripts[questIdx][questSpotIdx]);
+		//Log(s:"active quest spot: ", d:g_activeQuestSpots[questIdx][questSpotIdx]);
+		if (g_activeQuestScripts[questIdx][questSpotIdx] == 0) {
+			break;
+		}
+			//Run any cleanup that the quest script needs.
+		ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][questSpotIdx],
+							  QUESTSCRIPTMODE_CLEANUP, questIdx, questSpotIdx);
+	}
+	
+	//Pass these variables back to the client to update the HUD in multiplayer games.
+	//(We're executing a CLIENTSIDE script.)
+	ACS_ExecuteAlways(103, 0, g_activeQuestStats[questIdx][QUEST_STATS_PLAYER], 
+							-1,
+							g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR]);
+
+	//Unset the active player for the quest
+	g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] = -1;
+	
+	
+	//FIXME: This is just for testing until I figure out a better way it should work.
+	//Regenerate another quest of the same difficulty in the same quest slot.
+	generateQuest(questIdx, g_activeQuestStats[questIdx][QUEST_STATS_DIFFICULTY]);
+	
+	terminate;
+}
+
+/*  Announce a quest objective and display it in the HUD persistently.
+ *  @param questObjectiveText - the text to flash on the screen and put in the HUD
+ *  @param complete - Whether or not to put it in the HUD and clear the old HUD message.
+ */
+script 612 (int questObjectiveText, int complete)
+{
+	SetFont("BIGFONT");
+	HudMessage(s:questObjectiveText;
+		HUDMSG_FADEOUT, 2, CR_RED, 0.5, 0.6, 4.0, 3, 1);
+		
+	if (complete) {
+		HudMessage(s:"";
+					HUDMSG_PLAIN, HUDMSG_ID_QUEST_NAME, CR_GOLD, 0.90, 0.88, 0.0);
+	} else {
+		HudMessage(s:"Quest: ", s:questObjectiveText;
+					HUDMSG_PLAIN, HUDMSG_ID_QUEST_NAME, CR_GOLD, 0.90, 0.88, 0.0);
+	}
+
+}
+
+//Decrement all the quest timers, once per second
+//and regenerate expired quests.
+script 613 OPEN
+{
+	while (true)
+	{
+		Delay(35);
+		for (int questIdx = 0; questIdx < NUM_AVAILABLE_QUESTS; questIdx++)
+		{
+			g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT]--;
+			g_activeQuestStats[questIdx][QUEST_STATS_EXPRTIME]--;
+			
+			//Fail a quest if you run out of time.
+			if ((g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] >= 0) && //Only active quests
+			    (g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT] < 0))
+			{
+				failQuest(questIdx);
+				generateQuestRandomly(questIdx);
+			}
+
+			//Regenerate any expired quests.
+			if ((g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] == -1) && //Only unclaimed quests
+			    (g_activeQuestStats[questIdx][QUEST_STATS_EXPRTIME] < 0))
+			{
+				generateQuestRandomly(questIdx);
+			}
+		}
+	}
+}
+
+//Print DEBUG info:
+script 614 (void)
+{
+	//DEBUG:
+	for (int questIdx = 0; questIdx < NUM_AVAILABLE_QUESTS; questIdx++)
+	{
+		Log(s:"Quest ", d:questIdx, s:" spots: ",
+			d:g_activeQuestSpots[questIdx][0], s:", ",
+			d:g_activeQuestSpots[questIdx][1], s:", ",
+			d:g_activeQuestSpots[questIdx][2], s:", ",
+			d:g_activeQuestSpots[questIdx][3], s:", ",
+			d:g_activeQuestSpots[questIdx][4], s:", "
+		);
+		Log(s:"Quest ", d:questIdx, s:" scripts: ",
+			d:g_activeQuestScripts[questIdx][0], s:", ",
+			d:g_activeQuestScripts[questIdx][1], s:", ",
+			d:g_activeQuestScripts[questIdx][2], s:", ",
+			d:g_activeQuestScripts[questIdx][3], s:", ",
+			d:g_activeQuestScripts[questIdx][4], s:", "
+		);
+		/*
+		for (int questSpotInQuest = 0; questSpotInQuest < MAX_QUEST_DEPTH; questSpotInQuest++)
+		{
+		}*/
+	}
+}
+
+//Gets called when a player disconnects or spectates
+script 615 (int player) DISCONNECT
+{
+	if (PlayerIsSpectator(player))
+	{
+		//Log(s:"Player is spectating");
+	}
+	else
+	{
+		//Log(s:"Player quit");
+	}
+	
+	//Cancel any active quests the player has
+	for (int questIdx = 0; questIdx < NUM_AVAILABLE_QUESTS; questIdx++)
+	{
+		if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] == player)
+		{
+			cancelQuest(questIdx);
+			HudMessage(s:"Quest Aborted!"; HUDMSG_PLAIN, 5, CR_RED, 0.5, 0.5, 3.0, 1.0);
+		}
+	}	
+}
+
+function void failQuest(int questIdx)
+{
+	int oldActivator = ActivatorTID();
+	SetActivator(g_activeQuestStats[questIdx][QUEST_STATS_PLAYER]);
+	if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] >= 0) {
+		HudMessage(s:"Quest failed!"; HUDMSG_FADEOUT, 0, CR_RED, 0.5, 0.6, 3.0, 2.0, 1.0);
+	}
+	cancelQuest(questIdx);
+	
+	SetActivator(oldActivator);
+}
+
+function void cancelQuest(int questIdx)
+{
+	if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] < 0) {
+		Print(s:"Quest ", d:questIdx, s:" already cancelled");
+		return;
+	}
+	
+	Log(s:"Cancelling quest ", d:questIdx, s:"...");
+
+	//Run the cleanup scripts for each quest objective
+	for (int questSpotIdx = 0; questSpotIdx < MAX_QUEST_DEPTH; questSpotIdx++)
+	{
+		//Log(s:"active quest script: ", d:g_activeQuestScripts[questIdx][questSpotIdx]);
+		//Log(s:"active quest spot: ", d:g_activeQuestSpots[questIdx][questSpotIdx]);
+		if (g_activeQuestScripts[questIdx][questSpotIdx] == 0) {
+			break;
+		}
+			//Run any cleanup that the quest script needs.
+		ACS_ExecuteWithResult(g_activeQuestScripts[questIdx][questSpotIdx],
+							  QUESTSCRIPTMODE_CLEANUP, questIdx, questSpotIdx);
+	}
+	
+	//Unset the active player for the quest
+	g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] = -1;
+	
+
+	//Clear the quest from the HUD
+	HudMessage(s:"";
+		HUDMSG_PLAIN, HUDMSG_ID_QUEST_NAME, CR_GOLD, 0.90, 0.88, 0.0);
+	/*
+
+	//Clear the compass
+	HudMessage(s:"";
+		HUDMSG_PLAIN, HUDMSG_ID_COMPASS, CR_GOLD, 0.90, 0.88, 0.0);
+	*/
+
+	//FIXME: This is just for testing until I figure out a better way it should work.
+	//Regenerate another quest of the same difficulty in the same quest slot.
+	//enerateQuest(questIdx, g_activeQuestStats[questIdx][QUEST_STATS_DIFFICULTY]);
+
+}
+
+
+//
+//
+//Easy Quest Scripts: Script 620 - 624 are 
+//
+//
+
+//Easy - Go to the waypoint
+script 620 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	//Parameters: 
+	//	 questSpotTID - the TID of the QuestSpot associated with this objective (sometimes 0!)
+	//   questScriptMode - an enum - see the top of this file
+
+	//REMEMBER YOU CANNOT USE Delay or waiting commands 
+	//since we're using SetResultValue()!
+	
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		Log(s:"Waypoint mission, ", d:questSpotTID, s:", x: ", f:getActorX(questSpotTID), s:", y: ", f:getActorY(questSpotTID)); 
+		SetActorState(questSpotTID, "Active");
+		ACS_ExecuteAlways(612, 0, "Find the waypoint.");
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = questSpotTID; //Point the compass towards the quest spot
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		//Check if the player has the prerequisites needed for this part of the quest
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		//Check the completion criteria for this part of the quest
+		
+		//Check if the player is closer than 128 map units
+		if (fdistance(0, questSpotTID) < 128.0) {
+			ACS_ExecuteAlways(612, 0, "Good job.", 1);
+			//Log(s:"Objective complete.");
+			GiveInventory("1200XP", 1);
+			SetResultValue(true);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//Clean up any monsters or dangling actors.
+		//This is called after this part of a quest is completed or 
+		//if the player disconnects or otherwise aborts the quest.
+		SetActorState(questSpotTID, "Inactive");
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(8*60); // 8 minutes to get to the waypoint
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Explorer");
+	}
+}
+
+//Collect 3 hemp
+script 621 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	int HEMP_COUNT_INV = "QuestHempHarvested";
+	
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		TakeInventory(HEMP_COUNT_INV, 0x7FFFFFFF);
+		ACS_ExecuteAlways(612, 0, "Harvest 3 hemp plants.");
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		Log(s:"Amount of hemp: ", d:CheckInventory(HEMP_COUNT_INV));
+		if (CheckInventory(HEMP_COUNT_INV) >= 3) {
+			ACS_ExecuteAlways(612, 0, "Good foraging.", 1);
+			GiveInventory("500XP", 1);
+			SetResultValue(true);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		TakeInventory(HEMP_COUNT_INV, 0x7FFFFFFF);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(8*60); // 8 minutes to get the hemp
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Hemp Collector");
+	}
+}
+
+//Tree planting challenge
+script 622 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	str TREE_COUNT_INV = "QuestTreePlanted";
+	//TakeInventory("CollectedWoodForQuest", 0x7FFFFFFF)
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		TakeInventory(TREE_COUNT_INV, 0x7FFFFFFF);
+		ACS_ExecuteAlways(612, 0, "Plant 5 trees.");
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		//Log(d:CheckInventory(TREE_COUNT_INV));
+		if (CheckInventory(TREE_COUNT_INV) >= 5) {
+			ACS_ExecuteAlways(612, 0, "Good job!", 1);
+			GiveInventory("500XP", 1);
+			SetResultValue(true);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		TakeInventory(TREE_COUNT_INV, 0x7FFFFFFF);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(6*60); // 6 minutes to plant all the trees
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Tree Planter");
+	}
+}
+
+//Easy mode: Go talk to Hunter 
+script 623 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	str TALKED_TO_HUNTER_INV = "QuestTalkedToHunter";
+	int hunterTid = -1;
+	//TakeInventory("CollectedWoodForQuest", 0x7FFFFFFF)
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
+
+		hunterTid = unusedTID(900, 1000);
+				
+		//The conversation ID is the same as the script # for the NEXT step in the quest!
+		int conversationId = g_activeQuestData[questIdx][questSpotIdx];
+		
+		//Log(s:"Conversation ID: ", d:conversationId);
+		SpawnSpot("Hunter", questSpotTID, hunterTid);
+		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
+		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
+		Thing_ChangeTID(hunterTid,hunterTid); 
+
+		//Thing_SetSpecial(hunterTid, 226, 520, conversationId, 0);
+		//Thing_SetSpecial(hunterTid, 226, 520, 0, 0);
+		SetThingSpecial(hunterTid, ACS_ExecuteAlways, 520, 0, conversationId);
+
+		//Store Hunter's TID in the g_activeQuestStats array in the extradata field
+		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = hunterTid;
+		g_activeQuestData[questIdx][questSpotIdx] = hunterTid;
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = hunterTid; //Point the compass towards Hunter
+		//We will need that later to remove Hunter.
+		
+		ACS_ExecuteAlways(612, 0, "Go talk to Hunter.");
+		
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		//Log(d:CheckInventory(TALKED_TO_HUNTER_INV));
+		if (CheckInventory(TALKED_TO_HUNTER_INV) >= 1) {
+			//ACS_ExecuteAlways(612, 0, "Thanks!", 1);
+			GiveInventory("300XP", 1);
+			SetResultValue(true);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//hunterTid = g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA];
+		hunterTid = g_activeQuestData[questIdx][questSpotIdx];
+		Thing_Remove(hunterTid);
+		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(6*60); // 6 minutes to find and talk to Hunter
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		int nextQuestScriptId = 680;
+		if (random(0, 10) > 7) {
+			nextQuestScriptId = 681;
+		}
+		SetResultValue(nextQuestScriptId); //Kill the imp warlords quest
+		//This is saved temporarily so that when we're called again with INITIALIZE,
+		//we can get Hunter to show the conversation that corresponds to this next quest's objective.
+		g_activeQuestData[questIdx][questSpotIdx] = nextQuestScriptId;
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Find Hunter");
+	}
+}
+
+//
+//
+//MEDIUM quests
+//
+//
+
+//Medium mode: Go talk to Hunter 
+script 630 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	str TALKED_TO_HUNTER_INV = "QuestTalkedToHunter";
+	int hunterTid = -1;
+	//TakeInventory("CollectedWoodForQuest", 0x7FFFFFFF)
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
+
+		hunterTid = unusedTID(100, 1000);
+		
+		//The conversation ID is the same as the script # for the NEXT step in the quest!
+		int conversationId = g_activeQuestData[questIdx][questSpotIdx];
+		
+		//Log(s:"Conversation ID: ", d:conversationId);
+		SpawnSpot("Hunter", questSpotTID, hunterTid);
+		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
+		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
+		Thing_ChangeTID(hunterTid,hunterTid); 
+		SetThingSpecial(hunterTid, ACS_ExecuteAlways, 520, 0, conversationId);
+
+		//Store Hunter's TID in the g_activeQuestStats array in the extradata field
+		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = hunterTid;
+		g_activeQuestData[questIdx][questSpotIdx] = hunterTid;
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = hunterTid; //Point the compass towards Hunter
+		//We will need that later to remove Hunter.
+		
+		ACS_ExecuteAlways(612, 0, "Go talk to Hunter.");
+
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		//Log(d:CheckInventory(TALKED_TO_HUNTER_INV));
+		if (CheckInventory(TALKED_TO_HUNTER_INV) >= 1) {
+			//ACS_ExecuteAlways(612, 0, "Thanks!", 1);
+			GiveInventory("300XP", 1);
+			SetResultValue(true);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//hunterTid = g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA];
+		hunterTid = g_activeQuestData[questIdx][questSpotIdx];
+		Thing_Remove(hunterTid);
+		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(6*60); // 6 minutes to find and talk to Hunter
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		int nextQuestScriptId = 681; //Kill  Azazel quest
+		SetResultValue(nextQuestScriptId); 
+		//This is saved temporarily so that when we're called again with INITIALIZE,
+		//we can get Hunter to show the conversation that corresponds to this next quest's objective.
+		g_activeQuestData[questIdx][questSpotIdx] = nextQuestScriptId;
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Find Hunter");
+	}
+}
+
+//Dragon Slayer (Hard)
+script 640 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	int monsterTid = -1;
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		//Just in case...
+		g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = 0;
+		//Spawn the dragon
+		monsterTid = ACS_ExecuteWithResult(505, g_activeQuestSpots[questIdx][questSpotIdx], 0);//unusedTID(100, 1000);
+		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
+		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
+		Thing_ChangeTID(monsterTid,monsterTid); 
+
+		//ACS_ExecuteAlways(505, 0, questSpotTID, questIdx);//unusedTID(100, 1000);
+		Log(s:"Monster TID:", d:monsterTid);
+		//The dragon TID is actually kinda useless right now because it initially shares the same
+		//TID as the first mapspot. Also, the dragon magically changes its own TID as it
+		//flies through the different mapspots. (it takes the TID of the map spot it's targeting)
+		
+		//Store the Dragon's TID in the g_activeQuestData array
+		g_activeQuestData[questIdx][questSpotIdx] = monsterTid;
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = monsterTid; //Point the compass towards the dragon
+		//We will need that later to remove Hunter.
+		//Log(s:"Initializing 680 - Saved Warlord TID: ", d:impWarlordsTid);
+
+		//SpawnSpot("Dragon Slayer I", questSpotTID, monsterTid);
+		/*
+		Spawn("Azazel", 
+		      getActorX(questSpotTID) + 96.0, getActorY(questSpotTID), getActorZ(questSpotTID),
+		      monsterTid, random(0, 255));
+		Spawn("Azazel", 
+		      getActorX(questSpotTID) - 96.0, getActorY(questSpotTID) + 96.0, getActorZ(questSpotTID),
+		      monsterTid, random(0, 255));
+		*/
+		//Log(s:"Warlords by TID right after spawn: ", d:ThingCount(T_NONE, impWarlordsTid));
+		ACS_ExecuteAlways(612, 0, "Slay the dragon.");
+		//Log(s:"Warlord TID: ", d:impWarlordsTid);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+
+		monsterTid = g_activeQuestData[questIdx][questSpotIdx];
+		Log(s:"Checking for dragon with TID: ", d:monsterTid);
+		//if (ThingCountName("DoomZDragon", monsterTid) <= 0) {
+		Log(s:"Number of dragons:", d:ThingCountName("DoomZQuestDragon", monsterTid));
+		Log(s:"count for dragon TID:", d:ThingCount(T_NONE, monsterTid));
+		//if (ThingCountName("DoomZQuestDragon", 0) <= 0) {
+			/*
+		//As a safeguard, fail the mission if the DoomZDragonSpots die or are removed. 
+		if (ThingCountName("DoomZDragonSpot", monsterTid) <= 0)
+		{
+			failQuest(questIdx);
+		}
+	*/	
+		//The dragon will randomly take on the TID of it's tracer (one of the DoomZDragonSpots),
+		//so sometimes this ThingCount will be 2 (the first dragonspot + the dragon) and
+		//sometimes it'll be 1 (just the first dragonspot), even when the dragon is alive.
+		//GetActorProperty(APROP_
+		
+		//The dragon script (505) flips this flag to true when the dragon dies!
+		//We do it this way to because detecting if the dragon dies is super complicated.
+		//That complexity is entirely encapsulated in script 505 now.
+		//if (g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] == 1) {
+		if (ThingCountName("DoomZQuestDragon", monsterTid) <= 0) {
+			setResultValue(true);
+			ActivatorSound("thanks", 127);
+			//ACS_ExecuteAlways(612, 0, "You hear a faint 'thanks'\nin the distance...", 1);
+			GiveInventory("2000XP", 1);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//We're not even going to bother removing the dragon because it's unreliable.
+		//(The dragon seems to like to change its own TID at will.... ugh)
+		//I tried like 500 different approaches to make it work, and none of them worked.
+		
+		monsterTid = g_activeQuestData[questIdx][questSpotIdx];
+		//Print(s:"Cleanup on actor:", d:monsterTid);
+		//Print(s:"Actor is dragon?:", d:CheckActorClass(monsterTid, "DoomZQuestDragon"));
+		
+		//TODO: If quest is cancelled, then:
+		//setActorState(monsterTid, "CancelQuest");
+		//This actually does remove all the map spots sucessfully but the damn dragon is still there! Why???
+		//Thing_Destroy(monsterTid, true); //Use XDeath state
+		//Thing_Remove(monsterTid);
+		//terminate;
+		//TODO: End of if block
+		
+		//Really important to only call Thing_Destroy if the dragon is still alive (ThingCount checks that)
+		//so that we don't trigger the death state a second time!
+		//The 2 here is because the dragon and its first waypoint share the same TID.
+		//If both are still around, then the dragon is still alive.
+		if (ThingCount(T_NONE, monsterTid) >= 2) {
+			//Thing_Destroy(monsterTid);
+		}
+		//Delay(3);
+		
+		//Need to actually remove the dragon:
+		Thing_Remove(monsterTid);
+		g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = 0;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(30*60); // 30 minutes to find and slay the dragon
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Dragon Slayer I");
+	}
+}
+
+//Hunter: Kill the Imp Warlords (Easy)
+script 680 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	//TakeInventory("CollectedWoodForQuest", 0x7FFFFFFF)
+	int impWarlordsTid = -1;
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		impWarlordsTid = unusedTID(100, 1000);
+		//Store the Imp Warlords' TID in the g_activeQuestStats array in the extradata field
+		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = impWarlordsTid;
+		g_activeQuestData[questIdx][questSpotIdx] = impWarlordsTid;
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = impWarlordsTid; //Point the compass towards the imp warlords
+		//We will need that later to remove Hunter.
+		//Log(s:"Initializing 680 - Saved Warlord TID: ", d:impWarlordsTid);
+
+		SpawnSpot("ImpWarlord", questSpotTID, impWarlordsTid);
+		Spawn("ImpWarlord", 
+		      getActorX(questSpotTID) + 96.0, getActorY(questSpotTID), getActorZ(questSpotTID),
+		      impWarlordsTid, random(0, 255));
+		Spawn("ImpWarlord", 
+		      getActorX(questSpotTID) - 96.0, getActorY(questSpotTID) + 96.0, getActorZ(questSpotTID),
+		      impWarlordsTid, random(0, 255));
+		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
+		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
+		Thing_ChangeTID(impWarlordsTid,impWarlordsTid); 
+
+		//Log(s:"Warlords by TID right after spawn: ", d:ThingCount(T_NONE, impWarlordsTid));
+		ACS_ExecuteAlways(612, 0, "Eliminate the Imp Warlords.");
+		//Log(s:"Warlord TID: ", d:impWarlordsTid);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		//Log(d:CheckInventory(TALKED_TO_HUNTER_INV));
+		//impWarlordsTid = g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA];
+		impWarlordsTid = g_activeQuestData[questIdx][questSpotIdx];
+		/*
+		Log(s:"Active quest idx CHECK_COMPLETE: ", d:questIdx);
+		Log(s:"Retrieved Warlord TID: ", d:impWarlordsTid);
+		Log(s:"Warlords by TID: ", d:ThingCount(T_NONE, impWarlordsTid));
+		Log(s:"Warlords by name:", d:ThingCountName("ImpWarlord", impWarlordsTid));
+		*/
+		if (ThingCountName("ImpWarlord", impWarlordsTid) <= 0) {
+			setResultValue(true);
+			ActivatorSound("thanks", 127);
+			ACS_ExecuteAlways(612, 0, "You hear a faint 'thanks'\nin the distance...", 1);
+			GiveInventory("1000XP", 1);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//impWarlordsTid = g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA];
+		impWarlordsTid = g_activeQuestData[questIdx][questSpotIdx];
+		//Log(s:"Removing imp warlords with TID:", d:impWarlordsTid);
+		Thing_Remove(impWarlordsTid);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(10*60); // 10 minutes to find and eliminate the Imp Warlords
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Pesky Imps");
+	}
+}
+
+//Hunter: Kill Azazel  (Medium)
+script 681 (int questScriptMode, int questIdx, int questSpotIdx)
+{
+	int questSpotTID = g_activeQuestSpots[questIdx][questSpotIdx];
+	int monsterTid = -1;
+	//Give that to the player on the pickup state in LogItem
+	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
+	{
+		monsterTid = unusedTID(100, 1000);
+		//Store the Imp Warlords' TID in the g_activeQuestStats array in the extradata field
+		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = impWarlordsTid;
+		g_activeQuestData[questIdx][questSpotIdx] = monsterTid;
+		g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = monsterTid; //Point the compass towards the imp warlords
+		//We will need that later to remove Hunter.
+		//Log(s:"Initializing 680 - Saved Warlord TID: ", d:impWarlordsTid);
+
+		SpawnSpot("Azazel", questSpotTID, monsterTid);
+		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
+		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
+		Thing_ChangeTID(monsterTid,monsterTid); 
+
+		/*
+		Spawn("Azazel", 
+		      getActorX(questSpotTID) + 96.0, getActorY(questSpotTID), getActorZ(questSpotTID),
+		      monsterTid, random(0, 255));
+		Spawn("Azazel", 
+		      getActorX(questSpotTID) - 96.0, getActorY(questSpotTID) + 96.0, getActorZ(questSpotTID),
+		      monsterTid, random(0, 255));
+		*/
+		//Log(s:"Warlords by TID right after spawn: ", d:ThingCount(T_NONE, impWarlordsTid));
+		ACS_ExecuteAlways(612, 0, "Eliminate Azazel.");
+		//Log(s:"Warlord TID: ", d:impWarlordsTid);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_PREREQS)
+	{
+		SetResultValue(true);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_CHECK_COMPLETE)
+	{
+		monsterTid = g_activeQuestData[questIdx][questSpotIdx];
+		if (ThingCountName("Azazel", monsterTid) <= 0) {
+			setResultValue(true);
+			ActivatorSound("thanks", 127);
+			ACS_ExecuteAlways(612, 0, "You hear a faint 'thanks'\nin the distance...", 1);
+			GiveInventory("1000XP", 1);
+		} else {
+			SetResultValue(false);
+		}
+		terminate;
+	}	
+	else if (questScriptMode == QUESTSCRIPTMODE_CLEANUP)
+	{
+		//impWarlordsTid = g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA];
+		monsterTid = g_activeQuestData[questIdx][questSpotIdx];
+		Thing_Remove(monsterTid);
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
+	{
+		SetResultValue(12*60); // 12 minutes to find and eliminate Azazel
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
+	{
+		SetResultValue(0);
+		terminate;
+	}
+	else if (questScriptMode == QUESTSCRIPTMODE_GETNAME)
+	{
+		SetResultValue("Azazel");
+	}
+}
+

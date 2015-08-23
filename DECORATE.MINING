@@ -1,0 +1,130 @@
+Actor MinableRock
+{
+  +SHOOTABLE
+  +NOBLOOD
+  +SOLID 
+  +WINDTHRUST
+  +FRIENDLY
+  Speed 0
+  Damage 0
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 256 //100% chance of going into Pain state
+  //DamageFactor 0.0
+  DamageFactor "Axe", 1.0
+  
+  +SOLID
+  
+  States
+  {
+	  Spawn:
+		DFFB J 0 
+		DFFB J 0 
+		DFFB J -1
+		Stop
+	  Pain.Axe:
+	    TNT1 A 0
+		TNT1 A 0 A_Jump(40, 3)
+		TNT1 A 0 A_SpawnItemEx("CStoneBoxItem", 0.0, 0.0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_SpawnItemEx("Coal", 0.0, 0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		goto Spawn
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_PlaySound("rocks")
+		TNT1 A 0 A_SpawnItemEx("CStoneBoxItem")
+	  Death:
+	    Stop
+  }
+}
+
+
+Actor MineMananger 10770
+{
+    Game Doom
+	Tag "Mine Manager"
+	+NOGRAVITY
+	+FRIENDLY
+	-NOTARGET
+	-SHOOTABLE
+	+STANDSTILL
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_SpawnItemEx("MineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 10500 // 5 minutes
+			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 0 Thing_Remove(554) //Rocks
+			TNT1 A 8 
+			Loop
+	}
+}
+
+
+Actor MineItemGenerator
+{
+	Speed 0
+	Damage 1000
+	-SOLID
+	+NOBLOOD
+	-SHOOTABLE
+	+NOGRAVITY
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 5 ACS_ExecuteAlways(936, 0) //Has to be a bit of a delay here for Zandronum 2.0, no idea why...
+			Stop
+	}
+}
+
+Actor MineDestroyer
+{
+	+NOBLOCKMAP
+
+	States
+	{
+		Spawn:
+			//TNT1 A 70 Radius_Quake(4, 70, 640, 640, 0)//"world/quake")
+            TNT1 A 25 Radius_Quake(9, 30, 0, 5, 0)
+            TNT1 A 25 Radius_Quake(4, 30, 0, 5, 0)
+            TNT1 A 25 Radius_Quake(2, 30, 0, 5, 0)
+            TNT1 A 25 Radius_Quake(1, 30, 0, 5, 0)
+			Stop
+	}
+}
+
+actor Coal : Inventory
+{
+	Tag "Coal"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	+CANPASS // ---> crazy CPU usage
+	
+	
+	Health 50
+	Inventory.PickupMessage "Picked up coal"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "COAL" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			COAL A -1
+			Wait
+	}
+}

@@ -1,0 +1,416 @@
+#import "doomzgame.acs"
+#import "player.acs"
+#import "math.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "crafting"
+
+#libdefine BASE_MESSAGE_ID 	50
+#libdefine FLASH_MESSAGE_ID 	49
+#libdefine INFO_MESSAGE_ID 		48
+#libdefine TITLE_MESSAGE_ID 	47
+#libdefine SUBTITLE_MESSAGE_ID 	46
+#libdefine BASE_GRID_MSG_ID 	100
+
+#libdefine RETVAL_OK 			0
+#libdefine RETVAL_BAD_INGR 	1
+#libdefine RETVAL_BAD_XPLVL 	2
+
+
+/* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
+   up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+  */
+#libdefine CRAFTING_OPTIONS_LENGTH 13 //<--- Edit me if you add more craftable stuff
+str craftingOptions[CRAFTING_OPTIONS_LENGTH] = {
+	"Return",
+	"Craft a torch",
+	"Craft a wooden pillar",
+	"Craft a wooden floor",
+	"Craft a door",
+	"Craft a furnace",
+	"Craft a shotgun",
+	"Craft a chaingun",
+	"Craft a sentry turret",
+	"Craft a bow",
+	"Craft a magic quest box",
+	"Craft a spike",
+	"Craft a bucket",
+};
+	
+int craftingScripts[CRAFTING_OPTIONS_LENGTH] = {
+	751, //Return
+	752, //Torch
+	752, //Pillar
+	752, //Floor
+	752, //Door
+	752, //Furnace
+	752, //Shotgun
+	752, //Chaingun
+	752, //Sentry turret
+	752, //Bow
+	752, //Quest Box
+	752, //Spike
+	752, //Water Bucket
+	
+	//TODO: Crafting for:
+		// Turrets - should be chaingun + computer chip + steel?
+};
+
+int craftingXPLevels[CRAFTING_OPTIONS_LENGTH] = {
+	0, //Return
+	5, //Torch
+	4, //Pillar
+	3, //Floor
+	6, //Door
+	7, //Furnace
+	8, //Shotgun
+	8, //Chaingun
+	10, //Sentry turret
+	9, //Bow
+	11, //Quest Box
+	12, //Spike
+	14, //Water Bucket
+
+	//TODO: Crafting for:
+		// Turrets - should be chaingun + computer chip + steel?
+};
+
+#libdefine CRAFTING_RESULT_1 		0
+#libdefine CRAFTING_SOUND 			1
+#libdefine CRAFTING_SUCCESS_MSG 	2
+#libdefine CRAFTING_ERROR_MSG		3
+#libdefine MAX_CRAFTING_RESULT		4 //bad name for this constant :(
+str craftingResults[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] = 
+{
+	{"", "", "", ""},	//Return
+	{"TorchItem",   "misc/i_pkup", "You crafted a torch!",  "You need 1 pillar and 1 coal to craft a torch."},
+	{"CPillarItem", "misc/i_pkup", "You crafted a wooden pillar!",  "You need 4 wood to craft a pillar."},
+	{"CFloorItem", 	"misc/i_pkup", "You crafted a wooden floor!",  "You need 8 wood to craft a floor."},
+	{"CDoorItem", 	"misc/i_pkup", "You crafted a door!",  "You need 7 stone to craft a door."},
+	{"FurnaceItem", "misc/i_pkup", "You crafted a furnace!",  "You need 7 stone to craft a furnace"},
+	{"DoomZShotgun", "misc/w_pkup", "You crafted a shotgun!",  "You need 10 stone and 1 torch to craft a shotgun."},
+	{"DoomZChaingun","misc/w_pkup", "You crafted a chaingun!",  "You need 12 stone to craft a chaingun."},
+	{"SentryBox",   "misc/i_pkup", "You crafted a sentry turret!",  "You need 3 pillars and 1 chaingun to craft a sentry turret."},
+	{"Bow", 		"misc/w_pkup", "You crafted a bow!", "You need 2 wood and 1 rope to craft a bow."},
+	{"QuestBoxItem","misc/i_pkup", "You crafted a quest box!", "You need 24 wood and 8 stone to craft a quest box."},
+	{"SpikeItem",   "misc/i_pkup", "You crafted a wooden spike!", "You need 7 wood to craft a spike."},
+	{"Bucket",      "misc/w_pkup", "You crafted a water bucket!", "You need 4 wood to craft a bucket."},
+};
+
+//ghetto enum
+#libdefine CRAFTING_INGREDIENT_1 0
+#libdefine CRAFTING_INGREDIENT_2 1
+#libdefine CRAFTING_INGREDIENT_3 2
+#libdefine MAX_CRAFTING_INGREDIENTS 3
+//Ingredients needed to craft the above. Set the quantities below.
+str craftingIngredients[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{"", 			"", 			""}, //Return
+	{"CPillarItem", 	"Coal", 	""}, //Torch
+	{"CBoxItem", 	"", 			""}, //Wooden Pillar
+	{"CBoxItem", 	"", 			""}, //Wooden Floor
+	{"CStoneBoxItem", 	"", 			""}, //Door
+	{"CStoneBoxItem", 	"", 			""}, //Furnace
+	{"CStoneBoxItem", 	"TorchItem",	""}, //Shotgun
+	{"CStoneBoxItem", 	"", 			""}, //Chaingun
+	{"CPillarItem", 	"DoomZChaingun", 	""}, //Sentry turret
+	{"CBoxItem", 	"GraplingAmmo", ""}, //Bow
+	{"CBoxItem", 	"CStoneBoxItem", ""}, //Quest Box
+	{"CBoxItem", 	"", ""}, //Wooden Spike
+	{"CBoxItem", 	"", ""}, //Water Bucket
+};
+//Quantities needed to craft the above
+int craftingIngrAmounts[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{0,	 0,  0}, //Return
+	{1, 1,  0}, //Torch
+	{4, 0,  0}, //Wooden Pillar
+	{8, 0,  0}, //Wooden Floor
+	{7, 0,  0}, //Door
+	{7, 0,  0}, //Furnace
+	{10, 1,  0}, //Shotgun
+	{12, 0,  0}, //Chaingun
+	{3, 1,  0}, //Sentry turret
+	{2,  1,  0}, //Bow
+	{24,  8,  0}, //Quest Box
+	{7,  0,  0}, //Wooden Spike
+	{4,  0,  0}, //Water Bucket
+};
+
+script 777 (void)
+{
+}
+
+script 750 (void) //ENTER
+{ 
+	int buttons;
+	int selectedItemIdx = 0;
+	int buttonDepressed = false;
+
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}	
+
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+	if (PlayerIsSpectator(PlayerNumber()) > 0 || PlayerIsPseudoSpec(PlayerNumber()))
+	{
+		terminate;
+	}
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+	//Prevent each spacebar press from re-showing the menu
+	if (CheckInventory("ShowCraftingScreen") > 0) {	
+		terminate;
+	}
+	GiveInventory("ShowCraftingScreen", 1);
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	
+	//TODO: Make this even more generic
+	// -- Can't due to ACS constraints - no dynamic strings :(
+	str mode = "CraftingBox";
+	if (mode == "CraftingBox")
+	{
+	/*
+		str menuArray[] = craftingOptions;
+		int menuArrayLen = CRAFTING_OPTIONS_LENGTH;
+		int menuScripts[CRAFTING_OPTIONS_LENGTH = craftingScripts;
+		str menuToggleItem = "ShowCraftingScreen";
+		*/
+	}
+
+	
+	//Fade to half intensity black in two seconds, ...
+	if (CheckInventory("ShowCraftingScreen") > 0) {
+		ThingSound(playerTID, "click", 127);
+		FadeTo (0, 0, 0, 0.5, 0.2);
+	}
+
+	SetHudSize(640, 480, true);
+	while (CheckInventory("ShowCraftingScreen") > 0)
+	{
+		//print(s:"ShowCraftingScreen present!");
+
+		SetFont("SMALLFONT2");
+		SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN); //Freeze the player
+
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+
+		int yTop = 0.2;
+		for (int i = 0; i < CRAFTING_OPTIONS_LENGTH; i++)
+		{
+			int yPos = 80.4 + i*20.0;
+			int messageId = BASE_MESSAGE_ID + i;
+			int colour = CR_RED;
+			str strLine = craftingOptions[i];
+			int reqCheck = checkRequirements(i);
+						
+			if (i == selectedItemIdx) {
+				colour = CR_GOLD;
+				
+				str errorMsg = craftingResults[selectedItemIdx][CRAFTING_ERROR_MSG];
+				
+				//Hide the option until you're a high enough level to show it.
+				if (reqCheck == RETVAL_BAD_XPLVL) {
+					strLine = StrParam(s:"Unlocked at level ", d:craftingXPLevels[i]);
+					errorMsg = "";
+				}
+
+				HudMessage(s:"> ", s:strLine, s:" <"; HUDMSG_PLAIN, messageId, colour, 100.1, yPos, 0);				
+				HudMessage(s:errorMsg; HUDMSG_PLAIN, INFO_MESSAGE_ID, CR_RED, 300.1, yPos, 0);
+			
+			} else {
+				if (reqCheck == RETVAL_OK) {
+					colour = CR_GREEN;
+				}
+				//Hide the option until you're a high enough level to show it.
+				if (reqCheck == RETVAL_BAD_XPLVL) {
+					strLine = "==Locked==";
+					colour = CR_DARKGREY;
+				}
+				HudMessage(s:strLine; HUDMSG_PLAIN, messageId, colour, 100.1, yPos, 0);
+			}
+		}
+
+		if (!buttonDepressed)
+		{
+		   if (buttons & BT_FORWARD)//&& buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (CRAFTING_OPTIONS_LENGTH+selectedItemIdx-1) % CRAFTING_OPTIONS_LENGTH;//math_max(0, selectedItemIdx-1);
+		   } else if (buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (selectedItemIdx+1) % CRAFTING_OPTIONS_LENGTH;//math_min(selectedItemIdx+1, CRAFTING_OPTIONS_LENGTH-1);
+		   }
+		   else if (buttons & BT_USE) //|| buttons & BT_ATTACK)
+		   {
+			  buttonDepressed = true;
+			  //print(d: selectedItemIdx);
+			  Delay(1);
+			  ACS_ExecuteAlways(craftingScripts[selectedItemIdx], 0, selectedItemIdx);
+			  Delay(1);
+		   }
+		   //Exit if you hit the jump button
+		   else if (buttons & BT_JUMP)
+		   {
+			    buttonDepressed = true;
+				//print(d: selectedItemIdx);
+				Delay(1);
+				ACS_ExecuteAlways(751, 0);
+				Delay(1);
+				terminate;		   
+			}
+		}
+		if (buttons == 0)
+		{
+			buttonDepressed = false;
+		}
+
+		delay(1);
+	}
+
+	//print(s:"no ShowCraftingScreen, returning");
+}
+
+//Hide the crafting screen
+script 751 (void)
+{	
+	//print(s:"Taking ShowCraftingScreen");
+
+	//Delay(5);
+
+    FadeTo (0, 0, 0, 0.0, 0.2);
+
+	ThingSound(ActivatorTID(), "click", 127);
+	TakeInventory("ShowCraftingScreen", 0x7FFFFFFF);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN); //Unfreeze the player
+
+	//Clear the screen
+	for (int i = 0; i < CRAFTING_OPTIONS_LENGTH; i++)
+	{
+		int messageId = BASE_MESSAGE_ID + i;
+		HudMessage(s:""; HUDMSG_PLAIN, messageId, 0, 0, 0, 0, 0);
+	}
+	HudMessage(s:""; HUDMSG_PLAIN, INFO_MESSAGE_ID, 0, 0, 0, 0, 0);
+	HudMessage(s:""; HUDMSG_PLAIN, FLASH_MESSAGE_ID, 0, 0, 0, 0, 0);
+	HudMessage(s:""; HUDMSG_PLAIN, TITLE_MESSAGE_ID, 0, 0, 0, 0, 0);
+	HudMessage(s:""; HUDMSG_PLAIN, SUBTITLE_MESSAGE_ID, 0, 0, 0, 0, 0);
+	for (i = BASE_GRID_MSG_ID; i < BASE_GRID_MSG_ID+64; i++)
+	{
+		HudMessage(s:""; HUDMSG_PLAIN, i, 0, 0, 0, 0, 0);
+	}
+	
+	//Inventory sync delay
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	TakeInventory("ShowCraftingScreen", 0x7FFFFFFF);
+
+}
+
+function bool checkRequirements(int optionIdx)
+{
+	str req1inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+
+	//brain hurts
+
+	bool allReqsSatisfied = true;
+	if ((req1inv != "") && (CheckInventory(req1inv) < req1amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req1 failed ", s:req1inv, s:" ", d:req1amount);
+	}
+	
+	if ((req2inv != "") && (CheckInventory(req2inv) < req2amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req2 failed");
+	}
+	if ((req3inv != "") && (CheckInventory(req3inv) < req3amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req3 failed");
+	}
+	
+	if (CheckInventory("XPLevel")+1 < craftingXPLevels[optionIdx])
+	{
+		return RETVAL_BAD_XPLVL;
+	}
+	
+	if (allReqsSatisfied) {
+		return RETVAL_OK;
+	} else {
+		return RETVAL_BAD_INGR;
+	}
+	
+	return RETVAL_BAD_INGR;
+}
+
+//Default crafting function. It combines up to three items in some quantity
+//and gives the player an item. Edit the arrays at the top of this file
+//to add new crafting recipes!
+script 752 (int optionIdx)
+{
+	// I generalized this into a giant 2d array, a to make it easy to add more 
+	//crafting formulas and less room for mistakes. I had to split it up into
+	//separate arrays because apparently you can't mix strings and integers
+	//in a single array (boo). The compiler lets you but the values become wrong:
+	//  http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+	int tid = ActivatorTID();
+	int msgHoldTime = 4.0;
+
+	str req1inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+	str resultItem = 	craftingResults[optionIdx][CRAFTING_RESULT_1];
+	str sound = 		craftingResults[optionIdx][CRAFTING_SOUND];
+	str successMsg = 	craftingResults[optionIdx][CRAFTING_SUCCESS_MSG];
+	str errorMsg = 		craftingResults[optionIdx][CRAFTING_ERROR_MSG];
+
+	int allReqsSatisfied = checkRequirements(optionIdx);
+
+	if (allReqsSatisfied == RETVAL_OK) {
+		TakeInventory(req1inv, req1amount);
+		TakeInventory(req2inv, req2amount);
+		TakeInventory(req3inv, req3amount);
+		GiveInventory(resultItem, 1);
+		//GiveInventory("ArrowAmmo", 10);
+		ActivatorSound(sound, 127);
+	    HudMessage(s:successMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_GREEN, 320.0, 240.0, msgHoldTime);
+	}
+	else if (allReqsSatisfied == RETVAL_BAD_XPLVL) {
+		//Do nothing
+	} else {
+	    HudMessage(s:errorMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_RED, 320.0, 240.0, msgHoldTime);
+	}
+}
+
+// Making SwitchableDecoration work for the CraftingBox.
+// Derived from 935, the CDoor opening script
+script 753 (int doorTID)
+{
+	SetActivatorToTarget(0);
+	SetActorState(0, "Open");
+	//Delay(35*2);
+}

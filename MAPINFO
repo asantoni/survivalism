@@ -1,0 +1,74 @@
+clearepisodes
+episode DOOMZ1
+{
+   picname = "Survivalism"
+   key = "s"
+}
+
+map DOOMZ1 "DoomZ 1"
+{
+   next = "DOOMZ2"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}
+
+map DOOMZ2 "DoomZ 2"
+{
+   levelnum = 1
+   next = "DOOMZ1"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}
+
+map MAP01 "Test"
+{
+   next = "DOOMZ2"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}
+
+map TITLEMAP "Title Map"
+{
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}
+
+map DOOMZ3 "DoomZ 3"
+{
+   levelnum = 1
+   next = "DOOMZ1"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}
+
+
+map BOATTEST "Boat Test"
+{
+   next = "DOOMZ2"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+}

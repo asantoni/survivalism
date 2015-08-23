@@ -1,0 +1,150 @@
+#import "math.acs"
+#import "player.acs"
+#import "doomzgame.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "conversation"
+
+/* Script 520-530 Reserved for CONVERSATION.acs 
+*/
+
+/* 
+  These scripts are only used for quest conversations.
+
+*/
+
+script 520 (int dialog)
+{
+	
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
+	{
+		terminate;
+	}
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}
+
+	//Try to change the activator to the NPC
+	SetActivatorToTarget(0);
+	//log(d:targetTid);
+	if (PlayerNumber() >= 0) {
+		//Log(s:"Try pointing at the side of the furnace to activate it!");
+		//ACS_Execute(751, 0, 0);
+		terminate;
+	}
+	//Remove the special so spacebar won't activate it again
+	Thing_SetSpecial(0, 0, 0, 0, 0);
+	
+	//Set it back to being the player
+	SetActivator(playerTID);
+
+	//Grey the background
+	FadeTo (0, 0, 0, 0.8, 0.2);
+
+
+	//Log(s:"Conversation script called");
+	int words = 0;
+	int art = "";
+	int giveOnExit = "";
+	switch(dialog)
+	{
+		case 0:
+			words = "foo";
+			break;
+		case 680:
+			words = 
+"Good to see another survivor!\n
+Listen, I need a hand. There's a couple monsters\n
+over there that are too much for me to handle.\n\n
+Can you take them out for me?";
+			art = "HUN1";
+			giveOnExit="QuestTalkedToHunter"; //Dummy inventory item so the quest script knows we talked to Hunter
+			break;
+		case 681:
+			words = 
+"Nearly scared me half to death there!\n
+A strange beast has been following me for hours.\n
+Can you protect me from it?";
+			art = "HUN1";
+			giveOnExit="QuestTalkedToHunter"; //Dummy inventory item so the quest script knows we talked to Hunter
+			break;
+		default:
+			Log(s:"Error: Unknown dialog ID");
+			break;
+	}
+	
+	int HUDMSG_ART_ID = 11;
+	int HUDMSG_WORDS_ID = 12;
+	//Log(s:words);
+	SetFont(art);
+	SetHudSize(640, 480, TRUE); //Read this: http://zdoom.org/wiki/SetHudSize#Coordinate_Behaviour
+	HudMessage(s:"A"; HUDMSG_PLAIN, HUDMSG_ART_ID, CR_RED, 60.1, 180.0, 0, 1.0);
+	SetFont("SMALLFONT");
+	HudMessage(s:words; HUDMSG_PLAIN | HUDMSG_LOG, HUDMSG_WORDS_ID, CR_RED, 200.1, 180.0, 0, 1.0);
+	SetHudSize(0, 0, FALSE); //Reset the HUD coordinate system
+
+	
+	ThingSound(playerTID, "hey", 127);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN); //Freeze the player
+
+	int buttons;
+	int selectedItemIdx = 0;
+	int buttonDepressed = false;
+
+	Delay(15);
+	while (true)
+	{
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+
+	   //Exit if you hit the use or jump button
+	   if ((buttons & BT_JUMP) || (buttons & BT_USE) || (buttons & BT_ATTACK))
+	   {
+			buttonDepressed = true;
+			//print(d: selectedItemIdx);
+			Delay(1);
+			HudMessage(s:""; HUDMSG_PLAIN, HUDMSG_ART_ID, CR_RED, 0.4, 0.5, 0, 1.0);
+			HudMessage(s:""; HUDMSG_PLAIN | HUDMSG_LOG, HUDMSG_WORDS_ID, CR_RED, 0.5, 0.55, 0, 1.0);
+			SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN); //Unfreeze the player
+			GiveInventory(giveOnExit, 1);
+			FadeTo (0, 0, 0, 0.0, 0.2);
+			terminate;		   
+		}
+
+		if (!buttonDepressed)
+		{
+			/*
+		   if (buttons & BT_FORWARD)//&& buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (CRAFTING_OPTIONS_LENGTH+selectedItemIdx-1) % CRAFTING_OPTIONS_LENGTH;//math_max(0, selectedItemIdx-1);
+		   } else if (buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (selectedItemIdx+1) % CRAFTING_OPTIONS_LENGTH;//math_min(selectedItemIdx+1, CRAFTING_OPTIONS_LENGTH-1);
+		   }
+		   else if (buttons & BT_USE) //|| buttons & BT_ATTACK)
+		   {
+			  buttonDepressed = true;
+			  //print(d: selectedItemIdx);
+			  ACS_ExecuteAlways(craftingScripts[selectedItemIdx], 0, selectedItemIdx);
+		   }
+		   */
+		}
+		if (buttons == 0)
+		{
+			buttonDepressed = false;
+		}
+		Delay(3);
+	};	
+}

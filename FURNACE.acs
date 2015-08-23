@@ -1,0 +1,377 @@
+#import "doomzgame.acs"
+#import "player.acs"
+#import "math.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "furnace"
+
+#libdefine BASE_MESSAGE_ID 	50
+#libdefine FLASH_MESSAGE_ID 	49
+#libdefine INFO_MESSAGE_ID 		48
+#libdefine TITLE_MESSAGE_ID 	47
+#libdefine SUBTITLE_MESSAGE_ID 	46
+#libdefine BASE_GRID_MSG_ID 	100
+
+
+#define FURNACE_MIN_TID 5900
+#define FURNACE_MAX_TID 5999
+
+/* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
+   up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+  */
+#define FURNACE_OPTIONS_LENGTH 4 //<--- Edit me if you add more craftable stuff
+str craftingOptions[FURNACE_OPTIONS_LENGTH] = {
+	"Return",
+	"Load a wooden log",
+	"Load with coal",
+	"Cook a chicken",
+};
+	
+int craftingScripts[FURNACE_OPTIONS_LENGTH] = {
+	751, //Return
+	773, //Load with a log
+	773, //Load with coal
+	772, //Cook a chicken
+};
+
+
+#libdefine CRAFTING_RESULT_1 		0
+#libdefine CRAFTING_SOUND 			1
+#libdefine CRAFTING_SUCCESS_MSG 	2
+#libdefine CRAFTING_ERROR_MSG		3
+#libdefine MAX_CRAFTING_RESULT		4 //bad name for this constant :(
+str craftingResults[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] = 
+{
+	{"", "", "", ""},	//Return
+	{"", 	"", "You loaded the furnace with firewood.", "You need a log."},
+	{"", 	"", "You loaded the furnace with coal.",  "You need coal."},
+	{"CookedChicken", "chicken/death", "You cooked a chicken!",  "You need a chicken to cook.\nTip: Press spacebar on a chicken to pick it up."},
+};
+
+//ghetto enum
+#libdefine CRAFTING_INGREDIENT_1 0
+#libdefine CRAFTING_INGREDIENT_2 1
+#libdefine CRAFTING_INGREDIENT_3 2
+#libdefine MAX_CRAFTING_INGREDIENTS 3
+str craftingIngredients[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{"", 			"", 			""}, //Return
+	{"LogItem", 	"", 			""}, //Load log
+	{"Coal", 		"", 			""}, //Load coal
+	{"ChickenItem", "", 			"FurnaceFuel"}, //Cook a chicken
+};
+int craftingIngrAmounts[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{0,	 0,  0}, //Return
+	{1,  0,  0}, //Load log
+	{1, 0,  0}, //Load coal
+	{1, 0,  1}, //Cook a chicken
+};
+
+
+script 770 (void) //ENTER
+{ 
+	int buttons;
+	int selectedItemIdx = 0;
+	int buttonDepressed = false;
+
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}
+
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	if (PlayerIsSpectator(PlayerNumber()) > 0 || PlayerIsPseudoSpec(PlayerNumber()))
+	{
+		terminate;
+	}
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+
+	//Prevent each spacebar press from re-showing the menu
+	if (CheckInventory("ShowCraftingScreen") > 0) {	
+		terminate;
+	}
+	
+	//TODO: Make this even more generic
+	str mode = "CraftingBox";
+	if (mode == "CraftingBox")
+	{
+	/*
+		str menuArray[] = craftingOptions;
+		int menuArrayLen = CRAFTING_OPTIONS_LENGTH;
+		int menuScripts[CRAFTING_OPTIONS_LENGTH = craftingScripts;
+		str menuToggleItem = "ShowCraftingScreen";
+		*/
+	}
+
+	GiveInventory("ShowCraftingScreen", 1);
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+	Delay(1); //Inventory sync delay
+
+	//Fade to half intensity black in two seconds, ...
+	if (CheckInventory("ShowCraftingScreen") > 0) {
+		ThingSound(playerTID, "click", 127);
+		FadeTo (0, 0, 0, 0.5, 0.2);
+	}
+	
+	int yTop = 70.0;
+
+	SetHudSize(640, 480, true);
+	while (CheckInventory("ShowCraftingScreen") > 0)
+	{
+		//print(s:"ShowCraftingScreen present!");
+		SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN); //Freeze the player
+
+		//int targetTid = GetActorProperty(0, APROP_TargetTID);
+		SetActivatorToTarget(0);
+		//log(d:targetTid);
+		if (PlayerNumber() >= 0) {
+			Log(s:"Try pointing at the side of the furnace to activate it!");
+			ACS_Execute(751, 0, 0);
+			terminate;
+		}
+		//Log(s:"Furnace TID:", d:ActivatorTID());
+		int furnaceTID = ActivatorTID();
+		int furnaceFuelAmount = CheckActorInventory(furnaceTID, "FurnaceFuel");
+		//Set the activator back to being the player
+		SetActivator(playerTID);
+		
+		SetFont("BIGFONT");
+		HudMessage(s:"Furnace"; HUDMSG_PLAIN, TITLE_MESSAGE_ID, CR_LIGHTBLUE, 320.4, 30.0, 0);
+
+		SetFont("SMALLFONT2");		
+		HudMessage(s:"Burn Time: ", d:(furnaceFuelAmount), s:" seconds"; 
+				   HUDMSG_PLAIN, INFO_MESSAGE_ID, CR_CYAN, 320.4, 50.0, 0);
+
+
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+
+
+		for (int i = 0; i < FURNACE_OPTIONS_LENGTH; i++)
+		{
+			int yPos = yTop + i*20.0;//FixedMul(i, 0.1);
+			int messageId = BASE_MESSAGE_ID + i;
+			int colour = CR_RED;
+			str strLine = craftingOptions[i];
+			if (i == selectedItemIdx) {
+				colour = CR_GOLD;
+				HudMessage(s:"> ", s:strLine, s:" <"; HUDMSG_PLAIN, messageId, colour, 100.1, yPos, 0);
+				str errorMsg = craftingResults[selectedItemIdx][CRAFTING_ERROR_MSG];
+				HudMessage(s:errorMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_RED, 300.1, yPos, 0);
+			} else {
+				if (checkRequirements(i)) {
+					colour = CR_GREEN;
+				}
+				HudMessage(s:strLine; HUDMSG_PLAIN, messageId, colour, 100.1, yPos, 0);			
+			}
+		}
+
+		if (!buttonDepressed)
+		{
+		   if (buttons & BT_FORWARD)//&& buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (FURNACE_OPTIONS_LENGTH+selectedItemIdx-1) % FURNACE_OPTIONS_LENGTH;//math_max(0, selectedItemIdx-1);
+		   } else if (buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (selectedItemIdx+1) % FURNACE_OPTIONS_LENGTH;//math_min(selectedItemIdx+1, CRAFTING_OPTIONS_LENGTH-1);
+		   }
+		   else if (buttons & BT_USE) //|| buttons & BT_ATTACK)
+		   {
+			  buttonDepressed = true;
+			  //print(d: selectedItemIdx);
+			  ACS_ExecuteAlways(craftingScripts[selectedItemIdx], 0, selectedItemIdx);
+		   }
+		   //Exit if you hit the jump button
+		   else if (buttons & BT_JUMP)
+		   {
+			    buttonDepressed = true;
+				//print(d: selectedItemIdx);
+				Delay(1);
+				ACS_ExecuteAlways(751, 0);
+				terminate;		   
+			}
+		}
+		if (buttons == 0)
+		{
+			buttonDepressed = false;
+		}
+
+		delay(1);
+	}
+	
+	//print(s:"no ShowCraftingScreen, returning");
+}
+
+function bool checkRequirements(int optionIdx)
+{
+	str req1inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+
+	//brain hurts
+
+	bool allReqsSatisfied = true;
+	if ((req1inv != "") && (CheckInventory(req1inv) < req1amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req1 failed ", s:req1inv, s:" ", d:req1amount);
+	}
+	
+	if ((req2inv != "") && (CheckInventory(req2inv) < req2amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req2 failed");
+	}
+	
+	/*
+	if ((req3inv != "") && (CheckInventory(req3inv) < req3amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req3 failed");
+	}*/
+	
+	//Check the furnace fuel amount
+	//We're assuming the player is the activator here. This function should
+	//not be called if this is not true. You have been warned.
+	int playerTID = ActivatorTID();
+	SetActivatorToTarget(0);
+	/*
+	if (PlayerNumber() >= 0) {
+		Log(s:"Try pointing at the side of the furnace to activate it!");
+		ACS_Execute(751, 0, 0);
+	}*/
+	//If the 3rd required inventory item is FurnaceFuel, we assume
+	//this is referring to the Furnace's inventory!
+	int furnaceTID = ActivatorTID();
+	int furnaceFuelAmount = CheckActorInventory(furnaceTID, "FurnaceFuel");
+	if (req3inv == "FurnaceFuel" && furnaceFuelAmount < req3amount)
+	{
+		allReqsSatisfied = false;
+	}
+	
+	//Set the activator back to being the player
+	SetActivator(playerTID);
+
+	return allReqsSatisfied;
+}
+
+//Default crafting function. It combines up to three items in some quantity
+//and gives the player an item. Edit the arrays at the top of this file
+//to add new crafting recipes!
+script 772 (int optionIdx)
+{
+	// I generalized this into a giant 2d array, a to make it easy to add more 
+	//crafting formulas and less room for mistakes. I had to split it up into
+	//separate arrays because apparently you can't mix strings and integers
+	//in a single array (boo). The compiler lets you but the values become wrong:
+	//  http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+	int tid = ActivatorTID();
+	int msgHoldTime = 4.0;
+
+	str req1inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+	str resultItem = 	craftingResults[optionIdx][CRAFTING_RESULT_1];
+	str sound = 		craftingResults[optionIdx][CRAFTING_SOUND];
+	str successMsg = 	craftingResults[optionIdx][CRAFTING_SUCCESS_MSG];
+	str errorMsg = 		craftingResults[optionIdx][CRAFTING_ERROR_MSG];
+
+	bool allReqsSatisfied = checkRequirements(optionIdx);
+
+	int playerTID = ActivatorTID();
+	SetActivatorToTarget(0);
+	if (PlayerNumber() >= 0) {
+		Log(s:"Try pointing at the side of the furnace to activate it!");
+		ACS_Execute(751, 0, 0);
+		terminate;
+	}
+	int furnaceTID = ActivatorTID();
+	int furnaceFuelAmount = CheckActorInventory(furnaceTID, "FurnaceFuel");
+	//Set the activator back to being the player
+	SetActivator(playerTID);
+
+	if (req3inv == "FurnaceFuel" && furnaceFuelAmount == 0) {
+	    errorMsg = "Please load the furnace with wood or coal first.";
+		allReqsSatisfied = false;
+	}
+
+	if (allReqsSatisfied)
+	{
+		TakeInventory(req1inv, req1amount);
+		TakeInventory(req2inv, req2amount);
+		//TakeInventory(req3inv, req3amount);
+		GiveInventory(resultItem, 1);
+		//GiveInventory("ArrowAmmo", 10);
+		ActivatorSound(sound, 127);
+	    HudMessage(s:successMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_GREEN, 0.5, 0.5, msgHoldTime);
+	}
+	else
+	{
+	    HudMessage(s:errorMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_RED, 0.5, 0.5, msgHoldTime);
+	}
+}
+
+//Load fuel (eg. wood, coal) into the furnance
+script 773 (int optionIdx)
+{
+	str req1inv = 		craftingIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	craftingIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str sound = 		craftingResults[optionIdx][CRAFTING_SOUND];
+
+	bool allReqsSatisfied = checkRequirements(optionIdx);
+	if (allReqsSatisfied)
+	{
+		TakeInventory(req1inv, req1amount);
+		ActivatorSound(sound, 127);
+
+		//int targetTid = GetActorProperty(0, APROP_TargetTID);
+		SetActivatorToTarget(0);
+		//log(d:targetTid);
+		if (PlayerNumber() >= 0) {
+			Log(s:"Try pointing at the side of the furnace to activate it!");
+			terminate;
+		}
+		//Log(s:"Furnace TID:", d:ActivatorTID());
+		int furnaceTID = ActivatorTID();
+
+		if (req1inv == "LogItem") {
+			GiveActorInventory(furnaceTID, "FurnaceFuel", 10); //10 seconds of burn time
+			SetActorState(furnaceTID, "Cook");
+			//Thing_Remove(ActivatorTID());
+		} else if (req1inv == "Coal") {
+			GiveActorInventory(furnaceTID, "FurnaceFuel", 60); //60 seconds of burn time
+			SetActorState(furnaceTID, "Cook");
+		}
+	}
+
+}
+
+//Give the furnace a unique TID
+script 774 (void)
+{
+	int newTid = unusedTID(FURNACE_MIN_TID, FURNACE_MAX_TID);
+	//Log(i:newTid);
+	//Log(i:CheckActorClass (ActivatorTID(), "Survivalist"));
+	//Thing_Destroy(0, true);
+
+	Thing_ChangeTID(0, newTid);//CONSTRUCTION_TID);
+}
+
+/* script 780-790 reserved for QuestBox.acs */

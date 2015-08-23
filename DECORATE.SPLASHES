@@ -1,0 +1,280 @@
+///////////////////////////////////////////
+//core
+///////////////////////////////////////////
+//Core Splash definition for others to inherit from
+
+ACTOR NJCoreSplashChunk
+{
+	Radius 2
+	Height 4
+	Renderstyle Translucent
+	Alpha 0.7
+	+NOBLOCKMAP 
+	+MISSILE 
+	+DROPOFF
+	+NOTELEPORT
+	+LOWGRAVITY
+	+CANNOTPUSH
+	+DONTSPLASH
+	+DONTBLAST
+}
+
+
+ACTOR NJCoreSplashBase
+{
+	Radius 2
+	Height 4
+	Renderstyle Translucent
+	Alpha 0.7
+	+NOBLOCKMAP
+	+NOCLIP
+	+NOGRAVITY
+	+DONTSPLASH
+	+DONTBLAST
+}
+
+ACTOR NJCoreSplashSmoke
+{
+	Radius 2
+	Height 4
+	RenderStyle Translucent
+	Alpha 0.7
+	+NOBLOCKMAP
+	+NOCLIP
+	+NOGRAVITY
+	+DONTSPLASH
+	+DONTBLAST
+}
+
+///////////////////////////////////////////
+//Blood
+///////////////////////////////////////////
+Actor NJBloodChunk : NJCoreSplashChunk
+{
+	TRANSLATION "112:127=176:191"
+	States
+	{
+	Spawn:
+		NSL1 A 6
+		NSL1 B 6 A_SetTranslucent(0.6, 0)
+		NSL1 C 6 A_SetTranslucent(0.5, 0)
+		NSL1 D 6 A_SetTranslucent(0.4, 0)
+		NSL1 D 6 A_SetTranslucent(0.3, 0)
+		Stop
+	Death:
+		NSL1 D 8 A_SetTranslucent(0.2, 0)
+		Stop
+	}
+}
+
+Actor NJBloodBase : NJCoreSplashBase
+{
+	TRANSLATION "112:127=176:191"
+	States
+	{
+	Spawn:
+		NSL1 EFG 5
+		NSL1 H 5 A_SetTranslucent(0.6, 0)
+		NSL1 I 5 A_SetTranslucent(0.5, 0)
+		NSL1 J 5 A_SetTranslucent(0.4, 0)
+		NSL1 K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+
+///////////////////////////////////////////
+//Lava
+///////////////////////////////////////////
+ACTOR NJLavaSmoke : NJCoreSplashSmoke
+{
+	States
+	{
+	Spawn:
+		NLAV G 5
+		NLAV H 5 A_SetTranslucent(0.6, 0)
+		NLAV I 5 A_SetTranslucent(0.5, 0)
+		NLAV J 5 A_SetTranslucent(0.4, 0)
+		NLAV K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+Actor NJLavaBase : NJCoreSplashBase
+{
+	Renderstyle Add
+	Alpha 0.8
+	TRANSLATION "112:122=160:165", "123:127=43:47"
+	States
+	{
+	Spawn:
+		NLAV ABCDEF 5
+		Stop
+	}
+}
+
+///////////////////////////////////////////
+//Lava Smoke Only
+///////////////////////////////////////////
+ACTOR NJLavaSmokeOnly : NJCoreSplashSmoke
+{
+	States
+	{
+	Spawn:
+		NLAV G 5
+		NLAV H 5 A_SetTranslucent(0.6, 0)
+		NLAV I 5 A_SetTranslucent(0.5, 0)
+		NLAV J 5 A_SetTranslucent(0.4, 0)
+		NLAV K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+///////////////////////////////////////////
+//Nukage
+///////////////////////////////////////////
+Actor NJNukageSmoke : NJCoreSplashSmoke
+{
+	States
+	{
+	Spawn:
+	Spawn:
+		NLAV G 5
+		NLAV H 5 A_SetTranslucent(0.6, 0)
+		NLAV I 5 A_SetTranslucent(0.5, 0)
+		NLAV J 5 A_SetTranslucent(0.4, 0)
+		NLAV K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+Actor NJNukageBase : NJCoreSplashBase
+{
+	Translation "112:123=116:127", "124:127=9:12"
+	Renderstyle Add
+	Alpha 0.6
+	States
+	{
+	Spawn:
+		NWAT EFGH 5
+		NWAT I 5 A_SetTranslucent(0.5, 1)
+		NWAT J 5 A_SetTranslucent(0.4, 1)
+		NWAT K 5 A_SetTranslucent(0.3, 1)
+		Stop
+	}
+}
+
+
+///////////////////////////////////////////
+//Slime - Brown
+///////////////////////////////////////////
+Actor NJSlimeBrownChunk : NJCoreSplashChunk
+{
+	TRANSLATION "112:127=[107,71,39]:[23,15,7]"
+	States
+	{
+	Spawn:
+		NSL1 A 6
+		NSL1 B 6 A_SetTranslucent(0.6, 0)
+		NSL1 C 6 A_SetTranslucent(0.5, 0)
+		NSL1 D 6 A_SetTranslucent(0.4, 0)
+		NSL1 D 6 A_SetTranslucent(0.3, 0)
+		Stop
+	Death:
+		NSL1 D 8 A_SetTranslucent(0.2, 0)
+		Stop
+	}
+}
+
+Actor NJSlimeBrownBase : NJCoreSplashBase
+{
+	TRANSLATION "112:127=[107,71,39]:[23,15,7]"
+	States
+	{
+	Spawn:
+		NSL1 EFG 5
+		NSL1 H 5 A_SetTranslucent(0.6, 0)
+		NSL1 I 5 A_SetTranslucent(0.5, 0)
+		NSL1 J 5 A_SetTranslucent(0.4, 0)
+		NSL1 K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+///////////////////////////////////////////
+//Sludge - GreenyBrown
+///////////////////////////////////////////
+Actor NJSludgeChunk : NJCoreSplashChunk
+{
+	Renderstyle Translucent
+	Alpha 0.8
+	TRANSLATION "112:123=116:127", "124:127=76:79"
+	States
+	{
+	Spawn:
+		NSL2 A 6
+		NSL2 B 6 A_SetTranslucent(0.7, 0)
+		NSL2 C 6 A_SetTranslucent(0.6, 0)
+		NSL2 D 6 A_SetTranslucent(0.5, 0)
+		NSL2 D 6 A_SetTranslucent(0.4, 0)
+		Stop
+	Death:
+		NSL2 D 8 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+Actor NJSludgeBase : NJCoreSplashBase
+{
+	Renderstyle Translucent
+	Alpha 0.9
+	TRANSLATION 	"112:123=116:127", 
+			"124:124=79:79", 
+			"125:125=239:239", 
+			"126:127=1:2" 
+	States
+	{
+	Spawn:
+		NSL2 EFGH 6
+		NSL2 I 6 A_SetTranslucent(0.7, 0)
+		NSL2 J 6 A_SetTranslucent(0.5, 0)
+		NSL2 K 6 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}
+
+///////////////////////////////////////////
+//Water Normal
+///////////////////////////////////////////
+Actor NJWaterSplashChunk : NJCoreSplashChunk
+{
+	Alpha 0.6
+	TRANSLATION "112:127=192:207"
+	States
+	{
+	Spawn:
+		NWAT AB 6
+		NWAT C 6 A_SetTranslucent(0.5, 0)
+		NWAT D 6 A_SetTranslucent(0.4, 0)
+		NWAT D 6 A_SetTranslucent(0.3, 0)
+		Stop
+	Death:
+		NWAT D 8 A_SetTranslucent(0.2, 0)
+		Stop
+	}
+}
+
+Actor NJWaterSplashBase : NJCoreSplashBase
+{
+	Alpha 0.6
+	TRANSLATION "112:119=200:207", "120:127=240:247"
+	States
+	{
+	Spawn:
+		NWAT EFGH 5
+		NWAT I 5 A_SetTranslucent(0.5, 0)
+		NWAT J 5 A_SetTranslucent(0.4, 0)
+		NWAT K 5 A_SetTranslucent(0.3, 0)
+		Stop
+	}
+}

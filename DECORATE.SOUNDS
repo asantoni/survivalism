@@ -1,0 +1,11 @@
+actor AmbientSoundLava 22000
+{
+	+CLIENTSIDEONLY
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A -1 A_PlaySound("lava", CHAN_BODY, 0.6, true, 0.5)
+			Wait
+	}
+}

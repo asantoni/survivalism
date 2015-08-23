@@ -1,0 +1,17 @@
+
+/*
+	See DECORATE.HARVEST for vegetables (eg. turnips)
+*/
+
+
+actor HungerLevel : Inventory
+{
+	Inventory.MaxAmount 15
+	+UNDROPPABLE
+}
+
+actor ZombieMeat
+{
+	+SHOOTABLE
+	Health 20
+}

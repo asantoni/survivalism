@@ -1,0 +1,69 @@
+//11500-11599 is for quests
+
+actor QuestSpot : actor
+{
+	-SOLID
+	-SHOOTABLE
+	
+	States
+	{
+		//Go visible
+		Active:
+			TNT1 A 0
+			WYPT A -1
+			stop
+	}
+}
+
+actor EasyQuestSpot : QuestSpot 11500
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 //dummy frame
+			TNT1 A 0 ACS_ExecuteAlways(601, 0) //Assign it a TID
+		Inactive:
+			TNT1 A -1
+			stop
+	}
+}
+
+actor MediumQuestSpot : QuestSpot 11501
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 //dummy frame
+			TNT1 A 0 ACS_ExecuteAlways(602, 0) //Assign it a TID
+		Inactive:
+			TNT1 A -1
+			stop
+	}
+}
+
+actor HardQuestSpot : QuestSpot 11503
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 //dummy frame
+			TNT1 A 0 ACS_ExecuteAlways(603, 0) //Assign it a TID
+		Inactive:
+			TNT1 A -1
+			stop
+	}
+}
+
+//Dummy inventory items for quests
+actor QuestTreePlanted : Inventory {
+	Inventory.MaxAmount 0x7FFFFFFF
+}
+
+actor QuestHempHarvested : Inventory {
+	Inventory.MaxAmount 0x7FFFFFFF
+}
+
+
+actor QuestTalkedToHunter : Inventory {
+	Inventory.MaxAmount 0x7FFFFFFF
+}

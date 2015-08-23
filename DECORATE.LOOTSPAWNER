@@ -1,0 +1,29 @@
+
+actor DoomZLootSpawnerProjectile
+{
+	Projectile
+	BounceType "Hexen"
+	+RIPPER
+	+CEILINGHUGGER
+	Speed 60
+	
+	Height 128
+	Mass 0
+	Damage 0
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 100
+		//Randomize how far away the projectile goes before it turns into a monster
+		Procrastinate:
+			TNT1 A 50 A_Jump(48, "Death")
+			loop
+		Death:
+			TNT1 A 1
+			//TNT1 A 5 A_SpawnItemEx("MediumHighLoot", 0, 0, 0) //ACS_ExecuteAlways(203) //200 tic duration so our TID sticks around
+			TNT1 A 5 A_SpawnItemEx("LootBox", 0, 0, 0) //ACS_ExecuteAlways(203) //200 tic duration so our TID sticks around
+			Stop
+	}
+}

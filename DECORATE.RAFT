@@ -1,0 +1,282 @@
+
+
+actor Raft : Actor/*SwitchableDecoration*/ 17700
+{
+	Monster
+	+SHOOTABLE
+	-NOBLOOD
+	+SOLID
+	+NOGRAVITY
+	//+FRIENDLY
+	//+INVULNERABLE
+	+NOGRAVITY
+	+CANPASS
+    //+USESPECIAL
+	//+BUMPSPECIAL
+	//+NOTARGET
+	-PUSHABLE
+	+DONTBLAST
+	
+	//+ACTLIKEBRIDGE --> maybe crazy CPU
+
+	PainChance 255
+	  
+	//Health 0x7FFFFFFF
+	Health 0x7FFFFFFF
+	Radius 120
+	Height 16
+	Mass 0x7FFFFFFF
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//TNT1 A 0 ACS_ExecuteAlways(503, 0) - don't actually want to assign this the construction TID
+			TNT1 A 1 Thing_SetSpecial(0, 80, 943, 0, 0)//943, tid, 0)
+			//TNT1 A 0 A_SpawnItemEx("CBox", -96.0, 0.0, 32.0, 8.0, 0, 0, 0, SXF_SETMASTER, 0)
+			//CFLO A -1
+		Idle:
+			TNT1 A 0
+			CFLO A 0 A_ClearTarget
+			CFLO A 8 A_LookEx(LOF_NOSOUNDCHECK, 0, 64.0, 0, 256, "StartMoving")
+			Loop
+			//goto Inactive
+			//TNT1 A A_
+		StartMoving:
+			TNT1 A 0 
+			//CFLO A 0 ACS_Terminate(943, 0)
+			CBOX A 0 A_PlaySound("click") //A_PlaySound("DSDOROPN")
+			CFLO A 0 ACS_Execute(943, 0, 0)
+		Move:
+			//CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
+			CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
+			CFLO A -1
+			Wait
+
+		Pain.Axe:
+			TNT1 A 0
+			CFLO A 1 A_SetAngle(angle+180)
+			CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
+			//CFLO A 8 ThrustThing(angle*256/360 + 128, 1, 0)
+			goto Move
+		Active:
+		Open:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 A_HideThing
+			TNT1 A 0 A_UnSetShootable
+			TNT1 A 0 A_UnsetSolid
+			CBOX A -1 A_PlaySound("doors/dr1_open") //A_PlaySound("DSDOROPN")
+			Wait
+		Inactive:
+		Closed:
+			//CDOR A 35 A_PlaySound("creeper/fuse")
+			TNT1 A 0 //Dummy frame
+			//TNT1 A 0 A_PlaySound("doors/dr1_clos")
+			TNT1 A 0 A_UnHideThing
+			TNT1 A 0 A_SetShootable
+			TNT1 A 0 A_SetSolid
+			TNT1 A 0 A_ClearTarget
+			CFLO A -1 
+			Wait	
+		Death:
+		Death.Axe:
+			TNT1 A 0
+			Stop
+	}
+}
+
+
+
+actor Boat : Actor/*SwitchableDecoration*/ 17701
+{
+	Monster
+	+SHOOTABLE
+	+NOBLOOD
+	+SOLID
+	//+FLOAT
+	+FLOATBOB
+	+DONTOVERLAP //Two actors with this flag cannot occupy the same x/y-position.
+	//+NOGRAVITY
+	//+FRIENDLY
+	//+INVULNERABLE
+	+CANPASS
+    +USESPECIAL
+	//+BUMPSPECIAL
+	//+NOTARGET
+	-PUSHABLE
+	+DONTBLAST
+	+ACTLIKEBRIDGE
+	+FRIENDLY
+	+SLIDESONWALLS
+	+DONTFALL
+	+DONTRIP
+
+	
+	//+RELATIVETOFLOOR would be awesome here but that's beyond Zandronum 2.0 even.
+	
+	MeleeRange 256
+	
+	//+ACTLIKEBRIDGE --> maybe crazy CPU
+
+	PainChance 255
+	  
+	//Health 0x7FFFFFFF
+	Health 0x7FFFFFFF
+	Radius 120
+	Height 16
+	//Mass 0x7FFFFFFF
+	Mass 4000
+	
+	DamageFactor "Boat", 0.0
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//TNT1 A 0 ACS_ExecuteAlways(503, 0) //Make monsters attack the boat
+			TNT1 A 0 ACS_ExecuteAlways(774, 0) //Assign it a unique TID
+			TNT1 A 1 Thing_SetSpecial(0, 226, 945, 0, 0)//943, tid, 0) //Boat activation script
+			//TNT1 A 1 Thing_SetSpecial(tid, 80, 945, 0, 0)//943, tid, 0)
+			//TNT1 A 0 A_SpawnItemEx("CBox", -96.0, 0.0, 32.0, 8.0, 0, 0, 0, SXF_SETMASTER, 0)
+			//CFLO A -1
+		Idle:
+			TNT1 A 0
+			CFLO A 0 A_ClearTarget
+			//CFLO A 8 A_LookEx(LOF_NOSOUNDCHECK, 0, 64.0, 0, 256, "StartMoving")
+			CFLO A 8
+			Loop
+			//goto Inactive
+			//TNT1 A A_
+		StartMoving:
+			TNT1 A 0 
+			//CFLO A 0 ACS_Terminate(943, 0)
+			CBOX A 0 A_PlaySound("click") //A_PlaySound("DSDOROPN")
+			//CFLO A 0 ACS_ExecuteAlways(945, 0, tid)
+		Decelerate:
+			CFLO A 70
+			CFLO A 35 ThrustThing(angle*256/360, -1, 1, 0)
+			CFLO A 0 A_JumpIf((momx == 0) && (momy == 0), "Idle")
+			Loop
+
+		Pain.Axe:
+			TNT1 A 0
+			//CFLO A 1 A_SetAngle(angle+180)
+			//CFLO A 1 A_CustomMissile("BoatMelee", 48.0, 0, angle, CMF_AIMDIRECTION | CMF_AIMOFFSET, 0)
+			CFLO A 1 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 1 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 1 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 1 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 2 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 2 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 2 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 2 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 3 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 3 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 3 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 3 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 4 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 4 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 4 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 4 ThrustThing(angle*256/360, 5, 1, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, -64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
+			//CFLO A 4 ThrustThing(angle*256/360, 8, 1, 0)
+			//CFLO A 4 ThrustThing(angle*256/360, 8, 1, 0)
+			//CFLO A 4 ThrustThing(angle*256/360, 8, 1, 0)
+			//CFLO A 8 ThrustThing(angle*256/360 + 128, 1, 0)
+			goto Idle
+		Active:
+		Open:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 A_HideThing
+			TNT1 A 0 A_UnSetShootable
+			TNT1 A 0 A_UnsetSolid
+			CBOX A -1 A_PlaySound("doors/dr1_open") //A_PlaySound("DSDOROPN")
+			Wait
+		Inactive:
+		Closed:
+			//CDOR A 35 A_PlaySound("creeper/fuse")
+			TNT1 A 0 //Dummy frame
+			//TNT1 A 0 A_PlaySound("doors/dr1_clos")
+			TNT1 A 0 A_UnHideThing
+			TNT1 A 0 A_SetShootable
+			TNT1 A 0 A_SetSolid
+			TNT1 A 0 A_ClearTarget
+			CFLO A -1 
+			Wait	
+		Death:
+		Death.Axe:
+			TNT1 A 0
+			Stop
+	}
+}
+
+actor BoatMelee //: FastProjectile
+{
+	Projectile
+	Speed 80
+	Damage 300
+	Radius 48
+	Mass 3000
+	+FRIENDLY
+	+RIPPER
+	DamageType "Boat"
+	RenderStyle "None"
+	
+	States
+	{
+		Spawn:
+			SVXP A 0
+			SVXP A 1
+			goto Death
+		Death:
+			TNT1 A 0
+			Stop
+	}
+}

@@ -1,0 +1,220 @@
+/* JavaScript to generate the scroll items:
+http://repl.it/aDy/2
+
+for (var i = 1; i < 61; i++)
+{
+    var foo = "actor ScrollLevel" + i + " : Scroll {States{Use:TNT1 A 0\n \
+TNT1 A 0 ACS_ExecuteAlways(531, 0, " + i + ")stop}}";
+    console.log(foo);
+    
+}
+
+*/
+actor Scroll : CustomInventory
+{
+	Tag "Scroll"
+	Health 100
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	Inventory.PickupMessage "Picked up a scroll!"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "SCROLLI"
+	Inventory.MaxAmount 50
+	+INVENTORY.PICKUPFLASH
+
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			SCRL A -1
+			Wait
+		Use:
+			TNT1 A 0
+			TNT1 A 0 ACS_ExecuteAlways(531, 0, 0) //Show the scroll dialog
+			Stop
+	}
+}
+
+actor ScrollLevel1 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 1)stop}}
+
+actor ScrollLevel2 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 2)stop}}
+
+actor ScrollLevel3 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 3)stop}}
+
+actor ScrollLevel4 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 4)stop}}
+
+actor ScrollLevel5 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 5)stop}}
+
+actor ScrollLevel6 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 6)stop}}
+
+actor ScrollLevel7 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 7)stop}}
+
+actor ScrollLevel8 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 8)stop}}
+
+actor ScrollLevel9 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 9)stop}}
+
+actor ScrollLevel10 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 10)stop}}
+
+actor ScrollLevel11 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 11)stop}}
+
+actor ScrollLevel12 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 12)stop}}
+
+actor ScrollLevel13 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 13)stop}}
+
+actor ScrollLevel14 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 14)stop}}
+
+actor ScrollLevel15 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 15)
+ TNT1 A 0 A_GiveInventory("TurnipSeeds", 4)
+stop}}
+
+actor ScrollLevel16 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 16)stop}}
+
+actor ScrollLevel17 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 17)stop}}
+
+actor ScrollLevel18 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 18)stop}}
+
+actor ScrollLevel19 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 19)stop}}
+
+actor ScrollLevel20 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 20)stop}}
+
+actor ScrollLevel21 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 21)stop}}
+
+actor ScrollLevel22 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 22)stop}}
+
+actor ScrollLevel23 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 23)stop}}
+
+actor ScrollLevel24 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 24)stop}}
+
+actor ScrollLevel25 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 25)stop}}
+
+actor ScrollLevel26 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 26)stop}}
+
+actor ScrollLevel27 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 27)stop}}
+
+actor ScrollLevel28 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 28)stop}}
+
+actor ScrollLevel29 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 29)stop}}
+
+actor ScrollLevel30 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 30)stop}}
+
+actor ScrollLevel31 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 31)stop}}
+
+actor ScrollLevel32 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 32)stop}}
+
+actor ScrollLevel33 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 33)stop}}
+
+actor ScrollLevel34 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 34)stop}}
+
+actor ScrollLevel35 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 35)stop}}
+
+actor ScrollLevel36 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 36)stop}}
+
+actor ScrollLevel37 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 37)stop}}
+
+actor ScrollLevel38 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 38)stop}}
+
+actor ScrollLevel39 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 39)stop}}
+
+actor ScrollLevel40 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 40)stop}}
+
+actor ScrollLevel41 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 41)stop}}
+
+actor ScrollLevel42 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 42)stop}}
+
+actor ScrollLevel43 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 43)stop}}
+
+actor ScrollLevel44 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 44)stop}}
+
+actor ScrollLevel45 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 45)stop}}
+
+actor ScrollLevel46 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 46)stop}}
+
+actor ScrollLevel47 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 47)stop}}
+
+actor ScrollLevel48 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 48)stop}}
+
+actor ScrollLevel49 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 49)stop}}
+
+actor ScrollLevel50 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 50)stop}}
+
+actor ScrollLevel51 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 51)stop}}
+
+actor ScrollLevel52 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 52)stop}}
+
+actor ScrollLevel53 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 53)stop}}
+
+actor ScrollLevel54 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 54)stop}}
+
+actor ScrollLevel55 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 55)stop}}
+
+actor ScrollLevel56 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 56)stop}}
+
+actor ScrollLevel57 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 57)stop}}
+
+actor ScrollLevel58 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 58)stop}}
+
+actor ScrollLevel59 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 59)stop}}
+
+actor ScrollLevel60 : Scroll {States{Use:TNT1 A 0
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 60)stop}}

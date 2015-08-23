@@ -1,0 +1,170 @@
+/*
+Music manager
+- ZDoom/Zandronum only supports looping music, so if we want music
+  not to loop, we have to manually turn it off.
+*/
+
+#library "music"
+#include "zcommon.acs"
+#import "doomzgame.acs"
+
+bool g_isMusicPlaying = false;
+
+function void musicPlayDaytime (void)
+{
+	ACS_ExecuteAlways(110, 0);
+}
+
+function void musicPlayNighttime (void)
+{
+	ACS_ExecuteAlways(111, 0);
+}
+
+function void musicPlayBoss (void)
+{
+	ACS_ExecuteAlways(112, 0);
+}
+
+function void musicPlayMountain (void)
+{
+	ACS_Execute(113, 0);
+}
+
+function void musicPlayLevelUp (int level)
+{
+	ACS_Execute(115, 0, level); 
+}
+
+script 100 OPEN
+{
+	if (GameType() == GAME_TITLE_MAP)
+	{
+		g_isMusicPlaying = true;
+		SetMusic("MUSIC/theme.ogg");
+		terminate;
+	}
+	//ACS_ExecuteAlways(110, 0);
+	musicPlayDaytime();
+	
+	/* This is now done in the day/night cycle script in DOOMZGAME.acs
+	while (true)
+	{
+		//Delay(35*kMainLoopPeriodSeconds);
+		Delay(35 * (kDayLengthSeconds/4));
+		musicPlayNighttime();
+		Delay(35 * (kDayLengthSeconds/2));
+		musicPlayDaytime();
+		Delay(35 * (kDayLengthSeconds/4));
+	}*/
+}
+
+//Play daytime music
+script 110 (void)
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	SetMusic("MUSIC/day1.ogg");
+	Delay(35*24);
+	SetMusic("*");
+	g_isMusicPlaying = false;
+}
+
+//Play nighttime music
+script 111 (void)
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	SetMusic("MUSIC/night1.ogg");
+	Delay(35*30);
+	SetMusic("*");
+	g_isMusicPlaying = false;
+}
+
+//Play boss music
+script 112 (void)
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	SetMusic("MUSIC/boss1.ogg");
+	Delay(35*31);
+	SetMusic("*");
+	g_isMusicPlaying = false;
+}
+
+//Play mountain music
+script 113 (void) //CLIENTSIDE
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	LocalSetMusic ("MUSIC/mountain.ogg"); //CLIENTSIDE !!!!!!
+	Delay(35*73);
+	LocalSetMusic("*");
+	g_isMusicPlaying = false;
+	
+	Delay(35*60*2); //Disable triggering this music again for 2 minutes
+}
+
+//Play boss 2 music
+script 114 (void) 
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	LocalSetMusic ("MUSIC/boss2.ogg");
+	Delay(35*27);
+	LocalSetMusic("*");
+	g_isMusicPlaying = false;
+	
+	Delay(35*60*20); //Disable triggering this music again for 20 minutes
+}
+
+//Play level up music
+script 115 (int level) 
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	str musicFile = StrParam(s:"MUSIC/level2.ogg");//, d:level, s:".ogg");
+	LocalSetMusic(musicFile);
+	Delay(35*9);
+	LocalSetMusic("*");
+	g_isMusicPlaying = false;
+}
+
+//Play quest started music
+script 116 (int level) 
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	str musicFile = StrParam(s:"MUSIC/queststart.ogg");
+	LocalSetMusic(musicFile);
+	Delay(35*4);
+	LocalSetMusic("*");
+	g_isMusicPlaying = false;
+}
+
+//Play quest completed music
+script 117 (int level) 
+{
+	if (g_isMusicPlaying) {
+		terminate;
+	}
+	g_isMusicPlaying = true;
+	str musicFile = StrParam(s:"MUSIC/questcomp.ogg");
+	LocalSetMusic(musicFile);
+	Delay(35*6);
+	LocalSetMusic("*");
+	g_isMusicPlaying = false;
+}

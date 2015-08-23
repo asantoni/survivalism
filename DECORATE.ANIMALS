@@ -1,0 +1,391 @@
+
+
+actor DoomZChicken : Chicken 10808
+{
+	+FRIENDLY
+	+USESPECIAL
+	-COUNTKILL
+	Tag "Chicken"
+	
+	MeleeRange 8
+	
+	DamageFactor "Fire", 8.0
+	DamageFactor "SentryDamage", 0.0
+	
+	DamageType "Peck"
+	
+	States
+	{
+	  Spawn:
+		TNT1 A 0
+		CHKN A 0 Thing_SetSpecial(0, 80, 923, 0, 0)
+		CHKN A 0 A_GiveInventory("HungerLevel", 10)
+		//goto Sleep
+	  SpawnLook:
+		TNT1 A 0 
+		CHKN AB 3 A_Wander
+		CHKN A 0 A_Look
+		Loop
+	  See:
+		CHKN A 0
+		CHKN ABABABABABAB 3 A_Chase //~1 second in duration (36 tics)
+		CHKN ABABABABABAB 3 A_Chase
+		CHKN ABABABABABAB 3 A_Chase
+		CHKN ABABABABABAB 3 A_Chase
+		CHKN ABABABABABAB 3 A_Chase
+		CHKN ABABABABABAB 3 A_Chase
+		TNT1 A 0 A_JumpIfInventory("SleepinessLevel", 10, "Sleep")
+		TNT1 A 0 A_JumpIfInventory("HungerLevel", 10, "Hungry")
+		TNT1 A 0 A_Jump(3, "LayEgg") //We don't lay eggs if we're hungry
+		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
+		TNT1 A 0 A_Jump(230, "See") 
+		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
+		//TNT1 A 0 A_GiveInventory("HungerLevel", 5) //-> for testing
+		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
+		Loop
+	  Melee:
+		CHKN A 8 A_FaceTarget
+		CHKN C 10 A_CustomMeleeAttack(random[ChicAttack](1,2), "chicken/attack", "", "Peck")
+		//CHKN C 0 A_JumpIf(ACS_ExecuteWithResult(512), "StopBeingHungry")
+		CHKN A 1 A_TakeInventory("HungerLevel", 1)
+		CHKN A 0 A_JumpIfInventory("HungerLevel", 1, "See") //Keep looking for food if we're still hungry
+		CHKN A 0 A_Jump(255, "StopBeingHungry") //HungerLevel must be 0 then
+		Goto See
+	  LayEgg:
+	    TNT1 A 0 ACS_ExecuteAlways(948, 0, 0) // A_SpawnItem("DoomZEgg")
+		goto SpawnLook
+	  Stunned:
+		TNT1 A 0 A_Scream
+		TNT1 A 0 A_SpawnItem("ChickenItem")
+		TNT1 A 6 A_Feathers
+		Stop
+	  Hungry:
+		TNT1 A 0 
+		TNT1 A 0 A_ClearTarget
+		TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
+		//Dunno, have to call this twice to get it to show up in multiplayer:
+		CHKN A 1 A_SpawnItemEx("HungerThoughtBubble", -10.0, 0, 10.0, 0.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
+		CHKN A 1 A_SpawnItemEx("HungerThoughtBubble", random(-4, 4),  random(-4, 4), 20.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
+		CHKN ABABABABABABABABABABA 5
+		CHKN A 0 ACS_ExecuteAlways(510, 0, 1) //Start hating seeds
+		goto SpawnLook
+	  StopBeingHungry:
+		TNT1 A 0 
+		CHKN A 1 ACS_ExecuteAlways(510, 0, 0) //Stop hating seeds
+		CHKN A 1 A_ClearTarget
+		goto See
+	  Sleep:
+		TNT1 A 0
+		CHKN B 1 ACS_ExecuteAlways(510, 0, 1) //Temporarily turn this on so the next line always succeeds regardless of initial state of Thing_Hate
+		CHKN B 1 ACS_ExecuteAlways(510, 0, 0) //Stop hating seeds so we can hear the player wake us up
+	  Snore:
+		CHKN B 0 A_SpawnItemEx("SleepThoughtBubble", random(-4, 4),  random(-4, 4), 20.0, 0.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
+		CHKN BBBBBBBBBB 2 A_LookEx(LOF_NOSIGHTCHECK, 0, 100.0, 256.0, 360, "WakeUp")
+		CHKN BBBBBBBBBB 2 A_LookEx(LOF_NOSIGHTCHECK, 0, 100.0, 256.0, 360, "WakeUp")
+		CHKN BBBBBBBBBB 2 A_LookEx(LOF_NOSIGHTCHECK, 0, 100.0, 256.0, 360, "WakeUp")
+		CHKN B 5 A_LookEx(LOF_NOSIGHTCHECK, 0, 100.0, 256.0, 360, "WakeUp")
+		Loop
+	  WakeUp:
+		TNT1 A 0
+		TNT1 A 0 A_ClearTarget
+		TNT1 A 0 A_PlaySound("chicken/pain", CHAN_AUTO)
+		TNT1 A 0 A_TakeInventory("SleepinessLevel", 100)
+		TNT1 AAAA 0 A_Feathers
+		goto See
+	  Death:
+		CHKN E 6 A_Scream
+		CHKN F 6 A_Feathers
+		CHKN G 6
+		CHKN H 6 A_NoBlocking
+		CHKN IJK 6
+		CHKN L 0 A_QueueCorpse //Queue the corpse for removal
+		//Remove ourselves after 60 seconds
+		CHKN L 2100
+		CHKN L 6 A_FadeOut(0.2)
+		Stop
+	  Death.Fire:
+		CHKN E 6 A_Scream
+		CHKN F 6 A_Feathers
+		TNT1 A 0 A_NoBlocking
+		//CHKN G 6
+		//CHKN H 6 A_NoBlocking
+		//CHKN IJK 6
+		CHKN L 0 A_QueueCorpse //Queue the corpse for removal
+		CHKN L 0 A_SpawnItemEx("CookedChicken", 0, 0, 0, 0, 0, 0)
+		//Remove ourselves right away
+		CHKN L 6 A_FadeOut(0.2)
+		Stop
+	}
+}
+
+actor HungerLevel : Inventory { Inventory.MaxAmount 10 }
+actor SleepinessLevel : Inventory { Inventory.MaxAmount 10 }
+
+/*
+actor StunnedChicken : Inventory
+{
+  	Health 10
+	+SHOOTABLE
+    +WINDTHRUST
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	+INVENTORY.PICKUPFLASH
+	+INVENTORY.AUTOACTIVATE
+	+INVENTORY.UNDROPPABLE
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			CHKN A -1
+			Stop
+		Use:
+			TNT1 A 0
+			TNT1 A 0 A_GiveInventory("DoomZEgg")
+			Stop
+	}
+}*/
+
+actor DoomZEgg : CustomInventory
+{  
+	Height 32
+  	Health 10
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+CANPASS //---> crazy CPU usage
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	+INVENTORY.PICKUPFLASH
+	Tag "Chicken Egg"
+
+  Inventory.MaxAmount 10
+  Inventory.Icon "EGGI0"
+  Inventory.PickupMessage "You picked up a chicken egg."
+  
+  States
+  {
+	  Spawn:
+		EGGG A 42000 //Eggs stay for 20 minutes
+		Stop
+	   Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 AAAA 1 A_Feathers
+			TNT1 A 0 A_SpawnItemEx("DoomZChicken", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								cos(-pitch)*64.0, 0.0,32.0+(sin(-pitch)*64.0),
+								cos(-pitch)*8.0, 0, sin(-pitch)*8.0,
+								0.0, //angle
+								SXF_NOCHECKPOSITION) //flags
+			Stop
+  }
+}
+
+//Feathers sends network traffic unless we do this...
+actor DoomZFeather : Feather replaces Feather
+{
+	+CLIENTSIDEONLY
+}
+
+actor ChickenAmmo : Ammo
+{
+
+}
+
+actor ChickenItem : Weapon
+{
+	Tag "Chicken"
+	//SpawnID 255
+	//inventory.pickupsound "-"
+	Inventory.PickupMessage "You picked up a chicken!"
+	+INVENTORY.PICKUPFLASH
+	weapon.ammogive 1
+	weapon.ammotype ChickenAmmo
+	weapon.ammouse 1
+	Weapon.SlotNumber 9
+	Weapon.SelectionOrder 0
+	+NOAUTOFIRE //Semi-automatic!
+	//Weapon.SlotPriority 0
+	//+NOALERT
+	+CHEATNOTWEAPON
+	//+NOCLIP
+	//+NOBLOCKMONST
+	//+WEAPON.MELEEWEAPON
+	//+WEAPON.AMMO_OPTIONAL
+	//Speed -16
+	//radius 20
+	//height 35
+	Weapon.UpSound "chicken/sight"
+	activesound "chicken/active"
+	seesound "chicken/sight"
+	//MONSTER
+	//-ISMONSTER
+	//+WINDTHRUST
+	//+LOOKALLAROUND
+	//+UNDROPPABLE
+	-COUNTKILL
+	//-SHOOTABLE
+	
+	States
+	{
+		Spawn:
+			CHKN RSRSRSRSRSRSRSRSRS 3
+			CHKN RSRSRSRSRSRSRSRSRS 3
+			CHKN RSRSRSRS 2
+			//Wiggle
+			CHKN R 2 A_ChangeVelocity(-1, 0, 0.0)
+			CHKN S 2
+			CHKN RSRS 2
+			CHKN R 2 A_ChangeVelocity(0.7, 0, 0.0)
+			CHKN RSRS 2
+			//Jump up
+			CHKN R 0 A_ChangeVelocity(0, 0, 8.0)
+			CHKN RSRS 2
+			//and chicken!
+			TNT1 A 0 A_SpawnItemEx("DoomZChicken", 0,0,0,0,0,0,0,SXF_NOCHECKPOSITION)
+			TNT1 A 0 A_ActiveSound
+			Stop
+			//CHKN A 0 A_ChangeFlag("NOCLIP", 0)
+			//CHKN A 1 A_Look
+			/*
+		See:
+			//CHKN A 0 A_ChangeFlag("NOCLIP", 0)
+			CHKN ABCD 3 A_Chase
+			Loop
+			*/
+		Select:
+			CHKW A 1 A_Raise
+			Loop
+		Ready:
+			CHKW A 1 A_WeaponReady
+			Loop
+		Deselect:
+			CHKW A 1 A_Lower
+			Loop
+		Fire:
+			CHKW A 1 A_Feathers
+			TNT1 A 0 A_Feathers
+			TNT1 A 0 A_Feathers
+			
+			TNT1 A 0 A_SpawnItemEx("DoomZChicken", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								/*64.0, 0.0, 32.0, 
+								4.0, 0.0, 4.0, //velocity */
+								cos(-pitch)*64.0, 0.0,32.0+(sin(-pitch)*64.0),
+								cos(-pitch)*8.0, 0, sin(-pitch)*8.0,
+								0.0, //angle
+								SXF_NOCHECKPOSITION) //flags*/
+			TNT1 A 1 A_TakeInventory("ChickenAmmo", 0x7FFFFFFF)
+			TNT1 A 1 A_TakeInventory("ChickenItem", 0x7FFFFFFF)
+			//TNT1 A 0 A_SelectWeapon("Axe")
+			//goto Ready
+			goto Deselect
+	}
+}
+
+
+ACTOR CookedChicken : CustomInventory
+{
+  //+SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  Tag "Cooked Chicken"
+  //HealthPickup.AutoUse 0
+  +INVENTORY.INVBAR
+  Inventory.MaxAmount 10
+  Inventory.Icon "CHKNI"
+  Inventory.PickupMessage "You picked up a cooked chicken."
+
+  Health 30
+  
+  States
+  {
+	  Spawn:
+	    CCHN A 0
+		TNT1 A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
+		CCHN A -1
+		Stop
+	  Use:
+		TNT1 A 0
+		TNT1 A 0 A_GiveInventory("Health", 30)
+		TNT1 A 0 A_TakeInventory("HungerLevel", 10)
+		TNT1 A 0 A_PlaySound("eat/crunch")
+		TNT1 A 0 ACS_ExecuteAlways(850, 0, 0) //Green screen flash - PLAYER.ACS
+		stop
+
+  }
+}
+
+actor DoomZPig : Pig 10809
+{
+	+FRIENDLY
+	
+	States
+	{
+	  Death:
+	    
+		PIGY E 4 A_Scream
+		PIGY F 3 A_NoBlocking
+		PIGY G 4 A_QueueCorpse
+		PIGY H 3
+		PIGY IJK 4
+		PIGY L -1
+		PIGY L 0 A_QueueCorpse //Queue the corpse for removal
+		//Remove ourselves after 60 seconds
+		PIGY L 2100
+		PIGY L 6 A_FadeOut(0.2)
+		//FSZK N 0 ACS_ExecuteAlways(501, 0)
+		Stop
+	}
+}
+
+actor DummyCounter : Inventory {}
+
+actor HungerThoughtBubble
+{
+	+CLIENTSIDEONLY
+	-SOLID
+	+NOBLOCKMAP
+	-SHOOTABLE
+	+NOGRAVITY
+	-WINDTHRUST
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+		Appear:
+			TNT1 A 0
+			HNGR A 105 //A_Fire(32.0)//A_Warp(master, 0, 0, 32.0)
+			//HNGR A 0 A_GiveInventory("DummyCounter", 1)
+			//HNGR A 0 A_JumpIfInventory("DummyCounter", 105, "Death")
+			//goto Appear
+		Death:
+			TNT1 A 0
+			stop
+	}
+}
+
+actor SleepThoughtBubble
+{
+	+CLIENTSIDEONLY
+	-SOLID
+	+NOBLOCKMAP
+	-SHOOTABLE
+	+NOGRAVITY
+	-WINDTHRUST
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+		Appear:
+			SLEP A 35 ThrustThingZ(0, 1, 0, 1)//A_Fire(32.0)//A_Warp(master, 0, 0, 32.0)
+			//HNGR A 0 A_GiveInventory("DummyCounter", 1)
+			//HNGR A 0 A_JumpIfInventory("DummyCounter", 105, "Death")
+			//goto Appear
+		Death:
+			TNT1 A 0
+			stop
+	}
+}

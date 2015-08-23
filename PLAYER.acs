@@ -1,0 +1,896 @@
+#library "player"
+#include "zcommon.acs"
+#import "math.acs"
+#import "music.acs"
+#import "doomzgame.acs"
+#import "quests.acs"
+
+#libdefine PLAYER_MIN_TID 1010
+#define PLAYER_SPEED 0.3
+
+#define MAX_PLAYERS 64
+#define SPAWN_MAPSPOT_TID 555
+
+#libdefine HUDMSG_ALIVE_TIMER 	1
+#libdefine HUDMSG_XP_LEVEL    	3
+#libdefine HUDMSG_XP_GAIN 		20
+#libdefine HUDMSG_LEVEL_UP 		19
+#libdefine HUDMSG_ID_XPMETERTICK	4
+#libdefine HUDMSG_ID_XPMETER 	5
+#libdefine HUDMSG_ID_COMPASS 	6
+#libdefine HUDMSG_ID_HUNGER	    10
+#libdefine HUDMSG_ID_QUEST_NAME 9
+
+#define HUNGER_START_LEVEL 14
+
+
+#define PERSISTENT_INVENTORY_LEN 46
+int persistentInventory[PERSISTENT_INVENTORY_LEN] =
+{
+	//YOU MUST UPDATE PERSISTENT_INVENTORY_TABLE_LENGTH WHEN YOU ADD
+	//NEW ITEMS TO THIS ARRAY!
+// Ammo needs to be accounted for  
+//	"Clip",
+	"ArrowAmmo",
+//	"Shell",
+//XP and level are handled as a special case, so don't put them here:
+//    "XP",
+//    "XPLevel",
+	"HungerLevel", //Hunger is saved with your inventory. Helps dissuade cheating.
+	"DeathCurse", //Being cursed by death is saved too.
+	"Knife",
+	"Yellowboy",
+	"DoomZChainsaw",
+	"DoomZShotgun",
+	"DoomZSuperShotgun",
+	"DoomZPistol",
+	"Glock18",
+	"DoomZChaingun",
+	"HuntingRifle",
+	"WensternShotgun",
+	"Bucket",
+	"Bow",
+	"GraplingAmmo",//Rope
+	"GasolineAmmo",
+	"WaterAmmo",
+	"DoomZShellBoxItem",
+	"DoomZClipBoxItem",
+	"LootBox",
+	"CBoxItem",
+	"CKitItem",
+	"CDoorItem",
+	"CFloorItem",
+	"CPillarItem",
+	"CStoneBoxItem",
+	"CraftingBoxItem",
+	"QuestBoxItem",
+	"FurnaceItem",
+	"Coal",
+	"Steel",
+	"SentryBox",
+	"TorchItem",
+	"TurnipSeeds",
+	"Turnip",
+	"TreeSeeds",
+	"HempSeeds",
+	"FireSpell",
+	"DoomZEgg",
+	"ChickenItem",
+	"CookedChicken",
+	"GargoyleStatueItem",
+	"TechLampItem",
+	"FloorLampItem",
+	"SpikeItem"
+};
+
+#define NUM_XP_LEVELS 59 
+int xpLevelTable[NUM_XP_LEVELS] = {
+0,500,1700,3600,6200,9500,13500,18200,29700,36500, //Levels 1-11
+44300, 53100, 62900, 73700,85500,98300,112100,126900,142700, //Levels 12-20
+159500, //Level 21
+177300,
+196100,
+215900,
+236700,
+258500,
+281300,
+305100,
+329900,
+355700, //Level 30
+382700,
+410900,
+440300,
+470900,
+502700,
+535700,
+569900,
+605300,
+641900,
+679700, //Level 40
+718700,
+758900,
+800300,
+842900,
+886700,
+931700,
+977900,
+1025300,
+1073900,
+1123700, //Level 50
+1175000,
+1227800,
+1282100,
+1337900,
+1395200,
+1454000,
+1514300,
+1576100,
+1639400,
+1704200  //Level 60
+};
+
+//bool isPlayerPseudoSpectator[MAX_PLAYERS];
+
+/* REMEMBER: You can't have scripts numbered over 1000! */
+
+int playerHasLoadedInventory[MAX_PLAYERS] = {
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+};
+
+/*
+script 99 OPEN
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		isPlayerPseudoSpectator[i] = false;
+	}
+}*/
+
+//Called when the player enters
+script 100 ENTER
+{
+	//I'm going to hell for this but there should be a way to force this to be on.
+	ConsoleCommand("gl_use_models 1");
+
+	//isPlayerPseudoSpectator[PlayerNumber()] = false; //Reset this flag
+	
+	Thing_ChangeTID(0, PLAYER_MIN_TID+PlayerNumber());
+	int playerTid = PLAYER_MIN_TID+PlayerNumber();
+
+	setupPlayer(playerTid);
+	
+	//restorePersistentInventory(playerTid);
+	
+	//Draw HUD
+	ACS_ExecuteAlways(102, 0, 0);
+	
+	//Hunger loop
+	ACS_ExecuteAlways(851, 0, 0);
+}
+
+//Clientside variables
+int clientQuestTimeLeft = -1;
+int clientCompassTID = 0; //TID to point towards
+
+//function void showLifeTimerOnHUD(void)
+script 102 (void) CLIENTSIDE  
+{
+	int t;
+	int playerSpawnTime = Timer();
+	//while(PlayerHealth() > 0)
+	while (true)
+	{
+		t = (Timer() - playerSpawnTime) / 35;
+		SetFont("SMALLFONT");
+		HudMessage(s:"You've been alive for: ", d:t/60, s:":", d:(t%60)/10, d:t%10;
+			HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, CR_RED, 0.90, 0.90, 2.0);
+
+		//From quests.acs:
+
+		if (clientQuestTimeLeft > -1)
+		{
+			int qt = clientQuestTimeLeft; //g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT];
+			HudMessage(s:"Quest Time Left: ", d:qt/60, s:":", d:(qt%60)/10, d:qt%10;
+					HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, CR_GOLD, 0.90, 0.92, 2.0);
+					
+			//Draw the quest compass.
+			if (clientCompassTID != 0) {
+				//Print(s:"Compass pointing at:", d:clientCompassTID);
+				int tidToPointAt = clientCompassTID;
+				int dirX = GetActorX(tidToPointAt) - GetActorX(0);
+				int dirY = GetActorY(tidToPointAt) - GetActorY(0);
+				int vangle = VectorAngle(dirX, dirY);
+				int angle = (vangle - GetActorAngle (0) + 1.0) % 1.0;
+
+				if (angle < 0.2 || angle > 0.8)
+				{
+					int sx = 320 - (320 * Sin (angle) / Cos (angle));
+
+					SetFont("BIGFONT");
+					SetHudSize (640, 480, 0);
+					HudMessage (s:"^"; HUDMSG_PLAIN, HUDMSG_ID_COMPASS, CR_RED, sx * 1.0, 25.2, 0);
+				}
+				else
+				{
+					HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_COMPASS, 0, 0, 0, 0);
+				}
+				SetHudSize(0, 0, false);
+			} else { //COMPASSDIR == 0
+				HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_COMPASS, 0, 0, 0, 0);
+			}
+		} else {
+			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_COMPASS, 0, 0, 0, 0);
+			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, 0, 0, 0, 0);
+		}
+		
+		SetFont("SMALLFONT");
+		
+		//Draw the XP meter
+		int progressCentigrade = CheckInventory("XPProgress");
+		int progressDecigrade = progressCentigrade / 10;
+		
+		/* These logging statements show the 32-bit serverside / 16-bit clientside signed overflow bug:
+		Log(s:"Progress centigrade:", d:progressCentigrade);
+		Log(s:"Progress:", f:fProgress);
+		Log(s:"Current XP:", d:CheckInventory("XP"));
+		*/
+		
+		int hudWidth = 320;
+		SetHudSize(hudWidth, 240, false);
+		HudMessage(s:"[==========]"; 
+					HUDMSG_PLAIN, HUDMSG_ID_XPMETER, CR_GREY, 300.1, 2.1, 0, 64);
+		int pixelsPerCharacter = 5;
+		HudMessage(s:">"; HUDMSG_PLAIN, HUDMSG_ID_XPMETERTICK, CR_GREEN, 304.1+((progressDecigrade*pixelsPerCharacter)<<16), 2.1, 0, 64);
+	
+		HudMessage(s:"Level: ", d:CheckInventory("XPLevel")+1;
+		HUDMSG_PLAIN, HUDMSG_XP_LEVEL, CR_GREEN, 304.1, 10.1, 2.0);
+
+		int hungerLevel = CheckInventory("HungerLevel");
+		int hungerText = "Well Nourished";
+		int hungerColour = CR_GREEN;
+		switch (hungerLevel) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+				hungerText = "Well Nourished";
+				break;
+			case 8:
+			case 9:
+			case 10:
+				hungerText = "Getting Hungry";
+				hungerColour = CR_YELLOW;
+				break;
+			case 11:
+			case 12:
+			case 13:
+				hungerText = "Hungry";
+				hungerColour = CR_ORANGE;
+				break;
+			case 14:
+			case 15:
+			default: 
+				hungerText = "Starving";
+				hungerColour = CR_RED;
+				break;
+		}
+		
+		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
+			HudMessage(s:hungerText;
+			HUDMSG_PLAIN, HUDMSG_ID_HUNGER, hungerColour, 359.2, 18.1, 2.0);
+		}
+		
+		SetHudSize(0, 0, false);
+		Delay(3);
+	}
+}
+
+//Pass quest HUD variables from the server to the client.
+script 103 (int playerNum, int questTimeLeft, int compassTID) CLIENTSIDE
+{
+	//Print(s:"Client says player received from server is:", d:playerNum);
+	//Print(s:"Client says we are:", d:ConsolePlayerNumber());
+	if (ConsolePlayerNumber() == playerNum) //No way to ONLY send to specific clients unfortunately
+	{
+		clientQuestTimeLeft = questTimeLeft;
+		clientCompassTID = compassTID;
+	}
+}
+
+//104 is reserved for Axe.wad
+//script 104
+
+
+script 807 DEATH
+{
+	//Thing_ChangeTID(0, 0); //Try removing the TID of the player's corpse.
+	//isPlayerPseudoSpectator[PlayerNumber()] = true;
+	
+	//Wipe the player's inventory from the database
+	ACS_ExecuteAlways(811, 0, 0);
+}
+
+
+//Called when the player respawns
+script 808 RESPAWN
+{
+	Delay(1);
+	//Log(s:"RESPAWN called");
+	// Make sure our old dead body doesn't still have our tid
+	Thing_ChangeTID(PLAYER_MIN_TID+PlayerNumber(),0);
+	Thing_ChangeTID(0,PLAYER_MIN_TID+PlayerNumber());
+
+	int playerTid = PLAYER_MIN_TID+PlayerNumber();
+	
+	
+	//if (GameType() != GAME_NET_DEATHMATCH)
+	//XXX: Disabling the pseudo-specator mode because this is buggier in Zandro 2.0 (CustomInventory packet loss)
+	//		Sometimes when you respawn, you'd get your axe but still be fast and invisible.
+	if (false) 
+	{
+		if (CheckActorInventory(playerTid, "PseudoSpectatorFlag") > 0)
+		{
+		//	UnmorphActor(playerTid, true);
+		//	//Delay(200);
+			terminate;
+		}
+		
+		// SCREW THIS: MorphActor doesn't work if you're invulnerable, such
+		//			   as in the first 3 seconds after you respawn. If we clear
+		//			   the player's inventory first to remove the invulnerability, 
+		//			   then it works. SPENT HOURS ON THIS! argh
+		SetActorProperty(playerTid, APROP_Invulnerable, 0);
+		//ClearActorInventory(playerTid);
+		TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
+		Delay(1);
+		//MorphActor(playerTid, "PseudoSpectator", "", 1048576, 0, "", "");
+
+		if (PlayerCount() > 1) {
+			setupPseudoSpectator(playerTid);
+			//Delay(525 + 1);
+			for (int secondsToWait = 15; secondsToWait > 0; secondsToWait--) { 
+				if (PlayerHealth() <= 0) {
+					TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
+					terminate;
+				}
+				SetFont("BIGFONT");
+				HudMessage(s:"You will respawn in ", d:secondsToWait, s:" seconds.";
+					HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.7, 5.0);
+				Delay(35);
+			}
+			HudMessage(s:""; HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.7, 5.0); //Clear it
+
+			Teleport(SPAWN_MAPSPOT_TID, 0, 1); //Teleport you out of danger first before unmorphing
+			Delay(35);
+			//ClearActorInventory(playerTid);
+			TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
+			SetActorProperty(playerTid, APROP_Invulnerable, 0);
+			Delay(1);
+			UnMorphActor(playerTid, true);
+			//ClearActorInventory(playerTid);
+			SetActorProperty(playerTid, APROP_Invulnerable, 0);
+			TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
+			Delay(1);
+			//Thing_Damage2(playerTid, 999, "InstantDeath");
+		} else {
+			Teleport(SPAWN_MAPSPOT_TID, 0, 0);
+		}
+		
+		//Delay(200);
+		//UnmorphActor(playerTid, true);
+
+		//ACS_ExecuteAlways(103, 0, playerTid);
+		
+		//Delay(100);
+		//UnmorphActor(playerTid, true);
+		//TakeActorInventory(playerTid, "PseudoSpectatorMorph", 99);
+		//TODO: Teleport to a spawn spot? Or just kill the pseudospectated player?
+
+		Delay(1);
+		//ClearActorInventory(playerTid);
+		SetActorProperty(playerTid, APROP_Invulnerable, 0);
+		Delay(1);
+		TakeActorInventory(playerTid, "MonsterSpawnerMode", 99999); // Just in case. Bugfix for craziness in multiplayer?
+		Delay(1);
+	}
+	
+	
+	//READ: http://zdoom.org/wiki/About_Multiplayer,_Scripts,_and_TIDs
+	//All previously running scripts are inherited by the respawned player automatically!
+	
+	//Log(s:"done respawn, setting up player...");
+	setupPlayer(playerTid);
+	
+	//Start the alive time timer
+	//ACS_ExecuteAlways(102, 0, 0);
+
+}
+
+function void giveInitialInventory (int playerTid)
+{
+	GiveActorInventory(playerTid, "DoomZBoxPlacer", 1);
+	GiveActorInventory(playerTid, "Axe", 1);
+	//GiveActorInventory(playerTid, "Fist", 1);
+}
+
+function void setupPlayer(int playerTid)
+{
+	TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
+	SetActorProperty(playerTid, APROP_Invulnerable, 0);
+	SetActorProperty(playerTid, APROP_RenderStyle, STYLE_Normal);
+	SetActorProperty(playerTid, APROP_Alpha, 1.0);
+	giveInitialInventory(playerTid);
+	
+	//Summon Death to stalk the player if they're cursed by it.
+	if (CheckActorInventory(playerTid, "DeathCurse") > 0) {
+		ACS_ExecuteAlways(955, 0, 0);
+	}
+}
+
+
+function void setupPseudoSpectator (int playerTid)
+{
+/*
+    SetFont("BIGFONT");
+	HudMessage(s:"You have died.\nYou will respawn in 15 seconds.";
+			HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.7, 5.0);
+*/
+	GiveActorInventory(playerTid, "PseudoSpectatorFlag", 1);
+	GiveInventory("PseudoSpectatorMorph", 1);
+	//MorphActor(playerTid, "PseudoSpectator", "", 1048576, 0, "", "");
+
+	/*
+    int PLANCAM_TID = 500;
+	Spawn("PseudoSpectator", 
+		  GetActorX(0), GetActorY(0), 100*65536,//GetActorCeilingZ(0) - 4,
+		  PLANCAM_TID);
+	int tidToFollow = 1000 + PlayerNumber();
+	SetThingSpecial(PLANCAM_TID, 0, 45, 0, 0, tidToFollow);
+	*/
+	//SetActorProperty(ActivatorTID(), APROP_Gravity, 0.0);
+	//int morphed = MorphActor(playerTid, "Imp", 0, 1048576, 0);
+	//MorphActor(playerTid, "PseudoSpectator", "", 1048576, 0, "", "");
+}
+
+//Turn a pseudospectator back into a player and teleport them to a spawn point.
+/*
+script 809 (void)
+{
+	Spawn("TeleportFog", GetActorX(0), GetActorY(0), GetActorZ(0));
+}*/
+
+function bool restorePersistentInventory (int playerTid)
+{
+	//SetActivator(playerTid);
+	if (!PlayerIsLoggedIn(PlayerNumber()))
+	{
+		Print(s:"If you were logged in, we would be restoring your inventory!");
+		return false;
+	}
+	if (playerHasLoadedInventory[PlayerNumber()] > 0) {
+		HudMessage(s:"You can only load your inventory once each time you save it."; 0, 0, CR_RED, 0.5, 0.5, 3.0);
+		return false;
+	}
+	str accountName = GetPlayerAccountName(PlayerNumber());
+	str namespace = strparam(s:accountName, s:"_inventory");
+
+	Print(s:"Restoring your inventory...");
+    for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
+        GiveActorInventory(playerTid, persistentInventory[i], GetDBEntry(namespace, persistentInventory[i]));
+    }
+	
+	//XP and level are handled as a special case:
+    GiveActorInventory(playerTid, "XP", GetDBEntry(namespace, "XP"));
+    GiveActorInventory(playerTid, "XPLevel", GetDBEntry(namespace, "XPLevel"));
+    
+	//GiveActorInventory(playerTid, "PlayerHasLoadedInventory", 1);
+	playerHasLoadedInventory[PlayerNumber()] = 1;
+	
+	print(s:"Inventory restored!");
+	return true;
+}
+
+script 810 /*savePersistentInventoryAndXP*/ (void)
+{
+	int playerTid = PLAYER_MIN_TID + PlayerNumber();
+
+	if (!PlayerIsLoggedIn(PlayerNumber()))
+	{
+		print(s:"You must be logged in save your inventory.");
+		ActivatorSound("menu/invalid", 127);
+		SetResultValue(false);
+		terminate;
+	}
+	str accountName = GetPlayerAccountName(PlayerNumber());
+	str namespace = strparam(s:accountName, s:"_inventory");
+	
+	print(s:"Saving your inventory...");
+	BeginDBTransaction();
+    for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
+        SetDBEntry(namespace, persistentInventory[i], CheckActorInventory(playerTid, persistentInventory[i]));
+		//print(s:persistentInventory[i], s:" amount:", d:CheckActorInventory(playerTid, persistentInventory[i]));
+    }
+    
+	//XP and level are handled as a special case:
+	SetDBEntry(namespace, "XP", CheckActorInventory(playerTid, "XP"));
+	SetDBEntry(namespace, "XPLevel", CheckActorInventory(playerTid, "XPLevel"));
+
+	EndDBTransaction();
+	print(s:"Inventory saved!");
+	ActivatorSound("switches/normbutn", 127);
+	playerHasLoadedInventory[PlayerNumber()] = 1; //Don't allow you to save and then load!
+	setResultValue(true);
+	KickFromGame(PlayerNumber(), "Saved and quit!");
+}
+
+
+//Called on death!
+script 811 /* wipePersistentInventory*/ (void)
+{
+	int playerTid = PLAYER_MIN_TID + PlayerNumber();
+	
+	if (!PlayerIsLoggedIn(PlayerNumber()))
+	{
+		terminate;
+	}
+	str accountName = GetPlayerAccountName(PlayerNumber());
+	str namespace = strparam(s:accountName, s:"_inventory");
+	
+	BeginDBTransaction();
+    for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
+        SetDBEntry(namespace, persistentInventory[i], 0);
+    }
+	EndDBTransaction();
+	//print(s:"Inventory wiped!");
+}
+
+//Loading inventory:
+//See script 814 below
+
+
+
+/* This function "charges" the monster spawner, which is a potential indicating
+   how many monsters (and maybe how nasty) the monster spawner should spawn.
+   We use this to add more of a dynamic spatial element to the gameplay. 
+   When you're camping during the day, we spawn less monsters to force the player to 
+   go explore if they want loot.
+   
+   All this rolling average and vector derivative stuff
+   is just to accomplish that. We use it to give each player a "charge" that
+   accumulates as they wander around. The further they go, the higher the charge 
+   goes, but it decreases when they stay in one place. We spawn monsters based
+   on the charge (as it hits different thresholds), so they player gets action
+   when they go exploring, but are otherwise not bothered by too many badguys
+   when they're building their base (and consequently can't get loot either.)
+*/
+script 812 /* chargeMonsterSpawner*/ ENTER
+{
+	int t;
+	//int charge = 0;
+	
+	//Reset your monster spawner charge when you die
+	TakeActorInventory(0, "MonsterSpawnerCharge", 0x7FFFFFFF);
+		
+	//Only globals can be arrays...
+	int oldPlayerX = GetActorX(0);
+	int oldPlayerY = GetActorY(0);
+	int oldPlayerZ = GetActorZ(0);
+	int oldAvgPlayerX = GetActorX(0);
+	int oldAvgPlayerY = GetActorY(0);
+	int oldAvgPlayerZ = GetActorZ(0);
+	
+	//int oldPlayerX[3] = {0,0,0};
+	/*
+	int oldPlayerY[3] = {0,0,0};
+	int oldPlayerZ[3] = {0,0,0};
+	*/
+	int playerSpawnTime = Timer();
+	int timestepTics = 70.0;//140.0;//35*4;
+	int damping = FixedDiv(timestepTics, 800.0 + timestepTics);
+	
+	while(PlayerHealth() > 0)
+	{
+		t = (Timer() - playerSpawnTime) / 35;
+				
+		int newPlayerX = GetActorX(0);
+		int newPlayerY = GetActorY(0);
+		int newPlayerZ = GetActorZ(0);	
+		
+		//Use a low-pass filter as a ghetto rolling average.
+		int avgPlayerX = oldAvgPlayerX + FixedMul(damping, newPlayerX - oldAvgPlayerX);
+		int avgPlayerY = oldAvgPlayerY + FixedMul(damping, newPlayerY - oldAvgPlayerY);
+		int avgPlayerZ = oldAvgPlayerZ + FixedMul(damping, newPlayerZ - oldAvgPlayerZ);
+		
+		oldPlayerX = newPlayerX;
+		oldPlayerY = newPlayerY;
+		oldPlayerZ = newPlayerZ;
+		
+		//Calculate the derivative of the average player position.
+		int diffAvgPlayerX = FixedDiv(avgPlayerX - oldAvgPlayerX,timestepTics);
+		int diffAvgPlayerY = FixedDiv(avgPlayerY - oldAvgPlayerY,timestepTics);
+		int diffAvgPlayerZ = FixedDiv(avgPlayerZ - oldAvgPlayerZ,timestepTics);
+		
+		int diffAvgLen = fveclength(diffAvgPlayerX, diffAvgPlayerY, diffAvgPlayerZ);
+		
+		//Print how charged the monster spawner is to the screen for debugging:
+		//HudMessage(f:(diffAvgLen);
+		//	HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.1, 1.0);
+		//Delay(35*1);
+		
+		oldAvgPlayerX = avgPlayerX;
+		oldAvgPlayerY = avgPlayerY;
+		oldAvgPlayerZ = avgPlayerZ;
+		
+		int charge = math_min(diffAvgLen>>16, 8);
+		
+		TakeActorInventory(0, "MonsterSpawnerCharge", 0x7FFFFFFF);
+		Delay(1);
+		GiveActorInventory(0, "MonsterSpawnerCharge", charge);
+		
+		Delay(timestepTics>>16);
+	}
+}
+
+//Call chargeMonsterSpawner when you respawn too.
+script 813 RESPAWN
+{
+	ACS_ExecuteAlways(812, 0, 0);
+}
+
+//loadAndWipePersistentInventory - called from basic crafting menu when you load your inventory and XP
+script 814 (void)
+{
+	int playerTID = ActivatorTID();
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	//Don't allow this button to be pressed if you're spectating
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
+	{
+		terminate;
+	}
+	//If the activator is not a player, just return.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}
+
+	//Load inventory
+	if (restorePersistentInventory(playerTID))
+	{
+		//Wipe inventory - You will lose all your inventory if you time out or disconnect without saving again.
+		ACS_ExecuteAlways(811, 0);
+	}
+}
+
+//saveAndTakePersistentInventory()
+script 815 (void)
+{
+	//Saves all your iventory and takes it from your player
+	//so you can't exploit spectator mode to duplicate your inventory.
+	
+	//Save your inventory
+	if (!ACS_ExecuteWithResult(810, 0)) {
+		terminate;
+	}
+	
+	/*
+	//Take it all away from the player
+	for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
+        TakeActorInventory(0, persistentInventory[i], 0x7FFFFFFF);
+    }
+	*/
+}
+
+//Gets called when a player disconnects or spectates
+script 816 (int player) DISCONNECT
+{
+	if (PlayerIsSpectator(player))
+	{
+		//Log(s:"Player is spectating");
+	}
+	else
+	{
+		//Log(s:"Player quit");
+		playerHasLoadedInventory[player] = 0;
+	}
+	
+	//Remove death stalker and ankh
+	int deathTID = DEATH_TID_MIN + player;
+	Thing_Remove(deathTID);
+	int ankhTID = ANKH_TID_MIN + player;
+	Thing_Remove(ANKH_TID_MIN);
+}
+
+//Give the activator XP - can be either the player or another actor!
+script 817 (int xp, int source)
+{
+	int hudwidth = 0;
+	int hudheight = 0;
+
+	//If the global XP lock is on, don't give any XP. This is used to prevent players from getting free XP 
+	//when all the monsters die after night is over (at daybreak).
+	if (g_blockXP) {
+		terminate;
+	}
+
+	ActivatorSound("xp", 127);
+
+	for (int i = 8; i >= 0; i--)
+	{
+		hudwidth = 640 - i*60;
+		hudheight = 480 - i*60;
+		SetHudSize(hudwidth, hudheight, 1);
+		HudMessage(s:"+", d:xp, s:" XP"; HUDMSG_PLAIN, HUDMSG_XP_GAIN, CR_GOLD, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16) + 0.0, 0, 0.8);
+		Delay(1);
+	}
+	
+	HudMessage(s:"+", d:xp, s:" XP"; HUDMSG_PLAIN, HUDMSG_XP_GAIN, CR_GOLD, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16), 0.5, 0.8);
+	//TODO: Should zoom out, and do it even faster here?
+
+	SetHudSize(0, 0, true);
+	
+	GiveInventory("XP", xp);
+	
+		
+	//There's a bit of a funny bug in Zandronum's netcode. Internally, the inventory count is stored
+	//as a 32-bit integer, but when it's sent over the wire, it's turned into a 16-bit integer,
+	//so the client gets signed overflow, but the server still has the correct inventory count.
+	//To avoid using the XP count on the client side (which needs the range of a 32-bit integer), 
+	//we store the level-up progress bar value as its own inventory item (0-100).
+	int currentPlayerXPLevel = CheckInventory("XPLevel");
+	int totalXPUntilNextLevel = xpLevelTable[currentPlayerXPLevel+1] - xpLevelTable[currentPlayerXPLevel];
+	int xpTowardsNextLevel = CheckInventory("XP") - xpLevelTable[currentPlayerXPLevel];
+	int fProgress = FixedDiv(xpTowardsNextLevel, totalXPUntilNextLevel);
+	int progressCentigrade = FixedMul(fProgress, 100); //This actually ends up as an integer somehow...
+	int oldProgressCentigrade = CheckInventory("XPProgress");
+	//Log(d:progressCentigrade, s:" ", d:oldProgressCentigrade);
+	GiveInventory("XPProgress", progressCentigrade-oldProgressCentigrade);
+
+	
+	//Check if we need to level up the player
+	if (currentPlayerXPLevel >= NUM_XP_LEVELS) { //Don't level up past the max level!
+		terminate;
+	}
+	if (CheckInventory("XP") >= xpLevelTable[currentPlayerXPLevel+1])
+	{
+		GiveInventory("XPLevel", 1);
+		TakeInventory("XPProgress", 100);
+		//currentPlayerXPLevel++;
+		Delay(18);
+		
+		hudwidth = 320;
+		hudheight = 240;
+		SetHudSize(hudwidth, hudheight, 1);
+		HudMessage(s:"Level ", d:currentPlayerXPLevel+2; HUDMSG_TYPEON | HUDMSG_LOG, HUDMSG_LEVEL_UP, CR_GREEN, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16), 5.0, 0.1, 2.0);
+		//ActivatorSound("HEY", 127);
+		musicPlayLevelUp(currentPlayerXPLevel+2);
+		
+		//Bling bling
+		ACS_ExecuteAlways(818, 0, 0);
+		
+		if ((GameType() != GAME_SINGLE_PLAYER) && (PlayerNumber() != 0)) {
+			PrintBold(n:PlayerNumber()+1, s:" has reached level ", d:currentPlayerXPLevel+2, s:"!");
+		}
+		
+		SetHudSize(0, 0, true);	
+		
+		//Give the player a scroll telling them what they unlocked.
+		str scrollItem = StrParam(s:"ScrollLevel", d:currentPlayerXPLevel+2);
+		GiveInventory(scrollItem, 1);
+	}
+}
+
+str confettiActors[6] = {
+	"LevelConfetti1",
+	"LevelConfetti2",
+	"LevelConfetti3",
+	"LevelConfetti4",
+	"LevelConfetti5",
+	"LevelConfetti6",
+};
+//function void spawnLevelUpBling (void)
+script 818 (void)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		int r = 32.0;
+		str actor = confettiActors[i];
+		int delayTics = 1;
+		for (int j = 0; j < 3; j++)
+		{
+			int x = GetActorX(0);
+			int y = GetActorY(0);
+			int z = GetActorZ(0) + 64.0;
+			r += 4.0;
+			Spawn(actor, x+FixedMul(r, sin(0.16)), y+FixedMul(r, cos(0.16)), z); Delay(delayTics);
+			Spawn(actor, x+FixedMul(r, sin(0.32)), y+FixedMul(r, cos(0.32)), z); Delay(delayTics);
+			Spawn(actor, x+FixedMul(r, sin(0.48)), y+FixedMul(r, cos(0.48)), z); Delay(delayTics);
+			Spawn(actor, x+FixedMul(r, sin(0.64)), y+FixedMul(r, cos(0.64)), z); Delay(delayTics);
+			Spawn(actor, x+FixedMul(r, sin(0.72)), y+FixedMul(r, cos(0.72)), z); Delay(delayTics);
+			Spawn(actor, x+FixedMul(r, sin(0.96)), y+FixedMul(r, cos(0.96)), z); Delay(delayTics);
+		}
+		SpawnProjectile(ActivatorTID(), actor, 0, 40, 0, 1, 0);
+		SpawnProjectile(ActivatorTID(), actor, 42, 40, 0, 1, 0);
+		SpawnProjectile(ActivatorTID(), actor, 84, 40, 0, 1, 0);
+		SpawnProjectile(ActivatorTID(), actor, 126, 40, 0, 1, 0);
+		SpawnProjectile(ActivatorTID(), actor, 168, 40, 0, 1, 0);
+		SpawnProjectile(ActivatorTID(), actor, 212, 40, 0, 1, 0);
+	}
+}
+
+/* saveXP */
+script 819 (void)
+{
+	int playerTid = PLAYER_MIN_TID + PlayerNumber();
+
+	if (!PlayerIsLoggedIn(PlayerNumber()))
+	{
+		print(s:"You must be logged in save your XP");
+		ActivatorSound("menu/invalid", 127);
+		SetResultValue(false);
+		terminate;
+	}
+	str accountName = GetPlayerAccountName(PlayerNumber());
+	str namespace = strparam(s:accountName, s:"_inventory");
+	
+	print(s:"Saving your XP...");
+	BeginDBTransaction();
+
+	//XP and level are handled as a special case:
+	SetDBEntry(namespace, "XP", CheckActorInventory(playerTid, "XP"));
+	SetDBEntry(namespace, "XPLevel", CheckActorInventory(playerTid, "XPLevel"));
+
+	EndDBTransaction();
+	print(s:"XP saved!");
+	ActivatorSound("switches/normbutn", 127);
+	setResultValue(true);
+}
+
+//Script 820 - 849 are reserved for MISSIONS.ACS
+
+//Script 850 - 870 are reserved for PLAYER.ACS:
+ 
+//Screen flash when you eat food
+script 850 (void)
+{
+	FadeTo(63, 131, 47, 0.4, 0.2);
+	Delay(5);
+	FadeTo(0, 0, 0, 0.0, 0.1);
+}
+
+//Hunger loop
+script 851 (void)
+{
+	int MAX_HUNGER_LEVEL = 15;
+	int hungerIntervalTics = 35 * kDayLengthSeconds / 10;
+
+	while (true)
+	{
+		Delay(hungerIntervalTics);
+
+		int hungerLevel = CheckInventory("HungerLevel");
+		
+		//Only apply hunger to XP levels > 14		
+		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
+			GiveActorInventory(0, "HungerLevel", 1);
+			if (hungerLevel >= MAX_HUNGER_LEVEL) {
+				GiveActorInventory(0, "DeathCurse", 1);
+				Thing_Damage2(0, 300, "Hunger");
+				TakeActorInventory(0, "HungerLevel", 100);
+			} 
+			else if (hungerLevel > 12)
+			{
+				Print(s:"You are starving and will die in ", d:((hungerIntervalTics/35)*(MAX_HUNGER_LEVEL-13)), s:" seconds\nif you don't eat.");
+			}
+		}
+	}
+}

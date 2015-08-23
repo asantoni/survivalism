@@ -1,0 +1,290 @@
+#import "doomzgame.acs"
+#import "player.acs"
+#import "math.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "basiccrafting"
+#import "crafting.acs"
+
+
+/* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
+   up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+  */
+#define BASIC_OPTIONS_LENGTH 5 //<--- Edit me if you add more craftable stuff
+str basicOptions[BASIC_OPTIONS_LENGTH] = {
+	"Return",
+	"Build a crafting box",
+	"Save my XP",
+	"Save my inventory, XP, and disconnect.",
+	"Load my inventory and XP",
+};
+	
+int basicScripts[BASIC_OPTIONS_LENGTH] = {
+	751, //Return
+	762, //Crafting box
+	819, //Save my XP (PLAYER.ACS
+	815, //Save inventory and XP(PLAYER.ACS)
+	814, //Load inventory (PLAYER.ACS)
+};
+
+
+str basicResults[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] = 
+{
+	{"", "", "", ""},	//Return
+	{"CraftingBoxItem", 		"misc/i_pkup", "You built a crafting box!", "You need 8 wood to make a crafting box.\nTry chopping some logs to get wood."},
+	{"", "", "Your XP has been saved.", ""},
+	{"", "", "Your inventory and XP has been saved.", ""},
+	{"", "", "Your inventory has been loaded. Don't die.", ""},
+};
+
+
+str basicIngredients[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{"", 			"", 			""}, //Return
+	{"CBoxItem", 	"", ""}, //Crafting Box
+	{"", 	"", ""}, //Save XP
+	{"", 	"", ""}, //Save Inventory
+	{"", 	"", ""}, //Load Inventory
+};
+int basicIngrAmounts[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
+	{0,	 0,  0}, //Return
+	{8,  0,  0}, //Crafting Box
+	{0,  0,  0}, //Save XP
+	{0,  0,  0}, //Save Inventory
+	{0,  0,  0}, //Load Inventory
+};
+
+int basicXPLevels[BASIC_OPTIONS_LENGTH] = {
+	0, //Return
+	2, //Crafting Box
+	0, //Save Inventory
+	0, //Save Inventory
+	0, //Load Inventory
+};
+
+
+//The keybind/puke apparently only uses ACS_Execute(), so to allow multiple players to invoke this at once,
+//we wrap it into an ACS_ExecuteAlways().
+script 760 (void) NET
+{
+	ACS_ExecuteAlways(761, 0, 0);
+}
+script 761 (void) //ENTER
+{ 
+	int buttons;
+	int selectedItemIdx = 0;
+	int buttonDepressed = false;
+
+	//If the activator is not a player, just return.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}
+
+	int playerTID = ActivatorTID();
+	//Don't allow this button to be pressed if you're spectating
+	if (PlayerIsSpectator(PlayerNumber()) > 0 || PlayerIsPseudoSpec(PlayerNumber()))
+	{
+		terminate;
+	}
+	
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+
+	//XXX: Disabled this for basic crafting because it's triggered by a keybind
+	//instead of another actor (eg. CraftingBox)
+	//SetActivatorToTarget(0);
+	
+	//If you hit E again, toggle the screen
+	if (CheckInventory("ShowCraftingScreen") > 0)
+	{
+		//HudMessage(s:"HELLO?"; HUDMSG_PLAIN, 0, CR_RED, 0.8, 0.5, 0);			
+		//print(s:"Hello???");
+		ACS_ExecuteAlways(751, 0);
+		terminate;
+	}
+	GiveInventory("ShowCraftingScreen", 1);
+	Delay(1); //Inventory sync delay
+
+   //Fade to half intensity black in two seconds, ...
+   FadeTo (0, 0, 0, 0.5, 0.2);
+   
+	//Delay(1); //Inventory sync delay
+	//Delay(1); //Inventory sync delay
+	//Delay(1); //Inventory sync delay
+	//GiveInventory("ShowCraftingScreen", 1);
+
+
+	SetHudSize(640, 480, true);
+	while (CheckInventory("ShowCraftingScreen") > 0)
+	{
+		//print(s:"ShowCraftingScreen present!");
+		SetFont("SMALLFONT2");
+		SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN); //Freeze the player
+
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+		//print(d:buttons);
+
+		for (int i = 0; i < BASIC_OPTIONS_LENGTH; i++)
+		{
+			int yPos = 80.4 + i*20.0;
+			int messageId = BASE_MESSAGE_ID + i;
+			int colour = CR_RED;
+			str strLine = basicOptions[i];
+			int reqCheck = basicCheckRequirements(i);
+						
+			if (i == selectedItemIdx) {
+				colour = CR_GOLD;
+				
+				str errorMsg = basicResults[selectedItemIdx][CRAFTING_ERROR_MSG];
+				
+				//Hide the option until you're a high enough level to show it.
+				if (reqCheck == RETVAL_BAD_XPLVL) {
+					strLine = StrParam(s:"Unlocked at level ", d:basicXPLevels[i]);
+					errorMsg = "";
+				}
+
+				HudMessage(s:"> ", s:strLine, s:" <"; HUDMSG_PLAIN, messageId, colour, 320.4, yPos, 0);				
+				HudMessage(s:errorMsg; HUDMSG_PLAIN, INFO_MESSAGE_ID, CR_RED, 420.1, yPos, 0);
+			
+			} else {
+				if (reqCheck == RETVAL_OK) {
+					colour = CR_GREEN;
+				}
+				//Hide the option until you're a high enough level to show it.
+				if (reqCheck == RETVAL_BAD_XPLVL) {
+					strLine = "==Locked==";
+					colour = CR_DARKGREY;
+				}
+				HudMessage(s:strLine; HUDMSG_PLAIN, messageId, colour, 320.4, yPos, 0);
+			}
+		}
+
+		if (!buttonDepressed)
+		{
+		   if (buttons & BT_FORWARD)//&& buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (BASIC_OPTIONS_LENGTH+selectedItemIdx-1) % BASIC_OPTIONS_LENGTH;//math_max(0, selectedItemIdx-1);
+		   } else if (buttons & BT_BACK)
+		   {
+			  buttonDepressed = true;
+			  selectedItemIdx = (selectedItemIdx+1) % BASIC_OPTIONS_LENGTH;//math_min(selectedItemIdx+1, CRAFTING_OPTIONS_LENGTH-1);
+		   }
+		   else if (buttons & BT_USE) //|| buttons & BT_ATTACK)
+		   {
+			  buttonDepressed = true;
+			  //print(d: selectedItemIdx);
+			  ACS_ExecuteAlways(basicScripts[selectedItemIdx], 0, selectedItemIdx);
+			  ACS_ExecuteAlways(751, 0);
+			  terminate;		   
+		   }
+		   //Exit if you hit the jump button
+		   else if ((buttons & BT_JUMP) ||
+					(PlayerIsSpectator(PlayerNumber()) > 0) 
+					|| (PlayerIsPseudoSpec(PlayerNumber()))
+					|| (ClassifyActor(playerTid) & ACTOR_DEAD))
+		   {
+			    buttonDepressed = true;
+				//print(d: selectedItemIdx);
+				Delay(1);
+				ACS_ExecuteAlways(751, 0);
+				terminate;		   
+			}
+		}
+		if (buttons == 0)
+		{
+			buttonDepressed = false;
+		}
+
+		delay(1);
+	}
+	
+	//print(s:"no ShowCraftingScreen, returning");
+}
+
+
+
+//Default basic crafting function. It combines up to three items in some quantity
+//and gives the player an item. Edit the arrays at the top of this file
+//to add new basic recipes!
+script 762 (int optionIdx)
+{
+	// I generalized this into a giant 2d array, a to make it easy to add more 
+	//basic crafting formulas and less room for mistakes. I had to split it up into
+	//separate arrays because apparently you can't mix strings and integers
+	//in a single array (boo). The compiler lets you but the values become wrong:
+	//  http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+	int tid = ActivatorTID();
+	int msgHoldTime = 4.0;
+
+	str req1inv = 		basicIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		basicIngredients[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		basicIngredients[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+	str resultItem = 	basicResults[optionIdx][CRAFTING_RESULT_1];
+	str sound = 		basicResults[optionIdx][CRAFTING_SOUND];
+	str successMsg = 	basicResults[optionIdx][CRAFTING_SUCCESS_MSG];
+	str errorMsg = 		basicResults[optionIdx][CRAFTING_ERROR_MSG];
+
+	//brain hurts	
+	int allReqsSatisfied = basicCheckRequirements(optionIdx);
+
+	if (allReqsSatisfied == RETVAL_OK) {
+		TakeInventory(req1inv, req1amount);
+		TakeInventory(req2inv, req2amount);
+		TakeInventory(req3inv, req3amount);
+		GiveInventory(resultItem, 1);
+		//GiveInventory("ArrowAmmo", 10);
+		ActivatorSound(sound, 127);
+	    HudMessage(s:successMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_GREEN, 320.4, 250.1, msgHoldTime);
+	}
+	else if (allReqsSatisfied == RETVAL_BAD_XPLVL) {
+		//Do nothing
+	} else {
+	    HudMessage(s:errorMsg; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_RED, 320.4, 250.1, msgHoldTime);
+	}
+}
+
+function bool basicCheckRequirements(int optionIdx)
+{
+	str req1inv = 		basicIngredients[optionIdx][CRAFTING_INGREDIENT_1];
+	int req1amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_1];
+	str req2inv = 		basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	int req2amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_2];
+	str req3inv = 		basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+	int req3amount = 	basicIngrAmounts[optionIdx][CRAFTING_INGREDIENT_3];
+
+	//brain hurts
+
+	bool allReqsSatisfied = true;
+	if ((req1inv != "") && (CheckInventory(req1inv) < req1amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req1 failed ", s:req1inv, s:" ", d:req1amount);
+	}
+	
+	if ((req2inv != "") && (CheckInventory(req2inv) < req2amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req2 failed");
+	}
+	if ((req3inv != "") && (CheckInventory(req3inv) < req3amount)) {
+		allReqsSatisfied = false;
+		//print(s:"req3 failed");
+	}
+	
+	if (CheckInventory("XPLevel")+1 < basicXPLevels[optionIdx])
+	{
+		return RETVAL_BAD_XPLVL;
+	}
+	
+	if (allReqsSatisfied) {
+		return RETVAL_OK;
+	} else {
+		return RETVAL_BAD_INGR;
+	}
+	
+	return RETVAL_BAD_INGR;
+}

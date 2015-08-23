@@ -1,0 +1,1348 @@
+ACTOR ZombieRevenant : Revenant 16000
+{
+  Game Doom
+  SpawnID 4
+  Health 60
+  Radius 20
+  Height 56
+  Speed 10
+  PainChance 200
+  Monster
+  +FLOORCLIP
+  -NODROPOFF
+  +QUICKTORETALIATE
+  +WINDTHRUST
+  //+JUMPDOWN -> not in Zandronum?
+  +PUSHABLE
+  //SeeSound "grunt/sight"
+  //AttackSound "terrorist/attack"
+  //PainSound "terrorist/pain"
+  //DeathSound "terrorist/death"
+  ActiveSound "grunt/active"
+  Obituary "%o was killed by a zombie revenant."
+  //DropItem "Clip"
+  
+  States
+  {
+  Spawn:
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	SKEL Q 6 A_SetTranslucent(0.2, 2)
+	SKEL Q 6 A_SetTranslucent(0.4, 2)
+	SKEL Q 6 A_SetTranslucent(0.6, 2)
+	SKEL Q 6 A_SetTranslucent(0.8, 2)
+	SKEL Q 6 A_SetTranslucent(1.0, 0) //opaque
+	SKEL QPONML 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL AABBCCDDEEFF 4 A_Wander
+    SKEL A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	SKEL A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+	SKEL A 0 A_CheckSight("Remove")
+    loop
+  SeeAngry:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 ThrustThing(angle*256/360, 2)
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+    SKEL AABBCCDDEEFF 2 A_Chase
+	SKEL A 0 A_CheckSight("Remove")
+    loop  
+  Pain:
+    SKEL L 5
+    SKEL L 5 A_Pain
+    Goto SeeAngry
+	/*
+  See:
+	//SKEL A 1 ACS_Execute(500, 0, 2<<7)
+    SKEL AABBCCDDEEFF 2 A_Chase
+	//SKEL A 0 A_Jump(256, "QuickLook")
+    Loop
+	*/
+  Missile:
+    Stop //Removes this state from the parent
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SKEL LM 7
+    SKEL N 7 A_Scream
+    SKEL O 7 A_NoBlocking
+    SKEL P 7
+	TNT1 A 0 A_SpawnItemEx("RevenantLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	//SKEL Q 0 A_SpawnItemEx("Clip", 8, 0, 0, 0, 0, 0, 0, 0, 192)
+	//Loot dropping for the ZombieRevenant:
+	//SKEL P 1 ACS_ExecuteAlways(921)
+	SKEL Q 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SKEL Q 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SKEL Q 6 A_SetTranslucent(0.8, 2)
+	SKEL Q 6 A_SetTranslucent(0.6, 2)
+	SKEL Q 6 A_SetTranslucent(0.4, 2)
+	SKEL Q 6 A_SetTranslucent(0.2, 2)
+	SKEL Q 6 A_SetTranslucent(0.0, 0) 
+	SKEL Q 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR ZombieIncarnate : Revenant 16002
+{
+  Game Doom
+  SpawnID 4
+  Health 120
+  Radius 20
+  Height 56
+  Speed 14
+  PainChance 200
+  Monster
+  
+  MaxStepHeight 128
+  MaxDropOffHeight 128
+  
+  +FLOORCLIP
+  -NODROPOFF
+  +QUICKTORETALIATE
+  //+JUMPDOWN -> Zandronum 2.0
+  +PUSHABLE
+  +WINDTHRUST
+  SeeSound "monster/incsit"
+  //AttackSound "terrorist/attack"
+  //PainSound "terrorist/pain"
+  DeathSound "monster/incdth"
+  ActiveSound "monster/incact"
+  Obituary "%o was killed by a zombie incarnate."
+  //DropItem "Clip"
+  
+  States
+  {
+  Spawn:
+	TNT1 A 0
+	//Randomly make some zombies decide to attack your base:
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	INCA Q 6 A_SetTranslucent(0.2, 2)
+	INCA Q 6 A_SetTranslucent(0.4, 2)
+	INCA Q 6 A_SetTranslucent(0.6, 2)
+	INCA Q 6 A_SetTranslucent(0.8, 2)
+	INCA Q 6 A_SetTranslucent(1.0, 0) //opaque
+	INCA QPONML 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+  SpawnLook:
+	//INCA AABBCCDDEEFF 4 A_Wander
+    INCA AABBCCDDEEFF 4 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	//INCA AABBCCDDEEFF 4 A_Wander
+    INCA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	//INCA AABBCCDDEEFF 4 A_Wander
+    INCA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	INCA AABBCCDDEEFF 4 A_Wander
+    INCA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+    //Sprint if the player is close
+	//SKEL A 10 A_LookEx(LOF_NOSEESOUND, 0, 128*10, 128*20, 120, "Sprint")
+    //Give the zombie 360 degree awareness within a small distance
+	//SKEL A 5 A_LookEx(0, 0, 64, 128, 360, "See")
+	//Add this back in for Zandronum 1.3:
+	//SKEL A 0 A_CheckSightOrRange(256.0, "Remove")
+	INCA A 0 A_CheckSight("Remove")
+	//Randomly decide to start attacking your base (Incarnate behaviour for harder night time)
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+    Loop
+  Melee:
+    INCA G 1 A_FaceTarget
+    INCA G 6 A_SkelWhoosh
+    INCA H 6 A_FaceTarget
+    INCA I 6 A_SkelFist
+    Goto See
+  Pain:
+    INCA L 5
+    INCA L 5 A_Pain
+    Goto See
+
+  QuickLook:
+    //Check if the player has outrun us.
+    INCA A 1 A_LookEx(LOF_NOSEESOUND, 0, 128*10, 128*20, 360, "See")
+	INCA A 1 A_LookEx(LOF_NOSEESOUND, 0, 64, 128, 360, "See")
+	goto SpawnLook
+  Sprint:
+	//Trying to make the zombie sprint at first
+	//SKEL A 1 ACS_Execute(500, 0, 5<<7)
+	INCA AABBCCDDEEFF 2 A_Chase
+	goto See
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+    INCA AABBCCDDEEFF 2 A_Chase
+	INCA A 0 A_CheckSight("Remove")
+    Loop
+  Missile:
+    //SKEL J 1 Bright A_FaceTarget
+    //SKEL J 9 Bright A_FaceTarget
+    //SKEL K 10 A_SkelMissile
+    //SKEL K 10 A_FaceTarget
+    Goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieIncarnateKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    INCA LM 7
+    INCA N 7 A_Scream
+    INCA O 7 A_NoBlocking
+    INCA P 7
+	//SKEL Q 0 A_SpawnItemEx("Clip", 8, 0, 0, 0, 0, 0, 0, 0, 192)
+	//Loot dropping for the ZombieRevenant:
+	//INCA P 1 ACS_ExecuteAlways(921)
+	TNT1 A 0 A_SpawnItemEx("IncarnateLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	INCA Q 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	INCA Q 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	INCA Q 6 A_SetTranslucent(0.8, 2)
+	INCA Q 6 A_SetTranslucent(0.6, 2)
+	INCA Q 6 A_SetTranslucent(0.4, 2)
+	INCA Q 6 A_SetTranslucent(0.2, 2)
+	INCA Q 6 A_SetTranslucent(0.0, 0) 
+	INCA Q 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+
+ACTOR Creeper : Demon 16001
+{
+  Game Doom
+  Health 20
+  Radius 20
+  Height 56
+  Speed 10
+  PainChance 200
+  MeleeRange 200
+  Damage 30
+  //Mass 10
+ // Mass 0x7FFFFFFF
+  Monster
+  
+  Translation "32:47=127:123", "16:31=112:127"
+  +FLOORCLIP
+  +NODROPOFF
+  +WINDTHRUST
+  +QUICKTORETALIATE
+  -CANBLAST
+  SeeSound ""
+  AttackSound ""
+  //DeathSound "weapons/rocklx"
+  ActiveSound ""
+  Obituary "%o was killed by a zombie pinky."
+  //DropItem "Clip"
+  
+  States
+  {
+    Spawn:
+		TNT1 A 50 //Let the monster drop to the ground since we spawn
+				  //them way above ground level so they don't get stuck
+				  //in the floor.
+		TNT1 A 0 A_SetTranslucent(0.0, 2)
+		SARG N 6 A_SetTranslucent(0.2, 2)
+		SARG N 6 A_SetTranslucent(0.4, 2)
+		SARG N 6 A_SetTranslucent(0.6, 2)
+		SARG N 6 A_SetTranslucent(0.8, 2)
+		SARG N 6 A_SetTranslucent(1.0, 0) //opaque
+		SARG N 5
+		SARG MLKJI 5
+	SpawnLook:
+		SARG AB 10 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+		SARG A 5 A_CheckSight("Remove")
+		Loop
+  See:
+    SARG AABBCCDD 2 A_Chase
+    Loop
+  Melee:
+    SARG EF 4 A_FaceTarget
+	SARG F 6 //A_RadiusThrust(1024, 4000, 0)
+	SARG G 0 A_PlaySound("creeper/fuse", CHAN_WEAPON)
+	SARG GGGGGGG 5 A_FaceTarget
+    //SARG G 8 Fast A_SargAttack
+	//SARG G 0 A_Quake(7, 35, 256, 512)
+	SARG G 0 A_PlaySound("weapons/rocklx")
+	SARG G 0 //A_Detonate
+
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 246)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 250)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 0)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 4)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 8)
+
+	
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 16)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 32)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 48)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 64)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 72)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 96)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 112)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 128)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 144)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 144)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 160)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 176)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 192)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 208)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 224)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 240)
+	SARG G 0 A_CustomMissile("CreeperExplosion", 32.0, 32.0, 254)
+	//SARG G 4 Bright //A_Detonate
+	SARG G 0 Bright A_NoBlocking
+	//SARG G 1 Bright //A_RadiusThrust(1048576, 1024) //A_CustomMissile("CreeperExplosion", 32.0, 32.0) //A_Detonate
+	//SARG G 8 Bright //A_CustomMissile("CreeperExplosion", 32.0, 32.0)
+	MISL B 8 Bright 
+    MISL C 6 Bright 
+    MISL D 4 Bright
+	Goto SilentDeath
+	//SARG G 8 Bright A_SargAttack
+  Pain:
+    SARG H 2 A_StopSound(CHAN_WEAPON)
+    SARG H 2 A_Pain
+    Goto See
+  Death:
+    SARG I 8 A_StopSound(CHAN_WEAPON)
+    SARG J 8 A_Scream
+  SilentDeath:
+    SARG K 4
+    SARG L 4 A_NoBlocking
+	SARG L 0 A_UnsetSolid
+	SARG L 0 A_UnsetShootable
+    SARG M 4
+	SARG N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SARG N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SARG N 6 A_SetTranslucent(0.8, 2)
+	SARG N 6 A_SetTranslucent(0.6, 2)
+	SARG N 6 A_SetTranslucent(0.4, 2)
+	SARG N 6 A_SetTranslucent(0.2, 2)
+	SARG N 6 A_SetTranslucent(0.0, 0) 
+	SARG N 0 ACS_ExecuteAlways(501, 0)    
+	Stop
+  Raise:
+    SARG N 5
+    SARG MLKJI 5
+    Goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+
+  /*
+  Spawn:
+    SKEL A 10 A_LookEx(LOF_NOSEESOUND, 0, 128*10, 128*20, 120, "See")
+    //Give the zombie 360 degree awareness within a small distance
+	SKEL A 5 A_LookEx(0, 0, 64, 128, 360, "See")
+    Loop
+  QuickLook:
+    SKEL A 1 A_LookEx(LOF_NOSEESOUND, 0, 128*10, 128*20, 360, "See")
+	SKEL A 1 A_LookEx(LOF_NOSEESOUND, 0, 64, 128, 360, "See")
+	goto Spawn
+  See:
+    SKEL AABBCCDDEEFF 2 A_Chase
+	SKEL A 0 A_Jump(256, "QuickLook")
+    Loop
+  Missile:
+    //SKEL J 1 Bright A_FaceTarget
+    //SKEL J 9 Bright A_FaceTarget
+    //SKEL K 10 A_SkelMissile
+    //SKEL K 10 A_FaceTarget
+    Goto See
+  Death:
+    SKEL LM 7
+    SKEL N 7 A_Scream
+    SKEL O 7 A_NoBlocking
+    SKEL P 7
+	//TODO: Clever loot dropping based on random chance.
+	//		Call ACS
+	SKEL Q 0 A_SpawnItemEx("Clip", 8, 0, 0, 0, 0, 0, 0, 0, 192)
+    SKEL Q -1
+    Stop
+*/
+   }
+}
+
+//Have to have this dummy actor explode 
+Actor CreeperExplosion
+{
+	Projectile
+	//+RIPPER
+	+SEEKERMISSILE
+	Damage 0 //1
+	RenderStyle Add
+	Radius 16
+	Height 32
+	Speed 60
+	Mass 1
+	States 
+	{
+		Spawn:
+			TRNO A 0 A_Look
+		See:
+			FOGL ABCDEABCDE 1 //A_SeekerMissile(90, 90)
+			FOGM ABCDE 1 //A_SeekerMissile(90, 90)
+		SeeBig:
+			FOGS ABCDE 1 //A_SeekerMissile(90, 90)
+			TNT1 A 0 A_FadeOut(0.2)
+			//TRNP A -1 A_RadiusThrust(1024, 512)
+			//TRNP A 5 Radius_Quake(5, 5, 0, 5, 0)
+			//TRNP A 5 Radius_Quake(5, 5, 0, 5, 0)
+			//TRNP A 5 Radius_Quake(5, 5, 0, 5, 0)
+			//TRNP A 5 Radius_Quake(5, 5, 0, 5, 0)
+			//TRNP A 5 Radius_Quake(5, 5, 0, 5, 0)
+			Loop
+		Death:
+			TNT1 A 5 A_RadiusThrust(8095, 256)//16384, 256) //Values lower than 16384 are bugged :(
+			TNT1 A 5 Radius_Quake(5, 5, 0, 5, 0)
+			TNT1 A 5 Radius_Quake(4, 5, 0, 5, 0)
+			TNT1 A 5 Radius_Quake(3, 5, 0, 5, 0)
+			TNT1 A 5 Radius_Quake(2, 5, 0, 5, 0)
+			TNT1 A 5 Radius_Quake(1, 5, 0, 5, 0)
+			Stop
+	}
+}
+
+ACTOR ZombieMancubus : Fatso
+{
+  Game Doom
+  MaxStepHeight 128
+  MaxDropOffHeight 128
+  -NODROPOFF
+  +QUICKTORETALIATE
+  //+JUMPDOWN -> Zandronum 2.0
+  +PUSHABLE
+  +WINDTHRUST
+  Obituary "%o was killed by a zombie mancubus"
+  DropItem "MancubusLoot"
+  
+  PainChance 128
+  MeleeRange 256
+  
+  DamageFactor "Water", 40.0
+  
+  States
+  {
+  Spawn:
+	TNT1 A 0
+	//Randomly make some zombies decide to attack your base:
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FATT T 6 A_SetTranslucent(0.2, 2)
+	FATT T 6 A_SetTranslucent(0.4, 2)
+	FATT T 6 A_SetTranslucent(0.6, 2)
+	FATT T 6 A_SetTranslucent(0.8, 2)
+	FATT T 6 A_SetTranslucent(1.0, 0) //opaque
+	FATT TSRQPNOMLK 4 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+  SpawnLook:
+	//INCA AABBCCDDEEFF 4 A_Wander
+    FATT AABBCCDDEEFF 4 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	//INCA AABBCCDDEEFF 4 A_Wander
+    FATT A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	//INCA AABBCCDDEEFF 4 A_Wander
+    FATT A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	FATT AABBCCDDEEFF 4 A_Wander
+    FATT A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	//Add this back in for Zandronum 1.3:
+	//SKEL A 0 A_CheckSightOrRange(256.0, "Remove")
+	FATT A 0 A_CheckSight("Remove")
+	//Randomly decide to start attacking your base (Incarnate behaviour for harder night time)
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+    Loop
+  Melee:
+    FATT G 20 A_FatRaise
+    FATT H 10 Bright A_FatAttack1("ZombieFatShot")
+    FATT IG 5
+    FATT H 10 Bright A_FatAttack2("ZombieFatShot")
+    FATT IG 5
+    FATT H 10 Bright A_FatAttack3("ZombieFatShot")
+    FATT IG 5
+    Goto See
+  LongRangeAttack:
+	FATT G 20 A_FatRaise
+    FATT H 10 Bright A_FatAttack1("LongRangeZombieFatShot")
+    FATT IG 5
+    FATT H 10 Bright A_FatAttack2("LongRangeZombieFatShot")
+    FATT IG 5
+    FATT H 10 Bright A_FatAttack3("LongRangeZombieFatShot")
+    FATT IG 5
+    Goto See
+  QuickLook:
+    //Check if the player has outrun us.
+    FATT A 1 A_LookEx(LOF_NOSEESOUND, 0, 128*10, 128*20, 360, "See")
+	FATT A 1 A_LookEx(LOF_NOSEESOUND, 0, 64, 128, 360, "See")
+	goto SpawnLook
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+    FATT AABBCCDDEEFF 2 A_Chase
+	FATT A 0 A_CheckSight("Remove")
+    Loop
+  Missile:
+	Stop
+    //SKEL J 1 Bright A_FaceTarget
+    //SKEL J 9 Bright A_FaceTarget
+    //SKEL K 10 A_SkelMissile
+    //SKEL K 10 A_FaceTarget
+    Goto See
+  Pain:
+    FATT J 3
+    FATT J 3 A_Pain
+    Goto LongRangeAttack //Retaliate at long distances!
+  Death:
+	TNT1 A 0 A_GiveToTarget("MancubusKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FATT K 6
+    FATT L 7 A_Scream
+    FATT M 7 A_NoBlocking
+    FATT NOPQRS 6
+	FATT T 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FATT T 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FATT T 6 A_SetTranslucent(0.8, 2)
+	FATT T 6 A_SetTranslucent(0.6, 2)
+	FATT T 6 A_SetTranslucent(0.4, 2)
+	FATT T 6 A_SetTranslucent(0.2, 2)
+	FATT T 6 A_SetTranslucent(0.0, 0) 
+	FATT T 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+actor ZombieFatShot : FatShot
+{
+	+SHOOTABLE
+	DamageType "Fire"
+	Health 10
+	States
+	{
+	  Spawn:
+		MANF ABAB 2 Bright
+		goto Death
+	  Death:
+		MISL A 0 A_UnsetSolid
+		MISL B 3 Bright
+		MISL C 2 Bright
+		MISL D 2 Bright
+		Stop
+	}
+}
+
+actor LongRangeZombieFatShot : ZombieFatShot
+{
+	States {
+	  Spawn:
+		MANF ABAB 3 Bright
+		Loop
+	}
+}
+
+
+ACTOR DoomZHellKnight : HellKnight
+{
+  Tag "Hell Knight"
+
+  States
+  {
+	Spawn:
+		BOS2 AABBCCDD 4 A_Wander
+		BOS2 A 0 A_Look
+		//BOS2 A 0 A_CheckSight("Remove")
+		loop
+	See:
+		//Randomly decide to attack your base or not
+		// No - Not for
+		//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+		//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+		//Only check to remove ourselves and change attack modes every 6 seconds
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 AABBCCDD 4 A_Chase
+		BOS2 A 0 A_ClearTarget
+		//BOS2 A 0 A_CheckSight("Remove")
+		loop
+	Melee:
+	Missile:
+		BOS2 EF 8 A_FaceTarget
+		BOS2 G 8 A_CustomComboAttack("DoomZBaronBall", 32, 10 * random(1, 8), "baron/melee")
+		Goto See
+	Remove:
+		TNT1 A 1 
+		//Remove ourselves if we're too far from the player frustrum.
+		TNT1 A 5 ACS_ExecuteAlways(501, 0)
+		Stop
+	Death:
+		TNT1 A 0 A_GiveToTarget("HellKnightKillXP", 1)
+    Death.NoXP:
+    Death.SentryTurret:
+		BOS2 I 8
+		BOS2 J 8 A_Scream
+		BOS2 K 8
+		BOS2 L 8 A_NoBlocking
+		BOS2 MN 8
+		//Loot dropping:
+		BOS2 N 1 A_SpawnItemEx("YellowBoy", 0, 32.0)
+		//ACS_ExecuteAlways(922)
+		//Remove ourselves after 60 seconds
+		BOS2 O 2100
+		BOS2 O 0 ACS_ExecuteAlways(501, 0)    
+		Stop
+  }
+}
+
+ACTOR DoomZBaronOfHell : BaronOfHell
+{
+  Tag "Baron of Hell"
+
+	Speed 12
+	  Health 1500
+  States
+  {
+   Idle:
+   SpawnLook:
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	//BOSS A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+	BOSS A 0 A_ClearTarget
+	//BOSS A 0 A_CheckSight("Remove")
+    loop
+  Remove:
+    TNT1 A 1 
+    //Remove ourselves if we're too far from the player frustrum.
+    TNT1 A 5 ACS_ExecuteAlways(501, 0)
+    Stop
+  Melee:
+  Missile:
+    BOSS EF 8 A_FaceTarget
+    //BOSS G 8 A_BruisAttack
+	BOSS G 8 A_CustomComboAttack("DoomZBaronBall", 32, 10 * random(1, 8), "baron/melee")
+	BOSS G 4 A_CustomMissile("DoomZBaronBall", 32, 0, 16, 0, 0)
+	BOSS G 0 A_CustomMissile("DoomZBaronBall", 32, 0, -16, 0, 0)
+    Goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("BaronOfHellKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    BOSS I 8
+    BOSS J 8 A_Scream
+    BOSS K 8
+    BOSS L 8 A_NoBlocking
+    BOSS MN 8
+	BOSS N 1 A_SpawnItemEx("DoomZSuperShotgun", 0, 32.0)
+	//Remove ourselves after 60 seconds
+	BOSS O 2100
+	BOSS O 0 ACS_ExecuteAlways(501, 0)    
+    Stop
+  }
+}
+
+ACTOR DoomZImp : DoomImp
+{
+  //Mass 20 //For epic kickback
+  +PUSHABLE
+  +WINDTHRUST
+  +FIXMAPTHINGPOS //Testing for r14 test12
+  +DONTOVERLAP 	  //Ditto
+  
+  States
+  {
+  Spawn:
+	TNT1 A 0 //dummy frame
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	TROO M 6 A_SetTranslucent(0.2, 2)
+	TROO M 6 A_SetTranslucent(0.4, 2)
+	TROO M 6 A_SetTranslucent(0.6, 2)
+	TROO M 6 A_SetTranslucent(0.8, 2)
+	TROO M 6 A_SetTranslucent(1.0, 0) //opaque
+	TROO MLKJI 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+ 	//Randomly make some badguys decide to attack your base:
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+   Idle:
+   SpawnLook:
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO AABBCCDD 4 A_Wander
+    TROO A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
+	TROO A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    TROO AABBCCDD 4 A_Chase
+    TROO AABBCCDD 4 A_Chase
+    TROO AABBCCDD 4 A_Chase
+    TROO AABBCCDD 4 A_Chase
+    TROO AABBCCDD 4 A_Chase
+    TROO AABBCCDD 4 A_Chase
+	TROO A 0 A_CheckSight("Idle")
+    loop
+  Remove:
+    TNT1 A 1 
+    //Remove ourselves if we're too far from the player frustrum.
+    TNT1 A 5 ACS_ExecuteAlways(501, 0)
+    Stop
+  Melee:
+  Missile:
+    TROO EF 8 A_FaceTarget
+    TROO G 6 A_CustomComboAttack("DoomZImpBall", 32, 3 * random(1, 8), "imp/melee")
+    Goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ImpKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    TROO I 8
+    TROO J 8 A_Scream
+    TROO K 6
+    TROO L 6 A_NoBlocking
+	//Loot dropping for the ZombieRevenant:
+	//TROO M 1 ACS_ExecuteAlways(921)
+	TNT1 A 0 A_SpawnItemEx("ImpLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	//Remove ourselves after 60 seconds
+	TROO M 2100
+	TROO M 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ImpKillXP", 1)
+    TROO N 5
+    TROO O 5 A_XScream
+    TROO P 5
+    TROO Q 5 A_NoBlocking
+    TROO RST 5
+	TNT1 A 0 A_SpawnItemEx("ImpLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	//Loot dropping for the ZombieRevenant:
+	//TROO U 1 ACS_ExecuteAlways(921)
+	//Remove ourselves after 60 seconds
+	TROO U 2100
+	TROO U 0 ACS_ExecuteAlways(501, 0)    
+    Stop
+  }
+}
+
+actor DoomZImpBall : DoomImpBall replaces DoomImpBall
+{
+	Health 15
+	+SHOOTABLE
+	-NOBLOCKMAP
+	+NOBLOOD
+}
+
+
+ACTOR DoomZNightImp : DoomZImp
+{
+  //Mass 20 //For epic kickback
+  Speed 16 //Double the default imp speed
+  Mass 5 //Very light though, huge kickback
+  Health 100 //More health
+  
+  States
+  {
+   Missile:
+   TROO EF 8 A_FaceTarget
+   TROO G 6 A_CustomComboAttack("DoomZBaronBall", 32, 4 * random(1, 8), "imp/melee")
+   goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("NightImpKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    TROO I 8
+    TROO J 8 A_Scream
+    TROO K 6
+    TROO L 6 A_NoBlocking
+	//Loot dropping for the ZombieRevenant:
+	//TROO M 1 ACS_ExecuteAlways(921)
+	TNT1 A 0 A_SpawnItemEx("NightImpLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	//Remove ourselves after 60 seconds
+	TROO M 2100
+	TROO M 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("NightImpKillXP", 1)
+    TROO N 5
+    TROO O 5 A_XScream
+    TROO P 5
+    TROO Q 5 A_NoBlocking
+    TROO RST 5
+	TNT1 A 0 A_SpawnItemEx("NightImpLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	//Loot dropping for the ZombieRevenant:
+	//TROO U 1 ACS_ExecuteAlways(921)
+	//Remove ourselves after 60 seconds
+	TROO U 2100
+	TROO U 0 ACS_ExecuteAlways(501, 0)    
+    Stop
+  }
+}
+
+actor DoomZBaronBall : BaronBall Replaces BaronBall
+{
+	Health 15
+	+SHOOTABLE
+	-NOBLOCKMAP
+	+NOBLOOD
+}
+
+ACTOR DoomZGhoul 
+{ 
+Health 200 
+PainChance 24
+Speed 12 
+Radius 24 
+Height 56 
+Mass 320
+MeleeDamage 4
+//MinMissileChance 255 //Make missile attacks rare. Max is 255
+MaxTargetRange 512
+Meleethreshold 96
+MONSTER
+BloodColor "20 60 20"
++FLOORCLIP
++DONTHURTSPECIES
+-NODROPOFF
+MaxStepHeight 48
+MaxDropOffHeight 48
++MISSILEEVENMORE
+
+Obituary "A Ghoul poisoned %o with it's toxic projectiles."
+HitObituary "%o was beaten to death by a ghoul."
+SeeSound "monster/ghlsit" 
+MeleeSound "monster/ghlhit" 
+PainSound "monster/ghlpai" 
+DeathSound "monster/ghldth" 
+ActiveSound "monster/ghlact"
+States 
+   { 
+  Spawn:
+	TNT1 A 0 //dummy frame
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	GHUL P 6 A_SetTranslucent(0.2, 2)
+	GHUL P 6 A_SetTranslucent(0.4, 2)
+	GHUL P 6 A_SetTranslucent(0.6, 2)
+	GHUL P 6 A_SetTranslucent(0.8, 2)
+	GHUL P 6 A_SetTranslucent(1.0, 0) //opaque
+	GHUL POMLKJI 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+ 	//Randomly make some badguys decide to attack your base:
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+   Idle:
+   SpawnLook:
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL AABBCCDD 2 A_Wander
+    GHUL A 0 A_LookEx(0, 0, 1600.0, 2200.0, 0, "See") 
+	GHUL A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    GHUL AABBCCDD 1 A_Chase
+    GHUL AABBCCDD 1 A_Chase
+    GHUL AABBCCDD 1 A_Chase
+    GHUL AABBCCDD 1 A_Chase
+    GHUL AABBCCDD 1 A_Chase
+    GHUL AABBCCDD 1 A_Chase
+	GHUL A 0 A_CheckSight("Remove")
+    loop
+   Remove:
+    TNT1 A 1 
+    //Remove ourselves if we're too far from the player frustrum.
+    TNT1 A 5 ACS_ExecuteAlways(501, 0)
+    Stop
+   Melee:
+       GHUL E 0 A_Jump(128,5)
+       GHUL E 6 A_FaceTarget
+       GHUL F 0 A_PlaySound("monster/ghlswg")
+       GHUL F 6 A_FaceTarget
+       GHUL G 5 A_MeleeAttack
+       //Goto See
+       GHUL R 6 A_FaceTarget
+       GHUL S 0 A_PlaySound("monstler/ghlswg")
+       GHUL S 6 A_FaceTarget
+       GHUL T 5 A_MeleeAttack
+       Goto See
+   Missile:
+   Jump:
+       //GHUL T 5 A_FaceTarget 
+	   /*
+       GHUL Q 0 A_CustomMissile ("ToxinShot",44,-16,0,0,0)
+       GHUL Q 8 A_CustomMissile ("ToxinShot",44,16,0,0,0)
+       */
+		GHUL A 0 A_FaceTarget 
+		GHUL A 0 ThrustThingZ(0, 40, 0, 1)
+		GHUL A 0 ThrustThing(angle*256/360, 24, 0, 0)
+		goto Melee
+
+		//GHUL A 15 
+		//GHUL B 5 
+   Pain: 
+       GHUL H 2 
+       GHUL H 2 A_Pain 
+       Goto See 
+   Death: 
+	   TNT1 A 0 A_GiveToTarget("GhoulKillXP", 1)
+   Death.NoXP:
+   Death.SentryTurret:
+       GHUL I 5
+	   //This will destroy loot drops :-/
+       //GHUL J 0 A_CustomMissile ("ToxinCloud",40,0,0,0,0) 
+       GHUL J 5 A_Scream 
+       GHUL K 5 
+       GHUL L 5 A_NoBlocking 
+       GHUL M 5 
+       GHUL N 5
+       GHUL O 5
+       //GHUL P -1
+		//Loot dropping for the ZombieRevenant:
+		//GHUL P 1 ACS_ExecuteAlways(921)
+		TNT1 A 0 A_SpawnItemEx("GhoulLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+		//Remove ourselves after 60 seconds
+		GHUL P 2100
+		GHUL P 0 ACS_ExecuteAlways(501, 0)
+       Stop 
+   Raise: 
+       GHUL PONMLKJI 3 
+       Goto See 
+   } 
+}
+
+//Prevent re-entrancy into these states
+actor DragonDeathLock : Inventory { Inventory.MaxAmount 1 }
+actor DragonCrashLock : Inventory { Inventory.MaxAmount 1 }
+
+actor DragonTIDTracker : Inventory { Inventory.MaxAmount 0x7FFFFFFF }
+
+ACTOR DoomZDragon : Dragon 16017
+{
+	Scale 2.0
+	Speed 20
+	Height 130
+	Radius 70
+	Health 2000 //2000
+	-NOBLOOD
+	-BOSS
+  States
+  {
+	  Spawn:
+		//TNT1 A 0 ACS_ExecuteAlways(946, 0, tid,0,0) //Debug print
+		TNT1 A 0
+		TNT1 A 1 ACS_ExecuteAlways(509, 0) //Store the TID as custom inventory
+		goto Super::Spawn
+      Pain:
+		DRAG F 10 A_DragonPain
+		Goto Flap
+      Missile:
+		DRAG E 8 A_DragonAttack
+		Goto Flap
+	  See:
+	  	//TNT1 A 0 ACS_ExecuteAlways(946, 0, tid,0,0) //Debug print
+		DRAG CB 5
+		goto Flap
+	  Flap:
+	  	DRAG A 0 A_DragonInitFlight
+		TNT1 A 0
+		TNT1 A 0 ACS_ExecuteAlways(508) //Restore the TID from custom inventory
+		DRAG B 3 A_DragonFlap
+		//Make the Dragon go higher
+		//TNT1 A 0 ThrustThingZ(0, 4, 1, 1)
+		DRAG BCCDDCCBBAA 3 A_DragonFlight
+		//DRAG A 0 ACS_ExecuteAlways(946, 0, tid, args[0], args[1]) //Debug print
+		Goto Flap
+	/*
+	  XDeath:
+	  CancelQuest:
+		TNT1 A 0
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonCrashLock", 1)
+		DRAG A 0 Thing_Destroy(Args[1])
+		DRAG A 0 Thing_Destroy(Args[0])
+		Stop
+	*/
+	  InstaDeath: //Used when cancelling quests to the DoomZDragonMapSpot death state from invoking our death state
+		TNT1 A 0
+		Stop
+	  Death:
+		TNT1 A 0
+		DRAG M 0 A_UnsetSolid
+		TNT1 A 0 A_JumpIfInventory("DragonDeathLock", 1, "InstaDeath") //Read note above
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		TNT1 A 0 A_GiveInventory("DragonDeathLock", 1)
+		DRAG M 1 A_SpawnItemEx("FireSpell", 0, 0, 0, -momx, -momy, -momz, 0) //SXF_ABSOLUTEVELOCITY not supported in Zandronum 1.2
+		TNT1 A 0 A_GiveToTarget("DragonKillXP", 1)
+      Death.NoXP:
+      Death.SentryTurret:
+		goto Super::Death
+	  Crash:
+		TNT1 A 0
+		//DRAG M 1 ACS_ExecuteAlways(946, 0, tid, args[0], args[1]) //Debug print
+		//For some reason, we need to trigger the map spot removal BEFORE the re-entracy lock check
+		//DRAG M 0 Thing_Destroy(Args[1])
+		//DRAG M 0 Thing_Destroy(Args[0])
+		TNT1 A 0 A_JumpIfInventory("DragonCrashLock", 1, "Fadeout") //Read note above
+		TNT1 A 0 A_GiveInventory("DragonCrashLock", 1)
+		//This crash state can actually get called twice due to the way our removal 
+		//of the dragon map spots works. (The first spot shares the same TID as the dragon and
+		//Thing_Remove somehow triggers the Crash state again...)
+		//TNT1 A 0 A_JumpIfInventory("DragonDeathLock", 1, "InstaDeath") //Read note above
+		DRAG K 5 Radius_Quake(9, 30, 0, 20, 0)
+	    DRAG L 5 Radius_Quake(4, 30, 0, 20, 0)
+		
+		//Loot dropping: ACS_ExecuteAlways(921)
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		DRAG M 1 A_SpawnItemEx("LootBox", 0, 0, 0, 8.0, 0.0, 0.0, random(0, 255))
+		
+		
+		//Fancy footwork to destroy the dragon mapspots automatically:
+		//TODO: None of this works :( I'm just going to make the mapspots disappear
+		//automatically after 25 minutes. I think the problem is that the dragon 
+		//changes its own TID to the same TID as the mapspot that it's targeting
+		//(so it changes all the time as it's flying around).
+		//The big downside of this is that since the dragon doesn't have a single fixed TID,
+		//we can only keep track of it with ThingCountName in the dragon quest. That means
+		//we can only have one dragon alive at a time in order for that quest completion
+		//script to work. 
+		//TODO: Another way to do this could be to give the dragon dummy inventory items
+		//that indicate the TIDs of the map spots.
+		//1. Set arg[0] to be our TID.
+		//DRAG M 1 Thing_SetSpecial(0, 0, tid, 0, 0)
+		//DRAG M 1 ACS_ExecuteAlways(946, 0, tid, args[0], args[1]) //Debug print
+		//2. Clear our TID so we don't remove ourselves (infinite loop)
+		//DRAG M 1 ACS_ExecuteAlways(946, 0, tid, args[0], args[1]) //Debug print
+		//DRAG M 1 ACS_ExecuteAlways(506, 0, 0, 0, 0)
+		//3. Kill the first mapspot, which has the same TID as we used to. 
+		//   The Death state of DoomZDragonSpot cascades through and kills each of
+		//	 them (because args[0] in each points to the next one).
+		//DRAG M 0 Thing_Destroy(Args[1])
+		//DRAG M 0 Thing_Destroy(Args[0])
+		//DRAG M 1 Thing_Remove(Args[1])
+		//DRAG M 1 Thing_Remove(Args[0])
+		//TODO: Prevent re-entrancy with a dummy inventory lock if we need to!
+		//DRAG M 1 Thing_Destroy(Args[0], false)
+		//DRAG M 1 Thing_Destroy(Args[1], false)
+		//DRAG M 1 Thing_Destroy(Args[2], false)
+		
+		/* Yeah no... Trying to track the TIDs with dummy inventory almost worked but not quite.
+		    Could be worth a shot again in the future though.
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 1), false)
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 2), false)
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 3), false)
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 4), false)
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 5), false)
+		DRAG M 1 Thing_Destroy(ACS_ExecuteWithResult(507, 6), false)
+		*/
+
+	   FadeOut:
+		//Remove ourselves after 60 seconds
+		DRAG M 2100
+		DRAG M 16 A_FadeOut(0.2)
+		DRAG M 16 A_FadeOut(0.2)
+		DRAG M 16 A_FadeOut(0.2)
+		DRAG M 16 A_FadeOut(0.2)
+		DRAG M 16 A_FadeOut(0.2)
+		//DRAG M 0 ACS_ExecuteAlways(501, 0)
+		Stop
+   }
+}
+
+//Special name because we can only have one of these at a time (must keep track by name)...
+actor DoomZQuestDragon : DoomZDragon {}
+
+actor DoomZQuestDragon2 : DoomZDragon {
+Translation "97:121=51:63,164:172=246:252,128:140=192:202,81:95=51:63,240:245=33:42,122:127=186:191"
+}
+
+Actor DoomZDragonFireball : DragonFireball replaces DragonFireball
+{
+  +ROCKETTRAIL
+  Decal "DoomImpScorch"
+  SeeSound "weapons/dragonball"
+  Speed 32
+  Scale 2.0
+  Radius 24
+  States
+  {
+	  Death:
+		DRFX G 4 Bright Radius_Quake(8, 30, 0, 15, 0)
+		DRFX H 4 Bright Radius_Quake(5, 30, 0, 15, 0)
+		DRFX I 4 Bright Radius_Quake(2, 30, 0, 15, 0)
+		DRFX J 4 Bright A_DragonFX2
+		DRFX KL 3 Bright A_SpawnItemEx("CircleFlame")
+		Stop
+  }
+}
+
+Actor DoomZDragonExplosion : DragonExplosion replaces DragonExplosion
+{
+  States
+  {
+  Spawn:
+    CFCF Q 1 Bright
+    CFCF Q 4 Bright A_UnHideThing
+    CFCF R 3 Bright A_Scream
+    CFCF S 4 Bright
+    CFCF T 3 Bright A_Explode(80, 128, 0)
+    CFCF U 4 Bright A_SpawnItemEx("CircleFlame")
+    CFCF V 3 Bright A_SpawnItemEx("CircleFlame")
+    CFCF W 4 Bright 
+    CFCF X 3 Bright
+    CFCF Y 4 Bright
+    CFCF Z 3 Bright 
+    Stop
+  }
+}
+
+Actor DoomZCircleFlame : CircleFlame replaces CircleFlame
+{
+   scale 4.0
+    States
+  {
+  Spawn:
+    CFCF A 4 Bright
+    CFCF B 2 Bright A_CFlameRotate
+    CFCF C 2 Bright
+    CFCF D 1 Bright
+    CFCF E 2 Bright
+    CFCF F 2 Bright A_CFlameRotate
+    CFCF G 1 Bright
+    CFCF HI 2 Bright
+    CFCF J 1 Bright A_CFlameRotate
+    CFCF K 2 Bright
+    CFCF LM 3 Bright A_Jump(64, "Spawn")
+    CFCF N 2 Bright A_CFlameRotate
+    CFCF O 3 Bright
+    CFCF P 2 Bright 
+    Stop
+  Death:
+    CFCF QR 3 Bright
+    CFCF S 3 Bright A_Explode(20, 20, 0)
+    CFCF TUVWXYZ 3 Bright
+    Stop
+  }
+}
+
+actor DoomZDragonSpot : actor
+//: MapSpot - Making these a mapspot stops the Death state from working???
+{
+	//Monster
+	Speed 0
+	//Health 50
+	//+ISMONSTER
+	//+SHOOTABLE //This is needed for Thing_Destroy to work!!!
+	-SHOOTABLE
+	//+NONSHOOTABLE //This allows projectiles to pass through it though!
+	+STANDSTILL
+	-SOLID
+	+NOTARGET
+	-COUNTKILL
+	+NOGRAVITY
+	-PUSHABLE
+	+DONTBLAST
+	//NOTAUTOAIMED
+	+INVULNERABLE
+	+NOBLOCKMAP
+	
+	//-NOSECTOR // This will break the dragon pathfinding!
+	RenderStyle "None"
+	
+	States
+	{
+		Spawn:
+			SVXP A 52500 //Die after 25 minutes
+			//SVXP A -1
+			//Wait
+		Death:
+			TNT1 A 0
+			//Cascade and kill the remaining linked mapspots
+			//TNT1 A 3 Thing_Destroy(Args[1])
+			//TNT1 A 0 Thing_Remove(Args[1])
+			//TNT1 A 0 Thing_Remove(Args[0])
+			Stop
+	}
+}
+			
+//See: http://zdoom.org/wiki/Classes:Dragon
+//These go counterclockwise with my own numbering scheme. -- Hax
+actor DoomZDragonSpot1 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(250, 0, 251, 255, 0) 
+			TNT1 A -1 
+			Wait}}
+
+actor DoomZDragonSpot2 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(251, 0, 250, 252, 0) 
+			TNT1 A -1 
+			Wait}}
+
+actor DoomZDragonSpot3 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(252, 0, 251, 253, 0) 
+			TNT1 A -1 
+			Wait}}
+
+actor DoomZDragonSpot4 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(253, 0, 252, 254, 0) 
+			TNT1 A -1 
+			Wait}}
+
+actor DoomZDragonSpot5 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(254, 0, 253, 255, 0) 
+			TNT1 A -1 
+			Wait}}
+
+actor DoomZDragonSpot6 : MapSpot { States { Spawn: TNT1 A 0
+			TNT1 A 0 Thing_SetSpecial(255, 0, 254, 250, 0) 
+			SVXP A -1 
+			Wait}}
+		

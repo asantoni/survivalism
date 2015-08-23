@@ -1,0 +1,151 @@
+#import "math.acs"
+#import "player.acs"
+#import "doomzgame.acs"
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "scroll"
+	
+//Script 531-535 reserved for SCROLL.acs
+
+//Display a scroll to the player
+script 531 (int xpLevel)
+{
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
+	{
+		terminate;
+	}
+	
+	//Grey the background
+	FadeTo (0, 0, 0, 0.8, 0.2);
+	
+	int HUDMSG_BGART_ID = 13;
+	int HUDMSG_ART_ID = 12;
+	int HUDMSG_WORDS_ID = 11;
+
+	int words = 0;
+	int bgArt = "SCROLL";
+	int art = "SCROLLI"; //Default - just show a scroll icon
+	int giveOnExit = "";
+	switch(xpLevel)
+	{
+		case 1: words = "Level 1:\nYou should not be\nreading this!"; break;
+		case 2: words = "Level 2:\nYou've unlocked\nthe crafting box!"; art="CRAFTING"; break;
+		case 3: words = "Level 3:\nYou have learned to craft\nwooden floors!"; art="CFLIA0"; break;
+		case 4: words = "Level 4:\nYou have learned to craft\nwooden pillars!"; art="CPLIA0";break;
+		case 5: words = "Level 5:\nYou have learned to craft\ntorches!"; art="TRCHA0";break;
+		case 6: words = "Level 6:\nYou have learned to craft\ndoors!"; art="CDRIA0"; break;
+		case 7: words = "Level 7:\nYou have learned to craft\nfurnaces!"; art="FURNY"; break;
+		case 8: words = "Level 8:\nYou have learned to craft\nsome guns!"; art="SHOTI"; break;
+		case 9: words = "Level 9:\nYou have learned to craft\nthe bow!"; art="BOWART"; break;
+		case 10: words = "Level 10:\nYou have learned to craft\nsentry turrets!"; art="SENART"; break;
+		case 11: words = "Level 11:\nYou have learned to craft\nthe quest box!"; art="QUESTBOX"; break;
+		case 12: words = "Level 12:\nYou've unlocked\nSpike Crafting."; art="spike"; break;
+		case 13: words = "Level 13:\nYou've unlocked\nAxe heavy swing (alt-fire)!"; break;
+		case 14: words = "Level 14:\nYou've learned to craft\nwater buckets!"; art="BCKTI"; break;
+		case 15: words = "Level 15:\nYou now need to eat every day,\nor you'll die.\n\nHere's some turnip seeds for you!"; art="SEED3"; break;
+		case 16: words = "Level 16:\nYou should suggest some more\nunlockables ideas to\nHaxMurderer"; break;
+		case 17: words = "Level 17:\nYou are just beginning\nto live."; break;
+		case 18: words = "Level 18:\nYou are careful & systematic\nin your business\narrangements."; break;
+		case 19: words = "Level 19:\nYou will travel\nto many places."; break;
+		case 20: words = "Level 20:\n"; break;
+		case 21: words = "Level 21:\n"; break;
+		case 22: words = "Level 22:\nYour wisdom has kept you\nfar away from danger."; break;
+		case 23: words = "Level 23:\n"; break;
+		case 24: words = "Level 24:\n"; break;
+		case 25: words = "Level 25:\n"; break;
+		case 26: words = "Level 26:\n"; break;
+		case 27: words = "Level 27:\n"; break;
+		case 28: words = "Level 28:\n"; break;
+		case 29: words = "Level 29:\n"; break;
+		case 30: words = "Level 30:\n"; break;
+		case 31: words = "Level 31:\n"; break;
+		case 32: words = "Level 32:\n"; break;
+		case 33: words = "Level 33:\n"; break;
+		case 34: words = "Level 34:\n"; break;
+		case 35: words = "Level 35:\n"; break;
+		case 36: words = "Level 36:\n"; break;
+		case 37: words = "Level 37:\n"; break;
+		case 38: words = "Level 38:\n"; break;
+		case 39: words = "Level 39:\n"; break;
+		case 40: words = "Level 40:\n"; break;
+		case 41: words = "Level 41:\n"; break;
+		case 42: words = "Level 42:\n"; break;
+		case 43: words = "Level 43:\n"; break;
+		case 44: words = "Level 44:\n"; break;
+		case 45: words = "Level 45:\n"; break;
+		case 46: words = "Level 46:\n"; break;
+		case 47: words = "Level 47:\n"; break;
+		case 48: words = "Level 48:\n"; break;
+		case 49: words = "Level 49:\n"; break;
+		case 50: words = "Level 50:\n"; break;
+		case 51: words = "Level 51:\n"; break;
+		case 52: words = "Level 52:\n"; break;
+		case 53: words = "Level 53:\n"; break;
+		case 54: words = "Level 54:\n"; break;
+		case 55: words = "Level 55:\n"; break;
+		case 56: words = "Level 56 :\n"; break;
+		case 57: words = "Level 57:\n"; break;
+		case 58: words = "Level 58:\n"; break;
+		case 59: words = "Level 59:\n"; break;
+		case 60: words = "Level 59:\n"; break;
+		default:
+			Log(s:"Error:\nUnknown XP level");
+			break;
+	}
+
+	//Log(s:words);
+	SetHudSize(640, 480, TRUE); //Read this: http://zdoom.org/wiki/SetHudSize#Coordinate_Behaviour
+	SetFont(bgArt);
+	HudMessage(s:"A"; HUDMSG_PLAIN, HUDMSG_BGART_ID, CR_RED, 320.0, 240.0, 0, 1.0);
+	SetHudSize(320, 240, TRUE); //Read this: http://zdoom.org/wiki/SetHudSize#Coordinate_Behaviour
+	SetFont(art);
+	HudMessage(s:"A"; HUDMSG_PLAIN, HUDMSG_ART_ID, CR_RED, 160.0, 90.2, 0, 1.0);
+	SetFont("SMALLFONT");
+	SetHudSize(640, 480, TRUE); //Read this: http://zdoom.org/wiki/SetHudSize#Coordinate_Behaviour
+	HudMessage(s:words; HUDMSG_PLAIN | HUDMSG_LOG, HUDMSG_WORDS_ID, CR_RED, 310.4, 220.1, 0, 1.0);
+	SetHudSize(0, 0, FALSE); //Reset the HUD coordinate system
+	SetFont("SMALLFONT");
+
+	
+	ThingSound(playerTID, "click", 127);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN); //Freeze the player
+
+	int buttons;
+	int selectedItemIdx = 0;
+	int buttonDepressed = false;
+
+	Delay(15);
+	while (true)
+	{
+		buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+ 
+	   //Exit if you hit the use or jump button
+	   if ((buttons & BT_JUMP) || (buttons & BT_USE) || (buttons & BT_ATTACK))
+	   {
+			buttonDepressed = true;
+			//print(d: selectedItemIdx);
+			Delay(1);
+			HudMessage(s:""; HUDMSG_PLAIN, HUDMSG_ART_ID, CR_RED, 0.4, 0.5, 0, 1.0);
+			HudMessage(s:""; HUDMSG_PLAIN, HUDMSG_BGART_ID, CR_RED, 0.4, 0.5, 0, 1.0);
+			HudMessage(s:""; HUDMSG_PLAIN | HUDMSG_LOG, HUDMSG_WORDS_ID, CR_RED, 0.5, 0.55, 0, 1.0);
+			SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN); //Unfreeze the player
+			//GiveInventory(giveOnExit, 1);
+			FadeTo (0, 0, 0, 0.0, 0.2);
+			terminate;		   
+		}
+
+		if (!buttonDepressed)
+		{
+
+		}
+		if (buttons == 0)
+		{
+			buttonDepressed = false;
+		}
+		Delay(3);
+	};	
+}

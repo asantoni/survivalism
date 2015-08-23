@@ -1,0 +1,37 @@
+#library "tutorial"
+#include "zcommon.acs"
+/* script 950-959 are reserved for tutorial.acs */
+#libdefine HUD_MSG_TUTORIAL 7
+#libdefine HUD_MSG_TUTORIAL2 8
+
+script 950 ENTER
+{
+
+	/*
+	SetFont("BIGFONT");
+	HudMessage(s:"Stay Alive.";
+		HUDMSG_FADEOUT, 2, CR_RED, 0.5, 0.5, 4.0, 2, 1);
+	*/
+	//Don't run if we're playing the title map
+	if (GameType() == GAME_TITLE_MAP)
+	{
+		terminate;
+	}
+	
+	//Delay(35);
+	SetFont("BIGFONT");
+	HudMessage(s:"Build a base before nightfall to survive.";
+				HUDMSG_FADEOUT, HUD_MSG_TUTORIAL, CR_RED, 0.5, 0.5, 6.0, 1.0, 3.0);
+	//HudMessage(s:"Stay Alive.";
+	//	HUDMSG_FADEOUT, 2, CR_RED, 0.5, 0.5, 4.0, 2, 1);
+	
+	Delay(240);
+	HudMessage(s:"Press F1 for help.\n---------------------------------------";
+	HUDMSG_PLAIN, HUD_MSG_TUTORIAL2, CR_RED, 0.5, 0.8, 4.0, 0, 1);
+	Delay(70);
+	HudMessage(s:"Press F1 for help.\n          DO IT";
+	HUDMSG_PLAIN, HUD_MSG_TUTORIAL2, CR_RED, 0.5, 0.8, 4.0, 0.5, 1);
+	Delay(16);
+	HudMessage(s:"";
+	HUDMSG_PLAIN, HUD_MSG_TUTORIAL2, CR_RED, 0.5, 0.75, 4.0, 0, 1);
+}

@@ -1,0 +1,184 @@
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "probabilities"
+
+/* 
+   A lot of the code in this file is messy and repeats itself.
+   There's an ACS limitation that you can't pass an array into
+   a function, which makes writing clean LUT code a bit 
+   challenging. - Albert
+*/
+
+#define MISSION_TABLE_LENGTH 4
+int missionChanceTable[MISSION_TABLE_LENGTH][3] =
+{
+	//YOU MUST UPDATE MISSION_TABLE_LENGTH WHEN YOU ADD
+	//NEW ITEMS TO THIS ARRAY!
+	
+	//{ ACS Script #, probability, reserved for future use }
+	{ 825, 	2, 	0 }, //Hell Knight mission
+	{ 826, 	5, 	0 }, //Baron of Hell mission
+	{ 827, 	2, 	0 }, //Imp storm
+	{ 828, 	2, 	0 }, //Demolition Squad
+};
+
+/* 
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+
+FIXME: YOU CANNOT mix strings and integers in tables!
+http://forum.zdoom.org/viewtopic.php?f=3&t=28111
+
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+*/
+
+
+#define LOOTBOX_TABLE_LENGTH 21
+str lootBoxDropChanceTable[LOOTBOX_TABLE_LENGTH][3] =
+{
+	//YOU MUST UPDATE LOOTBOX_TABLE_LENGTH WHEN YOU ADD
+	//NEW ITEMS TO THIS ARRAY!
+	
+	//{ Item name, 			probability, 	reserved for future use }
+	{ "DoomZChaingun", 		20, 	0 },
+	//{ "RedCard", 			20, 	1 },
+	{ "ShellBox", 			50, 	0 },
+	{ "DoomZPistol", 		200, 	0 },
+	{ "DoomZShotgun", 		50, 	0 },
+	{ "WensternShotgun", 	2, 		0 },
+	{ "HuntingRifle", 		2, 		0 },
+	{ "Bow", 				50, 	0 },
+	{ "ShellBox", 			50, 	0 },
+	{ "Knife", 				150, 	0 },
+	//{ "Axe", 				150, 	0 },
+	{ "TorchItem", 			150, 	0 },
+	{ "Shell", 				50, 	0 },
+	{ "Clip", 				50,		0 },
+	{ "Stimpack", 			50,		0 },
+	{ "CKitItem", 			50,		0 },
+	{ "GreenArmor", 		30,		0 },
+	{ "Bow", 				50,		0 },
+	{ "ArrowAmmo", 			30,		0 },
+	{ "ArrowHefty", 		30,		0 },
+	{ "DoomZEgg", 		    5,		0 },
+	{ "SentryBox", 			10,		0 },
+	{ "TurnipSeeds", 		10,		0 },
+};
+
+#define ZOMBIE_TABLE_LENGTH 22
+#libdefine NUM_DAYZOMBIETYPES ZOMBIE_TABLE_LENGTH
+str g_zombieTable[ZOMBIE_TABLE_LENGTH] =
+{
+	//YOU MUST UPDATE ZOMBIE_TABLE_LENGTH WHEN YOU ADD
+	//NEW ITEMS TO THIS ARRAY!
+	"DoomZFemaleScientist",
+	"DoomZFemaleScientist2",
+	"DoomZZombieScientist", "DoomZZombieScientist2",
+	"DoomZFemaleScientist3", "DoomZFemaleScientist4",
+	"DoomZZombieScientist3", //"DoomZZombieScientist4",
+	"DoomZHazmatZombie", //"DevastatorZombie",
+	"ZombieRevenant",
+	"DogCluster",
+	"ZombieMancubus",
+	"ZombieCluster",
+};
+
+// Probabilities of the zombies above spawning
+int zombieChanceTable[ZOMBIE_TABLE_LENGTH] =
+{
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	3, //DogCluster
+	1, //ZombieMancubus
+	10, //ZombieCluster
+};
+
+function str getStringFromLootTable(int randomNum)
+{
+	int tableLength = LOOTBOX_TABLE_LENGTH;
+	int cumulativeWeight = 0; //sum of all the weighted probabilities
+	for (int i = 0; i < tableLength; i++)
+	{
+		cumulativeWeight += lootBoxDropChanceTable[i][1];
+		if (randomNum <= cumulativeWeight)
+		{
+			return lootBoxDropChanceTable[i][0];
+		}
+	}
+	return "";	
+}
+
+function str getLootBoxItem(void)
+{
+	int sumOfWeights = 0;
+	for (int i = 0; i < LOOTBOX_TABLE_LENGTH; i++)
+	{
+		sumOfWeights += lootBoxDropChanceTable[i][1];
+	}
+	int randomNum = random(0, sumOfWeights);
+	return getStringFromLootTable(randomNum);
+}
+
+function str getScriptFromMissionTable(int randomNum)
+{
+	int tableLength = MISSION_TABLE_LENGTH;
+	int cumulativeWeight = 0; //sum of all the weighted probabilities
+	for (int i = 0; i < tableLength; i++)
+	{
+		cumulativeWeight += missionChanceTable[i][1];
+		if (randomNum <= cumulativeWeight)
+		{
+			return missionChanceTable[i][0];
+		}
+	}
+	return 0;	
+}
+
+function str getRandomMission(void)
+{
+	int sumOfWeights = 0;
+	for (int i = 0; i < MISSION_TABLE_LENGTH; i++)
+	{
+		sumOfWeights += missionChanceTable[i][1];
+	}
+	int randomNum = random(0, sumOfWeights);
+	return getScriptFromMissionTable(randomNum);
+}
+
+function str getStringFromZombieTable(int randomNum)
+{
+	int tableLength = ZOMBIE_TABLE_LENGTH;
+	int cumulativeWeight = 0; //sum of all the weighted probabilities
+	for (int i = 0; i < tableLength; i++)
+	{
+		cumulativeWeight += zombieChanceTable[i];
+		if (randomNum <= cumulativeWeight)
+		{
+			return g_zombieTable[i];
+		}
+	}
+	return "";	
+}
+
+function str getRandomZombie(void)
+{
+	int sumOfWeights = 0;
+	for (int i = 0; i < ZOMBIE_TABLE_LENGTH; i++)
+	{
+		sumOfWeights += zombieChanceTable[i];
+	}
+	int randomNum = random(0, sumOfWeights);
+	return getStringFromZombieTable(randomNum);
+}

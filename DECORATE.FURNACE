@@ -1,0 +1,114 @@
+#include "DECORATE.CBOX"
+
+//Dummy item
+Actor ShowFurnaceScreen : Inventory {}
+
+
+//The furnace box item you pick up off the ground.
+actor FurnaceItem : CustomInventory
+{
+	Tag "Furnace"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	
+	//+CANPASS ---> crazy CPU usage
+	Health 50
+	Inventory.PickupMessage "Picked up a furnace."
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "FURNY" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	DamageFactor "SentryTurret", 0.0
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			FURN Z -1
+			Wait
+		Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+
+			//This is a bit insane because SXF_ABSOLUTEPOSITION doesn't
+			//actually work. There's no way to position something absolutely,
+			//so we call scripts that convert each coordinate into an absolute
+			//coordinate relative to the map's origin. We then snap it to the grid
+			//and translate it back to where the player is.
+			TNT1 A 0 A_SpawnItemEx("Furnace", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								   64.0, 
+								   0.0, 0.0, 0.0, //velocity 
+								   (angle/90.0)-(angle%90.0), //angle
+								   SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEMOMENTUM /*SXF_ABSOLUTEANGLE*/)
+			//Print these variables to the screen:
+			//TNT1 A 1 ACS_ExecuteAlways(933, 0, x, y, z)
+
+			//try the grid snapping express without absolute
+			//TNT1 A 0 A_SpawnItemEx("CBox", (x>>6)<<6, (y>>6)<<6, 256.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM, 0)
+			
+			//TNT1 A 1 A_Print("hi")
+			Stop
+	}
+}
+//Dummy item
+actor FurnaceFuel : Inventory 
+{ 
+	Inventory.MaxAmount 3600
+}
+actor FurnaceTidCounter : Inventory {}
+
+// A deployed furnace
+Actor Furnace : Actor //: SwitchableDecoration 
+{
+	Tag "Furnace"
+	+SHOOTABLE
+	+NOBLOOD
+	+SOLID
+	+CANPASS
+    +USESPECIAL
+	+FRIENDLY
+	+ISMONSTER // Needed for master/child relationship to work
+
+	Health 200
+	Radius 24
+	Height 38
+	Mass 0x7FFFFFFF
+	
+	DamageFactor "Axe", 100.0
+//SetActivatorToTarget
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 A_SpawnItemEx("MonsterSpawnerRepeller", 0, 0, 0, 0, 0, 0, 0, SXF_SETMASTER, 0)
+			TNT1 A 0 A_PlaySound("click")
+			TNT1 A 0 Thing_SetSpecial(0, 226, 770, 0, 0)
+			TNT1 A 0 ACS_ExecuteAlways(774, 0) //Assign it a unique TID
+			goto Idle
+			//TNT1 A 0 ACS_ExecuteAlways(503, 0)	
+
+			//FURN A 1 Thing_SetSpecial(tid, acs_execute, 770, tid, 0)
+		Idle:
+			TNT1 A 0
+			TNT1 A 0 A_JumpIfInventory("FurnaceFuel", 1, "Cook")
+			FURN A 35
+			Loop
+		Cook:
+			TNT1 A 0
+			//About 1 seconds of burn for 1 FurnaceFuel
+			FURN BCDEFGH 10
+			TNT1 A 0 A_TakeInventory("FurnaceFuel", 1)
+			FURN EFG 10
+			FURN H 10
+			goto Idle
+		Death:
+			TNT1 A 0 //Dummy frame is needed
+			TNT1 A 0 A_KillChildren
+			//Turn back into a CraftingBoxItem when we get destroyed
+			TNT1 A 0 A_SpawnItemEx("FurnaceItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
+			Stop
+	}
+}

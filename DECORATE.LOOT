@@ -1,0 +1,202 @@
+
+actor LootBox : CustomInventory 1112
+{
+	Tag "Loot Box"
+	+SHOOTABLE
+	+NOBLOOD
+	//+CANPASS
+	+WINDTHRUST
+	Health 3
+	Inventory.PickupMessage "Picked up a box of loot!"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "BOX2A0" //"PISTI0"
+	Inventory.MaxAmount 100
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			BOX1 A 3500 //A_Look 
+			//Every 100 seconds, check if the player is out of
+			//sight and destroy ourselves if so.
+			BOX1 A 5 A_CheckSight("Remove")
+			Loop
+		Use:
+			//TNT1 A 0 ACS_ExecuteAlways(920) //Old loot probability script
+			// A_SpawnItemEx("Yellowboy", 8, 0, 8, 0, 0, 0, 0, 0, 0) //128 = 50% chance	
+			TNT1 A 0 A_SpawnItem("LootBoxLoot", 0, 0, 0, 0)
+			Stop
+		Remove:
+			TNT1 A 1 
+			//Remove ourselves if we're too far from the player frustrum.
+			TNT1 A 5 ACS_ExecuteAlways(501, 0)
+			Stop
+	}
+}
+
+actor MediumHighLootBox : LootBox
+{
+	//Translation "64:79=212:223", "48:63=208:210"
+	States
+	{
+		Use:
+			TNT1 A 0 A_SpawnItemEx("MediumHighLoot", 0, 0, 0, 0, 0, 8.0, 0, 0, 0)
+			Stop
+	}
+}
+
+actor LightAmmoLoot : RandomSpawner
+{
+	DropItem "DoomZShellBoxItem",	255, 2
+	DropItem "Shell",				255, 10
+	DropItem "ArrowAmmo", 			255, 10
+	DropItem "ArrowHefty", 			255, 2
+	DropItem "Clip", 				255, 10
+	DropItem "DoomZClipBoxItem", 	255, 2
+}
+
+actor MediumLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	255, 50
+	DropItem "MediumHighLoot",	255, 85
+}
+
+actor MediumHighLoot : RandomSpawner
+{	
+	DropItem "DoomZPistol",		255, 10
+	DropItem "Glock18",			255, 10
+	DropItem "DoomZShotgun",	255, 10
+	DropItem "DoomZChaingun",	255, 5
+	DropItem "Bow",				255, 10
+	DropItem "GreenArmor", 		255, 5
+	DropItem "TurnipSeeds", 	255, 5		
+	DropItem "DoomZEgg", 		255, 5		
+	DropItem "TorchItem", 		255, 5		
+	DropItem "TurnipSeeds", 	255, 5
+	DropItem "Medikit", 		255, 5		
+	DropItem "SentryBox"		255, 5
+	DropItem "CKitItem"			255, 5
+	DropItem "GasolineAmmo"		255, 1
+}
+
+//Super rare good stuff :D
+actor HighLoot : RandomSpawner
+{
+	DropItem "WensternShotgun",		255, 10
+	DropItem "HuntingRifle",		255, 10
+	DropItem "SentryBox"			255, 1
+	DropItem "BlueArmor"			255, 3
+}
+
+actor VanityLoot : RandomSpawner
+{
+	DropItem "TechLampItem",		255, 5
+	DropItem "FloorLampItem",		255, 5
+	DropItem "GargoyleStatueItem",	255, 1
+}
+
+actor ZombieScientistLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot", 	100, 50
+	DropItem "DoomZHealthBonus", 255, 15 //about 1 in 5 drops (15/65) have a 100% chance of dropping health (255/255)
+	//DropItem "", 				255, 50
+}
+
+actor RevenantLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	150, 50
+	DropItem "DoomZPistol",		255, 10
+	DropItem "Knife",			255, 10
+	DropItem "MediumLoot",		255, 2
+}
+
+actor IncarnateLoot : RandomSpawner
+{
+	//Pre-r14:
+	//DropItem "LightAmmoLoot",	128, 50
+	//DropItem "MediumLoot",	128, 30
+	
+	DropItem "MediumHighLoot",	25, 85 // 10% chance of dropping
+}
+
+actor ImpLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	128, 50
+	DropItem "MediumLoot",		255, 10
+}
+
+actor NightImpLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	128, 50
+	DropItem "MediumLoot",		255, 20
+	DropItem "VanityLoot",		255, 2
+}
+
+actor GhoulLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	128, 50
+	DropItem "MediumLoot",		255, 30
+	DropItem "VanityLoot",		255, 5
+}
+
+actor ShadowLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	255, 50
+	DropItem "MediumLoot",		255, 30
+	DropItem "VanityLoot",		255, 5
+}
+
+actor MancubusLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	255, 50
+	DropItem "MediumLoot",		255, 20
+	DropItem "LootBox",			255, 2
+}
+
+actor AzazelLoot : RandomSpawner
+{
+	DropItem "LootBox",		255, 30
+}
+
+actor DemonDogLoot : RandomSpawner
+{
+	DropItem "LightAmmoLoot",	200, 50
+	DropItem "MediumLoot",		255, 5
+}
+
+actor LootBoxLoot : RandomSpawner
+{
+	DropItem "MediumHighLoot",	255, 30
+	DropItem "HighLoot",		255, 1
+	DropItem "VanityLoot",		255, 5	
+}
+
+	/*
+//actor Random
+
+	//{ Item name, 			probability, 	reserved for future use }
+	{ "DoomZChaingun", 		20, 	0 },
+	//{ "RedCard", 			20, 	1 },
+	{ "ShellBox", 			50, 	0 },
+	{ "DoomZPistol", 		200, 	0 },
+	{ "DoomZShotgun", 		50, 	0 },
+	{ "Bow", 				50, 	0 },
+	{ "ShellBox", 			50, 	0 },
+	{ "Knife", 				150, 	0 },
+	//{ "Axe", 				150, 	0 },
+	{ "TorchItem", 			150, 	0 },
+	{ "Shell", 				50, 	0 },
+	{ "Clip", 				50,		0 },
+	{ "Stimpack", 			50,		0 },
+	{ "CKitItem", 			50,		0 },
+	{ "GreenArmor", 		30,		0 },
+	{ "Bow", 				50,		0 },
+	{ "ArrowAmmo", 			30,		0 },
+	{ "ArrowHefty", 		30,		0 },
+	{ "DoomZEgg", 		    5,		0 },
+	{ "SentryBox", 			10,		0 },
+	{ "TurnipSeeds", 		10,		0 },
+	*/

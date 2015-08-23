@@ -1,0 +1,178 @@
+#include "zcommon.acs"
+#library "math"
+
+function int fdistance (int tid1, int tid2)
+{
+	int len;
+	int y = getactory(tid1) - getactory(tid2);
+	int x = getactorx(tid1) - getactorx(tid2);
+	int z = getactorz(tid1) - getactorz(tid2);
+
+	int ang = vectorangle(x,y);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(y, sin(ang));
+	else len = fixeddiv(x, cos(ang));
+
+	ang = vectorangle(len, z);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(z, sin(ang));
+	else len = fixeddiv(len, cos(ang));
+
+	return len;
+}
+
+function int math_max (int a, int b)
+{
+	if (a > b) {
+		return a;
+	} 
+	return b;
+}
+
+function int math_min (int a, int b)
+{
+	if (a < b) {
+		return a;
+	}
+	return b;
+}
+
+function int abs (int x)
+{
+    if (x < 0)
+        return -x;
+
+    return x;
+}
+
+//Derived from: http://zdoom.org/wiki/Distance
+function int fveclength (int x, int y, int z)
+{
+	int len;
+	int ang = vectorangle(x,y);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(y, sin(ang));
+	else len = fixeddiv(x, cos(ang));
+
+	ang = vectorangle(len, z);
+	if(((ang+0.125)%0.5) > 0.25) len = fixeddiv(z, sin(ang));
+	else len = fixeddiv(len, cos(ang));
+
+	return len;
+}
+
+
+//From bagheadspidey - http://forum.zdoom.org/viewtopic.php?f=3&t=21401&start=15
+function int f_sqrt(int number)
+{
+  if (number <= 0) return 0; // result is not a real number
+  int n=number;
+  while( FixedMul(n,n) < number ) n=FixedMul(n,2.0);
+  while( FixedMul(n,n) > number ) n=FixedDiv(n,2.0);
+  int last;
+  for(int i=0; i<10 && last != n; i++)
+  {
+    last = n;
+    n = FixedDiv((FixedDiv(number,n)+n),2.0);
+  }
+  return n;
+}
+
+
+
+int kQuantize = 128;
+
+//Snap a X coordinate to the grid
+script 930 (int x)
+{	
+	//Offset by the object's position so we can convert a relative
+	//position into an absolute one in map coords.
+	//(Converting from fixed to int here too).
+	//int absX = -(GetActorX(0)>>16);
+	int absX = -(x);
+	
+	//int foo = (GetActorX(0)>>16);
+	int foo = (x);
+	//foo+50 makes it round to the nearest instead of rounding down
+	int xq = 50; //x quantization / snapping
+	
+	int msf = (xq/2);
+	if (absX < 0) {
+		msf = -msf;
+	}
+	
+	//Spawn each box in the MIDDLE of each grid cell
+	//(snapping it to the grid then adding half a grid cell)
+	absX += ((foo-(msf))/xq)*xq; 
+
+	SetResultValue(absX);
+}
+
+//Snap a Y coordinate to the grid
+script 931 (int y)
+{
+	//int y = (GetActorY(0)>>16);//>>16);// / kQuantize);
+	//y /= kQuantize;
+	//y *= kQuantize;
+	
+	int yq = 50; //y quantization / snapping
+	//int absY = -(GetActorY(0)>>16);
+	int absY = -(y);
+	
+	//int foo = (GetActorY(0)>>16);
+	int foo = (y);
+	
+	int msf = (yq/2);
+	if (absY < 0) {
+		msf = -msf;
+	}
+	//Spawn each box in the MIDDLE of each grid cell
+	//(snapping it to the grid then adding half a grid cell)
+
+	absY += ((foo-(msf))/yq)*yq;
+
+	SetResultValue(absY);
+}
+
+//Snap a Z coordinate to the grid
+script 932 (int z)
+{
+	int absZ = -(GetActorZ(0)>>16);
+	
+	int foo = (GetActorZ(0)>>16);
+	int zq = 34; //z quantization / snapping
+	
+	int msf = (zq/2);
+	if (absZ < 0) {
+		msf = -msf;
+	}
+	
+	absZ += ((foo-(msf))/zq)*zq;
+
+	//Spawn each box in the MIDDLE of each grid cell
+	//(snapping it to the grid then adding half a grid cell)
+
+	//absZ += (zq/2)<<16;
+	
+	SetResultValue(absZ);
+}
+
+//Snap a Z coordinate to the grid, but at 2x grid size
+script 933 (int z)
+{
+	int absZ = -(GetActorZ(0)>>16);
+	
+	int foo = (GetActorZ(0)>>16);
+	int zq = 34*2; //z quantization / snapping
+	
+	int msf = (zq/2);
+	if (absZ < 0) {
+		msf = -msf;
+	}
+	
+	absZ += ((foo-(msf))/zq)*zq;
+
+	//Spawn each box in the MIDDLE of each grid cell
+	//(snapping it to the grid then adding half a grid cell)
+
+	//absZ += (zq/2)<<16;
+	
+	SetResultValue(absZ);
+}

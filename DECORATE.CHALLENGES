@@ -1,0 +1,22 @@
+/* Achievements / Challenges 
+*/
+actor WeaponKillCounter : CustomInventory
+{
+	Inventory.MaxAmount 0x7FFFFFFF
+	-COUNTITEM
+	
+	States
+	{
+		Spawn:
+			TNT1 A -1
+			stop
+		Pickup:
+			TNT1 A 0
+			TNT1 A 0 ACS_ExecuteAlways(818, 0, 0)
+			stop		
+	}
+}
+
+
+actor AxeKill : WeaponKillCounter {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(818, 0, 0)stop}}

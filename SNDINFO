@@ -1,0 +1,77 @@
+pistol DSPISTOL
+weapons/shotgf1 SHOTGN1
+weapons/shotgf2 SHOTGN2
+weapons/shotgf3 SHOTGN3
+
+creeper/fuse FUSE
+waterfall WATR
+waterstream WATERSTR
+treebreak TREEBRK
+click CLICK
+rocks ROCKS
+lava LAVA
+hey HEY
+thanks THX
+
+xp XP
+misc/i_pkup INVP
+
+
+$RANDOM eat/crunch {eat/crunch1 eat/crunch2 eat/crunch3 eat/crunch4 eat/crunch5}
+eat/crunch1 CRUNCH1
+eat/crunch2 CRUNCH2
+eat/crunch3 CRUNCH3
+eat/crunch4 CRUNCH4
+eat/crunch5 CRUNCH5
+
+
+
+antihunt ANTIHUNT
+$rolloff antihunt 256 768
+$limit antihunt 1 768
+
+ankhcure ANKHCURE
+
+//Objective completed sound.
+quest/objective QUESTOBJ
+
+$limit waterfall 1 1024 //only play 1 instance within 1024 units of each other.
+$limit waterstream 1 1024 //only play 1 instance within 1024 units of each other.
+$volume waterstream 0.5
+
+$volume misc/i_pkup 		0.6
+$volume misc/ammo_pkup 		0.6
+$volume misc/armor_pkup 	0.6
+$volume misc/health_pkup    0.6
+/* These are aliased in Predefined Sounds.... - Hax
+$alias misc/health_pkup		misc/i_pkup	// Pickup health
+$alias misc/armor_pkup		misc/i_pkup	// Pickup armor
+$alias misc/ammo_pkup		misc/i_pkup	// Pickup ammo
+*/
+$volume xp 0.3
+
+// Grappling-Hook
+GraplingHit GRAP1
+$RANDOM GraplingRope {GraplingRope1 GraplingRope2 GraplingRope3 GraplingRope4}
+GraplingRope1 ROPE1
+GraplingRope2 ROPE2
+GraplingRope3 ROPE3
+GraplingRope4 ROPE4
+
+$rolloff GraplingRope 200 2200
+
+$rolloff GraplingHit 40 4000
+
+// Chaingun
+weapons/minigunhold DSMGMID
+weapons/minigunup dsmgup
+weapons/minigundown dsmgdown
+weapons/minigun DSMINIGN
+
+//Ambient sounds
+$alias AmbientLava	lava	// Lava Gurgle
+//$AMBIENT 1 AmbientLava point continous 1.0
+//random 2.0 5.0 1.0
+//point continuous 1.0 
+
+

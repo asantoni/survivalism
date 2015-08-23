@@ -1,0 +1,1850 @@
+/*
+SERVER FLAGS TO USE:
+	alwaysapplydmflags true
+	sv_defaultdmflags false
+	sv_weaponstay false
+
+TODO r14:
+- Bullet puff sounds (use Crash and Death states to distinguish flesh hits from walls)
+- Actually make some good quests
+
+r14 test13:
+- Fixed monster spawner being blocked when you stood beside a torch.
+- Hunger system! Starts at level 14.
+- Chainsaw respawn fix for DoomZ2
+
+DONE r14 bugs:
+- receiving XP during leveling up gives you an extra level
+- Sentries don't damage constructed buildings now
+- turret kills give XP -> solved with damagetype
+- daylight kills might still give XP? -> solved with damagetype
+- something is randomly calling the cancel quest script... ? Or fail quest script? - it's when a quest expires?
+- Sentries are quieter now
+- Can't shoot arrows through boxes anymore
+- Cleanup of the Dragon Quest works correctly if you finish it, but cancelling it does not work at all.
+***Should we make it uncancellable? And make everything disappear after 25 minutes?
+  (How do we remove the dragon in a way that removes the mapspots too but doesn't drop loot?)
+   - the map spots disappear after 25 minutes, but how can we remove the dragon??
+- Nixed the Imp Warlord familiars so they don't ravage the spawn on doomz2
+- Eliminated the pseudo-spectator mode and 15 second respawn timer because it was too buggy
+
+
+DONE r14 tasks:
+- TEST! Especially in multiplayer
+- Revisit easy/medium/hard quest spots in DoomZ1
+Sounds/Music:
+	- Level up
+	- Picked up item
+	- XP received
+	- Quest started
+	- Quest objective completed
+	- Quest completed
+- Disable baddies.acs 505 script NET
+- Place easy/medium/hard quest spots in DoomZ3
+- Place easy/medium/hard quest spots in DoomZ2
+- Make levelling up bling
+- Procedural vegetation system
+- Hunting Rifle uses 4 bullet ammo per shot now, but also does 25% more damage.
+
+DONE r14:
+- Quests!
+- XP and level system
+- Crafting unlocks for leveling up
+- Scrolls that show what you unlocked at each level.
+- XP meter showing progress
+- Revamped the chaingun, shotgun, hunting rifle, axe, knife and tweaked the other weapons
+- Ammo can be stockpiled (ClipBox and ShellBox can be inventory)
+- No ammo drops at night. You must scavenge for it during the day now.
+- Axe alt-fire unlockable (heavy swing) at level 13
+- Advanced Chicken AI - Chickens now get hungry and sleep!
+- New Craftable: Spikes for base defense
+- Fixed DoomZFlamePawn actor leaks in trees and logs (should reduce CPU usage in long-running games)
+- Hemp seeds
+- Small improvements to monster spawning - Enemies don't spawn in trees anymore, and optimized the see/hear distances
+- Fixed not being able to activate crafting boxes sometimes
+- Zombies can now attack logs, so you can't build a wall out of them.
+- Decrease number of eggs chickens lay until there's 40 chickens
+- The fire spell no longer floats away (though many good adventures were had trying to get it down).
+- Maps: DoomZ1 and DoomZ3 updated! 
+- ZombieIncarnates have more health
+- Slightly overhauled menu screens
+r14 beta:
+- Enemies can attack your crops. Protect them!
+- Ghouls buffed and more fun again.
+- Chicken hunger graphics fixed
+- Azazel mission no longer results in net traffic spam / disconnection
+- Shotgun has vertical spread now
+- Torches fixed - preventing zombies from spawning was borked
+- Threw in the occasional Mancubus... !
+- Every 4 nights there will be a more difficult night. Be prepared.
+r14 beta2:
+- Fixed rocks not respawning (Zandronum 2.0 compatibility issue)
+- Wood doesn't pass through solid actors (like your base) anymore.
+- Nerfed the Mancubus night
+- Added tags for all items (human-readable names)
+
+r14 test 11:
+- Splashes - Thanks Enjay!
+- Water bucket! Water your plants to have them grow faster
+- Fixed monster spawner being slightly broken in Zandronum 2.0 - Now more action packed.
+- Reimplemented torches stopping monsters from spawning, twice. Uses even less CPU now and works better than ever.
+- Better water sounds
+
+
+DONE r13fix3:
+- Deep water in DoomZ3
+- Turrets don't shoot planted trees anymore
+- Doors are little bit stronger now
+- To prevent inventory exploit, you can only load your inventory once per game!
+- r13fix2: Fixed doors, crafting boxes, and furnaces from breaking (for real this time)
+
+DONE r13:
+- Chop logs to get wood now! 
+- Chickens can be picked up!
+- Box placer gun can place pillars, floors, and doors now
+- Torches light a bigger area
+- Torches work better at preventing monsters from spawning
+- Light logs on fire for campfires!
+- Fire can spread now. (logs and trees can catch on fire)
+- Doors work way better now.
+- Dogs spawn in packs now
+- Zandronum 2.0 compatibility
+- New, rare vanity items
+- Two new guns
+- New boss! And a special weapon as a reward.
+- Some crazy ACS / DECORATE to make a simple raft. :)
+- Loot boxes spawn 
+- Ghouls are not ridiculously hard now
+- Monster spawner charge
+- Furnace
+- Box placer gun improved - Less glitchy collsion detection. It's much harder to place boxes inside boxes now.
+- Tree growth is slower
+- Doors spawn a bit lower
+- Title screen map and logo!
+- Respawning turnips in a few spots on DoomZ2
+- Chainsaw gas
+
+Deferred to r14:
+- Steel
+
+DONE r12:
+- Torches stop monsters from spawning
+
+DONE r11:
+- Persistent inventory!!!!!!!! (Save it from the basic crafting menu!)
+- Crafting - Basic crafting menu and crafting boxes.
+- Ninja rope by AEnima! Find hemp and use the alt-fire on your bow.
+- Major revamp to DoomZ2!
+- Added Glock18.
+- Polished the weapons more. Timings tweaked, shell casings, and pistols are semi-auto now. 
+- The knife slashes faster, so it's actually useful now.
+- Revamped DECORATE for most monsters. Less buggy!
+- Loot dropping mechanic changed: Monsters drop loot now, and harder monsters
+  drop better loot. Random loot still drops, but is now much more rare.
+- Completely rewritten monster spawner, no more monsters outside the map!
+- Fixed a bunch of tree growing bugs 
+- Scientist unblocking bug - Map too big! Must be within 9400 x 9400 map units.
+- Chickens don't lay eggs so fast >:
+- Box placer gun moved to slot 0
+- The DoomZ2 revamp fixed monsters being unshootable sometimes.
+- Creepers fixed, now more 'splodey. And green!
+- Fixed broken door in secret.
+- Fixed mountain music not playing locally (hopefully)
+- Fixed monsters not spawning enough in the west.
+- Fixed suicide/XDeath not dropping your stuff.
+- Fixed crappy DECORATE coding. New AI for all monsters.
+- Baron of Hell is now harder.
+- Added demon dogs to forest
+- More spawns!!!
+- Added DoomZShadow and DoomZDemonDog
+
+TODO NEXT:
+- Chicken cooking
+- More events
+- Spikes crafting
+- Heracross says one of the old Doom alphas on idgames has a pinky death animation
+  where it explodes...
+- Fix pinky death message. 
+- Grab lighter from Ao Oni?
+- TODO NEXT r11:
+   - Monster Spawner 3.0 DONE
+   - Loot Spawner 3.0 DONE
+	- Fix burning trees
+	- Beds?
+	- Fireplace / Furnace?
+
+	
+
+DONE r10:
+- Chickens (and one pig). Chickens lay eggs!
+- Chickens can be cooked with fire
+- Monsters spawn at better heights now
+- Arrows shot with the bow now arc
+- Death wyvern on big mountain
+- Less pinkies
+- Swamp area improved
+- Turnip Farming
+- Bigger DoomZ2
+- Fixed spectator respawn death
+
+FIXED r9:
+- You can screw up the monster spawner mode if you spectate in an area then join again?
+   - or if you die in the swamp?
+- You can still sometimes never respawn -> Delay(1) between Clear and Give inventory!
+- Turrets were bugged - Ethril says have them clear their targets every once and a while --> That worked!
+- Items don't fall through floors now!
+- Events are more reliable, but don't happen as often (~ 9 minutes)
+
+
+MAYBE FIX:
+- ^^^ I think I should not use inventory for server-side state! --> Delay() seems to make it work 
+    - I'm guessing all actions are timestamped by tic in the netcode, and order is only guaranteed if 
+	  actions/function calls occur at different tics.
+- All items should destroy themselves after a long time (10 mins?)
+- Spread out the boxes more (Dr. Corrupt)
+
+FIXED r8:
+- Tweak the amount of stuff in the construction kit
+- Add a "Hit F1 for instructions!" blurb when you join
+   - Say required OpenGL and gl_use_models 1
+- Make bow and arrow ammo destructible
+- Add skin for door blocks
+- Trees disappearing after you hit them once in multiplayer
+- Don't drop axe or box placer gun
+- Turrets shoot rocks
+- Some rock hitboxes too big
+- Some trees (near big cave entrance, jungle trees) are not solid
+- Fix stuff getting stuck in the sky (get the Z spawn height from an ACS function that goes higher each time?)
+		-> Use DECORATE "fail" flow control statement if Used too fast
+
+
+TODO:
+- Make difficulty become less with more people. Too difficult now
+     (at least during day...)
+- Disasters: Wind, meteor
+- Melee key (SpawnProjectile a punch projectile?)
+- Make the arrows go a bit faster for Dr. Badass
+- Lava outside map to kill monsters?
+- 2D placeholder for 3D box so non-openGL ppl see something
+- Meteor shower - replace rocket sprite with meteor
+- Anti-camping?
+- Jumping zombies / more monster types to make camping
+  harder
+- explosive zombies, faster zombies?>
+- Fireplace?
+- Backpack loot drop
+- Item storage?
+- Custom survial gamemode with slow respawns
+- Fix creepers being able to kill you through walls
+   - also +THRUMONSTERS for creepers (check?)
+- Random resource cluster spawner
+   - Make a monster that moves super fast with A_Wander right
+     at the start of the map and spawns resource clusters
+- Coop with team damage
+- Sprint/stamina mechanic - put away guns to sprint? 
+     And tap in rhythm to sprint?
+- Crafting
+- More missions
+- Loot storage
+- NPCs in town to buy stuff off of
+- Stop dropping loot if players are camping!
+DONE:
+-r7 DONE:
+- Torches!
+- New tree harvesting system
+- MINING! Mine rocks to make stone blocks! 
+- Added a cave with respawning rocks to doomz2
+- Better foliage, way more foliage
+- Monster spawner still spawning for pseudospeced people
+- Make day zombies not attack bases as much
+- Axe by default, construction gun by default
+- Fixed redhead and brown head scientists not disappearing!
+- Crash when dying (SyKoTiC) - Fixed - it was the Axe!
+- Fixed the loot probabilities?
+- The BE server is now coop (so item drops work), no team damage 
+  
+- 30 second player respawn time if numplayers > 1
+- fix spawn animations for all zombie scientists
+- Non-linear day/night cycle
+- add mudmen to swamp
+- Make fog colour change with day/night cycle
+- Turnip farming
+- Zombies attack bases more, change modes on the fly
+- Imp storm
+- Dead trees choppable but regrow super slow
+- Fixed pinky sound bug
+- Turn off "give all keys" in the server config
+- Enable dropping stuff in multiplayer
+- Add Death Incarnates that spawn during the night, are harder
+  but die during the day
+- Set TID on baddie death, then sweep the bodies after a while
+- Armour
+- Bow
+- PROBABILITIES.acs
+- Add SSG drop for Hell Knight
+- "it needs more challenge and a less laggy random spawner" -
+- roofs on bases and doors
+- missions?
+- make punches weaker
+*/
+
+#library "doomzgame"
+#include "zcommon.acs"
+#import "missions.acs"
+#import "player.acs"
+#import "math.acs"
+#import "music.acs"
+#import "probabilities.acs"
+#import "quests.acs"
+#import "ACSNET.acs"
+
+#define RANDOM_LOOT_TID_MIN 8000
+#define RANDOM_LOOT_TID_MAX 8099
+#define BADDIES_TID_MIN 8200
+#define BADDIES_TID_MAX 8399
+#libdefine DEATH_TID_MIN 8450
+#libdefine DEATH_TID_MAX 8499
+#libdefine ANKH_TID_MIN 8500
+#libdefine ANKH_TID_MAX 8549
+#libdefine CONSTRUCTION_TID 99
+#libdefine MINE_ROCK_TID 554
+#define MONSTERSPAWNERPROJ_TID 8400
+#libdefine MONSTER_REPELLER_TID 8401
+//555 is used by respawn points
+#libdefine SEED_TID 8402
+#libdefine FOOD_TID 8403
+
+#libdefine DAYSTATE_DAY 	0
+#libdefine DAYSTATE_NIGHT 	1
+
+#define NUM_SKY_TEXTURES 32 // 0-31
+
+#DEFINE MONSTER_SPAWNER_MODE_OFF 3
+
+#define LOOT_SPAWNER_INTERVAL_SECONDS 20*60 //20 minutes
+
+
+
+//#libdefine kMainLoopPeriodSeconds 20
+int kMainLoopPeriodSeconds = 20;
+int kDayLengthSeconds = 12*60;
+int g_timeOfDaySeconds = 0;
+int g_dayNumber = 1;
+int g_dayState = DAYSTATE_DAY;
+int g_blockXP = false; //global lock for XP, to prevent players from getting free XP from monsters dying at daybreak
+
+
+#libdefine NUM_MONSTER_SPAWNER_MODES 6
+int g_maxBaddiesForSpawnerMode[NUM_MONSTER_SPAWNER_MODES] =
+	{ 16, //Default monsters (zombie mix)
+	  16, //Imps
+	  8,  //Swamp mudmen (ghouls)
+	  0,  //Safe zone (no monsters)
+	  8,  //Shadows
+	  10  //Forest zone
+	};
+
+//Called when the level loads
+script 200 OPEN
+{	
+	//Random loot every 10 minutes
+	ACS_ExecuteAlways(201, 0, 0, 0, 0);
+	
+	if (GameType() == GAME_TITLE_MAP)
+	{
+		kMainLoopPeriodSeconds = 2;
+		kDayLengthSeconds = 48;
+	}
+	
+	//Main game loop
+	while (true)
+	{
+		g_timeOfDaySeconds += kMainLoopPeriodSeconds;
+		if (g_timeOfDaySeconds > kDayLengthSeconds) {
+			g_dayNumber++;
+			g_timeOfDaySeconds = g_timeOfDaySeconds % kDayLengthSeconds;
+		}
+		
+		//Day/night cycle
+		ACS_ExecuteAlways(210, 0, 0, 0, 0);
+
+		//Spawn random loot around each player
+		//ACS_ExecuteAlways(201, 0, 0, 0, 0);
+		
+		//Spawn random badguys around each player
+		//ACS_ExecuteAlways(202, 0, 0, 0, 0);
+
+		//Mission spawner - see MISSIONS.acs
+		ACS_ExecuteAlways(820, 0, 0, 0, 0);
+		
+		//Sleep
+		Delay(35*kMainLoopPeriodSeconds);
+	}
+}
+
+script 221 OPEN
+{
+	while (true)	
+	{
+		//Spawn random badguys around each player
+		ACS_ExecuteAlways(202, 0, 0, 0, 0);
+
+		//Sleep
+		Delay(140);
+	}
+}
+
+//Spawn random loot in a frustrum around each player.
+//TODO: Stop dropping loot if players are camping!
+/* Old loot dropping code... 
+script 201 (void)
+{
+	int kNumLootBoxesPerPlayer = 3;
+	int kMinLootRadius = 1024; //Min distance to player for loot spawning
+	int kMaxLootRadius = 2048; //Max distance from player for loot spawning
+
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		int playerOffset = playerTid - PLAYER_MIN_TID;
+		int tid = RANDOM_LOOT_TID_MIN + playerOffset;
+
+		//Ignore spectators and pseudospectators (players who haven't respawned yet)
+		if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset)) 
+		{
+			continue;
+		}
+		
+		int playerX = GetActorX(playerTid);
+		int playerY = GetActorY(playerTid);
+		int playerZ = GetActorZ(playerTid);
+		int numLootAliveForPlayer = ThingCount(T_NONE, tid);
+		
+		//Spawn up to N loot boxes within a certain radius
+		//of the player.
+		if (numLootAliveForPlayer < kNumLootBoxesPerPlayer)
+		{
+			int numLootToSpawn = kNumLootBoxesPerPlayer - numLootAliveForPlayer;
+
+			//Spawn loot in polar coords, within some radius
+			//of the player.
+			for (int i = 0; i < numLootToSpawn; i++)
+			{
+				int herpderpangle = random(0, 65536);
+				int x = random(kMinLootRadius, kMaxLootRadius)*sin(herpderpangle);
+				int y = random(kMinLootRadius, kMaxLootRadius)*cos(herpderpangle);
+				int z = 32;
+				//Center the loot around the player
+				x += playerX;
+				y += playerY;
+				z += playerZ;
+				
+				Spawn("LootBox", x, y, z, tid);
+			}
+		}
+	}
+}*/
+
+/* Spawn random loot around each player every once and a while */
+script 201 (void)
+{
+	int kNumLootPerPlayer = 2;
+
+	while (true)
+	{
+		Delay(35*LOOT_SPAWNER_INTERVAL_SECONDS);
+
+		for (int playerTid = PLAYER_MIN_TID;
+			 playerTid < PLAYER_MIN_TID+PlayerCount();
+			 playerTid++)
+		{
+			int playerOffset = playerTid - PLAYER_MIN_TID;
+			
+			//Ignore spectators, pseudospectators (players who haven't respawned yet),
+			//and dead players!
+			if ((PlayerIsSpectator(playerOffset) > 0) || (PlayerIsPseudoSpec(playerOffset))
+				|| (ClassifyActor(playerTid) & ACTOR_DEAD)) 
+			{
+				continue;
+			}
+
+			int playerX = GetActorX(playerTid);
+			int playerY = GetActorY(playerTid);
+			int playerZ = GetActorZ(playerTid);
+			//int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+			//int numBadGuysAliveForPlayer = ThingCount(T_NONE, tid);
+			
+			for (int i = 0; i < kNumLootPerPlayer; i++)
+			{
+				int distance = 80;
+				int speed = distance;
+				SpawnProjectile(playerTid, "DoomZLootSpawnerProjectile",  random(0, 65536),  speed, 0, 0, 0);	
+			}
+		}
+	}
+}
+
+//Monster Spawner V3:
+script 202 (void)
+{
+	int kNumBadGuysPerPlayer = 10; //rsomething-r12: 10 //First versions: 3
+
+	if (g_dayState == DAYSTATE_NIGHT)
+	{
+		kNumBadGuysPerPlayer = 40; //12
+	}
+
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		int playerOffset = playerTid - PLAYER_MIN_TID;
+		int tid = BADDIES_TID_MIN + playerOffset;
+		
+		//Ignore spectators, pseudospectators (players who haven't respawned yet),
+		//and dead players!
+		if ((PlayerIsSpectator(playerOffset) > 0) || (PlayerIsPseudoSpec(playerOffset))
+		    || (ClassifyActor(playerTid) & ACTOR_DEAD)) 
+		{
+			continue;
+		}
+
+		int playerX = GetActorX(playerTid);
+		int playerY = GetActorY(playerTid);
+		int playerZ = GetActorZ(playerTid);
+		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		int numBadGuysAliveForPlayer = ThingCount(T_NONE, tid);
+		
+		//Clamp based on the monster spawner mode. Eg. We want less ghouls because they're so hard.
+		//maxBadGuysForThisPlayer = math_min(kNumBadGuysPerPlayer, g_maxBaddiesForSpawnerMode[monsterSpawnerModeForPlayer]);
+		
+		//Spawn up to N bad guys within a certain radius
+		//of the player.
+		//if ((numBadGuysAliveForPlayer < kNumBadGuysPerPlayer) &&
+		if (monsterSpawnerModeForPlayer != MONSTER_SPAWNER_MODE_OFF)
+		{
+			int monsterSpawnerChargeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerCharge");
+			//Log(d:monsterSpawnerChargeForPlayer);
+
+			int numBaddiesToSpawn;
+			if (g_dayState == DAYSTATE_NIGHT) {
+				numBaddiesToSpawn = kNumBadGuysPerPlayer - numBadGuysAliveForPlayer;
+			} else { //Day
+				numBaddiesToSpawn = math_min(g_maxBaddiesForSpawnerMode[monsterSpawnerModeForPlayer], kNumBadGuysPerPlayer*math_max(0.7*monsterSpawnerChargeForPlayer*monsterSpawnerChargeForPlayer, 1)) - numBadGuysAliveForPlayer;
+				//Clamp based on the monster spawner mode. Eg. We want less ghouls because they're so hard.
+				//Log(d:numBaddiesToSpawn);
+
+				//numBaddiesToSpawn = math_max(numBaddiesToSpawn, g_maxBaddiesForSpawnerMode[monsterSpawnerModeForPlayer]);
+				//Log(d:numBaddiesToSpawn);
+			}
+			
+			//Spawn baddies in polar coords, within some radius
+			//of the player.
+			for (int i = 0; i < numBaddiesToSpawn; i++)
+			{
+				int distance = 80;
+				int speed = distance;
+			  // playerX, playerY, playerZ, 
+				SpawnProjectile(playerTid, "DoomZMonsterSpawnerProjectile",  random(0, 65536),  speed, 0, 0, tid);	
+				//SpawnForced("DoomZMonsterSpawnerProjectile", playerX, playerY, playerZ, tid, random(0, 255));
+			}
+		}
+	}
+}
+
+//Spawn a random monster.
+//Get this gets called by the DoomZMonsterSpawnerProjectile when it dies.
+script 203 (void)
+{
+	int tid = ActivatorTID(); //Using getActorX/Y/Z with this doesn't work for some reason,
+						      // we have to use getActorX/Y/Z(0) instead.
+	int x = getActorX(0);  //Don't use tid here!
+	int y = getActorY(0);
+	//int z = getActorZ(0);
+	int z = getActorFloorZ(0); //Spawn on the floor beneath the projectile
+	
+	int randomFacingAngle = random(0, 65536);
+	//Thing_ChangeTID(0, 0); //Removes the TID of the activator only
+	//Spawn("DoomZFemaleScientist", x, y, z, tid, randomFacingAngle); --> not working
+	//I don't know why we have to use SpawnProjectile but we do here:
+	
+	//IMPORTANT: The max delay length here must be less than the duration of the Death
+	//			 state in DoomZMonsterSpawnerProjectile, because the TID of the 
+	//			 projectile could otherwise go away before this code reassigns it.
+	//Thing_ChangeTID(tid, 0);
+	//Delay(random(0, 150)); //READ ABOVE BEFORE TOUCHING
+
+	//Convert the baddie TID back into the player TID
+	int playerOffset = tid - BADDIES_TID_MIN;
+	int playerTid = PLAYER_MIN_TID + playerOffset;
+	//int tid = BADDIES_TID_MIN + playerOffset;
+	//print(s:"activator TID is: ", d:tid);
+	int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+	//Not using the charge here (yet?):
+	//int monsterSpawnerChargeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerCharge");
+
+	//Thing_ChangeTID(0, 0); //Removes the TID of the activator only
+	//SpawnProjectile(0, "DoomZFemaleScientist",  randomFacingAngle,  0, 0, 1.0, tid); //Works!
+	//Spawn("DoomZFemaleScientist", x, y, z, tid, randomFacingAngle); //--> not working
+
+	//pawn("DoomZFemaleScientist", x, y, z, tid, randomFacingAngle);
+	//SpawnForced("DoomZFemaleScientist", x, y, z, tid, randomFacingAngle);
+	
+	//Spawn("DoomZFemaleScientist", x, y, z-128.0, tid, randomFacingAngle);//, tid, randomFacingAngle); //--> not working
+
+	int zOffset = 0.0; //-128.0;
+	
+	switch (monsterSpawnerModeForPlayer)
+	{
+		case 1: //Imp zone
+			if (g_dayState == DAYSTATE_NIGHT) {
+				//SpawnProjectile(0, "DoomZNightImp", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZNightImp", x, y, z+zOffset, tid, randomFacingAngle);
+			} else {
+				//SpawnProjectile(0, "DoomZImp", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZImp", x, y, z+zOffset, tid, randomFacingAngle);
+			}
+			break;
+
+		case 2: //Ghoul zone
+			if (g_dayState == DAYSTATE_NIGHT) {
+				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+			} else {
+				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+			}
+			break;
+			
+		case 3: //No monsters
+			break;
+		case 4: //Shadow zone
+			if (g_dayState == DAYSTATE_NIGHT) {
+				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+			} else {
+				//SpawnProjectile(0, "DoomZShadow", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("DoomZShadow", x, y, z+zOffset, tid, randomFacingAngle);
+			}
+			break;
+		case 5: //Forest zone
+			if (g_dayState == DAYSTATE_NIGHT) {
+				Spawn("DoomZIncarnate", x, y, z+zOffset, tid, randomFacingAngle);
+			} else {
+				Spawn("DoomZDemonDog", x, y, z+zOffset, tid, randomFacingAngle);
+			}
+			break;
+		default: //0 too
+			int randomSpawnType = random(1, 100);
+			if (randomSpawnType % 30 == 0) {
+				//SpawnProjectile(0, "Creeper", randomFacingAngle, 0, 0, 1.0, tid);
+				Spawn("Creeper", x, y, z+zOffset, tid, randomFacingAngle);			
+			}
+			else 
+			{
+				if (g_dayState == DAYSTATE_NIGHT) {
+					if (g_dayNumber % 4 == 0)
+					{
+						if (random(0, 100) <= 5) {
+							Spawn("ZombieMancubus", x, y, z+zOffset, tid, randomFacingAngle);			
+						} else {
+							Spawn("ZombieIncarnate", x, y, z+zOffset, tid, randomFacingAngle);			
+						}
+					}
+					else
+					{
+						if (random(0, 10) <= 3) {
+							str zombie2 = getRandomZombie();
+							//SpawnProjectile(0, zombie2, randomFacingAngle, 0, 0, 1.0, tid);
+							Spawn(zombie2, x, y, z+zOffset, tid, randomFacingAngle);			
+						} else {
+							//SpawnProjectile(0, "ZombieIncarnate", randomFacingAngle, 0, 0, 1.0, tid);
+							Spawn("ZombieIncarnate", x, y, z+zOffset, tid, randomFacingAngle);			
+						}
+					}
+				} else {
+					str zombie = getRandomZombie();
+					Spawn(zombie, x, y, z+zOffset, tid, randomFacingAngle);			
+				}
+			}
+			break;
+	}	
+}
+
+//Spawn a dog from a cluster.
+//Get this gets called by the DogSpawnerProjectile when it dies.
+script 204 (int type, int preserveTID)
+{
+	//preserveTID is used to set the TID of the spawned monster to the activator that spawned it (usually a projectile)
+	//Set preserveTID to 1 for monsters, and 0 for vegetation.
+	
+	int tid = ActivatorTID(); //Using getActorX/Y/Z with this doesn't work for some reason,
+						      // we have to use getActorX/Y/Z(0) instead.
+	if (preserveTID == 0) {
+		tid = 0;
+	}
+	int x = getActorX(0);  //Don't use tid here!
+	int y = getActorY(0);
+	int z = GetActorFloorZ(0); //getActorZ(0);
+	
+	int randomFacingAngle = random(0, 65536);
+
+	if (preserveTID > 0) {
+		//Convert the baddie TID back into the player TID
+		int playerOffset = tid - BADDIES_TID_MIN;
+		int playerTid = PLAYER_MIN_TID + playerOffset;
+		//int tid = BADDIES_TID_MIN + playerOffset;
+		//print(s:"activator TID is: ", d:tid);
+		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		//TODO: UNFINISHED - not sure what I was going for here...
+	}
+
+	int zOffset = 0.0;
+	
+
+	str monster = "";
+	switch (type) {
+		case 0:
+			monster = "DoomZDemonDog";
+			break;
+		case 1:
+			monster = "ChoppableTree";
+			break;
+		case 2:
+			do { 
+				monster = getRandomZombie();
+			} while (StringContains(monster, "Cluster"));
+			break;
+	};
+	
+	//Log(s:"spawning... ", s:monster);
+
+	Spawn(monster, x, y, z+zOffset, tid, randomFacingAngle);	
+}
+
+//Spawn projectiles in a 360 degree radius from the activator and give the 
+//projectiles the TID of the activator.
+//This is used for spawning clusters of monsters!
+script 205 (int type, int numProjectiles, int speed)
+{
+	str projectile = "DogSpawnerProjectile";
+	switch (type) {
+		case 0:
+			projectile = "DogSpawnerProjectile";
+			break;
+		case 1:
+			projectile = "TreeSpawnerProjectile";
+			break;
+		case 2:
+			projectile = "ZombieSpawnerProjectile";
+			break;
+	};
+	
+	//Log(s:"spawning... ", d:type, s:", num projectiles: ", d:numProjectiles, s:", speed: ", d:speed); 
+
+	int shooterTid = ActivatorTID();
+	Thing_ChangeTID(0, 0);
+	for (int i = 0; i < numProjectiles; i++)
+	{
+		//Log(s:"spawning projectile ", d:i, s:" ", s:projectile);
+		SpawnProjectile(0, projectile, random(0, 255), speed, 0, 0, shooterTid);		
+		Delay(1);
+	}
+}
+
+/*
+//Monster Spawner Version 2:
+script 202 (void)
+{
+	int kNumBadGuysPerPlayer = 10; //3
+	int kMinBadGuyRadius = 512; //Min distance to player for bad guy spawning
+	int kMaxBadGuyRadius = 2048; //Max distance from player for bad guy spawning
+
+	if (g_dayState == DAYSTATE_NIGHT)
+	{
+		kNumBadGuysPerPlayer = 40; //12
+	}
+
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		int playerOffset = playerTid - PLAYER_MIN_TID;
+		int tid = BADDIES_TID_MIN + playerOffset;
+		
+		//Ignore spectators and pseudospectators (players who haven't respawned yet)
+		if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset)) 
+		{
+			continue;
+		}
+
+		int playerX = GetActorX(playerTid);
+		int playerY = GetActorY(playerTid);
+		int playerZ = GetActorZ(playerTid);
+		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		int numBadGuysAliveForPlayer = ThingCount(T_NONE, tid);
+		
+		//Spawn up to N bad guys within a certain radius
+		//of the player.
+		if ((numBadGuysAliveForPlayer < kNumBadGuysPerPlayer) &&
+			(monsterSpawnerModeForPlayer != 3))
+		{
+			int numBaddiesToSpawn = kNumBadGuysPerPlayer - numBadGuysAliveForPlayer;
+
+			//Spawn baddies in polar coords, within some radius
+			//of the player.
+			for (int i = 0; i < numBaddiesToSpawn; i++)
+			{
+				int herpderpangle = random(0, 65536);
+				int x = random(kMinBadGuyRadius, kMaxBadGuyRadius)*sin(herpderpangle);
+				int y = random(kMinBadGuyRadius, kMaxBadGuyRadius)*cos(herpderpangle);
+				int z = 128;
+				
+				//Center the monster around the player
+				x += playerX;
+				y += playerY;
+				z += playerZ;
+				
+				int randomFacingAngle = random(0, 65536);
+				switch (monsterSpawnerModeForPlayer)
+				{
+					case 1: //Imp zone
+						if (g_dayState == DAYSTATE_NIGHT) {
+							Spawn("DoomZNightImp", x, y, z, tid, randomFacingAngle);
+						} else {
+							Spawn("DoomZImp", x, y, z, tid, randomFacingAngle);
+						}
+						break;
+					case 2: //Ghoul zone
+						if (g_dayState == DAYSTATE_NIGHT) {
+							Spawn("DoomZGhoul", x, y, z, tid, randomFacingAngle);
+						} else {
+							Spawn("DoomZGhoul", x, y, z, tid, randomFacingAngle);
+						}
+						break;
+					case 3: //No monsters
+						break;
+					case 4: //Shadow zone
+						if (g_dayState == DAYSTATE_NIGHT) {
+							Spawn("DoomZGhoul", x, y, z, tid, randomFacingAngle);
+						} else {
+							Spawn("DoomZShadow", x, y, z, tid, randomFacingAngle);
+						}
+						break;
+					default: //0 too
+						int randomSpawnType = random(1, 100);
+						if (randomSpawnType % 30 == 0) {
+							Spawn("Creeper", x, y, z, tid, randomFacingAngle);			
+						}
+						else {
+							if (g_dayState == DAYSTATE_NIGHT) {
+								if (random(0, 10) <= 3) {
+									str zombie2 = g_dayZombies[random(0, NUM_DAYZOMBIETYPES-1)];
+									Spawn(zombie2, x, y, z, tid, randomFacingAngle);
+								} else {
+									Spawn("ZombieIncarnate", x, y, z, tid, randomFacingAngle);
+								}
+							} else {
+								str zombie = g_dayZombies[random(0, NUM_DAYZOMBIETYPES-1)];
+								//Spawn("ZombieRevenant", x, y, 256, tid, randomFacingAngle);
+								Spawn(zombie, x, y, z, tid, randomFacingAngle);
+							}
+						}
+						break;
+				}
+			}
+		}
+	}
+}
+*/
+
+function bool PlayerIsPseudoSpec (int playerOffset)
+{
+	int playerTid = PLAYER_MIN_TID + playerOffset;
+	if (CheckActorInventory(playerTid, "PseudoSpectatorFlag") > 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+function int getDayFraction (void)
+{
+ 	int fDayFraction = FixedDiv(g_timeOfDaySeconds<<16, 
+								kDayLengthSeconds<<16);
+	return fDayFraction;
+}
+
+/*
+ Day / night cycle 
+ */
+script 210 (void)
+{
+	//int fDayFraction = FixedDiv(g_timeOfDaySeconds<<16, 
+	//							kDayLengthSeconds<<16);
+	int fDayFraction = getDayFraction();
+	
+	//We rescale the day fraction to make the nights shorter. We do this 
+	//by plugging it into a sigmoid function so that it's no longer linear.
+	//Whole rescaling equation is a sigmoid:
+	//	y = 0.5*(1 + (10x-5)/ (1+abs(10x-5)))
+	//Rescale it:
+	int nightShortnessFactor = 10.0; //Higher = shorter night
+	int fX = FixedMul(nightShortnessFactor, fDayFraction) - FixedDiv(nightShortnessFactor, 2.0);
+	//int fX = FixedMul(10.0, fDayFraction) - 5.0;
+	fDayFraction = FixedMul(0.5, (1.0 + FixedDiv(fX, 1.0+abs(fX))));
+					
+					
+	//g_timeOfDaySeconds - the current time
+	//kDayLengthSeconds - the length a day+night cycle in seconds
+
+	//Save a convenience variable indicating whether it's
+	//day or night.
+	if (abs(fDayFraction-0.5) < 0.20)
+	{
+		//If the previous state was day, play the night time music because
+		//it's night now!
+		if (g_dayState == DAYSTATE_DAY) {
+			musicPlayNighttime();
+		}
+		g_dayState = DAYSTATE_NIGHT;	
+		//ChangeSky("NIGHT","NIGHT");
+		//Log(s:"Night");
+	}
+	else {
+	//if ((g_timeOfDaySeconds < (kDayLengthSeconds/4)) || 
+	//	(g_timeOfDaySeconds >= (3*kDayLengthSeconds/4))) {
+
+		//If the previous state was night, kill all the 
+		//night zombies.
+		if (g_dayState == DAYSTATE_NIGHT) {
+			g_blockXP = true; //globally block XP so players don't get free XP for monsters dying at night
+			for (int tid = BADDIES_TID_MIN; tid < BADDIES_TID_MAX; tid++)
+			{
+				Thing_Damage2(tid, 1000, "NoXP"); //Kill everything and don't give any XP for it (second approach. Shouldn't need the global XP lock anymore.)
+				musicPlayDaytime();
+				//Spoil all the food:
+				ACS_ExecuteAlways(954, 0, 0);
+			}
+			g_blockXP = false; 
+		}
+		//It's now day time!
+		g_dayState = DAYSTATE_DAY;
+		//ChangeSky("DAY","DAY");
+	} 
+						
+	int iSkyTexIdx = abs((NUM_SKY_TEXTURES-1) - (FixedMul(fDayFraction, 62.0)>>16)); //62.0 is 31.0 * 2
+	//Log(i:iSkyTexIdx);
+	int skyTexName = strparam(s:"0-", i:iSkyTexIdx);
+	ChangeSky(skyTexName,skyTexName);
+	
+	int sectorTag = 0;
+	int lightLevel = 64.0 + FixedMul(cos(fDayFraction), 200.0); //Sums to 256.0 max
+	lightLevel = (lightLevel>>16)/2 + 128; //Convert back to integer
+
+    Light_ChangeToValue(sectorTag, lightLevel);
+	
+	//DoomZ2 hack :-(
+    Light_ChangeToValue(12, lightLevel);
+    Light_ChangeToValue(13, lightLevel);
+	Light_ChangeToValue(14, lightLevel);
+	
+	//Log(f:fDayFraction);
+	int fogLevel = 255-lightLevel;
+	if (fogLevel < 0) {
+		fogLevel = 258; //Disables fog! :D
+	}
+	//Sector_SetColor(sectorTag, 255, 0, 0, 0); //last param is desaturate
+	//A fade of 0,0,0 is no fog!
+	//A fade of 0,0,1 is black fog!
+	Sector_SetFade(sectorTag, 16, 16, 16);//fogLevel, fogLevel, fogLevel);
+
+	//DoomZ2 hack :-(
+    Sector_SetFade(12, 16, 16, 16);
+    Sector_SetFade(13, 16, 16, 16);
+	Sector_SetFade(14, 16, 16, 16);
+
+    //int lightLevel = GetSectorLightLevel(sectorTag);
+}
+
+//Set the monster spawner mode for the activator.
+script 220 (int monsterSpawnerMode)
+{
+	/* A little bit of defensive coding here. There's a weird bug
+	   where (rarely) players are ending up with the wrong monster spawner mode.
+	   It could be a subtle bug anywhere, including perhaps linedefs not getting
+	   activated in rare cases in multiplayer.
+	*/
+	int playerTID = ActivatorTID();
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	//Ignore spectators and pseudospectators (players who haven't respawned yet)
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset)) 
+	{
+		monsterSpawnerMode = 0; //the default mode is 0!
+	}
+	
+	if ((monsterSpawnerMode == MONSTER_SPAWNER_MODE_OFF) &&
+	    (CheckActorInventory(playerTID, "MonsterSpawnerMode") != MONSTER_SPAWNER_MODE_OFF))
+	{
+		HUDMessage(s:"You feel safer here..."; HUDMSG_FADEOUT, 0, 5, 0.5, 0.4, 0, 3.5);
+		//Print(s:"You feel safer here...");
+	}
+	else if ((monsterSpawnerMode != MONSTER_SPAWNER_MODE_OFF) &&
+	    (CheckActorInventory(playerTID, "MonsterSpawnerMode") == MONSTER_SPAWNER_MODE_OFF))
+	{
+		HUDMessage(s:"You no longer feel safe."; HUDMSG_FADEOUT, 0, 5, 0.5, 0.4, 0, 3.5);	
+		//Print(s:"You no longer feel safe.");
+	}
+	Delay(1);
+	
+	//We use a dummy item in the player's inventory to indicate what
+	//type of monsters the monster spawners should be generating. 
+	//(it changes by biome...). The number of dummy items in the inventory
+	//corresponds to the mode.
+	TakeInventory("MonsterSpawnerMode", 0x7FFFFFFF);
+	Delay(1); //**** Can't take inventory and give it in the same tick (possibly), from the guys in #zamapping.
+	GiveInventory("MonsterSpawnerMode", monsterSpawnerMode);
+	
+	//HudMessage(s:"Herp derp! ", d:monsterSpawnerMode; HUDMSG_PLAIN, 0, CR_ORANGE, 0.5, 0.5, 2.0, 255);
+
+}
+
+//Spawn a random item at the activator. This is called when
+//an LootBox is used from the player's inventory.
+script 920 (void)
+{
+	str thingToSpawn = getLootBoxItem();
+	
+	if (thingToSpawn == "")
+	{
+		Print(s:"The box was empty.");
+		terminate;
+	}
+	
+	Spawn(thingToSpawn, GetActorX(0), GetActorY(0), GetActorZ(0)+16.0);
+}
+
+//*** Script numbers 921 - 929 are reserved for BADDIES.acs
+
+
+
+
+function bool isTheRedKeyOutThereSomewhere (void)
+{
+	//Check if any player has the red key in their inventory.
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		if (CheckActorInventory(playerTid, "RedCard") > 0)
+		{
+			return true;
+		}
+	}
+	
+	//Check if the red key is dropped in the map somewhere
+	if (ThingCountName("RedCard", 0) > 0)
+	{
+		return true;
+	}
+	
+	return false;
+}
+
+/* Script 930-933 are reserved for MATH.acs */
+
+
+//Move an actor slightly towards the player. This is used
+//to offset construction boxes so they can snap together
+//side by side.
+//TODO: FINISH ME - This is not working yet.
+script 934 (void)
+{
+	int playerTID = PLAYER_MIN_TID + PlayerNumber();
+	int boxTID = 0;
+	
+	int x = GetActorX(boxTID) - GetActorX(playerTID);
+	int y = GetActorY(boxTID) - GetActorY(playerTID);
+	int mag = fdistance(playerTID, boxTID);
+	
+	//PrintBold(i:boxTID, s:" ", i:playerTID, s:" ", i:x);
+	
+	PrintBold(i:GetActorX(boxTID), s:" ", i:FixedDiv(x, mag));
+	
+	x = FixedMul(FixedDiv(x, mag), 16.0);
+	y = FixedMul(FixedDiv(y, mag), 16.0);
+	
+	SetActorPosition(boxTID, 
+					 GetActorX(boxTID) + x,
+					 GetActorY(boxTID) + y,
+					 GetActorZ(boxTID), 
+					 false);
+}
+
+// CBoxDoor opening/closing script 
+script 935 (int doorTID)
+{
+	//PrintBold(i:x, s:" ", i:y);
+	//Exit_Normal(0);
+	int playerTID = ActivatorTID();
+	SetActivatorToTarget(0);
+	//SetActorProperty(0, APROP_Gravity, false);
+	
+	//SetActorPosition(0, GetActorX(0), GetActorY(0),
+	//				 GetActorZ(0)+(76<<16), false);
+	if (SetActorState(0, "Open"))
+	{
+		//Make the player be the door's target so it can
+		//watch until the player walks away before it closes (A_JumpIfCloser)...
+		//Zandronum 2.0 maybe?
+		//SetPointer(AAPTR_TARGET, playerTID);
+	}
+	//Fight desync
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	Delay(1);
+	//Delay(35*2);
+
+	//SetActorState(0, "Closed");
+	//SetActorPosition(0, GetActorX(0), GetActorY(0),
+	//				 GetActorZ(0)-(76<<16), false);
+	//SetActorProperty(0, APROP_Gravity, true);
+}
+
+// Mine generation
+script 936 (void)
+{
+	int x = GetActorX(0);
+	int y = GetActorY(0);
+	int z = GetActorZ(0);
+	int maxDist = 640.0;
+	for (int i = 0; i < 2; i++)
+	{
+		Spawn("DaggerFallThing41", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+		Spawn("DaggerFallThing42", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+		Spawn("DaggerFallThing60", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+		Spawn("DaggerFallThing139", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+		Spawn("DaggerFallThing143", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+	}
+}
+
+//Heal trees back to their full health so regrowing works
+script 937 (void)
+{
+	int tid = ActivatorTID();
+	SetActorProperty(tid, APROP_Health, 20000);
+}
+
+//Lock construction mutex
+script 938 (void)
+{
+	int playerTID = ActivatorTID();
+	//GiveActorInventory(playerTID, "ArmorBonus", 75);
+	//GiveInventory("GreenArmor", 75);
+
+	if (CheckInventory("ConstructionMutex") > 0) {
+		//ACS_Execute(933, 0, CheckInventory("ConstructionMutex"));
+		SetResultValue(false);
+	} else {
+		//GiveActorInventory(playerTID, "ConstructionMutex", 1); <-- Not working, dunno why
+		GiveInventory("ConstructionMutex", 1);
+		//ACS_Execute(933, 0, CheckInventory("ConstructionMutex"));
+		SetResultValue(true);
+	}
+}
+
+//Release construction mutex
+script 939 (int delayTics)
+{
+	Delay(delayTics); //Throttle the construction box placing by 10/35 seconds
+	int playerTID = ActivatorTID();
+
+	//TakeActorInventory(playerTID, "ConstructionMutex", 1);
+	TakeInventory("ConstructionMutex", 1);
+	//ACS_Execute(933, 0, CheckInventory("ConstructionMutex"));
+
+	//ACS_Execute(933, 0, ActivatorTID());
+	SetResultValue(true);
+}
+
+//Check if actor has been placed on soil. This is used
+//to see if turnips have been planted on soil or not.
+script 940 (void)
+{
+	if (CheckActorFloorTexture(0, "FLAT10") ||
+		CheckActorFloorTexture(0, "ASHWALL4"))
+	{
+		SetResultValue(true);
+	}
+	else
+	{
+		SetResultValue(false);
+	}
+}
+
+//Check if actor has been placed on soil or grass. This is used
+//to see if trees have been planted on soil/grass or not.
+script 941 (void)
+{
+	if (CheckActorFloorTexture(0, "FLAT10") ||
+		CheckActorFloorTexture(0, "ASHWALL4") ||
+		CheckActorFloorTexture(0, "RROCK19") ||
+		CheckActorFloorTexture(0, "GRASS1"))
+	{
+		SetResultValue(true);
+	}
+	else
+	{
+		SetResultValue(false);
+	}
+}
+
+/*
+//Fire mutex (OnFire)
+script 941 (void)
+{
+	//int playerTID = ActivatorTID();
+
+	if (CheckInventory("OnFire") > 0) {
+		SetResultValue(false);
+		Log(s:"Already on fire, skipping...");
+		//SetActorState(0, "Douse");
+	} else {
+		GiveInventory("OnFire", 1);
+		SetResultValue(true);
+		Log(s:"Not on fire, catching...");
+	}
+	//Delay(2); //Inventory sync
+}
+
+//Remove OnFire flag from master (the thing that's on fire)
+//The flame actor calls this when it burns out.
+script 942 (void)
+{
+	//int oldTid = ActivatorTID();
+	//int master = UniqueTID();
+	//Thing_ChangeTID(0, );
+	//int masterTID = UniqueTID();
+	SetActivator(0);//, AAPTR_MASTER);
+	TakeInventory("OnFire", 0x7FFFFFFF);
+	SetActorState(0, "Grow");
+}*/
+
+/* script 950-959 are reserved for tutorial.acs */
+
+
+//From GZDoomBuilder's commonFuncs.h 
+function int unusedTID(int start, int end)
+{
+    int ret = start - 1;
+    int tidNum;
+
+    if (start > end) { start ^= end; end ^= start; start ^= end; }  // good ol' XOR swap
+    
+    while (ret++ != end)
+    {
+        if (ThingCount(0, ret) == 0)
+        {
+            return ret;
+        }
+    }
+    
+    return -1;
+}
+
+//int lastPlayerBoatActivator = 0;
+
+//Raft script
+script 943 (void)
+{
+/* Old approach where player is the activator to begin with (USESPECIAL or BUMPSPECIAL),
+   and then we get the boat TID by getting the 
+
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
+	{
+		terminate;
+	}
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+	
+
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		Log(s:"Non-player activator!");
+		//terminate;
+	}
+	
+	//The current activator is usually the player, so this next line will make the 
+	//player's target the new activator.
+	SetActivatorToTarget(0);
+	
+	//If the player is still the activator, then that means the player didn't have
+	//the boat under their crosshairs when they activated it.
+	if (PlayerNumber() >= 0) {
+		Log(s:"Try pointing at the edge of the boat to activate it!");
+		terminate;
+	}
+*/
+
+	//NEW
+	int boatTid = ActivatorTID();
+	
+	if (boatTid == 0) {
+		boatTid = unusedTID(5000, 6000);
+		Thing_ChangeTID(0, boatTid);
+	}
+	//Log(s:"Raft TID:", d:boatTid);
+
+	//NEW
+	SetActivatorToTarget(boatTid);
+	int playerTID = ActivatorTID();
+
+	ThingSound(playerTID, "click", 127);
+
+	if (GetActorVelY(boatTid) > 0)
+	{
+		//Log(s:"Raft already started. Aborting.");
+		//terminate;
+	}
+
+/*
+	if (CheckActorInventory(boatTid, "PlatformDirection") > 0) {
+		//SetActorState(boatTid, "MoveBackwards");
+		TakeActorInventory(boatTid, "PlatformDirection", 0x7FFFFFFF);
+		Delay(1);
+		GiveActorInventory(boatTid, "PlatformDirection", 2);
+	} else {
+		//SetActorState(boatTid, "Move");
+		TakeActorInventory(boatTid, "PlatformDirection", 0x7FFFFFFF);
+		Delay(1);
+		GiveActorInventory(boatTid, "PlatformDirection", 1);
+		Delay(1);
+	}
+*/
+
+	//Alternative mode: Freezing the player to the boat.
+	//SetActorProperty(playerTID, APROP_Speed, 0);
+	
+	int kBoatRadius = 120.0;
+	int kBoatHeight = 16.0;
+	
+	SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
+
+	while (true)
+	{
+		for (int i = PLAYER_MIN_TID; i < PLAYER_MIN_TID+PlayerCount(); i++)
+		{
+			if ((abs(GetActorX(boatTid)-GetActorX(i)) <= kBoatRadius) && 
+				(abs(GetActorY(boatTid)-GetActorY(i)) <= kBoatRadius)) //no APROP_Radius until Zandro 2.0? :-(
+			{
+				//SetActorVelocity(i, 0.0, FixedDiv(GetActorVelY(boatTid), 1.6), 0, false, false);
+				SetActorVelocity(i, 0.0, FixedDiv(GetActorVelY(boatTid), 1.4), 0, true, false);
+				//SetActorVelocity(i, 0.0, GetActorVelY(boatTid), 0, true, false);
+			}
+		}
+		//Alternative mode: Freezing the player to the boat.
+		//SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+4.0, false);
+		Delay(8);
+	}
+}
+
+script 944 (int playerTID)
+{
+	SetActivatorToTarget(playerTID);
+	//Thing_Remove(GetActivatorTID());
+}
+
+
+//Boat script
+//Totally not finished yet. Check out the raft script above (and DECORATE.RAFT) if you want to 
+//see how I made the hell raft in the doomz2 map.
+script 945 (void) 
+{
+	int playerTID = ActivatorTID();
+
+	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
+	{
+		terminate;
+	}
+	
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+	
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}
+
+	//Prevent each spacebar press from re-activating the boat
+	if (GetActorProperty(0, APROP_Speed) == 0) {	
+		terminate;
+	}
+	/*
+	//NEW
+	int boatTid = ActivatorTID();
+	
+	if (boatTid == 0) {
+		boatTid = unusedTID(5000, 6000);
+		Thing_ChangeTID(0, boatTid);
+	}
+	Log(s:"Boat TID:", d:boatTid);
+
+	//NEW
+	SetActivatorToTarget(boatTid);
+	int playerTID = ActivatorTID();
+	*/
+	
+	SetActivatorToTarget(0);
+	//log(d:targetTid);
+	if (PlayerNumber() >= 0) {
+		Print(s:"Try pointing at the side of the boat to activate it!");
+		//ACS_Execute(751, 0, 0);
+		terminate;
+	}
+	int boatTID = ActivatorTID();
+	Log(s:"Boat TID:", d:boatTID);
+	//int furnaceFuelAmount = CheckActorInventory(furnaceTID, "FurnaceFuel");
+	
+	//Set the activator back to being the player
+	SetActivator(playerTID);
+	
+
+
+	ThingSound(playerTID, "click", 127);
+
+	if (GetActorVelY(boatTid) > 0)
+	{
+		Log(s:"Boat already started. Aborting.");
+		terminate;
+	}
+
+	int kBoatRadius = 120.0;
+	int kBoatHeight = 16.5;
+
+	//Alternative mode: Freezing the player to the boat.
+	SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
+	int oldPlayerSpeed = GetActorProperty(playerTID, APROP_Speed);
+	SetActorProperty(playerTID, APROP_Speed, 0);
+	
+	while (true)
+	{
+		/*
+		for (int i = PLAYER_MIN_TID; i < PLAYER_MIN_TID+PlayerCount(); i++)
+		{
+			if ((abs(GetActorX(boatTid)-GetActorX(i)) <= kBoatRadius) && 
+				(abs(GetActorY(boatTid)-GetActorY(i)) <= kBoatRadius)) //no APROP_Radius until Zandro 2.0? :-(
+			{
+				//SetActorVelocity(i, 0.0, FixedDiv(GetActorVelY(boatTid), 1.6), 0, false, false);
+				SetActorVelocity(i, 0.0, FixedDiv(GetActorVelY(boatTid), 1.4), 0, true, false);
+				//SetActorVelocity(i, 0.0, GetActorVelY(boatTid), 0, true, false);
+			}
+		}*/
+		
+		SetActorAngle(boatTid, GetActorAngle(playerTid));
+		//SetActorVelocity(boatTid, 
+		
+		//Alternative mode: Freezing the player to the boat.
+		SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
+		Delay(1);
+				
+		int buttons = GetPlayerInput(-1, INPUT_BUTTONS);
+
+		//Exit if you hit the jump button
+		if (buttons & BT_JUMP)
+		{
+			//buttonDepressed = true;
+			//print(d: selectedItemIdx);
+			//Delay(1);
+			//ACS_ExecuteAlways(751, 0);
+			ActivatorSound("click", 127);
+			SetActorProperty(playerTID, APROP_Speed, oldPlayerSpeed);
+			terminate;		   
+		}
+	}
+}
+
+//Print debug (all players)
+script 946 (int x, int y, int z)
+{
+	PrintBold(s:"DEBUG:", d:x, s:" ", d:y, s:" ", d:z);
+	PrintBold(s:"DEBUG: Activator TID: ", d:ActivatorTID());
+}
+
+//Spawn a new tree after some random delay
+//FIXME: Try again with Zandronum 2.0.
+script 947 (void)
+{
+	//Delay(35);
+	//FIXME: This line always returns 0 (or string 0)
+	int foo = GetActorProperty(ActivatorTID(), APROP_NameTag);
+	Log(s:"Spawning:", d:foo);
+	Log(s:"at:", d:GetActorX(0));
+	//Spawn(GetActorProperty(0, APROP_NameTag), 0, 0, 16.0);
+	Spawn("DaggerFallThing53", GetActorX(0), GetActorY(0), GetActorZ(0)+16.0);
+}
+
+//Chicken lay egg script. Caps the number of eggs!
+script 948 (void)
+{
+	int MAX_CHICKENS = 40;
+	int numChickens = ThingCountName("DoomZChicken", 0);
+	if (numChickens >= MAX_CHICKENS) {
+		terminate;
+	}
+	
+	//Lower the probability of actually laying an egg (linearly) as the number 
+	//of chickens grows toward the max number of chicknes.
+	if (random(0, MAX_CHICKENS) > numChickens)
+	{
+		Spawn("DoomZEgg", GetActorX(0), GetActorY(0), GetActorZ(0));
+	}
+}
+
+//Use an ammo box
+script 949 (int ammoType)
+{
+	switch(ammoType)
+	{
+		case 0:
+			UseInventory("DoomZShellBoxItem");
+			break;
+		default:
+			Print(s:"Unknown ammo type in script 949");
+			break;
+	}
+}
+
+int gridSize = 4096.0;
+int kVegDisappearDistance = 2896.5; // sqrt(2*gridSize*gridSize)
+
+script 950 ENTER CLIENTSIDE
+{
+	while (true)
+	{
+		int playerTID = ActivatorTID();
+		int playerX = GetActorX(playerTID);
+		int playerY = GetActorY(playerTID);
+		
+		int VEGETATION_TID = 8888;
+		int MAX_VEGETATION_COUNT = 1024; //Per quadrant
+		int currentVegCount = ThingCount(T_NONE, VEGETATION_TID);
+		int numVeggiesToGenerate = MAX_VEGETATION_COUNT - currentVegCount;
+
+		int gridCellSpacing = 256.0;
+		int gridCellCountWide = 16;
+		
+		//The vegetation is generated on a square grid. This grid is populated with cells,
+		//with a plant on each cell vertex. The origin of the grid is shifted such that the
+		//the player is always at the center of the grid.
+		int vegGridOriginX = playerX - gridSize/2; //- (playerX % gridSize);
+		int vegGridOriginY = playerY - gridSize/2; //- (playerY % gridSize);
+
+		for (int i = 0; i < MAX_VEGETATION_COUNT; i++)
+		{
+			int vegX = vegGridOriginX + (i%gridCellCountWide)*gridCellSpacing;
+			int vegY = vegGridOriginY + (i/gridCellCountWide)*gridCellSpacing;
+			
+			//Snap to a second coordinate grid, which serve as the input variables for the 
+			//procedural generation (vegetation type, position deviation, etc.)
+			vegX -= (vegX % gridCellSpacing);
+			vegY -= (vegY % gridCellSpacing);
+			
+			//Deterministic RNG code from Mathias Byens: https://gist.github.com/mathiasbynens/5670917
+			int seed = (vegX+vegX) - (vegY+vegY);
+			// Robert Jenkins’ 32 bit integer hash function
+			seed = ((seed + 0x7ED55D16) + (seed << 12))  & 0xFFFFFFFF;
+			seed = ((seed ^ 0xC761C23C) ^ (seed >> 19)) & 0xFFFFFFFF;
+			seed = ((seed + 0x165667B1) + (seed << 5))   & 0xFFFFFFFF;
+			seed = ((seed + 0xD3A2646C) ^ (seed << 9))   & 0xFFFFFFFF;
+			seed = ((seed + 0xFD7046C5) + (seed << 3))   & 0xFFFFFFFF;
+			seed = ((seed ^ 0xB55A4F09) ^ (seed >> 16)) & 0xFFFFFFFF;
+			int w1 = FixedDiv(seed & 0xFFFFFFF, 0x10000000);
+
+			seed = (vegX + vegX) + (vegY + vegY);
+			seed = ((seed + 0x7ED55D16) + (seed << 12))  & 0xFFFFFFFF;
+			seed = ((seed ^ 0xC761C23C) ^ (seed >> 19)) & 0xFFFFFFFF;
+			seed = ((seed + 0x165667B1) + (seed << 5))   & 0xFFFFFFFF;
+			seed = ((seed + 0xD3A2646C) ^ (seed << 9))   & 0xFFFFFFFF;
+			seed = ((seed + 0xFD7046C5) + (seed << 3))   & 0xFFFFFFFF;
+			seed = ((seed ^ 0xB55A4F09) ^ (seed >> 16)) & 0xFFFFFFFF;
+			int w2 = FixedDiv(seed & 0xFFFFFFF, 0x10000000); // / 0x10000000;
+
+			
+			//TODO: Calculate vegation variant based off seed!
+			
+			int variant = ((FixedMul(w1, 4.0) + 0.5) >> 16); //rounded - 0 to 4
+		
+			//2D waves! Could be useful as ocean wave generator!!!
+			//vegX += FixedMul(256.0, sin(FixedDiv(vegX % gridSize, gridSize)));
+			//vegY += FixedMul(256.0, cos(FixedDiv(vegY % gridSize, gridSize)));
+
+
+			//Spawn it with a temporary TID and drop it to the floor.
+			int tempTID = VEGETATION_TID + 1;
+
+			vegX += FixedMul(w1 - 0.5, 256.0);
+			vegY += FixedMul(w2 - 0.5, 256.0);
+			
+			//Dummy actor so we can check the floor texture:
+			Spawn("DaggerfallThing1", vegX, vegY, GetActorCeilingZ(playerTID)-256.0, tempTID);
+			
+			int floorZ = GetActorFloorZ(tempTID);
+			
+			//The game freaks out and +DONTOVERLAP doesn't work correctly
+			//when we're outside the limits floating point precision limits of the
+			//Doom engine. The position comparison of the engine fails due to precision problems.
+			if (vegX > 9400.0 || vegY > 9400.0) {
+				Thing_Remove(tempTID);
+			}
+			if (vegX < -9400.0 || vegY < -9400.0) {
+				Thing_Remove(tempTID);
+			}
+			
+			if (CheckActorFloorTexture(tempTID, "FLAT10") ||
+				CheckActorFloorTexture(tempTID, "ASHWALL4"))
+			{
+				Thing_Remove(tempTID);
+
+				str vegClass = "ProceduralGrass1";
+				if (variant == 0) {
+					vegClass = "ProceduralGrass2";
+				} else if (variant == 1) {
+					vegClass = "ProceduralGrass3";
+				} else if (variant == 2) {
+					vegClass = "ProceduralGrass4";
+				} else if (variant == 3) {
+					vegClass = "ProceduralGrass5";
+				} else if (variant == 4) {
+					vegClass = "ProceduralGrass6";
+				} else if (variant == 5) {
+					vegClass = "ProceduralGrass7";
+				} else if (variant == 6) {
+					vegClass = "ProceduralGrass8";
+				} else if (variant == 7) {
+					vegClass = "ProceduralGrass9";
+				}
+				/*
+				} else if (variant == 8) {
+					vegClass = "ProceduralGrass2";
+				} else if (variant == 9) {
+					vegClass = "ProceduralGrass2";
+				} else {
+					vegClass = "ProceduralGrass2";
+				}					*/
+				if (!Spawn(vegClass, vegX, vegY, floorZ, tempTID)) {
+					//Log(s:"spawn failed ", d:i);
+					continue;
+				}
+				
+				 //Line of sight check to ensure it's inside the map
+				 /*
+				if (!ACS_ExecuteWithResult(958, playerTID, tempTID))
+				{
+					Thing_Remove(tempTID);
+					continue;
+				}*/
+				
+				//We use the actor's score to store the player TID
+				SetActorProperty(tempTID, APROP_SCORE, playerTID);
+				Thing_ChangeTID(tempTID, VEGETATION_TID);
+				
+			} else {
+				Thing_Remove(tempTID);
+			}
+			
+
+		}
+
+		Delay(8);
+	}
+}
+
+//Distance check for procedural vegetation
+script 951 (int playerTID) 
+{
+	//See also script 958!!!
+	
+	//TODO: Need to 
+	if (fdistance(0, playerTID) > kVegDisappearDistance) { // 5793.0 2896.3 //sqrt(2*gridSize*gridSize)
+		SetActorState(0, "Death");
+	}
+}
+
+//Check if the actor is on water. Used by the water bucket.
+script 952 (int playerTID)
+{
+	int hitWater = CheckActorFloorTexture(0, "FWATER1")  || 
+					CheckActorFloorTexture(0, "FWATER2") ||
+					CheckActorFloorTexture(0, "FWATER3") ||
+					CheckActorFloorTexture(0, "FWATER4");
+		
+	//Since this function is being called from a projectile, 
+	//we can set the activator back to the player by calling this like so:
+	//Reference: http://zdoom.org/wiki/SetActivatorToTarget
+	SetActivatorToTarget(0);
+	
+	//SetActivator(playerTID);
+	//Now the player is the activator.
+	
+	if (hitWater) {
+		GiveInventory("WaterAmmo", 10);
+		SetResultValue(true);
+	} else {
+		SetResultValue(false);
+	}
+}
+
+/* Called by food when it spawns. Set the TID of an actor to be the food TID. 
+   This is how we make all the food on a map spoil.
+*/ 
+script 953 (void)
+{
+	Thing_ChangeTID(0, FOOD_TID);
+}
+
+//Spoil all the food on the map after a 1 minute delay.
+script 954 (void)
+{
+	Delay(35*60);
+	
+	//Remove all food on the ground
+	Thing_Remove(FOOD_TID);
+	
+	//Remove all food from every player's inventory
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		int playerOffset = playerTid - PLAYER_MIN_TID;
+		TakeActorInventory(playerTid, "CookedChicken", 0x7FFFFFFF);
+		TakeActorInventory(playerTid, "Turnip", 0x7FFFFFFF);		
+	}
+	
+	PrintBold(s:"Any food you had has spoiled.");
+}
+
+
+//Summon Death to follow the player since they died of hunger.
+//The player must get an Ankh an use it to stop Death.
+script 955 (void)
+{
+	int playerTid = ActivatorTID();
+	int playerOffset = playerTid - PLAYER_MIN_TID;
+	int deathTID = DEATH_TID_MIN + playerOffset;
+	int ankhTID = ANKH_TID_MIN + playerOffset;
+	
+	//If there already is a death actor roaming the map for this player, return.
+	if (ThingCount(T_NONE, deathTID) > 0) {
+		Thing_Hate(deathTID, playerTID, 5); //Hunt and attack the player
+		terminate;
+	}
+	
+	Print(s:"Death is now stalking you...");
+	SpawnForced("DoomZDeath", GetActorX(playerTid)+512.0, GetActorY(playerTid)+512.0, getActorZ(playerTid), deathTID, 0);
+	Thing_Hate(deathTID, playerTID, 5); //Hunt and attack the player
+	
+	Delay(100);
+	Print(s:"Find the Ankh to cheat death!");
+	
+	//Summon the ankh at a random easy questspot on the map:
+	
+	if (CheckActorInventory(playerTid, "Ankh") > 0) { //Unless the player already has an ankh somehow (shouldn't happen...)
+		terminate;
+	}
+	
+	int numEasyQuestSpotsOnMap = countQuestSpots(MIN_EASYQUESTSPOT_TID, MAX_EASYQUESTSPOT_TID);
+	int questSpotTID = random(MIN_EASYQUESTSPOT_TID, MIN_EASYQUESTSPOT_TID + numEasyQuestSpotsOnMap - 1);
+
+	SpawnForced("Ankh", GetActorX(questSpotTID), GetActorY(questSpotTID), GetActorZ(questSpotTID), ankhTID, 0);
+	
+}
+
+//Called by the Ankh of Life when it's used. Kills the Death actor chasing the player
+//after they die of hunger and removes the curse.
+script 956 (void)
+{
+	int playerTid = ActivatorTID();
+	int playerOffset = playerTid - PLAYER_MIN_TID;
+	int deathTID = DEATH_TID_MIN + playerOffset;
+
+	//If there is no death actor roaming the map for this player, return.
+	//if (ThingCount(T_NONE, deathTID) == 0) {
+	if (CheckInventory("DeathCurse") <= 0) {
+		SetResultValue(0);
+		terminate;
+	}
+
+	
+	//Play the cure music
+	LocalAmbientSound("ankhcure", 127);
+
+	SetActorProperty(playerTid, APROP_Invulnerable, 1);
+	int oldSpeed = GetActorProperty(0, APROP_Speed);
+	int oldMass = GetActorProperty(0, APROP_Mass);
+	SetActorProperty(playerTid, APROP_Speed, 0);
+	SetActorProperty(playerTid, APROP_Mass, 0x7FFFFFFF);
+
+	FadeTo(255, 255, 255, 1.0, 3.0);
+	Radius_Quake(4, 35, 0, 4, 0);
+	Delay(35*1);
+	Radius_Quake(6, 35, 0, 4, 0);
+	Delay(35*1);
+	Radius_Quake(9, 35, 0, 4, 0);
+	Delay(35*1);
+	FadeTo(0, 0, 0, 1.0, 2.0);
+	Delay(35*2);
+	
+	Thing_Destroy(deathTID, 1);
+	TakeActorInventory(playerTid, "DeathCurse", 0x7FFFFFFF);
+	TakeActorInventory(playerTid, "HungerLevel", 0x7FFFFFFF);
+
+
+	Delay(35*3);
+
+	FadeTo(0, 0, 0, 0.0, 1.0);
+	Delay(35*1);
+	
+	for (int angle = 0; angle < 255; angle += 255/10) {
+		SpawnProjectile(playerTid, "CreeperExplosion", angle, 80, 0, 0, 0);
+	}
+	
+	Delay(45);
+	SetActorProperty(playerTid, APROP_Invulnerable, 0);
+	SetActorProperty(playerTid, APROP_Speed, oldSpeed);
+	SetActorProperty(playerTid, APROP_Mass, oldMass);
+
+	//Play the quest completed music.
+	//ACS_ExecuteAlways(117, 0, 0);
+	Print(s:"You have defeated death!");
+}
+
+script 957 (void) 
+{
+	int playerTid = ActivatorTID();
+	int hasDeathCurse = (CheckInventory("DeathCurse") > 0);
+	SetResultValue(hasDeathCurse);
+}
+
+//Line of sight check for procedural vegetation system - Used by the vegetation
+//to test if they spawned outside the map or not.
+script 958 (int playerTID)
+{
+	if (!CheckSight(0, playerTID, CSF_NOBLOCKALL | CSF_NOFAKEFLOORS)) {
+		SetActorState(0, "Death");
+	}
+}
+

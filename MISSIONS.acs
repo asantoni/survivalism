@@ -1,0 +1,225 @@
+
+#library "missions"
+#include "zcommon.acs"
+#import "player.acs"
+#import "math.acs"
+#import "music.acs"
+#import "probabilities.acs"
+#import "doomzgame.acs"
+
+//#define MISSION_SCRIPT_MIN 825
+//#define MISSION_SCRIPT_MAX 826
+#define MISSION_MONSTER_TID 5000
+
+#define MISSION_INTERVAL_SECONDS 540 //9 minutes
+int g_missionIntervalTimer = 0;
+
+script 820 (void)
+{
+	//This script gets called in the main game loop,
+	//which executes every kMainLoopPeriodSeconds seconds.
+	//That's too frequent for missions, so let's randomly bail
+	//here so missions are only added every few minutes.
+	g_missionIntervalTimer += kMainLoopPeriodSeconds;
+	if (g_missionIntervalTimer < MISSION_INTERVAL_SECONDS)
+	{
+		terminate;
+	}
+	g_missionIntervalTimer = 0; //Reset it.
+	
+	//Pick a random mission to execute
+	int scriptId = getRandomMission();//random(MISSION_SCRIPT_MIN, MISSION_SCRIPT_MAX);
+	
+	//Start a new mission if there isn't one ongoing
+	//if (!isMissionOngoing()) {
+	//	ACS_ExecuteAlways(scriptId, 0);
+	//}
+	cancelOngoingMission();
+	ACS_ExecuteAlways(scriptId, 0);
+}
+
+function void cancelOngoingMission (void)
+{
+	Thing_Remove(MISSION_MONSTER_TID);
+}
+
+function bool isMissionOngoing (void)
+{
+	if (ThingCount(0, MISSION_MONSTER_TID) > 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+//Announce the mission
+script 821 (int popupText)
+{
+	SetFont("BIGFONT");
+	HudMessage(s:popupText;
+		HUDMSG_FADEOUT, 2, CR_RED, 0.5, 0.5, 4.0, 3, 1);
+}
+
+//Spawn a monster close to the centroid of all players.
+script 822 (int strMonsterToSpawn)
+{
+	int averagePlayerX = 0;
+	int averagePlayerY = 0;
+	int maxPlayerZ = 0;
+	
+	for (int playerTid = PLAYER_MIN_TID;
+		 playerTid < PLAYER_MIN_TID+PlayerCount();
+		 playerTid++)
+	{
+		int playerOffset = playerTid - PLAYER_MIN_TID;
+		
+		//Ignore players that are in a no-monster zone for this calculation.
+		//If you're just building stuff in a no-monster zone, then I don't
+		//want to ruin your day.
+		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		if (monsterSpawnerModeForPlayer == 3) {
+			continue;
+		}
+		//int tid = BADDIES_TID_MIN + playerOffset;
+		
+		int playerX = GetActorX(playerTid);
+		int playerY = GetActorY(playerTid);
+		int playerZ = GetActorZ(playerTid);
+		//int numBadGuysAliveForPlayer = ThingCount(T_NONE, tid);
+		averagePlayerX += playerX;
+		averagePlayerY += playerY;
+		maxPlayerZ = math_max(maxPlayerZ, playerZ);
+	}
+	
+	int numPlayers = PlayerCount();
+	if (numPlayers <= 0) {
+		terminate;
+	}
+	averagePlayerX /= numPlayers;
+	averagePlayerY /= numPlayers;
+	//averagePlayerZ /= numPlayers;
+	
+	int kMinBossRadius = 512;
+	int kMaxBossRadius = 1024;
+	int randomAngle = random(0, 65536);
+	int monsterSpawnX = random(kMinBossRadius, kMaxBossRadius)*sin(randomAngle);
+	int monsterSpawnY = random(kMinBossRadius, kMaxBossRadius)*cos(randomAngle);
+	int monsterSpawnZ = maxPlayerZ;
+	
+	//Center the monster around the centroid of all players
+	monsterSpawnX += averagePlayerX;
+	monsterSpawnY += averagePlayerY;
+	
+	Spawn(strMonsterToSpawn, monsterSpawnX, monsterSpawnY, monsterSpawnZ,
+		  MISSION_MONSTER_TID, random(0, 255));
+}
+
+//Spawn a monster in the frustrum **around one particular player**
+script 823 (int strMonsterToSpawn, int playerTID, int ZOffset)
+{
+	int playerX = GetActorX(playerTid);
+	int playerY = GetActorY(playerTid);
+	int playerZ = GetActorZ(playerTid);
+	
+	int numPlayers = PlayerCount();
+	if (numPlayers <= 0) {
+		terminate;
+	}
+	
+	int kMinBossRadius = 512;
+	int kMaxBossRadius = 1024;
+	int randomAngle = random(0, 65536);
+	int monsterSpawnX = random(kMinBossRadius, kMaxBossRadius)*sin(randomAngle);
+	int monsterSpawnY = random(kMinBossRadius, kMaxBossRadius)*cos(randomAngle);
+	int monsterSpawnZ = playerZ + ZOffset;
+	
+	//Center the monster around the centroid of all players
+	monsterSpawnX += playerX;
+	monsterSpawnY += playerY;
+	
+	Spawn(strMonsterToSpawn, monsterSpawnX, monsterSpawnY, monsterSpawnZ,
+		  MISSION_MONSTER_TID, random(0, 255));
+}
+
+//Hell Knight mission
+script 825 (void)
+{
+	//Announce it.
+	ACS_ExecuteAlways(821, 0, "A Hell Knight has been summoned.");
+	
+	//Spawn the monster.
+	ACS_ExecuteAlways(822, 0, "DoomZHellKnight");
+	
+	//Play scary music
+	musicPlayBoss();
+}
+
+//Baron of Hell mission (the harder one)
+script 826 (void)
+{
+	//Announce it.
+	ACS_ExecuteAlways(821, 0, "A Baron of Hell has been summoned.");
+	
+	//Spawn the monster.
+	ACS_ExecuteAlways(822, 0, "DoomZBaronOfHell");
+	
+	//Play scary music
+	musicPlayBoss();
+}
+
+//Imp Storm!
+script 827 (void)
+{
+	int numImpsToSpawnPerPlayer = 12;
+	
+	//Announce it.
+	ACS_ExecuteAlways(821, 0, "Imp Storm!");
+	
+	for (int playerTid = PLAYER_MIN_TID;
+	 playerTid < PLAYER_MIN_TID+PlayerCount();
+	 playerTid++)
+	{
+		for (int i = 0; i < numImpsToSpawnPerPlayer; i++)
+		{
+			//Spawn imps around each player.
+			ACS_ExecuteAlways(823, 0, "DoomZImp", playerTid, 0);
+		}
+
+		//Radius_Quake(1, 35*2, 0, 1024, playerTid);
+		// "world/quake");
+	}
+	
+	//Play scary music
+	musicPlayBoss();
+}
+
+
+//Demolition Squad!
+script 828 (void)
+{
+	int numDemoZombsToSpawnPerPlayer = 12;
+	
+	//Announce it.
+	ACS_ExecuteAlways(821, 0, "A demolition squad\nhas been spotted!");
+	
+	for (int playerTid = PLAYER_MIN_TID;
+	 playerTid < PLAYER_MIN_TID+PlayerCount();
+	 playerTid++)
+	{
+		for (int i = 0; i < numDemoZombsToSpawnPerPlayer; i++)
+		{
+			//Spawn demolition zombies around each player.
+			//These try to attack bases right away.
+			if (random(0,1) == 1) {
+				ACS_ExecuteAlways(823, 0, "DemolitionZombie", playerTid, 0);
+			} else {
+				ACS_ExecuteAlways(823, 0, "DemolitionZombie2", playerTid, 0);
+			}
+		}
+	}
+	
+	//Play scary music
+	musicPlayBoss();
+}
+
+//Script 850 - 870 are reserved for PLAYER.ACS

@@ -1,0 +1,331 @@
+#library "baddies"
+#include "zcommon.acs"
+#import "doomzgame.acs"
+#import "player.acs"
+#import "quests.acs" //Only referenced by script 505
+#import "math.acs"
+
+
+// Script 500 - ?? Reserve for BADDIES.acs
+// Script 921 - 929 Reserved  for BADDIES.acs
+
+//Change the movement speed of the activator
+script 500 (int speed)
+{
+	SetActorProperty(0, APROP_SPEED, speed);
+}
+
+script 501 (void)
+{
+	Thing_Remove(0);
+}
+
+//Set up the hate behaviour for certain types of monsters
+//so that they attack bases.
+script 502 (void)
+{
+	int randomNum = random(1, 25);
+	if (randomNum <= 2)
+	{
+		//5 - Hate actors with given TID and ignore player attacks
+		//ie. Attack bases and ignore players, even when shot!
+		Thing_Hate(0, CONSTRUCTION_TID, 5);
+	}
+	else if (randomNum <= 5)
+	{
+		//1 - Hate actors with given TID and attack players when shot
+		//ie. Attack bases and attack the player when shot
+		Thing_Hate(0, CONSTRUCTION_TID, 1);	
+	}
+	else
+	{
+		//Just regular attack-on-sight mode
+		Thing_Hate(0, 0, 0); //TEST ME!
+	}
+}
+
+//All construction materials should be spawned with
+//the TID set to CONSTRUCTION_TID so that we can make some 
+//monsters "hate" them and try to attack your bases.
+script 503 (void)
+{
+	Thing_ChangeTID(0, CONSTRUCTION_TID);
+}
+
+//Demolition squad AI
+script 504 (void)
+{
+	//1 - Hate actors with given TID and attack players when shot
+	//ie. Attack bases and attack the player when shot
+	Thing_Hate(0, CONSTRUCTION_TID, 1);	
+}
+
+//Spawn a dragon and set up all the special mapspots it needs.
+//Uses unique TIDs so we can create multiple dragons at once (sweet!)
+script 505 (int spawnTID, int questIdx)
+{
+	Log(s:"Spawning dragon around TID:", d:spawnTID);
+	Log(s:"Dragon quest has index:", d:questIdx);
+	int x = GetActorX(spawnTID);
+	int y = GetActorY(spawnTID);
+	int z = GetActorFloorZ(spawnTID) + FixedDiv(GetActorCeilingZ(spawnTID) - GetActorFloorZ(spawnTID), 2.0);
+	Log(s:"Dragon Z is:", f:z);
+	int r = 700.0;
+	//int minTID = 250;
+	/*
+	for (int i = 1; i <= 6; i++)
+	{
+		str spotClass = StrParam(s:"DoomZDragonSpot", d:i);
+		Spawn(spotClass, x+FixedMul(r, sin(42*i)), y+FixedMul(r, cos(42*i)), z+256.0, minTID+(i-1));
+	}
+	Spawn("DoomZDragon", x, y, z, 250);
+	*/
+	
+	int MIN_TID = 250;
+	int MAX_TID = 500;
+	int dragonTID = unusedTID(MIN_TID, MAX_TID);
+	int spotTID1 = dragonTID; //unusedTID(250, 500);
+	//The dragonTID has to be shared with the first waypoint map spot.
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.16)), y+FixedMul(r, cos(0.16)), z, spotTID1);
+	int spotTID2 = unusedTID(spotTID1+1, MAX_TID);
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.32)), y+FixedMul(r, cos(0.32)), z, spotTID2);
+	int spotTID3 = unusedTID(spotTID2+1, MAX_TID);
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.48)), y+FixedMul(r, cos(0.48)), z, spotTID3);
+	int spotTID4 = unusedTID(spotTID3+1, MAX_TID);
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.64)), y+FixedMul(r, cos(0.64)), z, spotTID4);
+	int spotTID5 = unusedTID(spotTID4+1, MAX_TID);
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.72)), y+FixedMul(r, cos(0.72)), z, spotTID5);
+	int spotTID6 = unusedTID(spotTID5+1, MAX_TID);
+	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.96)), y+FixedMul(r, cos(0.96)), z, spotTID6);
+	
+	Log(s:"Dragon spots:");
+	Log(d:spotTID1);
+	Log(d:spotTID2);
+	Log(d:spotTID3);
+	Log(d:spotTID4);
+	Log(d:spotTID5);
+	Log(d:spotTID6);
+	Log(s:"Dragon TID: ", d:dragonTID);
+
+	
+	Thing_SetSpecial(spotTID1, 0, spotTID6, spotTID2, 0);
+	Thing_SetSpecial(spotTID2, 0, spotTID1, spotTID3, 0);
+	Thing_SetSpecial(spotTID3, 0, spotTID2, spotTID4, 0);
+	Thing_SetSpecial(spotTID4, 0, spotTID3, spotTID5, 0);
+	Thing_SetSpecial(spotTID5, 0, spotTID4, spotTID6, 0);
+	Thing_SetSpecial(spotTID6, 0, spotTID5, spotTID1, 0);	
+	/*
+	SetActivator(spotTID1);	SetPointer(AAPTR_MASTER, dragonTID);
+	SetActivator(spotTID2);	SetPointer(AAPTR_MASTER, dragonTID);
+	SetActivator(spotTID3);	SetPointer(AAPTR_MASTER, dragonTID);
+	SetActivator(spotTID4);	SetPointer(AAPTR_MASTER, dragonTID);
+	SetActivator(spotTID5);	SetPointer(AAPTR_MASTER, dragonTID);
+	SetActivator(spotTID6);	SetPointer(AAPTR_MASTER, dragonTID);
+	*/
+	Spawn("DoomZQuestDragon", x, y, z, dragonTID);
+	
+	/* Didn't work...
+	GiveActorInventory(dragonTID, "DZDSpotTID1", spotTID1);
+	GiveActorInventory(dragonTID, "DZDSpotTID2", spotTID2);
+	GiveActorInventory(dragonTID, "DZDSpotTID3", spotTID3);
+	GiveActorInventory(dragonTID, "DZDSpotTID4", spotTID4);
+	GiveActorInventory(dragonTID, "DZDSpotTID5", spotTID5);
+	GiveActorInventory(dragonTID, "DZDSpotTID6", spotTID6);
+	*/
+	//SetThingSpecial(dragonTID, 0, spotTID1, 0, 0);
+	//This kinda worked:
+	//Thing_SetSpecial(dragonTID, 0, spotTID6, spotTID2, 0);
+	Log(s:"Dragon check:", d:ThingCountName("DoomZQuestDragon", dragonTID));
+	//XXX: Can't set the special of the dragon here because both the first mapspot and the dragon share the same TID!
+
+	g_activeQuestStats[questIdx][QUEST_STATS_COMPASSDIR] = dragonTID; //Point the compass towards the dragon
+
+	//The dragon will randomly change it's TID to be the same as the tracer spot
+	//it's flying towards. To actually detect if the dragon has died, we just 
+	//count the total number of actors with the 6 TIDs that we handed out. 
+	//There should be 7 actors if the dragon is still alive, or 6 otherwise.
+	int totalDragonRelatedActors = 0;
+	//Delay(1);
+	//do {
+		totalDragonRelatedActors = 0;
+		/*
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", dragonTID); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID1); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID2); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID3); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID4); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID5); //ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCountName("DoomZQuestDragon", spotTID6); //ThingCount(T_NONE, spotTID1);
+		*/
+
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID1);
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID2);
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID3);
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID4);
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID5);
+		totalDragonRelatedActors += ThingCount(T_NONE, spotTID6);
+		Log(s:"Total dragon actors: ", d:totalDragonRelatedActors);
+		Log(s:"Dragon check:", d:ThingCountName("DoomZQuestDragon", dragonTID));
+		//Delay(70);
+	//} while (totalDragonRelatedActors >= 0);
+	
+	//Flip this flag to indicate that the dragon died.
+	//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = 1;
+
+	SetResultValue(dragonTID);
+}
+
+script 506 (void)
+{
+/*
+	//The activator is funky here?
+	SetActivatorToTarget(0);
+	int tracer = GetActorProperty(0, APROP_TracerTID);
+	Log(s:"tracer TID:", d:tracer); 
+*/
+
+	int oldTid = ActivatorTID();
+	Log(s:"Dragon old TID: ", d: oldTid);
+	int newTid=unusedTID(500, 1000);
+	Thing_ChangeTID(0, newTid);
+	//Thing_SetSpecial(0, 0, newTid, 0, 0);
+}
+
+
+//Dragon map spot TID tracker to help the DoomZDragon DECORATE remove
+//those map spots when the dragon dies.
+script 507 (int mapSpotIdx)
+{
+	switch (mapSpotIdx)
+	{
+		case 1:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID1"));
+			break;
+		case 2:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID2"));
+			break;
+		case 3:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID3"));
+			break;
+		case 4:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID4"));
+			break;
+		case 5:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID5"));
+			break;
+		case 6:
+			SetResultValue(CheckInventory("DoomZDragonSpotTID6"));
+			break;
+	}
+}
+
+script 508 (void)
+{
+	Log(s:"Dragon flap: Changing TID from ", d:ActivatorTID(), s:" back to ", d:CheckInventory("DragonTIDTracker"));
+	Thing_ChangeTID(0, CheckInventory("DragonTIDTracker"));
+}
+
+
+script 509 (void)
+{
+	Log(s:"In script 509!");
+	Print(s:"In script 509!");
+	int dragonTID = ActivatorTID();
+	Log(s:"Dragon starter: TID is: ", d:dragonTID);
+	GiveInventory("DragonTIDTracker", dragonTID);
+}
+
+//Let chickens "hate" seeds when they're hungry
+script 510 (int mode)
+{ 
+	//5 - Hate actors with given TID and ignore player attacks
+	//ie. Attack seeds and ignore players, even when shot!
+	if (mode == 1) {
+		//SetActorProperty(0, APROP_Friendly, 0); //Must not be friendly for Thing_Hate to work - the docs seem wrong on that one?
+		Thing_Hate(0, SEED_TID, 1);
+		//Log(s:"Enabling chicken seed hate...");
+	}
+	else {
+		Log(s:"Clearing chicken hate...");
+		//Thing_Hate(0, 0, 0);//-1, 4); //For whatever reason, these are the only params in Zandro 1.3 that actually seems to clear the hate correctly.
+		Thing_Hate(0, 0, 1); //For whatever reason, these are the only params in Zandro 1.3 that actually seems to clear the hate correctly.
+		//Thing_Hate(0, -1, 4); //For whatever reason, these are the only params in Zandro 1.3 that actually seems to clear the hate correctly.
+		//-1, 4); //For whatever reason, these are the only params in Zandro 1.3 that actually seems to clear the hate correctly.
+		//SetActorProperty(0, APROP_Friendly, 1);
+	}
+} 
+
+//All seeds should be spawned with
+//the TID set to SEED_TID so that chickens can "hate" them
+//when they're hungry
+script 511 (void)
+{
+	Thing_ChangeTID(0, SEED_TID);
+}
+
+//All monster spawner repellers are spawned with TID set to MONSTER_REPELLER_TID
+//so that monster spawner projectiles can destroy themselves if they get within
+//range of one. This used to work in reverse but it was too slow over time
+// - Monster repellers used to "attack" monster spawner projectiles, but
+//   the number of torches/repellers gets too high in long games and having them
+//   A_Look every tic takes up too much CPU usage.
+//There's much less CPU usage if we make the monster spawner projectiles destroy
+//themselves if they see a repeller/torch. This function is part of that implementation.
+script 512 (void)
+{
+	Thing_ChangeTID(0, MONSTER_REPELLER_TID);
+}
+
+
+/* Script 520-530 Reserved for CONVERSATION.acs 
+
+*/
+
+//ZombieRevenant item drop
+script 921 (void)
+{
+	str thingToSpawn = "";
+	int randomNum = random(0, 1000);
+	if (randomNum > 700)
+	{
+		thingToSpawn = "LootBox";
+	}
+	else if (randomNum > 600)
+	{
+		thingToSpawn = "Clip";
+	}
+	Spawn(thingToSpawn, GetActorX(0) + 8.0, GetActorY(0), GetActorZ(0));
+}
+
+//DoomZShadow item drop
+script 922 (void)
+{
+	str thingToSpawn = "";
+	int randomNum = random(0, 1000);
+	if (randomNum < 500)
+	{
+		thingToSpawn = "LootBox";
+	}
+	else//if (randomNum > 700)
+	{
+		thingToSpawn = "DoomZEgg";
+	}
+	Spawn(thingToSpawn, GetActorX(0) + 12.0, GetActorY(0), GetActorZ(0));
+}
+
+//Stun a chicken when a player uses it 
+script 923 (int chickenTid, int foo)
+{
+	int playerTid = ActivatorTID();
+
+	//Log(s:"Chicken tid:", d:chickenTid, s:" ", d:foo);
+	if (GetActorProperty(chickenTid, APROP_Health) <= 0)
+	{
+		terminate;
+	}
+	
+	SetActivatorToTarget(playerTid);
+	//Thing_Remove(0);
+	//Stun the chicken
+	SetActorState(0, "Stunned");
+}

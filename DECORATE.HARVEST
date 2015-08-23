@@ -1,0 +1,843 @@
+/* This was originally an alternate version of ChoppableTree that called a script
+   when it dies in order to respawn itself. The script doesn't work
+   in Zandronum 1.3 though, but I'm keeping the code around in case it works
+   in Zandronum 2.0. The reason this approach is preferred is so that:
+     A) We won't be affected by non-solid actors being buggy/jittery in multiplayer.
+	 B) Trees won't be respawned if they're blocked (eg. by buildings)
+
+   Because we can't make this approach work (and work around the Zandronum bugs),
+   I've added TreeSeeds to the game. 
+*/
+Actor ChoppableTree
+{
+  +SHOOTABLE
+  +NOBLOOD
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+  +STANDSTILL
+  //+ACTLIKEBRIDGE //Added in r14 so that enemies don't get stuck on top of trees
+  +SOLID
+   Monster
+  -COUNTKILL
+  -PUSHABLE
+  -WINDTHRUST
+  -CANBLAST
+
+  +ISMONSTER //So master/child works with fire
+  Mass 0x7FFFFFFF
+  //Health 0x7FFFFFFF
+  Health 200
+  PainChance 255
+  
+  //PainChance "Axe", 255 //100% chance of going into Pain state
+  //PainChance "Fire", 255 //100% chance of going into Pain state
+  //DamageFactor "Axe", 1.0
+  //DamageFactor "Fire", 1.0
+  //DamageFactor "Fire" 0.1
+  
+  States
+  {
+	  Spawn:
+	 	TNT1 A 1
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+		TNT1 A 0 A_Look
+	  SpawnStill:
+		NTRE A -1
+		Stop
+	 //These pain states have to be in this order! And there must be matching Death states!
+	  /*
+	  Pain:
+		TRNP A 35 A_Pain
+		goto Spawn
+	    //goto Pain.Fire
+	  */
+	  Pain.Axe:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		TNT1 A 0 A_GiveToTarget("TreeChopXP", 1)
+		TNT1 A 0 A_SpawnItemEx("LogItem", 0, 0, 64.0, random(-4.0,4.0), random(-4.0,4.0), 8.0)
+	  Pain.Water:
+	    TNT1 A 0 A_KillChildren //Put out any fires
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 1 //Dummy frame if we get this far
+		//TNT1 A 18 //Half a second wait to prevent server desync
+		//TNT1 A -1
+		goto Spawn //Weird hack to make the trees not go invisible in multiplayer, Zandro bug?
+	   Pain.Fire:
+		TNT1 A 0
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		goto SpawnStill
+	  //These death states have to be in this order!
+	  /*Death:
+		TNT1 A 0
+	    Stop
+	  */
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("LogItem", 0.0, 0.0, 32.0, 0, 0, 8.0)
+		TNT1 A 0 A_SpawnItemEx("TreeSeeds", 0.0, 0.0, 64.0, 3.0, 0.0, 8.0, random(0, 255), 0, 128)
+		TNT1 A 1 A_SpawnItemEx("TreeSeeds", 0.0, 0.0, 64.0, 2.0, 0.0, 8.0, random(0, 255), 0, 128)
+		TNT1 A 1 A_SpawnItemEx("TreeSeeds", 0.0, 0.0, 64.0, 1.0, 0.0, 8.0, random(0, 255), 0, 128)
+		TNT1 A 1 A_SpawnItemEx("TreeSeeds", 0.0, 0.0, 64.0, 1.0, 0.0, 8.0, random(0, 255), 0, 128)
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_RemoveChildren(true)
+		TNT1 A 0 A_PlaySound("treebreak")
+		//TNT1 A 35 ACS_ExecuteAlways(947, 0, 0) //Call a script that uses APROP_NameTag to spawn another tree after a delay
+	    Stop
+	  Death.Fire:
+		TNT1 A 0
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_RemoveChildren(true)
+		TNT1 A 0 A_PlaySound("treebreak")
+		//TNT1 A 0 ACS_ExecuteAlways(947, 0, 0) //Call a script that uses APROP_NameTag to spawn another tree after a delay
+		Stop
+  }
+}
+
+/* 
+Old tree class that becomes invisible/non-solid once it "dies", and "respawns"
+a few minutes later. Deprecated in r14.
+
+Actor ChoppableTree
+{
+  +SHOOTABLE
+  +NOBLOOD
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+  +STANDSTILL
+  +SOLID
+   Monster
+  -PUSHABLE
+  -WINDTHRUST
+  -CANBLAST
+
+  +ISMONSTER //So master/child works with fire
+  Mass 0x7FFFFFFF
+  //Health 0x7FFFFFFF
+  Health 20000
+  PainChance 255
+  
+  //PainChance "Axe", 255 //100% chance of going into Pain state
+  //PainChance "Fire", 255 //100% chance of going into Pain state
+  //DamageFactor "Axe", 1.0
+  //DamageFactor "Fire", 1.0
+  //DamageFactor "Fire" 0.1
+  
+  States
+  {
+	  Spawn:
+	 	TNT1 A 1
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+	  SpawnStill:
+		NTRE A -1
+		Stop
+	  HealAndSpawn: //Part of regrowing. This state makes inheritance easier.
+		TNT1 A 1
+		//TNT1 A 1 A_TakeInventory("OnFire", 0x7FFFFFFF)
+		TNT1 A 1 ACS_ExecuteAlways(937) //Heal us. HealThing doesn't have a max in Zandronum 1.2 :(
+		TNT1 A 0 A_UnHideThing //Have to call these here for some reason. They don't work right in the Spawn state in subclasses... ?
+		TNT1 A 0 A_SetShootable
+		TNT1 A 0 A_SetSolid
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+		// Repeating these to workaround desync issues in multiplayer
+	    TNT1 A 4 A_Jump(256, "Spawn")
+	    TNT1 A 4 A_Jump(256, "Spawn")
+	    TNT1 A 4 A_Jump(256, "Spawn")
+	    TNT1 A 4 A_Jump(256, "Spawn")
+	    TNT1 A 4 A_Jump(256, "Spawn")
+	    TNT1 A 4 A_Jump(256, "Spawn")
+		goto Spawn
+	  Crumble:
+	    TNT1 A 0 A_PlaySound("treebreak")
+	  Grow:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		//TNT1 A 5 A_NoBlocking
+		TNT1 A 0 A_HideThing
+		TNT1 A 0 A_UnSetShootable
+		TNT1 A 0 A_UnsetSolid
+		TNT1 A 0 A_KillChildren
+		//25% chance it'll regrow every 4 minutes
+		//TNT1 A 8400 - r12
+		//25% chance it'll regrow every 10 minutes
+		TNT1 A 21000 //- r13
+		TNT1 A 1 A_Jump(64, "HealAndSpawn") //Dynamic dispatch
+		Loop
+	 //These pain states have to be in this order! And there must be matching Death states!
+	 //
+	  //Pain:
+	//	TRNP A 35 A_Pain
+	//	goto Spawn
+	 //   //goto Pain.Fire
+	  Pain.Axe:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		TNT1 A 0 A_KillChildren //Put out any fires
+		TNT1 A 0 A_SpawnItemEx("LogItem", 0, 0, 64.0, random(-4.0,4.0), random(-4.0,4.0), 8.0)
+		TNT1 A 0 A_JumpIf(health < 20000-200, "Crumble") //A_JumpIfHealthLower(20000-200, "Grow") <-- does not work
+		TNT1 A 0 A_JumpIf(health < 20000-200, "Crumble") //A_JumpIfHealthLower(20000-200, "Grow") <-- does not work
+		TNT1 A 0 A_JumpIf(health < 20000-200, "Crumble") //A_JumpIfHealthLower(20000-200, "Grow") <-- does not work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 1 //Dummy frame if we get this far
+		//TNT1 A 18 //Half a second wait to prevent server desync
+		//TNT1 A -1
+		goto Spawn //Weird hack to make the trees not go invisible in multiplayer, Zandro bug?
+	   Pain.Fire:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(health < 20000-300, "Crumble")
+		TNT1 A 0 A_Jump(256, "SpawnStill") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "SpawnStill") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "SpawnStill") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "SpawnStill") //A_Jump is evaluated at run-time so this makes inheritance work		
+		goto SpawnStill
+
+	  //These death states have to be in this order!
+	  //Death:
+	  // TNT1 A 0
+	  // Stop
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("LogItem")
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 //TODO: Call a script that uses APROP_NameTag to spawn another tree after a delay
+	    Stop
+	  Death.Fire:
+		TNT1 A 0
+		TNT1 A 0 A_KillChildren
+		Stop
+  }
+}
+
+*/
+
+Actor SlowChoppableTree : ChoppableTree
+{
+
+  States
+  {
+	  GrowCheck:
+	  	TNT1 A 1 //Dummy frame so A_Jump works
+		//There's a 1/256 chance that this tree will respawn
+		//every 10 second (35 ticks).
+		TNT1 A 0 A_UnsetSolid
+		TNT1 A 0 A_UnsetShootable
+		//6% chance it'll regrow every 4 minutes
+		//TNT1 A 8400 // r12
+		//6% chance it'll regrow every 10 minutes
+		TNT1 A 21000 //- r13
+		TNT1 A 1 A_Jump(16, "HealAndSpawn") //Dynamic dispatch
+		Loop
+		/*
+	    TNT1 A 350 A_Jump(1, "Spawn")
+		TNT1 A 35 A_Jump(256, "GrowCheck")
+		goto GrowCheck*/
+  }
+}
+
+
+ACTOR SmallTreeHarvestable : ChoppableTree 10710
+{
+  Radius 16
+  Height 96
+    
+  States
+  {
+	  Spawn:
+	  	TNT1 A 0 		
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+		TREN A 0 A_SetSolid
+		TREN A 0 A_SetShootable
+	  SpawnStill:
+		TREN A -1
+		Stop
+  }
+}
+
+ACTOR Tree6 : SmallTreeHarvestable 10711
+{
+	States
+	{
+	  Spawn:
+		TREA A 0 A_SetSolid
+		TREA A 0 A_SetShootable
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+	  SpawnStill:
+		TREA A -1
+		Stop
+	}
+}
+
+ACTOR PlantedTurnip 10750
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  +SOLID
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 1.0
+  DamageFactor "Fire", 1.0
+  DamageFactor "Water", 1.0
+  
+  States
+  {
+	Spawn:
+		TNT1 A 1 
+		//Check if we planted on soil or grass
+		TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Wilt")
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+	
+	//Ripening will take 10 mins by default. If you water your plant 10 times, you can cut it down to 3 minutes.
+	WaitUntilRipe:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP C 2100 // Progress every 1 minute
+		TRNP C 1 A_GiveInventory("Ripeness", 10) //Ripen the plant a bit
+		goto WaitUntilRipe
+	WaitUntilRipeWatered:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP D 2100 // Progress every 1 minute
+		TRNP D 1 A_GiveInventory("Ripeness", 34) //Ripen the plant a bit
+	Pain.Water:
+		TNT1 A 0 
+		goto WaitUntilRipeWatered
+	Ripe:
+		TNT1 A 0 A_SpawnItemEx("RipePlantedTurnip", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		Stop
+	Death.Axe:
+	Death:
+	Wilt:
+		TRNP E 2100 // 1 minute
+		Stop
+  }
+}
+
+actor Ripeness : Inventory
+{
+	Inventory.MaxAmount 100
+}
+
+
+actor RipePlantedTurnip
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  +SOLID
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 1.0
+  DamageFactor "Fire", 1.0
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 0
+		TRNP A 16800 // only stay ripe for 8 minutes then die
+		goto Death
+	  Pain.Axe:
+	    TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("Turnip", 0, 0, 0, 0, 0, 12.0)
+		TNT1 A 0 A_Jump(128, "SpawnSeeds")
+		//goto Grow --> Respawning turnip
+		Stop
+	  Pain:
+	    TNT1 A 0
+		goto Spawn
+	  SpawnSeeds:
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
+		Stop
+	  Death.Axe:
+		TNT1 A 0 
+		TNT1 A 0 A_JumpIfInventory("Ripe", 1, "Pain.Axe")
+	    goto Death //otherwise wilt
+	  Death:
+	  Wilt:
+	    TRNP E 350
+		Stop
+  }
+}
+
+actor RespawningPlantedTurnip : PlantedTurnip 10751
+{
+	-SHOOTABLE
+	-SOLID
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_UnsetShootable
+			TNT1 A 42000 //Every 20 minutes
+			goto Super::Spawn
+		Pain.Axe:
+			TNT1 A 0 A_SpawnItemEx("RespawningPlantedTurnip")
+			goto Super::Pain.Axe
+	    Death.Axe:
+			goto Pain.Axe //avoids A_Jump netcode madness
+	}
+}
+
+
+/* Pre DoomZ r14 test 12 - uses HealthPickup and only gives health
+ACTOR Turnip : HealthPickup
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  
+  HealthPickup.AutoUse 0
+  Inventory.MaxAmount 10
+  Inventory.Icon "TRNI0"
+  Inventory.PickupMessage "You picked up a delicious turnip."
+
+  Health 30
+  
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		TRNP B 0 A_SetShootable
+		TRNP B -1
+		Stop
+  }
+}
+*/
+
+ACTOR Turnip : CustomInventory
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  
+  +INVENTORY.INVBAR
+  
+  Inventory.MaxAmount 10
+  Inventory.Icon "TRNI0"
+  Inventory.PickupMessage "You picked up a delicious turnip."
+
+  Health 30
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 0
+		TNT1 A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
+//		TRNP A 0 A_SetSolid
+		TRNP B 0 A_SetShootable
+		TRNP B -1
+		Stop
+	  Use:
+		TNT1 A 0
+		TNT1 A 0 A_GiveInventory("Health", 30)
+		TNT1 A 0 A_TakeInventory("HungerLevel", 10)
+		TNT1 A 0 A_PlaySound("eat/crunch")
+		TNT1 A 0 ACS_ExecuteAlways(850, 0, 0) //Green screen flash - PLAYER.ACS
+		stop
+  }
+}
+
+
+ACTOR TurnipSeeds : CustomInventory
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  +BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+
+  Tag "Turnip Seeds"
+  Inventory.MaxAmount 50
+  Inventory.Icon "SEED3"
+  Inventory.PickupMessage "You picked up turnip seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+  Mass 0x7FFFFFFF //No knockback when pecked by chickens
+
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED C 0 A_SetShootable
+		SEED C 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED C -1
+		Stop
+	  Pain.Peck:
+		//SEED C 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED C -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedTurnip", 64.0, 0.0, 8.0)
+		Stop
+  }
+}
+
+ACTOR TreeSeeds : TurnipSeeds
+{ 
+  Tag "Tree Seeds"
+  Inventory.MaxAmount 300
+  Inventory.Icon "SEED2"
+  Inventory.PickupMessage "You picked up tree seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+	
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED B 0 A_SetShootable
+		SEED B 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED B -1
+		Stop
+	  Pain.Peck:
+		//SEED B 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED B -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedTree", 64.0, 0.0, 8.0)
+		TNT1 A 0 A_GiveInventory("QuestTreePlanted", 1)
+		Stop
+  }
+}
+
+
+ACTOR HempSeeds : TurnipSeeds
+{ 
+  Tag "Hemp Seeds"
+  Inventory.MaxAmount 300
+  Inventory.Icon "SEED1"
+  Inventory.PickupMessage "You picked up hemp seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+  
+  //Setting the hemp seeds to friendly makes the chickens not peck them... 
+  
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED A 0 A_SetShootable
+		SEED A 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED A -1
+		Stop
+	  Pain.Peck:
+		//SEED B 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED B -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedHemp", 64.0, 0.0, 8.0)
+		//TNT1 A 0 A_GiveInventory("QuestTreePlanted", 1)
+		Stop
+  }
+}
+
+
+ACTOR PlantedTree //Sapling
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  
+  
+  Mass 0x7FFFFFFF
+  Health 300
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 7.0
+  DamageFactor "Fire", 1.0
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 1 
+		//Check if we planted on soil or grass
+		TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Wilt")
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+	//Ripening will take 10 mins by default. If you water your plant 10 times, you can cut it down to 3 minutes.
+	WaitUntilRipe:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP C 2100 // Progress every 1 minute
+		TRNP C 1 A_GiveInventory("Ripeness", 10) //Ripen the plant a bit
+		goto WaitUntilRipe
+	WaitUntilRipeWatered:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP D 2100 // Progress every 1 minute
+		TRNP D 1 A_GiveInventory("Ripeness", 34) //Ripen the plant a bit
+	Pain.Water:
+		TNT1 A 0 
+		goto WaitUntilRipeWatered
+	  Ripe:
+		TNT1 A 0 A_SpawnItemEx("RandomTreeSpawner", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		Stop
+	  Death.Axe:
+	  Death:
+	  Wilt:
+	    TRNP E 350
+		Stop
+  }
+}
+
+actor RandomTreeSpawner : RandomSpawner
+{
+	+FRIENDLY //Turrets would shoot these trees otherwise
+	DropItem "DaggerFallThing51" //"Daggerfall Tree - Full"
+	DropItem "DaggerFallThing53" //"Daggerfall Tree - Evergreen"
+	DropItem "DaggerFallThing86" //"Daggerfall Tree - Evergreen 4"
+	DropItem "DaggerFallThing135" //"Daggerfall Tree 3"
+	DropItem "DaggerFallThing137" //"Daggerfall Tree 4"
+	DropItem "DaggerFallThing155" //"Daggerfall Tree - Plush 3"
+	DropItem "DaggerFallThing162" //"Daggerfall Tree - Plush 4"
+	DropItem "DaggerFallThing169" //"Daggerfall Tree - Evergreen"
+	DropItem "DaggerFallThing173" //"Daggerfall Tree - Evergreen 2"
+	DropItem "DaggerFallThing180" //"Daggerfall Tree - Evergreen Skinny"
+	DropItem "DaggerFallThing183" //"Daggerfall Tree - Skinny Bunchy"
+}
+
+actor RandomSafariTreeSpawner : RandomSpawner
+{
+	+FRIENDLY //Turrets would shoot trees otherwise
+	DropItem "DaggerFallThing32" //"Daggerfall Tree - Safari"
+	DropItem "DaggerFallThing33" //"Daggerfall Tree - Japanese Garden"
+	DropItem "DaggerFallThing142" //"Daggerfall Tree - Plush"
+	DropItem "DaggerFallThing148" //"Daggerfall Tree - Plush 2"
+	DropItem "DaggerFallThing149" //"Daggerfall Tree - Japanese"
+	DropItem "DaggerFallThing174" //"Daggerfall Tree - Plush 6"
+	DropItem "DaggerFallThing178" //"Daggerfall Tree - Jungle 1"
+	DropItem "DaggerFallThing185" //"Daggerfall Tree - Japanese Garden"
+	DropItem "DaggerFallThing171" //"Daggerfall Tree - Jungle Skinny"
+}
+
+/* Others:
+DaggerFallThing112 - "Daggerfall Tree - Small Shaped"
+DaggerFallThing140 - "Daggerfall Tree - Dead 4"
+DaggerFallThing150 -  "Daggerfall Tree - Desert"
+DaggerFallThing157 - "Daggerfall Tree - Palm tree"
+DaggerFallThing164 - "Daggerfall Tree - Palm Short"
+DaggerFallThing172 - "Daggerfall Tree - Ferntree"
+
+DaggerFallThing163 - "Daggerfall Tree - Dead Swamp"
+DaggerFallThing153 - "Daggerfall Tree - Dead 6"
+DaggerFallThing152 - "Daggerfall Tree - Dead 5"
+DaggerFallThing52 - "Daggerfall Tree - Dead"
+
+*/
+
+ACTOR HempPlant : actor 10420 //ChoppableTree 10420
+{
+  PainChance 255
+  Radius 16
+  Height 96
+  scale 0.2
+  Health 100
+  Mass 0x7FFFFFFF
+  //DamageFactor "Axe", 10.0
+
+/*
+  +SHOOTABLE
+  +NOBLOOD
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+  +STANDSTILL
+  +SOLID
+
+*/
+//   Monster
+//FIXME: Trying to narrow down what part of the Monster combo breaks A_GiveToTarget:
+/* 
+OK, so here's the problem with A_GiveToTarget and monsters/actors:
+- If A_GiveToTarget is used with a regular monster, no problem
+- If A_GiveToTarget is used with a regular actor, no problem
+- If A_GiveToTarget is used with an actor that we've set +ISMOSNTER on,
+  it doesn't get a target correctly and doesn't work in the Death state. :-(
+  (We need +ISMONSTER for the master/child relationship to work for DoomZFlamePawn)
+
+*/   
+
+//So here I decided to sacrifice the flammability of hemp in order to make the
+//A_GiveToTarget thing work...
+//+ISMONSTER
+
+	+SHOOTABLE
+	+NOBLOOD
+	-COUNTKILL
+	-PUSHABLE
+	-WINDTHRUST
+	-CANBLAST
+
+/* I tried everything...
+	+LOOKALLAROUND
+	//+FRIENDLY
+	+STANDSTILL
+	+AMBUSH
+	-NOINFIGHTING
+	+JUSTHIT
+	Speed 0
+*/
+
+  States
+  {
+	  Spawn:
+	  	TNT1 A 0
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+		//TNT1 A 1 ACS_ExecuteAlways(937) //Heal us. HealThing doesn't have a max in Zandronum 1.2 :(
+		TREN A 0 A_SetSolid
+		TREN A 0 A_SetShootable
+		TNT1 A 0 A_KillChildren
+		//Disabled this because we're not giving Hemp +ISMONSTER so that A_GiveToTarget works
+		//TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+	  SpawnLook:
+	    //This is needed for A_GiveToTarget to work too.
+		HEMP A 10 A_LookEx(LOF_NOSOUNDCHECK , 0, 128.0, 0, 360, "See")
+		Loop
+	Melee:
+	Missile:
+			TNT1 A 0 A_FaceTarget
+			TNT1 A 0 A_FaceTarget
+			goto See
+	  See:
+		TNT1 A 0
+		HEMP A 35
+		loop
+	  //For some reason, actors that don't inherit from Monster but have +ISMONSTER (for master/child)
+	  //lose their targets in their Death state. To make A_GiveToTarget work, we use it
+	  //in the pain state instead and just drop straight into the Death state 
+	  //(so the hemp dies in one hit with the axe)
+	  Pain.Axe:
+	  	HEMP A 0 A_GiveToTarget("QuestHempHarvested", 1)
+	  Death.Axe:
+	  Death:
+		TNT1 A 0 
+		//A_GiveToTarget doesn't work here. See the note above.
+		TNT1 A 0 A_SpawnItemEx("GraplingAmmo", 0, 0, 0, 0, 0, 12.0)
+		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
+		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
+		TNT1 A 0 A_KillChildren
+	    Stop
+		//goto Grow
+		/*
+	  Grow:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		//TNT1 A 0 HealThing(0x7FFFFFFF)
+		TNT1 A 1 ACS_ExecuteAlways(937) //Heal us. HealThing doesn't have a max in Zandronum 1.2 :(
+		//TNT1 A 5 A_NoBlocking
+		//TNT1 A 0 A_HideThing
+		TNT1 A 1 A_UnsetSolid
+		TNT1 A 1 A_UnsetShootable
+		//15% chance it'll regrow every 4 minutes
+		TNT1 A 8400
+		TNT1 A 1 A_Jump(64, "Spawn") //Dynamic dispatch
+		Loop
+	*/
+  }
+}
+
+
+ACTOR PlantedHemp //Sapling
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 7.0
+  DamageFactor "Fire", 1.0
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 1 
+		//Check if we planted on soil or grass
+		TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Wilt")
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+	//Ripening will take 10 mins by default. If you water your plant 10 times, you can cut it down to 3 minutes.
+	WaitUntilRipe:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP C 2100 // Progress every 1 minute
+		TRNP C 1 A_GiveInventory("Ripeness", 10) //Ripen the plant a bit
+		goto WaitUntilRipe
+	WaitUntilRipeWatered:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP D 2100 // Progress every 1 minute
+		TRNP D 1 A_GiveInventory("Ripeness", 34) //Ripen the plant a bit
+	Pain.Water:
+		TNT1 A 0 
+		goto WaitUntilRipeWatered
+	  Ripe:
+		TNT1 A 0 A_SpawnItemEx("HempPlant", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		Stop
+	  Death.Axe:
+	  Death:
+	  Wilt:
+	    TRNP E 350
+		Stop
+  }
+}
+
+
+actor RespawningPlantedHemp : PlantedHemp 10752
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_UnsetShootable
+			TNT1 A 42000 //Every 20 minutes
+			goto Super::Spawn
+		Pain.Axe:
+			TNT1 A 0 A_SpawnItemEx("RespawningPlantedHemp")
+			goto Super::Pain.Axe
+	    Death.Axe:
+			goto Pain.Axe //avoids A_Jump netcode madness
+	}
+}
+

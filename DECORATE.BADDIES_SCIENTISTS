@@ -1,0 +1,1427 @@
+ACTOR DoomZFemaleScientist
+{
+  Game Doom
+  obituary "%o was stabbed by a zombie scientist."
+  health 15
+  mass 90
+  speed 10
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FSZK N 6 A_SetTranslucent(0.2, 2)
+	FSZK N 6 A_SetTranslucent(0.4, 2)
+	FSZK N 6 A_SetTranslucent(0.6, 2)
+	FSZK N 6 A_SetTranslucent(0.8, 2)
+	FSZK N 6 A_SetTranslucent(1.0, 0) //opaque
+	FSZK NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK AABBCCDD 4 A_Wander
+    FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZK A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    FSZK AABBCCDD 4 A_Chase
+    FSZK AABBCCDD 4 A_Chase
+    FSZK AABBCCDD 4 A_Chase
+    FSZK AABBCCDD 4 A_Chase
+    FSZK AABBCCDD 4 A_Chase
+    FSZK AABBCCDD 4 A_Chase
+	FSZK A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    FSZK E 4 A_FaceTarget
+    FSZK F 8 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    goto See
+  Pain:
+    FSZK G 3
+    FSZK G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZK H 5 
+    FSZK I 5 A_Scream
+    FSZK J 5 A_NoBlocking
+    FSZK K 5
+    FSZK L 5
+    FSZK M 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	FSZK N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZK N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZK N 6 A_SetTranslucent(0.8, 2)
+	FSZK N 6 A_SetTranslucent(0.6, 2)
+	FSZK N 6 A_SetTranslucent(0.4, 2)
+	FSZK N 6 A_SetTranslucent(0.2, 2)
+	FSZK N 6 A_SetTranslucent(0.0, 0) 
+	FSZK N 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZK O 5
+    FSZK P 5 A_XScream
+    FSZK Q 5 A_NoBlocking
+    FSZK RSTUV 5
+    FSZK W 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	FSZK W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZK W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZK W 6 A_SetTranslucent(0.8, 2)
+	FSZK W 6 A_SetTranslucent(0.6, 2)
+	FSZK W 6 A_SetTranslucent(0.4, 2)
+	FSZK W 6 A_SetTranslucent(0.2, 2)
+	FSZK W 6 A_SetTranslucent(0.0, 0) 
+	FSZK W 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  Raise:
+    FSZK MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+actor ScientistCorpse {
+
+}
+
+actor DoomZFemaleScientistCorpse : ScientistCorpse 
+{
+	+SHOOTABLE
+	Mass 0x7FFFFFFF
+	Health 150
+	states {
+		Spawn:
+			//Remove ourselves after 60 seconds
+			FSZK W 2100
+			TNT1 A 0 A_SetTranslucent(1.0, 2)
+			FSZK W 6 A_SetTranslucent(0.8, 2)
+			FSZK W 6 A_SetTranslucent(0.6, 2)
+			FSZK W 6 A_SetTranslucent(0.4, 2)
+			FSZK W 6 A_SetTranslucent(0.2, 2)
+			FSZK W 6 A_SetTranslucent(0.0, 0) 
+			FSZK W 0 ACS_ExecuteAlways(501, 0)    
+			stop
+	}
+}
+
+/*
+ACTOR DoomZFemaleScientist
+{
+  Game Doom
+  obituary "%o was stabbed by a zombie scientist."
+  health 15
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FSZK N 6 A_SetTranslucent(0.2, 2)
+	FSZK N 6 A_SetTranslucent(0.4, 2)
+	FSZK N 6 A_SetTranslucent(0.6, 2)
+	FSZK N 6 A_SetTranslucent(0.8, 2)
+	FSZK N 6 A_SetTranslucent(1.0, 0) //opaque
+	FSZK NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+    FSZK AB 10 A_Look
+	FSZK A 5 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+    FSZK AABBCCDD 4 A_Chase
+    loop
+  Melee:
+    FSZK E 4 A_FaceTarget
+    FSZK F 8 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    goto See
+  Pain:
+    FSZK G 3
+    FSZK G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+    FSZK H 5
+    FSZK I 5 A_Scream
+    FSZK J 5 A_NoBlocking
+    FSZK K 5
+    FSZK L 5
+    FSZK M 5
+	FSZK N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZK N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZK N 6 A_SetTranslucent(0.8, 2)
+	FSZK N 6 A_SetTranslucent(0.6, 2)
+	FSZK N 6 A_SetTranslucent(0.4, 2)
+	FSZK N 6 A_SetTranslucent(0.2, 2)
+	FSZK N 6 A_SetTranslucent(0.0, 0) 
+	FSZK N 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+    FSZK O 5
+    FSZK P 5 A_XScream
+    FSZK Q 5 A_NoBlocking
+    FSZK RSTUV 5
+    FSZK W 5
+	FSZK W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZK W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZK W 6 A_SetTranslucent(0.8, 2)
+	FSZK W 6 A_SetTranslucent(0.6, 2)
+	FSZK W 6 A_SetTranslucent(0.4, 2)
+	FSZK W 6 A_SetTranslucent(0.2, 2)
+	FSZK W 6 A_SetTranslucent(0.0, 0) 
+	FSZK W 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  Raise:
+    FSZK MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+*/
+
+ACTOR DoomZFemaleScientist2
+{
+  Game Doom
+  obituary "%o was bludgeoned to death by a zombie scientist."
+  health 15
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FSZW N 6 A_SetTranslucent(0.2, 2)
+	FSZW N 6 A_SetTranslucent(0.4, 2)
+	FSZW N 6 A_SetTranslucent(0.6, 2)
+	FSZW N 6 A_SetTranslucent(0.8, 2)
+	FSZW N 6 A_SetTranslucent(1.0, 0) //opaque
+	FSZW NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW AABBCCDD 4 A_Wander
+    FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZW A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    FSZW AABBCCDD 4 A_Chase
+    FSZW AABBCCDD 4 A_Chase
+    FSZW AABBCCDD 4 A_Chase
+    FSZW AABBCCDD 4 A_Chase
+    FSZW AABBCCDD 4 A_Chase
+    FSZW AABBCCDD 4 A_Chase
+	FSZW A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    FSZW E 4 A_FaceTarget
+    FSZW F 8 A_CustomMeleeAttack (random (1, 5) *5, "skeleton/melee", "skeleton/swing")
+    FSZW D 4
+    goto See
+  Pain:
+    FSZW G 3
+    FSZW G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZW H 5
+    FSZW I 5 A_Scream
+    FSZW J 5 A_NoBlocking
+    FSZW K 5
+    FSZW L 5
+    FSZW M 5
+    //FSZW N -1
+	FSZW N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZW N 2100
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZW N 6 A_SetTranslucent(0.8, 2)
+	FSZW N 6 A_SetTranslucent(0.6, 2)
+	FSZW N 6 A_SetTranslucent(0.4, 2)
+	FSZW N 6 A_SetTranslucent(0.2, 2)
+	FSZW N 6 A_SetTranslucent(0.0, 0) 
+	FSZW N 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZW O 5
+    FSZW P 5 A_XScream
+    FSZW Q 5 A_NoBlocking
+    FSZW RSTUV 5
+	FSZW W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZW W 2100
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZW W 6 A_SetTranslucent(0.8, 2)
+	FSZW W 6 A_SetTranslucent(0.6, 2)
+	FSZW W 6 A_SetTranslucent(0.4, 2)
+	FSZW W 6 A_SetTranslucent(0.2, 2)
+	FSZW W 6 A_SetTranslucent(0.0, 0) 
+	FSZW W 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  Raise:
+    FSZW MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZFemaleScientist3
+{
+  Game Doom
+  obituary "%o was bludgeoned to death by a zombie scientist."
+  health 15
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FSZC N 6 A_SetTranslucent(0.2, 2)
+	FSZC N 6 A_SetTranslucent(0.4, 2)
+	FSZC N 6 A_SetTranslucent(0.6, 2)
+	FSZC N 6 A_SetTranslucent(0.8, 2)
+	FSZC N 6 A_SetTranslucent(1.0, 0) //opaque
+	FSZC NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC AABBCCDD 4 A_Wander
+    FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZC A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    FSZC AABBCCDD 4 A_Chase
+    FSZC AABBCCDD 4 A_Chase
+    FSZC AABBCCDD 4 A_Chase
+    FSZC AABBCCDD 4 A_Chase
+    FSZC AABBCCDD 4 A_Chase
+    FSZC AABBCCDD 4 A_Chase
+	FSZC A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    FSZC E 4 A_FaceTarget
+    FSZC F 8 A_CustomMeleeAttack (random (1, 5) *5, "knifehit", "skeleton/swing")
+    FSZC D 4
+    goto See
+  Pain:
+    FSZC G 3
+    FSZC G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZC H 5
+    FSZC I 5 A_Scream
+    FSZC J 5 A_NoBlocking
+    FSZC K 5
+    FSZC L 5
+    FSZC M 5
+	FSZC N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZC N 2100
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZC N 6 A_SetTranslucent(0.8, 2)
+	FSZC N 6 A_SetTranslucent(0.6, 2)
+	FSZC N 6 A_SetTranslucent(0.4, 2)
+	FSZC N 6 A_SetTranslucent(0.2, 2)
+	FSZC N 6 A_SetTranslucent(0.0, 0) 
+	FSZC N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZC O 5
+    FSZC P 5 A_XScream
+    FSZC Q 5 A_NoBlocking
+    FSZC RSTUV 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	FSZC W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZC W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZC W 6 A_SetTranslucent(0.8, 2)
+	FSZC W 6 A_SetTranslucent(0.6, 2)
+	FSZC W 6 A_SetTranslucent(0.4, 2)
+	FSZC W 6 A_SetTranslucent(0.2, 2)
+	FSZC W 6 A_SetTranslucent(0.0, 0) 
+	FSZC W 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  Raise:
+    FSZC MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+
+ACTOR DoomZFemaleScientist4
+{
+  Game Doom
+  obituary "%o was poisoned by a zombie scientist."
+  health 30
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	FSZS N 6 A_SetTranslucent(0.2, 2)
+	FSZS N 6 A_SetTranslucent(0.4, 2)
+	FSZS N 6 A_SetTranslucent(0.6, 2)
+	FSZS N 6 A_SetTranslucent(0.8, 2)
+	FSZS N 6 A_SetTranslucent(1.0, 0) //opaque
+	FSZS NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS AABBCCDD 4 A_Wander
+    FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	FSZS A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")    
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    FSZS AABBCCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+	FSZS A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    FSZS E 4 A_FaceTarget
+    FSZS E 0 A_SkelWhoosh
+    FSZS F 8 A_CustomMeleeAttack (random (1, 5) *3, "knifehit", "skeleton/swing")
+	// Not supported in Zandronum 1.2 -- Albert
+    //FSZS F 0 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 0 A_CustomMissile("PoisonDrop", 32, 8, 0, 0, 12) 
+	goto See
+  Squirt:
+    FSZS E 4 A_FaceTarget
+    FSZS F 0 A_PlaySound ("skeleton/swing")
+	/* Not supported in Zandronum 1.2 -- Albert
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) */    
+	FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12) 
+    FSZS D 4
+    goto See
+  Pain:
+    FSZS G 3
+    FSZS G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZS H 5
+    FSZS I 5 A_Scream
+    FSZS J 5 A_NoBlocking
+    FSZS K 5
+    FSZS L 5
+    FSZS M 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	FSZS N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZS N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZS N 6 A_SetTranslucent(0.8, 2)
+	FSZS N 6 A_SetTranslucent(0.6, 2)
+	FSZS N 6 A_SetTranslucent(0.4, 2)
+	FSZS N 6 A_SetTranslucent(0.2, 2)
+	FSZS N 6 A_SetTranslucent(0.0, 0) 
+	FSZS N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    FSZS O 5
+    FSZS P 5 A_XScream
+    FSZS Q 5 A_NoBlocking
+    FSZS RSTUV 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	FSZS W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	FSZS W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	FSZS W 6 A_SetTranslucent(0.8, 2)
+	FSZS W 6 A_SetTranslucent(0.6, 2)
+	FSZS W 6 A_SetTranslucent(0.4, 2)
+	FSZS W 6 A_SetTranslucent(0.2, 2)
+	FSZS W 6 A_SetTranslucent(0.0, 0) 
+	FSZS W 0 ACS_ExecuteAlways(501, 0)    
+    stop
+  Raise:
+    FSZS MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZZombieScientist
+{
+  Game Doom
+  obituary "%o was axe-murdered by a zombie scientist."
+  health 20
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	SCZA N 6 A_SetTranslucent(0.2, 2)
+	SCZA N 6 A_SetTranslucent(0.4, 2)
+	SCZA N 6 A_SetTranslucent(0.6, 2)
+	SCZA N 6 A_SetTranslucent(0.8, 2)
+	SCZA N 6 A_SetTranslucent(1.0, 0) //opaque
+	SCZA NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+	TNT1 A 0 A_Jump(255, "Idle") //For inheritance
+   Idle:
+   SpawnLook:
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+	SCZA A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    SCZA E 8 A_FaceTarget
+    SCZA F 16 A_CustomMeleeAttack (random (2, 6) *5, "KnifeHit", "skeleton/swing")
+    SCZA E 4
+    goto See
+  Pain:
+    SCZA G 3
+    SCZA G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCZA H 5
+    SCZA I 5 A_Scream
+    SCZA J 5 A_NoBlocking
+    SCZA K 5
+    SCZA L 5
+    SCZA M 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+    //SCZA N -1
+	SCZA N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZA N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZA N 6 A_SetTranslucent(0.8, 2)
+	SCZA N 6 A_SetTranslucent(0.6, 2)
+	SCZA N 6 A_SetTranslucent(0.4, 2)
+	SCZA N 6 A_SetTranslucent(0.2, 2)
+	SCZA N 6 A_SetTranslucent(0.0, 0) 
+	SCZA N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCZA O 5
+    SCZA P 5 A_XScream
+    SCZA Q 5 A_NoBlocking
+    SCZA RSTUV 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+    //SCZA W -1
+	SCZA W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZA W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZA W 6 A_SetTranslucent(0.8, 2)
+	SCZA W 6 A_SetTranslucent(0.6, 2)
+	SCZA W 6 A_SetTranslucent(0.4, 2)
+	SCZA W 6 A_SetTranslucent(0.2, 2)
+	SCZA W 6 A_SetTranslucent(0.0, 0) 
+	SCZA W 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    SCZA MLKJIH 5
+    goto See
+Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZZombieScientist2
+{
+  Game Doom
+  obituary "%o was prised open by a zombie scientist."
+  health 20
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	SCZC N 6 A_SetTranslucent(0.2, 2)
+	SCZC N 6 A_SetTranslucent(0.4, 2)
+	SCZC N 6 A_SetTranslucent(0.6, 2)
+	SCZC N 6 A_SetTranslucent(0.8, 2)
+	SCZC N 6 A_SetTranslucent(1.0, 0) //opaque
+	SCZC NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+	TNT1 A 0 A_Jump(255, "Idle") //For inheritance
+   Idle:
+   SpawnLook:
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+	SCZC A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    SCZC E 8 A_FaceTarget
+    SCZC F 16 A_CustomMeleeAttack (random (2, 6) *5, "CrowbarHit", "skeleton/swing")
+    SCZC E 4
+    goto See
+  Pain:
+    SCZC G 3
+    SCZC G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCZC H 5
+    SCZC I 5 A_Scream
+    SCZC J 5 A_NoBlocking
+    SCZC K 5
+    SCZC L 5
+    SCZC M 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+    //SCZC N -1
+	SCZC N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZC N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZC N 6 A_SetTranslucent(0.8, 2)
+	SCZC N 6 A_SetTranslucent(0.6, 2)
+	SCZC N 6 A_SetTranslucent(0.4, 2)
+	SCZC N 6 A_SetTranslucent(0.2, 2)
+	SCZC N 6 A_SetTranslucent(0.0, 0) 
+	SCZC N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCZC O 5
+    SCZC P 5 A_XScream
+    SCZC Q 5 A_NoBlocking
+    SCZC RSTUV 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //SCZC W -1
+	SCZC N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZC W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZC W 6 A_SetTranslucent(0.8, 2)
+	SCZC W 6 A_SetTranslucent(0.6, 2)
+	SCZC W 6 A_SetTranslucent(0.4, 2)
+	SCZC W 6 A_SetTranslucent(0.2, 2)
+	SCZC W 6 A_SetTranslucent(0.0, 0) 
+	SCZC W 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    SCZC MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZZombieScientist3
+{
+  Game Doom
+  obituary "%o was axe-murdered by a zombie scientist."
+  health 20
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	SCZH N 6 A_SetTranslucent(0.2, 2)
+	SCZH N 6 A_SetTranslucent(0.4, 2)
+	SCZH N 6 A_SetTranslucent(0.6, 2)
+	SCZH N 6 A_SetTranslucent(0.8, 2)
+	SCZH N 6 A_SetTranslucent(1.0, 0) //opaque
+	SCZH NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH AABBCCDD 4 A_Wander
+    SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZH A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SCZH AABBCCDD 4 A_Chase
+    SCZH AABBCCDD 4 A_Chase
+    SCZH AABBCCDD 4 A_Chase
+    SCZH AABBCCDD 4 A_Chase
+    SCZH AABBCCDD 4 A_Chase
+    SCZH AABBCCDD 4 A_Chase
+	SCZH A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    SCZH E 8 A_FaceTarget
+    SCZH F 16 A_CustomMeleeAttack (random (2, 6) *5, "skeleton/melee", "skeleton/swing")
+    SCZH E 4
+    goto See
+  Pain:
+    SCZH G 3
+    SCZH G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+ 	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    SCZH H 5
+    SCZH I 5 A_Scream
+    SCZH J 5 A_NoBlocking
+    SCZH K 5
+    SCZH L 5
+    SCZH M 5
+    //SCZH N -1
+	SCZH N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZH N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZH N 6 A_SetTranslucent(0.8, 2)
+	SCZH N 6 A_SetTranslucent(0.6, 2)
+	SCZH N 6 A_SetTranslucent(0.4, 2)
+	SCZH N 6 A_SetTranslucent(0.2, 2)
+	SCZH N 6 A_SetTranslucent(0.0, 0) 
+	SCZH N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+ 	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    SCZH O 5
+    SCZH P 5 A_XScream
+    SCZH Q 5 A_NoBlocking
+    SCZH RSTUV 5
+    //SCZH W -1
+	SCZH W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCZH W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCZH W 6 A_SetTranslucent(0.8, 2)
+	SCZH W 6 A_SetTranslucent(0.6, 2)
+	SCZH W 6 A_SetTranslucent(0.4, 2)
+	SCZH W 6 A_SetTranslucent(0.2, 2)
+	SCZH W 6 A_SetTranslucent(0.0, 0) 
+	SCZH W 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    SCZH MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZZombieScientist4
+{
+  Game Doom
+  obituary "%o was put out by a zombie scientist."
+  health 40
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MeleeRange 128
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	SCFE N 6 A_SetTranslucent(0.2, 2)
+	SCFE N 6 A_SetTranslucent(0.4, 2)
+	SCFE N 6 A_SetTranslucent(0.6, 2)
+	SCFE N 6 A_SetTranslucent(0.8, 2)
+	SCFE N 6 A_SetTranslucent(1.0, 0) //opaque
+	SCFE NMLKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE AABBCCDD 4 A_Wander
+    SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCFE A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    SCFE AABBCCDD 4 A_Chase
+    SCFE AABBCCDD 4 A_Chase
+    SCFE AABBCCDD 4 A_Chase
+    SCFE AABBCCDD 4 A_Chase
+    SCFE AABBCCDD 4 A_Chase
+    SCFE AABBCCDD 4 A_Chase
+	SCFE A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    SCFE E 1 A_FaceTarget
+    SCFE E 1 A_PlaySound ("Steam/Fire")
+	/* Not supported in Zandronum 1.2 -- Albert
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    */
+	SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    goto See
+  Pain:
+    SCFE G 3
+    SCFE G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCFE H 5
+    SCFE I 5 A_Scream
+    SCFE J 5 A_NoBlocking
+    SCFE K 5
+    SCFE L 5
+    SCFE M 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //SCFE N -1
+	SCFE N 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCFE N 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCFE N 6 A_SetTranslucent(0.8, 2)
+	SCFE N 6 A_SetTranslucent(0.6, 2)
+	SCFE N 6 A_SetTranslucent(0.4, 2)
+	SCFE N 6 A_SetTranslucent(0.2, 2)
+	SCFE N 6 A_SetTranslucent(0.0, 0) 
+	SCFE N 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    SCFE O 5
+    SCFE P 5 A_XScream
+    SCFE Q 5 A_NoBlocking
+    SCFE RSTUV 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //SCFE W -1
+	SCFE W 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	SCFE W 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	SCFE W 6 A_SetTranslucent(0.8, 2)
+	SCFE W 6 A_SetTranslucent(0.6, 2)
+	SCFE W 6 A_SetTranslucent(0.4, 2)
+	SCFE W 6 A_SetTranslucent(0.2, 2)
+	SCFE W 6 A_SetTranslucent(0.0, 0) 
+	SCFE W 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    SCFE MLKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+ACTOR DoomZHazmatZombie
+{
+  Game Doom
+  obituary "%o was electrocuted by a zombie scientist."
+  health 20
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  attacksound "hazmat/tazer"
+  MONSTER
+  +FLOORCLIP
+  +WINDTHRUST
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	HMZP L 6 A_SetTranslucent(0.2, 2)
+	HMZP L 6 A_SetTranslucent(0.4, 2)
+	HMZP L 6 A_SetTranslucent(0.6, 2)
+	HMZP L 6 A_SetTranslucent(0.8, 2)
+	HMZP L 6 A_SetTranslucent(1.0, 0) //opaque
+	HMZP LKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	HMZP A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+	HMZP A 0 A_CheckSight("Remove")
+    loop
+  Melee:
+    HMZP E 4 A_FaceTarget
+    HMZP F 4 Bright A_CustomMeleeAttack (random (2, 12) *3)
+    HMZP E 4
+    goto See
+  Pain:
+    HMZP G 3
+    HMZP G 3 A_Pain
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    HMZP H 5
+    HMZP I 5 A_Scream
+    HMZP J 5 A_NoBlocking
+    HMZP K 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //HMZP L -1
+	HMZP L 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	HMZP L 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	HMZP L 6 A_SetTranslucent(0.8, 2)
+	HMZP L 6 A_SetTranslucent(0.6, 2)
+	HMZP L 6 A_SetTranslucent(0.4, 2)
+	HMZP L 6 A_SetTranslucent(0.2, 2)
+	HMZP L 6 A_SetTranslucent(0.0, 0) 
+	HMZP L 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    HMZP M 5
+    HMZP N 5 A_XScream
+    HMZP O 5 A_NoBlocking
+    HMZP PQRST 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //HMZP U -1
+	HMZP U 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	HMZP U 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	HMZP U 6 A_SetTranslucent(0.8, 2)
+	HMZP U 6 A_SetTranslucent(0.6, 2)
+	HMZP U 6 A_SetTranslucent(0.4, 2)
+	HMZP U 6 A_SetTranslucent(0.2, 2)
+	HMZP U 6 A_SetTranslucent(0.0, 0) 
+	HMZP U 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    HMZP LKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+actor DemolitionZombie : DoomZZombieScientist
+{
+	Health 100
+	Translation "80:104=[196,192,66]:[72,71,45]", "4:4=161:161", "168:168=161:161", "208:208=161:161", "224:224=161:161"
+states
+{
+	Spawn:
+		TNT1 A 0 ACS_ExecuteAlways(504, 0)
+		goto Super::Spawn
+   Idle:
+   SpawnLook:
+  	//Always attack bases because we're a demolition zombie!
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA AABBCCDD 4 A_Wander
+    SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZA A 0 A_CheckSight("Remove")
+    loop
+  See:
+	//Only check to remove ourselves and change attack modes every 6 seconds
+	TNT1 A 0 ACS_ExecuteAlways(504, 0)
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+    SCZA AABBCCDD 4 A_Chase
+	SCZA A 0 A_CheckSight("Remove")
+    loop
+}
+}
+
+actor DemolitionZombie2 : DoomZZombieScientist2
+{
+	Health 100
+	Translation "80:104=[196,192,66]:[72,71,45]", "4:4=161:161", "168:168=161:161", "208:208=161:161", "224:224=161:161"
+States
+{
+	Spawn:
+		//Always attack bases because we're a demolition zombie!
+		TNT1 A 0 ACS_ExecuteAlways(504, 0)
+		goto Super::Spawn
+   Idle:
+   SpawnLook:
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC AABBCCDD 4 A_Wander
+    SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	SCZC A 0 A_CheckSight("Remove")
+    loop
+  See:	//Only check to remove ourselves and change attack modes every 6 seconds
+ 	TNT1 A 0 ACS_ExecuteAlways(504, 0)
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+    SCZC AABBCCDD 4 A_Chase
+	SCZC A 0 A_CheckSight("Remove")
+    loop
+}
+}

@@ -1,0 +1,18 @@
+
+//Note Zandronum 2.0 will support GAMEINFO, so we can use that to define
+//the player classes in the future:
+// http://zdoom.org/wiki/Creating_new_player_classes
+
+// This command clears the player classes' list.
+clearplayerclasses
+
+// Add your player class to the list
+addplayerclass Survivalist
+
+// Add standard Doom player to the list, but make it accessible only via player setup menu (i.e. hide from 'New Game' choice)
+//addplayerclass DoomPlayer nomenu
+
+addkeysection "Survivalism" foobar
+addmenukey "Show Basic Crafting Menu" dz_basiccrafting
+alias dz_basiccrafting "puke 760;"
+defaultbind e dz_basiccrafting

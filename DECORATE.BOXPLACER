@@ -1,0 +1,513 @@
+/* Box Placer gun for Minecraft-style box placing. */
+
+
+actor DoomZBoxPlacer : DoomWeapon 15006
+{
+  Tag "Wooden Box Placer"
+  Game Doom
+  Weapon.SelectionOrder 9999
+  Weapon.SlotNumber 0
+  Weapon.SlotPriority 2
+  Weapon.Kickback 0
+  //Weapon.AmmoType "CBoxItem"
+  +WEAPON.NOALERT
+  +WEAPON.WIMPY_WEAPON
+  +WEAPON.NOAUTOAIM 
+ // +WEAPON.MELEEWEAPON
+  +NOEXTREMEDEATH
+  +SHOOTABLE
+  +NOBLOOD
+  +AMMO_OPTIONAL
+	//+CANPASS //---> crazy CPU usage
+  +WINDTHRUST
+  //-DROPPABLE
+  Health 10
+  //Obituary "$OB_MPFIST" // "%o was cut up by %k's knife."
+  Inventory.PickupMessage "You found a box placer!"
+  States
+  {
+  Spawn:
+    FGRN A 31500 //Disappear after 15 minutes
+    Stop
+  Ready:
+    FLAR A 1 A_WeaponReady
+    loop
+  Deselect:
+    FLAR A 1 A_Lower
+    loop
+  Select:
+    FLAR A 1 A_Raise
+    loop 
+  PrintMode:
+    TNT1 A 0
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 4, "PrintMode.StoneBox")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 3, "PrintMode.Door")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 2, "PrintMode.Floor")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 1, "PrintMode.Pillar")
+	//Otherwise fallthrough to box:
+  PrintMode.Box:
+	FLAR A 12 A_Print("Mode: Wooden Box")
+	goto Ready
+  PrintMode.Pillar:
+	FLAR A 12 A_Print("Mode: Wooden Pillar")
+	goto Ready
+  PrintMode.Floor:
+	FLAR A 12 A_Print("Mode: Wooden Floor")
+	goto Ready
+  PrintMode.Door:
+	FLAR A 12 A_Print("Mode: Door")
+	goto Ready
+  PrintMode.StoneBox:
+	FLAR A 12 A_Print("Mode: Stone Box")
+	goto Ready
+  AltFire:
+	TNT1 A 0
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 0, "ResetMode")
+	TNT1 A 0 A_GiveInventory("BoxPlacerMode", 1)
+	goto PrintMode
+  ResetMode:
+	TNT1 A 0 A_TakeInventory("BoxPlacerMode", 0x7FFFFFFF)
+	goto PrintMode
+  Fire:
+ 	TNT1 A 0 //Dummy frame
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 4, "Fire.StoneBox")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 3, "Fire.Door")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 2, "Fire.Floor")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 1, "Fire.Pillar")
+	TNT1 A 0 A_Jump(255, "Fire.Box")
+  Fire.Box:
+ 	TNT1 A 0 //Dummy frame
+ 	//Ensure there's at least 1 CBox in the inventory to consume.
+	FFIR B 0 A_JumpIfInventory("CBoxItem", 1, "ActuallyFire.Box")
+	//If there was no CBoxItem in your inventory, don't do anything
+    FFIR B 0 A_Print("You need wood in your inventory first.")
+    goto Ready
+  Fire.Pillar:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 0 A_JumpIfInventory("CPillarItem", 1, "ActuallyFire.Pillar")
+    FFIR B 0 A_Print("You need a pillar in your inventory first.")
+    goto Ready
+  Fire.Floor:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 0 A_JumpIfInventory("CFloorItem", 1, "ActuallyFire.Floor")
+    FFIR B 0 A_Print("You need a floor in your inventory first.")
+    goto Ready
+  Fire.Door:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 0 A_JumpIfInventory("CDoorItem", 1, "ActuallyFire.Door")
+    FFIR B 0 A_Print("You need a door in your inventory first.")
+    goto Ready
+  Fire.StoneBox:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 0 A_JumpIfInventory("CStoneBoxItem", 1, "ActuallyFire.StoneBox")
+    FFIR B 0 A_Print("You need stone in your inventory first.")
+    goto Ready
+  ActuallyFire.Box:
+ 	TNT1 A 0 //Dummy frame
+    FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+	//FFIR B 4 A_FireBullets(0, 0, 1, 0, "BoxPlacerPuff", CBAF_NORANDOM, 256)   
+	FFIR B 4 A_FireCustomMissile("BoxPlacerMissile", 0, 0, 0, 16)   
+    FFIR B 0 A_TakeInventory("CBoxItem", 1)
+	goto Ready
+  ActuallyFire.Pillar:
+ 	TNT1 A 0 //Dummy frame
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+	FFIR B 4 A_FireCustomMissile("BoxPlacerPillarMissile", 0, 0, 0, 16)   
+    FFIR B 0 A_TakeInventory("CPillarItem", 1)
+	goto Ready
+  ActuallyFire.Floor:
+ 	TNT1 A 0 //Dummy frame
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+	FFIR B 4 A_FireCustomMissile("BoxPlacerFloorMissile", 0, 0, 0, 16)   
+    FFIR B 0 A_TakeInventory("CFloorItem", 1)
+	goto Ready
+  ActuallyFire.Door:
+ 	TNT1 A 0 //Dummy frame
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+	FFIR B 4 A_FireCustomMissile("BoxPlacerDoorMissile", 0, 0, 0, 16)   
+    FFIR B 0 A_TakeInventory("CDoorItem", 1)
+	goto Ready
+  ActuallyFire.StoneBox:
+ 	TNT1 A 0 //Dummy frame
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+	FFIR B 4 A_FireCustomMissile("BoxPlacerStoneBoxMissile", 0, 0, 0, 16)   
+    FFIR B 0 A_TakeInventory("CStoneBoxItem", 1)
+	goto Ready
+   Hold:
+	TNT1 A 0 //Dummy frame
+	//FFIR A 4 A_FireBullets(0, 0, 1, 0, "BoxPlacerGhostPuff", CBAF_NORANDOM, 256)
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 4, "Hold.StoneBox")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 3, "Hold.Door")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 2, "Hold.Floor")
+	TNT1 A 0 A_JumpIfInventory("BoxPlacerMode", 1, "Hold.Pillar")
+	TNT1 A 0 A_Jump(255, "Hold.Box")
+	goto Hold.Box
+   Hold.Box:
+ 	TNT1 A 0 //Dummy frame
+	FFIR B 4 A_FireCustomMissile("BoxPlacerGhostMissile", 0, 0, 0, 16)   
+	FFIR B 0 A_ReFire //("Hold.Box") //If fire button is held, then it goes back to the beginning of the sequence, Otherwise it would continue
+    goto ActuallyFire.Box
+   Hold.Pillar:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 4 A_FireCustomMissile("BoxPlacerPillarGhostMissile", 0, 0, 0, 16)
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+    goto ActuallyFire.Pillar
+   Hold.Floor:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 4 A_FireCustomMissile("BoxPlacerFloorGhostMissile", 0, 0, 0, 16)
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+    goto ActuallyFire.Floor
+   Hold.Door:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 4 A_FireCustomMissile("BoxPlacerDoorGhostMissile", 0, 0, 0, 16)
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+    goto ActuallyFire.Door
+   Hold.StoneBox:
+ 	TNT1 A 0 //Dummy frame
+ 	FFIR B 4 A_FireCustomMissile("BoxPlacerStoneBoxGhostMissile", 0, 0, 0, 16)
+	FFIR B 0 A_Refire //Will jump to the Hold state if the button is held down
+    goto ActuallyFire.StoneBox
+  }
+}
+
+actor BoxPlacerMode : Inventory
+{
+	Inventory.MaxAmount 4
+}
+
+actor BoxPlacerMissile : FastProjectile
+{
+	Speed 80
+	-SOLID
+	-SHOOTABLE
+	
+	States
+	{
+		Spawn:
+			TNT1 A 3 //Max distance determined by: (Speed)*(this duration)
+			Stop
+		//XDeath is used if we hit a bleeding actor. Let's not implement that state then so we 
+		//don't allow placing blocks on bleeding actors.q
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+actor BoxPlacerPillarMissile : BoxPlacerMissile
+{
+	States {
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerPillarPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop		
+	}
+}
+
+actor BoxPlacerFloorMissile : BoxPlacerMissile
+{
+	States {
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerFloorPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop		
+	}
+}
+
+actor BoxPlacerDoorMissile : BoxPlacerMissile
+{
+	States {
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerDoorPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop		
+	}
+}
+
+actor BoxPlacerStoneBoxMissile : BoxPlacerMissile
+{
+	States {
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerStoneBoxPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop		
+	}
+}
+
+//Ghost missile actors
+actor BoxPlacerGhostMissile : BoxPlacerMissile
+{
+	Speed 80
+	States
+	{
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerGhostPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+actor BoxPlacerPillarGhostMissile : BoxPlacerGhostMissile
+{
+	States
+	{
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerPillarGhostPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+actor BoxPlacerFloorGhostMissile : BoxPlacerGhostMissile
+{
+	States
+	{
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerFloorGhostPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+actor BoxPlacerDoorGhostMissile : BoxPlacerGhostMissile
+{
+	States
+	{
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerDoorGhostPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+actor BoxPlacerStoneBoxGhostMissile : BoxPlacerGhostMissile
+{
+	States
+	{
+		Death:
+		Crash:
+			TNT1 A 0 A_SpawnItemEx("BoxPlacerStoneBoxGhostPuff", -8, 0, 0, 0, 0, 0, angle, 0, 0)
+			Stop
+	}
+}
+
+/* === Puff actors ===
+   This is the "bullet puff" that appears when you try to
+   place a box with the BoxPlacer gun above. This bullet puff
+   is the thing that actually spawns the box that you wanted to
+   place.
+*/
+ACTOR BoxPlacerPuff : BulletPuff
+{
+  +NOBLOCKMAP
+  +NOGRAVITY
+  +NOEXTREMEDEATH
+  +PUFFONACTORS
+  +CANPASS
+  RenderStyle Translucent
+  Alpha 0.6
+  //SeeSound "KnifeHitThing"
+  //AttackSound "KnifeHitWall"
+  //ActiveSound "KnifeMiss"
+  Radius 2
+  VSpeed 0
+  States
+  {
+  Spawn:
+    //PUFF ABCD 4
+	PUFF ABCD 1
+	TNT1 A 0 A_SpawnItemEx("CBox", 
+							//These script calls are snapping the
+							//puff coordinates to the grid so the
+							//box is placed on the grid!
+							ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+    Stop
+  }
+}  
+
+actor BoxPlacerPillarPuff : BoxPlacerPuff
+{
+  States
+  {
+  Spawn:
+    //PUFF ABCD 4
+	PUFF ABCD 1
+	TNT1 A 0 A_SpawnItemEx("CPillar", 
+							//These script calls are snapping the
+							//puff coordinates to the grid so the
+							//box is placed on the grid!
+							ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(933, z),  //2x quantization for pillar
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+    Stop
+  }
+}
+
+
+actor BoxPlacerFloorPuff : BoxPlacerPuff
+{
+  States
+  {
+  Spawn:
+    //PUFF ABCD 4
+	PUFF ABCD 1
+	TNT1 A 0 A_SpawnItemEx("CFloor", 
+							//These script calls are snapping the
+							//puff coordinates to the grid so the
+							//box is placed on the grid!
+							ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+    Stop
+  }
+}
+
+
+actor BoxPlacerDoorPuff : BoxPlacerPuff
+{
+  States
+  {
+  Spawn:
+    //PUFF ABCD 4
+	PUFF ABCD 1
+	TNT1 A 0 A_SpawnItemEx("CDoor", 
+							//These script calls are snapping the
+							//puff coordinates to the grid so the
+							//box is placed on the grid!
+							ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+    Stop
+  }
+}
+
+
+actor BoxPlacerStoneBoxPuff : BoxPlacerPuff
+{
+  States
+  {
+  Spawn:
+    //PUFF ABCD 4
+	PUFF ABCD 1
+	TNT1 A 0 A_SpawnItemEx("CStoneBox", 
+							//These script calls are snapping the
+							//puff coordinates to the grid so the
+							//box is placed on the grid!
+							ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+    Stop
+  }
+}
+
+
+/* === Ghost Puff actors ===
+   This is the temporary box that appears when you're holding
+   down the fire button while using the box placer.
+*/
+ACTOR BoxPlacerGhostPuff : BulletPuff
+{
+  +NOBLOCKMAP
+  +NOGRAVITY
+  +NOEXTREMEDEATH
+  +PUFFONACTORS
+  +CANPASS
+  -RANDOMIZE
+  RenderStyle Translucent
+  Alpha 0.6
+  VSpeed 0
+  States
+  {
+  Spawn:
+    PUFF A 0 //Dummy  frame
+	TNT1 A 0 A_SpawnItemEx("CBoxGhost", 
+						   ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+    Stop
+  }
+}  
+
+Actor BoxPlacerPillarGhostPuff : BoxPlacerGhostPuff
+{
+  States
+  {
+  Spawn:
+    PUFF A 0 //Dummy  frame
+	TNT1 A 0 A_SpawnItemEx("CPillarGhost", 
+						   ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(933, z),  //2x quantization for pillar
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+    Stop
+  }
+}
+
+Actor BoxPlacerFloorGhostPuff : BoxPlacerGhostPuff
+{
+  States
+  {
+  Spawn:
+    PUFF A 0 //Dummy  frame
+	TNT1 A 0 A_SpawnItemEx("CFloorGhost", 
+						   ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+    Stop
+  }
+}
+
+Actor BoxPlacerDoorGhostPuff : BoxPlacerGhostPuff
+{
+  States
+  {
+  Spawn:
+    PUFF A 0 //Dummy  frame
+	TNT1 A 0 A_SpawnItemEx("CDoorGhost", 
+						   ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+    Stop
+  }
+}
+
+Actor BoxPlacerStoneBoxGhostPuff : BoxPlacerGhostPuff
+{
+  States
+  {
+  Spawn:
+    PUFF A 0 //Dummy  frame
+	TNT1 A 0 A_SpawnItemEx("CStoneBoxGhost", 
+						   ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+						   ACS_ExecuteWithResult(932, z), 
+						   0.0, 0.0, 0.0, //velocity 
+						   0.0, //angle
+						   SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+    Stop
+  }
+}

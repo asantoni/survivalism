@@ -1,0 +1,413 @@
+
+/* Each player has this instead of a global variable. It tells us what type of monsters to spawn around a player. 
+   Check DOOMZGAME.acs for what the different modes mean.
+*/
+ACTOR MonsterSpawnerMode : Inventory
+{
+   inventory.maxamount 999
+   inventory.amount 0
+   //+INVENTORY.UNDROPPABLE - "Note that this also prevents the actor from being removed when ClearInventory or ClearActorInventory is called."
+   -INVENTORY.AUTOACTIVATE
+}
+
+
+ACTOR MonsterSpawnerCharge : Inventory
+{
+   inventory.maxamount 999
+   inventory.amount 0
+   -INVENTORY.AUTOACTIVATE
+}
+
+actor DoomZMonsterSpawnerProjectile
+{
+	Projectile
+	
+	//Only bounce off walls / planes
+	BounceType "Hexen"
+	
+	//Bouncing projectiles blow up on actors by default, so we need to turn that off.
+	-ALLOWBOUNCEONACTORS //Needs to be set for BOUNCEONACTORS to work
+	-BOUNCEONACTORS
+	
+	//Rip through all actors.
+	+THRUACTORS
+	//+RIPPER results in actors bleeding, +THRUACTORS doesn't! :-)
+	//+CEILINGHUGGER
+	+FLOORHUGGER
+	Speed 60
+	
+	WallBounceFactor 1.0 //Don't lose momentum when we bounce off walls
+	+NEVERRESPAWN 
+	//+ISMONSTER
+	+INVULNERABLE
+
+    -COUNTKILL
+	-SOLID
+	+NOBLOCKMAP
+	+STEPMISSILE
+
+	//+SHOOTABLE - pre r14 test 12
+	-SHOOTABLE //- r14 test 12 - shouldn't be needed anymore, and stops turrets from attacking them?
+	+NOGRAVITY
+	+LOOKALLAROUND
+	
+	+PAINLESS //Actors hit by us will never enter their pain states
+	+NODAMAGETHRUST //We will never thrust actors we damage, if we do damage anyone.
+	-BLOODSPLATTER //Do not spawn blood splatter sprites when ripping through an actor
+	
+	//Disabled in r14 test 13 because if you stand beside a torch, the repeller blocks the spawn
+	//+DONTOVERLAP //r14 Test 11
+
+	+SERVERSIDEONLY //DoomZ r14 Test 10
+	
+	/* TODO: Try reimplementing this as a +FRIGHTENED monster instead of a projectile?
+	+FRIGHTENED
+	Monster
+	*/
+	
+	Height 8
+	Mass 0
+	//Damage 1
+	Damage 0
+	Health 1000
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Don't let these projectiles get intercepted yet...
+			TNT1 A 0 A_SetInvulnerable
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 //A_HideThing
+			TNT1 A 0 Bright Thing_Hate(0, 8401 /*MONSTER_REPELLER_TID*/, 5)
+			TNT1 A 100 Bright
+		//Randomize how far away the projectile goes before it turns into a monster
+		Procrastinate:
+			TNT1 A 0 
+			TNT1 A 50 Bright A_Jump(48, "SpawnMonster")
+			TNT1 A 0 
+			loop
+		SpawnMonster:
+			TNT1 A 1
+			//OK, now let's allow them to be shot down by the MonsterSpawnerRepeller
+			//(so monsters don't spawn above your base!)
+			//TNT1 A 0 A_ChangeVelocity(0, 0, 0, CVF_REPLACE) - Old approach
+			//Change it from a floor hugger into a ceiling hugger, and turn off THRUACTORS
+			//so it gets blocked by any repellers.
+			TNT1 A 0 A_ChangeFlag("FLOORHUGGER", 0)
+			TNT1 A 0 A_ChangeFlag("CEILINGHUGGER", 1)
+			TNT1 A 0 A_ChangeFlag("THRUACTORS", 0)
+			TNT1 A 1 A_UnSetInvulnerable
+			TNT1 A 1 A_SetSolid //Make it get stuck in a repeller block
+			//TNT1 A 1 A_ChangeFlag("CEILINGHUGGER", 0)
+			//TNT1 A 1 A_ChangeFlag("NOGRAVITY", 0)
+			TNT1 A 1 A_JumpIf((velx == 0), "Death") //If we're still, it means we're stuck in something, so abort. 
+			TNT1 A 1 A_UnsetSolid //We don't want to block spawning of the monster, so we set this back.
+			TNT1 A 1 //A_UnHideThing
+			
+			//A_LookEx seems to only target non-player actors if the player can be seen.
+			/*
+			TNT1 A 1 A_LookEx(0, 0, 2048.0, 2048.0, 0, "Death")
+			TNT1 A 1 A_SetAngle(angle+90)
+			TNT1 A 1 A_LookEx(0, 0, 2048.0, 2048.0, 0, "Death")
+			TNT1 A 1 A_SetAngle(angle+90)
+			TNT1 A 1 A_LookEx(0, 0, 2048.0, 2048.0, 0, "Death")
+			TNT1 A 1 A_SetAngle(angle+90)
+			TNT1 A 1 A_LookEx(0, 0, 2048.0, 2048.0, 0, "Death")
+			TNT1 A 1 A_SetAngle(angle+90)
+			TNT1 A 1 A_LookEx(0, 0, 2048.0, 2048.0, 0, "Death")
+			*/
+			TNT1 A 0 //A_PlaySound("misc/i_pkup")
+			//SVXP A 35 //Give a MonsterSpawnerRepeller 35 ticks to kill us
+			//Dynamic dispatch
+			TNT1 A 0 A_Jump(255, "ReallySpawnMonster")
+			TNT1 A 1 A_Jump(255, "ReallySpawnMonster")
+			TNT1 A 1 A_Jump(255, "ReallySpawnMonster")
+			TNT1 A 1 A_Jump(255, "ReallySpawnMonster")
+			TNT1 A 1 A_Jump(255, "ReallySpawnMonster")
+		ReallySpawnMonster:
+			TNT1 A 5 ACS_ExecuteAlways(203) //200 tic duration so our TID sticks around
+			Stop
+		Pain:
+		Death:
+			TNT1 A 0 //A_PlaySound("Click")
+			Stop
+	}
+}
+
+/* This is an invisible actor that sits below each torch. It's purpose
+   is to shoot down MonsterSpawnerProjectiles so that monsters don't spawn
+   in your base!
+*/
+actor MonsterSpawnerRepellerOld
+{
+	//Projectile
+	//BounceType "Hexen"
+	//+RIPPER
+	Monster
+	ReactionTime 0
+	//+CEILINGHUGGER
+	//+FLOORHUGGER
+	+ISMONSTER // Needed for master/child relationship to work
+	+FRIENDLY
+	-SOLID
+    -COUNTKILL
+	+NOBLOCKMAP //Added in r14. Previously the MonsterSpawnerProjectile had it
+	+NOGRAVITY
+	+STANDSTILL
+	+NOCLIP
+	+NOTARGET
+	+LOOKALLAROUND
+	+QUICKTORETALIATE
+
+	+SERVERSIDEONLY //DoomZ r14 Test 10
+
+	Speed 0
+	
+	Height 16
+	Mass 0x7FFFFFFF
+	Damage 5
+	MeleeRange 642 //Be sure the change the max see distance below too!
+	Health 0x7FFFFFFF
+	
+	DamageFactor "FireIgnition", 0
+	DamageType "MonsterSpawnerRepeller"
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 ACS_ExecuteAlways(512, 0, 0) //Change our TID to MONSTER_REPELLER_TID so monster spawner projectiles can kill themselves if they see us
+			//This TID hating mechanism doesn't really work as intended because repellers will still
+			//attack regular monsters too. For this reason, we're still sticking with ceiling-hugging repellers.
+			//TNT1 A 0 ACS_ExecuteAlways(948, 0, 0) //Hate MonsterSpawnerProjectiles
+			TNT1 A 1 A_ChangeVelocity (0, 0, 64, CVF_REPLACE) //Float to the ceiling
+			TNT1 A 15  //Wait until it's reach the ceiling...
+			TNT1 A 0 A_ChangeVelocity (0, 0, 0, CVF_REPLACE)
+		SpawnLook:
+			TNT1 A 35 BRIGHT A_AlertMonsters 
+			Loop
+			//TNT1 A 8 A_LookEx(LOF_NOSOUNDCHECK, 0, 642, 0, 0, "See") //512 max see distance, 360 degrees -> LOOKALLAROUND
+			//Loop
+		/* Pre-r14 rework:
+		See:
+			//Attack DoomZMonsterSpawnerProjectiles
+			TNT1 B 0 A_FaceTarget
+			TNT1 B 5 A_Chase
+			TNT1 B 0 A_ClearTarget
+			goto SpawnLook
+		//Missile:
+		//	Stop //Remove it
+		Melee:
+			TNT1 A 0
+			TNT1 A 0 A_FaceTarget
+			TNT1 A 1 A_CustomMeleeAttack(10)
+			//TNT1 A 0 A_PlaySound("imp/melee") // -> For debugging
+			goto See
+		*/
+		Pain:
+			TNT1 A 1
+			goto See
+		Death:
+			Stop
+	}
+}
+
+//Zandronum 3.0
+//DamageType MonsterSpawnerRepeller { Factor 0 }
+
+/* This is an invisible actor that sits above each torch. 
+   This version blocks MonsterSpawnerProjectiles by just taking up a lot of space
+   so that monsters don't spawn in your base!
+*/
+actor MonsterSpawnerRepeller
+{
+	//Projectile
+	//BounceType "Hexen"
+	//+RIPPER
+	//Monster
+	ReactionTime 0
+	+CEILINGHUGGER
+	//+FLOORHUGGER
+	+ISMONSTER // Needed for master/child relationship to work
+	+FRIENDLY
+	+SOLID
+    -COUNTKILL
+	-NOBLOCKMAP //Added in r14. Previously the MonsterSpawnerProjectile had it
+	+NOGRAVITY
+	+STANDSTILL
+	+NOCLIP
+	+NOTARGET
+	+LOOKALLAROUND
+	+QUICKTORETALIATE
+	
+	+SERVERSIDEONLY //DoomZ r14 Test 10
+
+	Speed 0
+	Height 16
+	Radius 256
+	Mass 0x7FFFFFFF
+	Health 0x7FFFFFFF
+	
+	DamageFactor "FireIgnition", 0
+	DamageType "MonsterSpawnerRepeller"
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 ACS_ExecuteAlways(512, 0, 0) //Change our TID to MONSTER_REPELLER_TID so monster spawner projectiles can kill themselves if they see us
+			//This TID hating mechanism doesn't really work as intended because repellers will still
+			//attack regular monsters too. For this reason, we're still sticking with ceiling-hugging repellers.
+			//TNT1 A 0 ACS_ExecuteAlways(948, 0, 0) //Hate MonsterSpawnerProjectiles
+			TNT1 A 1 A_ChangeVelocity (0, 0, 64, CVF_REPLACE) //Float to the ceiling
+			TNT1 A 15  //Wait until it's reach the ceiling...
+			TNT1 A 0 A_ChangeVelocity (0, 0, 0, CVF_REPLACE)
+		SpawnLook:
+			TNT1 A 70 BRIGHT A_AlertMonsters 
+			TNT1 A 1 BRIGHT //A_Explode(10, 2048) - 3d radius sucks hurts you if you're on the ground :(
+							// If we get DamageType declarations in Zandronum 3.0, we can make this work - http://zdoom.org/wiki/Custom_damage_types
+			Loop
+		Pain:
+			TNT1 A 1
+			goto See
+		Death:
+			Stop
+	}
+}
+
+actor DogCluster
+{
+	-SOLID
+	-NOBLOCKMAP
+
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Shoot DogSpawnerProjectiles (with the correct TID)
+			TNT1 A 1 ACS_ExecuteAlways(205, 0, 0, 5, 30)
+			TNT1 A 100
+			Stop
+	}
+}
+
+actor DogSpawnerProjectile : DoomZMonsterSpawnerProjectile
+{
+	//this breaks this for some reason here:
+	-CEILINGHUGGER
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Don't let these projectiles get intercepted yet...
+			TNT1 A 0 A_SetInvulnerable
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_HideThing
+			TNT1 A 20
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			goto SpawnMonster
+		//Randomize how far away the projectile goes before it turns into a monster
+		//Procrastinate:
+			//TNT1 A 16 A_Jump(48, "SpawnMonster")
+			//loop
+		ReallySpawnMonster:
+			TNT1 A 1 A_UnsetSolid //So we don't block the spawning below
+			TNT1 A 5 ACS_ExecuteAlways(204, 0, 0, 1) //200 tic duration so our TID sticks around
+			Stop
+	}
+}
+
+
+actor TreeCluster
+{
+	-SOLID
+	-NOBLOCKMAP
+
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Shoot DogSpawnerProjectiles (with the correct TID)
+			TNT1 A 1 ACS_ExecuteAlways(205, 0, 1, 5, 30)
+			TNT1 A 100
+			Stop
+	}
+}
+
+actor TreeSpawnerProjectile : DoomZMonsterSpawnerProjectile
+{
+	//this breaks this for some reason here:
+	-CEILINGHUGGER
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Don't let these projectiles get intercepted yet...
+			TNT1 A 0 A_SetInvulnerable
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_HideThing
+			TNT1 A 20
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			goto SpawnMonster
+		//Randomize how far away the projectile goes before it turns into a monster
+		//Procrastinate:
+			//TNT1 A 16 A_Jump(48, "SpawnMonster")
+			//loop
+		ReallySpawnMonster:
+			TNT1 A 1 A_UnsetSolid //So we don't block the spawning below
+			//Spawn a tree:
+			TNT1 A 5 ACS_ExecuteAlways(204, 0, 1, 0) //200 tic duration so our TID sticks around
+			Stop
+	}
+}
+
+actor ZombieCluster
+{
+	-SOLID
+	+CEILINGHUGGER
+	//-NOBLOCKMAP
+
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Shoot ZombieSpawnerProjectiles (with the correct TID)
+			TNT1 A 5 ACS_ExecuteAlways(205, 0, 2, 15, 30)
+			TNT1 A 100
+			Stop
+	}
+}
+
+actor ZombieSpawnerProjectile : DoomZMonsterSpawnerProjectile
+{
+	//+SOLID
+	//this breaks this for some reason here:
+	+CEILINGHUGGER
+	//Height 192.0 //Height has to be higher than the zombies we're spawning if we want to stay as a CEILINGHUGGER!
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			//Don't let these projectiles get intercepted yet...
+			TNT1 A 0 A_SetInvulnerable
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 //A_HideThing
+			TNT1 A 20
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			TNT1 A 0 A_Jump(255, "SpawnMonster")
+			goto SpawnMonster
+
+		ReallySpawnMonster:
+			TNT1 A 1 //A_UnsetSolid //So we don't block the spawning below
+			//Spawn a zombie:
+			TNT1 A 5 ACS_ExecuteAlways(204, 0, 2, 1) //200 tic duration so our TID sticks around
+			Stop
+	}
+}

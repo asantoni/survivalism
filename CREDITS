@@ -1,0 +1,119 @@
+DoomZ / Survivalism WAD
+by Albert Santoni (haxmurderer)
+Project Start: February 2014
+================
+
+Release notes on the Zandronum forums:
+http://zandronum.com/forum/showthread.php?tid=4273
+
+
+ABOUT:
+================
+
+Can you survive?
+
+Survivalism is a WAD that pits you in a barren wasteland against
+zombies and other surprises. Gather weapons and resources to 
+survive! And watch out for other players - Are they friends or foes?
+
+- Maps: doomz1, doomz2
+- Server flags to use:
+	alwaysapplydmflags true
+	sv_defaultdmflags false
+	sv_weaponstay false
+	
+
+CREDITS:
+================
+ACS by Albert Santoni
+
+2D Art, Weapons, and Decorations:
+Knife - Xim / ScubaSteve
+Yellowboy - Batandy
+Axe - TheMightyHeracross, Blue Shadow, Mike12, scalliano
+FlareGun - Monolight Productions, lolo_is_cool 
+Box - 3D Realms, Captain Awesome, Lucario, Hayabusa
+DeadSwampTrees - Raven Software, Gothic
+Garden - Rogue Entertainment, Raven Software, Yuyu3
+NecroRocks - Raven Software, Captain Toenail
+SmallTrees&Bushes - Raven Software, CaptainToenail
+Bow - Gothic, Raven Software, GvH, Bethesda, Raven Software, Monolith
+Death Incarnate - Eriance, Blue Shadow, MagicWazard, Ghastly Dragon, Sandypaper (Brightmaps), Midway, Rogue Entertainment, Raven Software, id Software, Midway
+Deployable Sentry Gun - Captain Toenail, ID Software, 3D Realms, Raven, Valve
+Sky textures - Powergloveninja, Bethesda
+Hazmat Zombie - scalliano, Id Software, Volition, Enjay
+Former Scientists - scalliano, Sounds: Id Software, DavidRaven, Konami, Valve, Id Software (Zombieman), Xim (Jawless Zombie Head), JoeyTD (Player 6, 7 & 8 frames), The Skulltag Team (Illucia, Player II), DavidRaven (Female Zombie), Marty Kirra (Alt Female Zombie) 
+Former Scientists Pack 2 - scalliano, Id Software, DavidRaven, Konami, Valve, Id Software (Zombieman), JoeyTD (Player 6, 7 & 8 frames), The Skulltag Team (Illucia, Player II), DavidRaven (Female Zombie), Marty Kirra (Diaz, Alt Female Zombie), NMN, Tormentor667 (Rapid Fire Zombie), Woolie Wool (SMG Zombie), Vader (Chaingun Major), Mike12 (Revy Skin), solarsnowfall (Steam sprites)
+Undead Priest - Captain Toenail, Free Radical Design, Raven Software
+Devastator Zombie - scalliano, Eriance (?), Id Software, ItsNatureToDie, neoworm, Captain Toenail, Xim, Ghastly_dragon, Demon Eclipse
+Ghoul - Tormentor667, Eriance, Ghastly Dragon, Raven Software
+Daggerfall Foliage - Powergloveninja, Bethesda, Hax Murderer (DECORATE)
+Death Wyvern - Raven Software
+Chicken and Pig - Raven Software
+Shadow - Tormentor667, Vader, Ghastly Dragon, Sandypaper (Brightmaps), Blizzard Entertainment, Vader
+Rottweiler - Captain Toenail, id Software
+Fog - Raven Software
+Rope and Grapling Gun - TheShooter7, AEnima (from Mercenaries v1.9 and originally 99GunsX)
+Hemp - 
+Casing Spawner - Ghastly_dragon, KDiZD Team
+Glock18 - id Software, JoeyTD, Minigunner
+Holding a Chicken Sprite - Hotwax, Cutman, Raven Software
+Firewood - ETTiNGRiNDER, Raven Software
+Hunting Rifle - TODM, Valve
+Wenstern (sic) Shotgun - Cory Whittle, lolo_is_cool, Raven Software, Valve
+Gargoyle Statue - Raven Software
+CyberSnake and Daemonium - SunMadCat
+Imp Warlord - Espi, Nanami, Popsoap, Tormentor667, Keksdose, Id Software, Raven Software
+Gas Can - 
+Peasants - TheMightyHeracross, Graf Zhal, Rogue Entertainment, id Software, Xim
+Scroll - DooFi / OpenClipArt
+Medical Backpack - TheMightyHeracross, Blue Shadow, id Software, BloodyAcid
+Chaingun sounds - lolo_is_cool, Croteam
+Hunting Rifle Reload Sound - MentalSanityOff on Freesound (sound ID 153560) - Creative Commons Zero License
+Ammo Belt - Ghastly_dragon, id Software
+Splashes - Enjay @ ZDoom Forums - http://forum.zdoom.org/viewtopic.php?f=37&t=35547
+Bucket - Raven Software
+Crimson Disciple - idGamer, Raven Software, id Software, Huy Pham
+Cultist - Eriance, Dreadopp, SandyPaper (Brightmaps), Monolith, Raven Software
+Apprentice of Dsparil - Bouncy, Ghastly Dragon, Sandypaper (Brightmaps), Raven Software, Tormentor667
+Ankh of Life - Blue Shadow, Raven Software
+
+Sounds:
+Pistol - id Software
+Fuse - Mojang
+TREEBRK, ROCKS - Raven Software
+CLICK - gify
+LavaFlow - BouncyTEM, XV Sound Effect Library
+HEY, THX - Streets of Rage 2
+Waterfall and water stream - Soundjay.com
+
+Music:
+Survivalism Day 1, Boss, and Night - gify
+The Mountain - gify
+The Cave - gify
+Survivalism Theme - gify
+
+Other Art:
+Bed and crate 3d model - Sitters Electronics (CC-BY) - www.md2.sitters-electronics.nl
+
+Other ACS Code:
+Player drop stuff - bagheadspidey
+ACS.NET Library
+
+Special Thanks:
+- Nascence for his awesome DoomZ fork!
+- Dot for his help making inflammable trees work
+- Scroton for the movable platform inspiration
+- noob_one for his tweaks and chainsaw!
+- bagheadspidey for his fsqrt function
+- Visual Vincent for his awesome ACS.NET library
+
+Release 5 helpers:
+
+Sky/Night Textures & Script                  - Claudio
+DOOMZ1 3D Floor Light Fix                    - Claudio
+Lms Compatibility                            - Claudio
+Loot Box Light                               - Claudio
+More Player starts for Hunger Gam-..... LMS  - Claudio
+TitlePics                                    - Claudio
+SentryGun                                    - SenteyHunter
