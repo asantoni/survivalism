@@ -14,7 +14,7 @@ acs/%.o: %.acs Makefile
 	$(ACC) -i $(ACC_INC_DIR) $< $@ 
 
 pk3:
-	$(ZIP) -v -u -r $(OUTPUT_PK3) -x *.bat *
+	$(ZIP) -v -r -u $(OUTPUT_PK3) *  -x *.bat 
 	echo "Created $(OUTPUT_PK3)"
     
 clean:
