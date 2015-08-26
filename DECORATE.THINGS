@@ -565,7 +565,7 @@ ACTOR Ankh : CustomInventory
   Inventory.Amount 1 
   Inventory.Icon "ARTIALI1"
   Inventory.InterHubAmount 100
-  Inventory.MaxAmount 3 
+  Inventory.MaxAmount 1
   Inventory.PickupMessage "You found the Ankh Of Life - Use it to defeat death!"
   Inventory.PickupSound "misc/p_pkup"
   Tag "Ankh of Life"
