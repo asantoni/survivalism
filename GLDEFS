@@ -1,3 +1,5 @@
+#include "GL/crimsondisciple.txt"				// Crimson Disciple
+
 object SentryGun
 {
     frame SENTB { light ZOMBIEATK }

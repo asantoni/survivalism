@@ -1,0 +1,79 @@
+PulseLight CrimsonDiscipleFire
+{
+	color 0.7 0.4 0.0
+	size 64
+	secondarySize 50
+	Interval 0.5
+}
+
+PulseLight CrimsonDiscipleFire
+{
+	color 0.7 0.4 0.0
+	size 40
+	secondarySize 25
+	Interval 0.5
+}
+
+
+PointLight CrimsonDiscipleBlood
+{
+	color 1.0 0.0 0.0
+	size 32
+}
+
+PointLight CrimsonDiscipleRain
+{
+	color 1.0 0.0 0.0
+	size 6
+}
+
+PulseLight CrimsonDiscipleBlood2
+{
+	color 1.0 0.0 0.0
+	size 64
+	SecondarySize 60
+	Interval 0.1
+}
+
+Object FireWall
+{
+	frame CFIRA { light CrimsonDiscipleFire2 }
+	frame CFIRB { light CrimsonDiscipleFire2 }
+	frame CFIRC { light CrimsonDiscipleFire }
+	frame CFIRD { light CrimsonDiscipleFire }
+	frame CFIRE { light CrimsonDiscipleFire }
+	frame CFIRF { light CrimsonDiscipleFire }
+	frame CFIRG { light CrimsonDiscipleFire }
+	frame CFIRH { light CrimsonDiscipleFire }
+	frame CFIRI { light CrimsonDiscipleFire }
+	frame CFIRJ { light CrimsonDiscipleFire }
+	frame CFIRK { light CrimsonDiscipleFire }
+	frame CFIRL { light CrimsonDiscipleFire }
+	frame CFIRM { light CrimsonDiscipleFire }
+}
+
+Object BloodShot
+{
+	frame CBLDA { light CrimsonDiscipleBlood }
+	frame CBLDB { light CrimsonDiscipleBlood }
+	frame CBLDC { light CrimsonDiscipleBlood }
+	frame CBLDD { light CrimsonDiscipleBlood2 }
+	frame CBLDE { light CrimsonDiscipleBlood2 }
+	frame CBLDF { light CrimsonDiscipleBlood2 }
+	frame CBLDG { light CrimsonDiscipleBlood2 }
+	frame CBLDH { light CrimsonDiscipleBlood2 }
+	frame CBLDI { light CrimsonDiscipleBlood2 }
+}
+
+Object RainPillar2
+{
+	frame FX22A { light CrimsonDiscipleRain }
+	frame FX22B { light CrimsonDiscipleRain }
+	frame FX22C { light CrimsonDiscipleRain }
+	frame FX22D { light CrimsonDiscipleRain }
+	frame FX22E { light CrimsonDiscipleRain }
+	frame FX22F { light CrimsonDiscipleRain }
+	frame FX22G { light CrimsonDiscipleRain }
+	frame FX22H { light CrimsonDiscipleRain }
+	frame FX22I { light CrimsonDiscipleRain }
+}

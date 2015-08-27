@@ -24,3 +24,11 @@
 #include "DECORATE.CPILLAR"
 #include "DECORATE.CDOOR"
 #include "DECORATE.CFLOOR"
+
+//================================================
+// MONSTERS
+//================================================
+
+#include "actors/monsters/crimsondisciple.txt"
+
+//================================================
