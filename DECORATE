@@ -29,6 +29,7 @@
 // MONSTERS
 //================================================
 
-#include "actors/monsters/crimsondisciple.txt"
+#include "actors/monsters/crimsondisciple.txt"				// Crimson Disciple
+#include "actors/monsters/apprenticeofdsparil.txt"			// Apprentice of D'Sparil
 
 //================================================
