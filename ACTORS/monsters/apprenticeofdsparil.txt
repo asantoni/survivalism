@@ -1,0 +1,182 @@
+Actor ApprenticeofDsparil 30000
+{
+  Health 500
+  Radius 20
+  Height 56
+  Speed 8
+  PainChance 100
+  Monster
+  +FloorClip
+  +NoGravity
+  +Float
+  +DontHurtSpecies
+  SeeSound "Wizard2/Sight"
+  PainSound "Wizard2/Pain"
+  DeathSound "Wizard2/Death"
+  ActiveSound "Wizard2/Active"
+  Obituary "%o was spooked by one of D'sparil's Apprentices."
+  States
+  {
+  Spawn:
+    APDP AB 10 A_Look
+    Loop
+  See:
+    APDP A 0 A_SetTranslucent(1, 0)
+    APDP AABB 3 A_Chase
+    Loop
+  Missile:
+    APDP C 0 A_FaceTarget
+    APDP C 2 A_SetTranslucent(0.50, 0)
+    APDP C 2 A_SetTranslucent(1, 0)
+    APDP C 2 A_SetTranslucent(0.50, 0)
+    APDP C 2 A_SetTranslucent(1, 0)
+    APDP C 2 A_SetTranslucent(0.50, 0)
+    APDP C 2 A_SetTranslucent(1, 0)
+    APDP C 2 A_SetTranslucent(0.50, 0)
+    APDP C 2 A_SetTranslucent(1, 0)
+    APDP C 0 A_Jump(64, "Missile2")
+    APDP C 0 A_Jump(64, "Missile3")
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 0 A_CustomMissile("FireBlast", 30, -10, 4)
+    APDP D 0 A_CustomMissile("FireBlast", 30, 0, 0)
+    APDP D 6 A_CustomMissile("FireBlast", 30, 10, -4)
+    Goto See
+  Missile2:
+    APDP D 1 A_SetTranslucent(0.90, 0)
+    APDP D 1 A_SetTranslucent(0.80, 0)
+    APDP D 1 A_SetTranslucent(0.70, 0)
+    APDP D 1 A_SetTranslucent(0.60, 0)
+    APDP D 1 A_SetTranslucent(0.50, 0)
+    APDP D 1 A_SetTranslucent(0.40, 0)
+    APDP D 1 A_SetTranslucent(0.30, 0)
+    APDP D 1 A_SetTranslucent(0.20, 0)
+    APDP D 1 A_SetTranslucent(0.10, 0)
+    APDP D 1 A_SetTranslucent(0.00, 0)
+    APDP D 0 A_SetInvulnerable
+    APDP D 0 A_Stop
+    APDP DDDDDDDDDDDDDDDD 2 A_Wander
+    APDP D 0 A_FaceTarget
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 0 A_CustomMissile("FireBlast", 30, -10, 4)
+    APDP D 0 A_CustomMissile("FireBlast", 30, 0, 0)
+    APDP D 6 A_CustomMissile("FireBlast", 30, 10, -4)
+    APDP DDDDDDDDDDDDDDDD 2 A_Wander
+    APDP D 0 A_FaceTarget
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 0 A_CustomMissile("FireBlast", 30, -10, 4)
+    APDP D 0 A_CustomMissile("FireBlast", 30, 0, 0)
+    APDP D 6 A_CustomMissile("FireBlast", 30, 10, -4)
+    APDP DDDDDDDDDDDDDDDD 2 A_Wander
+    APDP D 0 A_FaceTarget
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 0 A_CustomMissile("FireBlast", 30, -10, 4)
+    APDP D 0 A_CustomMissile("FireBlast", 30, 0, 0)
+    APDP D 6 A_CustomMissile("FireBlast", 30, 10, -4)
+    APDP DDDDDDDDDDDDDDDD 2 A_Wander
+    APDP D 0 A_FaceTarget
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 0 A_CustomMissile("FireBlast", 30, -10, 4)
+    APDP D 0 A_CustomMissile("FireBlast", 30, 0, 0)
+    APDP D 6 A_CustomMissile("FireBlast", 30, 10, -4)
+    APDP DDDDDDDDDDDDDDDD 2 A_Wander
+    APDP D 1 A_SetTranslucent(0.10, 0)
+    APDP D 1 A_SetTranslucent(0.20, 0)
+    APDP D 1 A_SetTranslucent(0.30, 0)
+    APDP D 1 A_SetTranslucent(0.40, 0)
+    APDP D 1 A_SetTranslucent(0.50, 0)
+    APDP D 1 A_SetTranslucent(0.60, 0)
+    APDP D 1 A_SetTranslucent(0.70, 0)
+    APDP D 1 A_SetTranslucent(0.80, 0)
+    APDP D 1 A_SetTranslucent(0.90, 0)
+    APDP D 1 A_UnSetInvulnerable
+    APDP D 1 A_SetTranslucent(1, 0)
+    Goto See
+  Missile3:
+    APDP C 0 A_FaceTarget
+    APDP C 0 A_Playsound("Wizard2/Attack")
+    APDP D 4 A_CustomMissile("SuperFireBlast", 15, 0, 0)
+    Goto See
+  Pain:
+    APDP E 0 A_SetTranslucent(1,0)
+    APDP E 4
+    APDP E 4 A_Pain
+    Goto See
+  Death:
+    APDP E 0 A_SetTranslucent(1,0)
+    APDP E 6
+    APDP F 6
+    APDP G 6 A_Scream
+    APDP H 6 A_SpawnItemEx("AoDGhost", 0, 0, 8, 0, 0, 0, 0, 128)
+    APDP I 6 A_Fall
+    APDP JKL 6
+    APDP M -1
+    Stop
+  Raise:
+    APDP ML 8
+    APDP KJI 6
+    Goto See
+  }
+}
+
+Actor AoDGhost
+{
+  Radius 1
+  Height 1
+  Speed 0
+  Projectile
+  RenderStyle Translucent
+  Alpha 0.75
+  +NoClip
+  SeeSound "AoD/Ghost"
+  States
+  {
+  Spawn:
+  Death:
+    AODG ABCDEF 5 Bright
+    AODG G 5 Bright A_Fadeout
+    Stop
+  }
+}
+
+Actor FireBlast
+{
+  Speed 25
+  Scale 0.75
+  Damage 5
+  Projectile
+  +StrifeDamage
+  +NoGravity
+  Deathsound "FireBlast/Explode"
+  Decal Scorch
+  states
+  {
+  Spawn:
+    PROJ ABC 4 Bright
+    Loop
+  Death:
+    PROJ D 4 Bright A_Explode(8, 64, 0)
+    PROJ EFGH 4 Bright
+    PROJ I 4 Bright A_Fadeout(0.50)
+    Stop
+  }
+}
+
+Actor SuperFireBlast : FireBlast
+{
+  Speed 16
+  Scale 1.5
+  Damage (20*Random(2, 4))
+  Deathsound "SuperFireBlast/Explode"
+  Decal BigScorch
+  states
+  {
+  Spawn:
+    PROJ ABC 4 Bright
+    Loop
+  Death:
+    PROJ D 4 Bright A_Explode(128, 128, 0)
+    PROJ EFGH 4 Bright
+    PROJ I 4 Bright A_Fadeout(0.50)
+    Stop
+  }
+}
