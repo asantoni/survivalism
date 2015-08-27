@@ -31,6 +31,7 @@
 
 #include "actors/monsters/crimsondisciple.txt"				// Crimson Disciple
 #include "actors/monsters/apprenticeofdsparil.txt"			// Apprentice of D'Sparil
+#include "actors/monsters/azazel.txt"			            // Azazel
 
 //================================================
 // WEAPONS
