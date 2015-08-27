@@ -1,6 +1,10 @@
 #include "GL/monsters/crimsondisciple.txt"				// Crimson Disciple
 #include "GL/monsters/apprenticeofdsparil.txt"			// Apprentice of D'Sparil
 #include "GL/monsters/azazel.txt"			            // Azazel
+#include "GL/monsters/cultist.txt"			            // Cultist
+#include "GL/monsters/deathincarnate.txt"			    // Death Incarnate (night zombie)
+
+#include "GL/weapons/bow.txt"			                // Bow
 
 object SentryGun
 {
