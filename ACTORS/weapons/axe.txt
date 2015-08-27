@@ -1,0 +1,142 @@
+ACTOR Axe : Weapon
+{
+	+WEAPON.MELEEWEAPON
+	Weapon.SelectionOrder 2000
+	Weapon.SlotNumber 1
+	Weapon.SlotPriority 5
+	Weapon.KickBack 500000
+	Inventory.Icon "AXEPA0"
+	Inventory.PickupMessage "You claimed yourself a powerful axe!"
+	Tag "Axe"
+	Obituary "%k butchered %o with his axe!"
+	+SHOOTABLE
+  //+CANPASS
+    +WINDTHRUST
+	Health 10
+
+	States
+	{
+	Spawn:
+		AXEP A 31500 //Disappear after 15 minutes
+		Stop
+	Select:
+		AXEG AAAAAAAAAA 0 A_Raise //To get it to raise
+		TNT1 A 6
+		AXEG EDCBA 2
+		Goto Ready
+	Deselect:
+		TNT1 A 0 A_TakeInventory("AxeCharge", 0x7FFFFFFF)
+		AXEG A 1 A_Lower
+		loop
+		//This old code causes a crash for some reason in Zandronum 1.2, 
+		//if you die with the axe out: -- Albert
+		//AXEG ABCDE 2 A_Lower
+		//TNT1 A 6
+		//AXEG A 0 A_Lower
+		//Wait
+	Ready:
+		AXEG A 1 A_WeaponReady
+		loop
+	Fire:
+		//AXEG ABCDE 3 A_SetAngle(angle-5)
+		//WIND UP!
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 0 ThrustThing((angle+6)*256/360+128, 1, 0, 0)
+		AXEG B 1 A_SetAngle(angle-2)
+		AXEG B 1 A_SetAngle(angle-2)
+		AXEG B 1 A_SetAngle(angle-2)	
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)	
+		AXEG E 1 A_SetAngle(angle-2)
+		AXEG E 1 A_SetAngle(angle-2)
+		AXEG E 1 A_SetAngle(angle-2)
+		TNT1 A 4
+		AXEG A 0 ThrustThing((angle+30)*256/360, 4, 0, 0)
+		AXEG I 2 A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		AXEG I 0 A_JumpIfInventory("PowerStrength", 1, "ToughFire")
+		AXEG I 0 A_SetAngle(angle+30)
+		AXEG J 2 A_CustomPunch(20+random(4, 16), 1, 0, "AxeHitPuff")
+		//Small screen shake :D
+		AXEG K 1 A_SetPitch(pitch+2)
+		AXEG K 1 A_SetPitch(pitch-2)
+		TNT1 A 4
+		AXEG EDCBA 2
+		AXEG A 6
+		Goto Ready
+	ToughFire:
+		AXEG J 2 A_CustomPunch(60+random(4, 16), 1, 0, "AxeHitPuff")
+		Goto Fire+9
+
+	AltFire:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIfInventory("XPLevel", 12, "ActuallyAltFire") //Unlocks at level 13
+		goto Ready
+	ActuallyAltFire:
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 1 A_SetAngle(angle-2)
+		AXEG A 0 ThrustThing((angle+6)*256/360+128, 1, 0, 0)
+		AXEG B 1 A_SetAngle(angle-2)
+		AXEG B 1 A_SetAngle(angle-2)
+		AXEG B 1 A_SetAngle(angle-2)	
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG C 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)
+		AXEG D 1 A_SetAngle(angle-2)	
+		AXEG E 1 A_SetAngle(angle-2)
+		AXEG E 1 A_SetAngle(angle-2)
+		AXEG E 1 A_SetAngle(angle-2)
+		TNT1 A 8
+		TNT1 A 0 A_GiveInventory("AxeCharge", 9)
+	AltHold:
+		AXEG F 2 A_GiveInventory("AxeCharge", 1)
+		TNT1 A 0 A_Refire
+		AXEG G 3
+		AXEG H 0 ThrustThing((angle+30)*256/360, 12, 0, 0)
+		AXEG H 3 A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		AXEG I 2
+		AXEG A 0 A_SetAngle(angle+30)
+		AXEG A 0 A_JumpIfInventory("PowerStrength", 1, "AltFireHitBerserk")
+		AXEG J 2 A_CustomPunch(56 * ACS_ExecuteWithResult(104) * 0.1 + random(4, 14), 1, 0, "AxeHitPuff")
+		Goto AltFireEnd
+	AltFireHitBerserk:
+		AXEG J 2 A_CustomPunch(112 * ACS_ExecuteWithResult(104) * 0.1 + random(4, 20), 1, 0, "AxeHitPuff")
+	AltFireEnd:
+		AXEG K 2
+		TNT1 A 8
+		AXEG EDCBA 3
+		Goto Ready
+
+	}
+}
+
+ACTOR AxeHitPuff : BulletPuff
+{
+  +PUFFONACTORS
+  +NOEXTREMEDEATH //prevent gibs
+  SeeSound "weapons/axecut"
+  AttackSound "weapons/axebang"
+  ActiveSound "silent"
+  DamageType "Axe"
+
+  States
+  {
+  Spawn:
+	TNT1 A 0
+    PUFF ABCD 4 Radius_Quake(6, 4, 0, 16, 0) //Radius_Quake doesn't seem to be working here... ?
+    Stop
+  }
+}
+
+ACTOR AxeCharge : Inventory
+{
+  Inventory.MaxAmount 30 // [Blue Shadow] A maximum of 3x the damage when fully charged
+}

@@ -1,0 +1,16 @@
+Name: Axe
+Class: 1
+Type: Melee
+Palette: Doom
+Summon: Axe
+Ammo Type: None
+Altfire: Yes
+Powered Mode: No
+Brightmaps: No
+Added States: No
+ACS: Yes
+
+
+Chop, splice, and butcher your foes with this axe! Use the regular fire for a fast slice, and the
+altfire for a slower but very strong attack. Pressing and holding the altfire key will result in a
+powerful, charged up attack.
