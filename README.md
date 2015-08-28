@@ -1,6 +1,11 @@
 # Survivalism
 ## A Multiplayer Survival Horror Mod for Doom 2
-Runs on the Zandronum engine.
+Runs on the [Zandronum](http://www.zandronum.com) engine and is mostly ZDoom/GZDoom compatible.
+
+
+YouTube:
+
+[![Survivalism r13 Trailer Video](http://img.youtube.com/vi/ZM7FsSJpVac/0.jpg)](http://www.youtube.com/watch?v=ZM7FsSJpVac)
 
 ## Features
 
@@ -10,15 +15,23 @@ Runs on the Zandronum engine.
 - Construction - Build a base to survive the night!
 - Farming
 - Leveling, XP, and unlockable craftables
+- **Full Multiplayer Support** - Survive with your friends!
+- Persistent server-side inventory and characters
 - Procedural vegetation system
 - Hunger system
 - Quest system
 - Giant bosses
-- **Full Multiplayer Support** - Survive with your friends!
 - Low system requirements - It even runs on Android with Doom Touch.
 
 This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS) file for a full list of authors.
 
+## Download and Play
+
+The latest release is [available for download here](http://104.236.221.85/). Be sure to install [Zandronum](http://www.zandronum.com) and [grab a copy of doom2.wad](http://store.steampowered.com/app/2300/). 
+
+Please note that OpenGL is required. You must turn on OpenGL in Zandronum.
+
+A multiplayer server is usually running at 104.236.221.85:10667. If you download Zandronum and try to connect to this server with Doomseeker, the WAD will automatically download.
 
 ## Developing
 
