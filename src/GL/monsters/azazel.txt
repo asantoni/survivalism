@@ -1,0 +1,254 @@
+Pointlight SatyrLordMissile11
+{
+Color 0.6 0.0 0.0
+Size 48
+}
+
+Pointlight SatyrLordMissile12
+{
+Color 0.8 0.0 0.0
+Size 56
+}
+
+Pointlight SatyrLordMissile13
+{
+Color 1.0 0.0 0.0
+Size 64
+}
+
+Pointlight SatyrLordMissile14
+{
+Color 0.8 0.0 0.0
+Size 48
+}
+
+Pointlight SatyrLordMissile15
+{
+Color 0.4 0.0 0.0
+Size 24
+}
+
+Object SatyrLordMissile1
+{
+Frame ANFBA { Light SatyrLordMissile11 }
+Frame ANFBB { Light SatyrLordMissile11 }
+Frame ANFBC { Light SatyrLordMissile11 }
+Frame ANFBD { Light SatyrLordMissile12 }
+Frame ANFBE { Light SatyrLordMissile13 }
+Frame ANFBF { Light SatyrLordMissile14 }
+Frame ANFBG { Light SatyrLordMissile15 }
+}
+
+Pointlight SatyrLordMissile21
+{
+Color 0.8 0.8 0.8
+Size 16
+}
+
+Pointlight SatyrLordMissile22
+{
+Color 0.8 0.8 0.8
+Size 24
+}
+
+Pointlight SatyrLordMissile23
+{
+Color 0.8 0.8 0.8
+Size 32
+}
+
+Pointlight SatyrLordMissile24
+{
+Color 0.8 0.8 0.8
+Size 48
+}
+
+Pointlight SatyrLordMissile25
+{
+Color 0.7 0.7 0.7
+Size 48
+}
+
+Pointlight SatyrLordMissile26
+{
+Color 0.6 0.6 0.6
+Size 48
+}
+
+Pointlight SatyrLordMissile27
+{
+Color 0.4 0.4 0.4
+Size 48
+}
+
+Pointlight SatyrLordMissile28
+{
+Color 0.4 0.4 0.4
+Size 40
+}
+
+Pointlight SatyrLordMissile29
+{
+Color 0.4 0.4 0.4
+Size 32
+}
+
+Pointlight SatyrLordMissile210
+{
+Color 0.4 0.4 0.4
+Size 24
+}
+
+Pointlight SatyrLordMissile211
+{
+Color 0.4 0.4 0.4
+Size 16
+}
+
+Object SatyrLordMissile2
+{
+Frame PSMMA { Light SatyrLordMissile21 }
+Frame PSMMB { Light SatyrLordMissile22 }
+Frame PSMMC { Light SatyrLordMissile23 }
+Frame PSMMD { Light SatyrLordMissile24 }
+Frame PSMME { Light SatyrLordMissile24 }
+Frame PSMMF { Light SatyrLordMissile24 }
+Frame PSMMG { Light SatyrLordMissile25 }
+Frame PSMMH { Light SatyrLordMissile26 }
+Frame PSMMI { Light SatyrLordMissile27 }
+Frame PSMMJ { Light SatyrLordMissile28 }
+Frame PSMMK { Light SatyrLordMissile29 }
+Frame PSMML { Light SatyrLordMissile210 }
+Frame PSMMM { Light SatyrLordMissile211 }
+}
+
+Pointlight SLGroundFire
+{
+Color 0.3 0.0 0.0
+Size 40
+}
+
+Object SLGroundFire
+{
+Frame FX03 { Light SLGroundFire }
+}
+
+Pointlight SatyrLordWhiteMissile1
+{
+Color 1.0 1.0 1.0
+Size 32
+}
+
+Pointlight SatyrLordWhiteMissile2
+{
+Color 1.0 1.0 1.0
+Size 40
+}
+
+Pointlight SatyrLordWhiteMissile3
+{
+Color 0.6 0.6 0.6
+Size 32
+}
+
+Pointlight SatyrLordWhiteMissile4
+{
+Color 0.4 0.4 0.4
+Size 24
+}
+
+Object SatyrLordMissileDual2Real
+{
+Frame CSSFD { Light SatyrLordWhiteMissile1 }
+Frame CSSFE { Light SatyrLordWhiteMissile1 }
+Frame CSSFG { Light SatyrLordWhiteMissile2 }
+Frame CSSFH { Light SatyrLordWhiteMissile3 }
+Frame CSSFI { Light SatyrLordWhiteMissile4 }
+}
+
+Pointlight SatyrLordRedMissile1
+{
+Color 0.4 0.0 0.0
+Size 32
+}
+
+Pointlight SatyrLordRedMissile2
+{
+Color 0.6 0.0 0.0
+Size 24
+}
+
+Pointlight SatyrLordRedMissile3
+{
+Color 0.8 0.0 0.0
+Size 32
+}
+
+Pointlight SatyrLordRedMissile4
+{
+Color 1.0 0.0 0.0
+Size 48
+}
+
+Pointlight SatyrLordRedMissile5
+{
+Color 1.0 0.0 0.0
+Size 64
+}
+
+Pointlight SatyrLordRedMissile6
+{
+Color 1.0 0.0 0.0
+Size 56
+Offset 0 6 0
+}
+
+Pointlight SatyrLordRedMissile7
+{
+Color 1.0 0.0 0.0
+Size 48
+Offset 0 8 0
+}
+
+Pointlight SatyrLordRedMissile8
+{
+Color 0.8 0.0 0.0
+Size 32
+Offset 0 12 0
+}
+
+Pointlight SatyrLordRedMissile9
+{
+Color 0.6 0.0 0.0
+Size 24
+Offset 0 16 0
+}
+
+Pointlight SatyrLordRedMissile10
+{
+Color 0.4 0.0 0.0
+Size 20
+Offset 0 20 0
+}
+
+Pointlight SatyrLordRedMissile11
+{
+Color 0.3 0.0 0.0
+Size 16
+Offset 0 24 0
+}
+
+Object SatyrLordMissileDual1Real
+{
+Frame MSP2 { Light SatyrLordRedMissile1 }
+Frame MSP1G { Light SatyrLordRedMissile2 }
+Frame MSP1H { Light SatyrLordRedMissile3 }
+Frame MSP1I { Light SatyrLordRedMissile4 }
+Frame MSP1J { Light SatyrLordRedMissile5 }
+Frame MSP1K { Light SatyrLordRedMissile6 }
+Frame MSP1L { Light SatyrLordRedMissile7 }
+Frame MSP1M { Light SatyrLordRedMissile8 }
+Frame MSP1N { Light SatyrLordRedMissile9 }
+Frame MSP1O { Light SatyrLordRedMissile10 }
+Frame MSP1P { Light SatyrLordRedMissile11 }
+}

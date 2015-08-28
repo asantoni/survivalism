@@ -1,0 +1,77 @@
+ACTOR SmallTree1 10700
+{
+  Radius 16
+  Height 96
+  +SOLID
+  States
+  {
+  Spawn:
+    TREN A -1
+    Stop
+  }
+}
+
+ACTOR SmallTree2 10701
+{
+  Radius 16
+  Height 64
+  +SOLID
+  States
+  {
+  Spawn:
+    TREN B -1
+    Stop
+  }
+}
+
+ACTOR SmallBush1 10702
+{
+  Radius 16
+  Height 24
+  +SOLID
+  States
+  {
+  Spawn:
+    BUSN A -1
+    Stop
+  }
+}
+
+ACTOR SmallBush2 10703
+{
+  Radius 16
+  Height 40
+  +SOLID
+  States
+  {
+  Spawn:
+    BUSN B -1
+    Stop
+  }
+}
+
+ACTOR SmallWinterTree1 10704
+{
+  Radius 16
+  Height 72
+  +SOLID
+  States
+  {
+  Spawn:
+    TRWN A -1
+    Stop
+  }
+}
+
+ACTOR SmallWinterTree2 10705
+{
+  Radius 16
+  Height 88
+  +SOLID
+  States
+  {
+  Spawn:
+    TRWN B -1
+    Stop
+  }
+}

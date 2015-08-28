@@ -1,0 +1,150 @@
+//If you Use Enhanced Night Vision (ENV), Use This Version.
+
+actor HuntingRifle : Weapon
+{
+  obituary "%o was Prey For %k's Hunting Rifle."
+  radius 20
+  height 16
+  attacksound "HuntingRifle/Fire"
+  inventory.pickupmessage "You got the Hunting Rifle!"
+  weapon.selectionorder 1
+  weapon.slotnumber 2
+  weapon.kickback 125
+  weapon.ammotype "Clip"
+  weapon.ammouse 1
+  weapon.ammogive 40
+  +NOALERT
+  states
+  {
+  Ready:
+    LDHR A 0 A_TakeInventory("HuntingRifleToken1",1)
+    LDHR A 2 A_WeaponReady
+    LDHR A 0 A_TakeInventory("HuntingRifleToken2",1)
+    loop
+  Deselect: 
+    LDHR A 1 A_Lower
+    loop
+  Select:
+    LDHR A 0 A_JumpIfInventory("HuntingRifleToken1",1,"Ready")
+    LDHR A 1 A_Raise
+    loop
+  Fire:
+    LDHR A 0 A_AlertMonsters
+    LDHR A 0 A_FireBullets (0.5, 0.5, -1, 25, "BulletPuff")
+    LDHR A 0 A_PlayWeaponSound("HuntingRifle/Fire")
+    LDHR A 0 A_Quake (4, 5, 0, 1)
+    LDHR A 0 A_SetPitch (pitch-0.5)
+    LDHR BC 1
+    LDHR D 2
+    LDHR E 4
+    LDHR FGH 2
+    LDHR A 1 A_ReFire 
+    goto Ready
+  Spawn:
+    LDHR P -1
+    stop
+  AltFire:
+    LDHR A 0 A_JumpIfInventory("HuntingRifleToken2",1,"Ready")
+    LDHR A 0 A_GiveInventory("HuntingRifleToken2")
+    LDHR A 0
+    LDHR A 0 A_GiveInventory("HuntingRifleScope")
+    LDHR A 0 A_SelectWeapon("HuntingRifleScope")
+    LDHR A 0 A_Lower
+    LDHR A 0 A_Lower
+    LDHR A 0 A_Lower
+    LDHR A 0 A_Lower
+    LDHR A 0 A_Lower
+    goto AltFire+3
+    }
+}
+
+Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
+{ 
+  obituary "%o was Picked-Off By %k's Scoped Hunting Rifle."
+  weapon.kickback 125
+  weapon.ammotype "Clip"
+  weapon.ammouse 1
+  weapon.ammogive 0
+  +DONTBOB
+  +NOALERT
+  States
+  {
+  Spawn:
+    LDHR P -1
+    Loop
+  Ready:
+    LDHR S 0 A_GiveInventory("PowerLightAmp")
+    LDHR S 2 A_WeaponReady
+    LDHR S 0 A_TakeInventory("HuntingRifleToken2",1)
+    Loop
+  Deselect:
+    LDHR S 0 A_TakeInventory("PowerLightAmp")
+    LDHR S 0 
+    Goto AltFire+2
+  Select:
+    LDHR S 0 A_PlayWeaponSound("HuntingRifle/Scope")
+    LDHR S 0 A_ZoomFactor(4.0)
+    LDHR S 0 A_GiveInventory("PowerLightAmp")
+    LDHR S 0 A_Raise
+    Loop
+  Fire:
+    LDHR S 0 A_AlertMonsters
+    LDHR S 0 A_GiveInventory("PowerLightAmp")
+    LDHR S 0 A_PlayWeaponSound("HuntingRifle/Fire")
+    LDHR S 0 A_FireBullets (0.1, 0.1, -1, 25, "BulletPuff")
+    LDHR S 0 A_Quake (4, 5, 0, 1)
+    LDHR S 0 A_SetPitch (pitch-0.5)
+    LDHR S 15 
+    LDHR S 0 A_Refire
+    Goto Ready
+  AltFire:
+    LDHR S 0 A_JumpIfInventory("HuntingRifleToken2",1,"Ready")
+    LDHR S 0 A_PlayWeaponSound("HuntingRifle/Scope")
+    LDHR S 0 A_JumpIfInventory("HuntingRifleToken3",2,"AltFireDeselect")
+    LDHR S 0 A_ZoomFactor(12.0)
+    LDHR S 0 A_GiveInventory("HuntingRifleToken2")
+    LDHR S 0 A_JumpIfInventory("HuntingRifleToken3",1,"AltFire2")
+    LDHR S 0 A_GiveInventory("HuntingRifleToken3")
+    Goto Ready
+    AltFire2:
+    LDHR S 0 A_ZoomFactor(24.0)
+    LDHR S 0 A_GiveInventory("HuntingRifleToken3")
+    Goto Ready
+  AltFireDeselect: 
+    LDHR S 0 A_TakeInventory("HuntingRifleToken3")
+    LDHR S 0 A_TakeInventory("HuntingRifleToken3")
+    LDHR S 0 A_GiveInventory("HuntingRifleToken1")
+    LDHR S 0 A_GiveInventory("HuntingRifleToken2")
+    LDHR S 0 A_PlayWeaponSound("HuntingRifle/Scope")
+    LDHR S 0 A_ZoomFactor(1.0)
+    LDHR S 0 A_SelectWeapon("HuntingRifle")
+    LDHR S 0 A_Lower
+    LDHR S 0 A_Lower
+    LDHR S 0 A_Lower
+    LDHR S 0 A_Lower
+    LDHR S 0 A_Lower
+    LDHR S 0 A_TakeInventory("PowerLightAmp")
+    goto AltfireDeselect+7
+  }
+}
+
+ACTOR HuntingRifleToken1 : Ammo
+{
+	Inventory.MaxAmount 1
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 1
+}
+
+ACTOR HuntingRifleToken2 : Ammo
+{
+	Inventory.MaxAmount 1
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 1
+}
+
+ACTOR HuntingRifleToken3 : Ammo
+{
+	Inventory.MaxAmount 2
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 2
+}

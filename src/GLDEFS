@@ -1,0 +1,149 @@
+#include "GL/monsters/crimsondisciple.txt"				// Crimson Disciple
+#include "GL/monsters/apprenticeofdsparil.txt"			// Apprentice of D'Sparil
+#include "GL/monsters/azazel.txt"			            // Azazel
+#include "GL/monsters/cultist.txt"			            // Cultist
+#include "GL/monsters/deathincarnate.txt"			    // Death Incarnate (night zombie)
+#include "GL/monsters/undeadpriest.txt"			        // Undead Priest
+#include "GL/monsters/shadow.txt"			            // Shadow
+#include "GL/monsters/peasants.txt"			            // Peasants / Hunter
+#include "GL/monsters/impwarlord.txt"			        // Imp Warlord
+#include "GL/monsters/hazmatzombie.txt"			        // Hazmat Zombie
+#include "GL/monsters/ghoul.txt"			            // Ghoul
+
+#include "GL/weapons/bow.txt"			                // Bow
+
+#include "GL/construction/sentry.txt"			        // Sentry Turret
+#include "GL/construction/firewood.txt"			        // Wooden Logs / Firewood
+
+
+object SentryGun
+{
+    frame SENTB { light ZOMBIEATK }
+}
+
+pointlight BOXLIGHT
+{
+    color 1.0 1.0 0.0
+    size 20
+    offset 0 16 0
+}
+
+pointlight ANKHLIGHT
+{
+	color 1.0 1.0 0.0
+	size 200
+	offset 0 16 0
+}
+
+object LootBox
+{
+    frame BOX1A { light BOXLIGHT }
+}
+
+object Ankh
+{
+	frame AKOLA { light ANKHLIGHT }
+}
+
+pointlight CRAFTINGLIGHT
+{
+    color 0.3 0.3 0.3
+    size 32
+    offset 0 16 0
+}
+object CraftingBox
+{
+	frame CRFTA { light CRAFTINGLIGHT }
+}
+
+object Furnace
+{
+	frame FURNB { light TORCHLIGHT1 }
+	frame FURNC { light TORCHLIGHT2 }
+	frame FURND { light TORCHLIGHT3 }
+	frame FURNE { light TORCHLIGHT4 }
+	frame FURNF { light TORCHLIGHT1 }
+	frame FURNG { light TORCHLIGHT2 }
+	frame FURNH { light TORCHLIGHT3 }
+}
+
+flickerlight TORCHLIGHT1
+{
+    color 1.0 1.0 0.0
+    size 128
+    secondarySize 136 //SECSIZE must be greater than SIZE
+    chance 0.10
+    offset 0.0 0.0 0.0
+}
+
+
+flickerlight TORCHLIGHT2
+{
+    color 1.0 1.0 0.0
+    size 116
+    secondarySize 128 //SECSIZE must be greater than SIZE
+    chance 0.10
+    offset 0.0 0.0 0.0
+}
+
+
+flickerlight TORCHLIGHT3
+{
+    color 1.0 1.0 0.0
+    size 134
+    secondarySize 140 //SECSIZE must be greater than SIZE
+    chance 0.10
+    offset 0.0 0.0 0.0
+}
+
+
+flickerlight TORCHLIGHT4
+{
+    color 1.0 1.0 0.0
+    size 140
+    secondarySize 146 //SECSIZE must be greater than SIZE
+    chance 0.10
+    offset 0.0 0.0 0.0
+}
+
+
+object Torch
+{
+    frame SMRTA { light TORCHLIGHT1 }
+    frame SMRTB { light TORCHLIGHT2 }
+    frame SMRTC { light TORCHLIGHT3 }
+    frame SMRTD { light TORCHLIGHT4 }
+}
+
+pointlight FLOORLAMPLIGHT
+{
+    color 0.3 0.3 0.3
+    size 96
+    offset 0 32 0
+}
+
+object DoomZFloorLamp
+{
+	frame COLUA { light FLOORLAMPLIGHT }
+}
+
+pointlight TECHLAMPLIGHT
+{
+    color 0.4 0.4 0.4
+    size 128
+    offset 0 48 0
+}
+
+object DoomZTechLamp
+{
+	frame TLMPA { light TECHLAMPLIGHT }
+	frame TLMPB { light TECHLAMPLIGHT }
+	frame TLMPC { light TECHLAMPLIGHT }
+	frame TLMPD { light TECHLAMPLIGHT }
+}
+
+object DoomZChainGun
+{
+	frame CHGGA { light TORCHLIGHT1 }
+	frame CHGGB { light TORCHLIGHT1 }
+}

@@ -1,0 +1,6 @@
+Decorate: Eriance
+GLDEFs: Dreadopp, SandyPaper (Brightmaps)
+Sounds: Monolith, Eriance
+Sprites: Raven Software
+Sprite Edit: Eriance
+Idea Base: Hellstorm Cultist

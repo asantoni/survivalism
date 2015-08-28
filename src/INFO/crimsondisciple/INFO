@@ -1,0 +1,10 @@
+Name: Crimson Disciple
+Difficulty: Medium
+Connection: None
+Summon: CrimsonDisciple
+Melee: Summons fire when at melee
+Distance: Projectile, Tracer
+Brightmaps: No
+ACS: No
+Added States: No
+Type: Human, Medieval, Magical

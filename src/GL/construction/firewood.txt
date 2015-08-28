@@ -1,0 +1,42 @@
+flickerlight2 BurningLogLight
+{
+	COLOR 1.0 0.7 0.1
+	Size 32
+	SecondarySize 48
+	Interval 0.01
+}
+
+flickerlight2 EmberLogLight
+{
+	COLOR 1.0 0.2 0.0
+	Size 16
+	SecondarySize 24
+	Interval 0.01
+}
+
+Object BurningLog
+{
+	Frame LOG2
+	{
+		light BurningLogLight
+	}
+}
+
+Object EmberLog
+{
+	Frame LOG2
+	{
+		light EmberLogLight
+	}
+}
+
+Object FlammableLog
+{
+	Frame LOG2C { light BurningLogLight }
+	Frame LOG2D { light BurningLogLight }
+	Frame LOG2E { light BurningLogLight }
+	Frame LOG2F { light EmberLogLight }
+	Frame LOG2F { light EmberLogLight }
+	Frame LOG2G { light EmberLogLight }
+	Frame LOG2H { light EmberLogLight }
+}

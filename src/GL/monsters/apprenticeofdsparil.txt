@@ -1,0 +1,233 @@
+Pointlight Fireblast1
+{
+Color 0.6 0.3 0.0
+Size 48
+}
+
+Pointlight Fireblast2
+{
+Color 0.7 0.5 0.0
+Size 96
+}
+
+Pointlight Fireblast3
+{
+Color 0.7 0.5 0.0
+Size 80
+}
+
+Pointlight Fireblast4
+{
+Color 0.7 0.4 0.0
+Size 72
+}
+
+Pointlight Fireblast5
+{
+Color 0.6 0.4 0.05
+Size 64
+}
+
+Pointlight Fireblast6
+{
+Color 0.5 0.3 0.0
+Size 64
+}
+
+Pointlight Fireblast7
+{
+Color 0.5 0.2 0.0
+Size 40
+}
+
+Object Fireblast
+{
+Frame PROJA { Light Fireblast1 }
+Frame PROJB { Light Fireblast1 }
+Frame PROJC { Light Fireblast1 }
+Frame PROJD { Light Fireblast2 }
+Frame PROJE { Light Fireblast3 }
+Frame PROJF { Light Fireblast4 }
+Frame PROJG { Light Fireblast5 }
+Frame PROJH { Light Fireblast6 }
+Frame PROJI { Light Fireblast7 }
+}
+
+Pointlight SuperFireblast1
+{
+Color 0.6 0.3 0.0
+Size 64
+}
+
+Pointlight SuperFireblast2
+{
+Color 0.7 0.5 0.0
+Size 128
+}
+
+Pointlight SuperFireblast3
+{
+Color 0.7 0.5 0.0
+Size 112
+}
+
+Pointlight SuperFireblast4
+{
+Color 0.7 0.4 0.0
+Size 96
+}
+
+Pointlight SuperFireblast5
+{
+Color 0.6 0.4 0.05
+Size 80
+}
+
+Pointlight SuperFireblast6
+{
+Color 0.5 0.3 0.0
+Size 72
+}
+
+Pointlight SuperFireblast7
+{
+Color 0.5 0.2 0.0
+Size 56
+}
+
+Object SuperFireblast
+{
+Frame PROJA { Light SuperFireblast1 }
+Frame PROJB { Light SuperFireblast1 }
+Frame PROJC { Light SuperFireblast1 }
+Frame PROJD { Light SuperFireblast2 }
+Frame PROJE { Light SuperFireblast3 }
+Frame PROJF { Light SuperFireblast4 }
+Frame PROJG { Light SuperFireblast5 }
+Frame PROJH { Light SuperFireblast6 }
+Frame PROJI { Light SuperFireblast7 }
+}
+
+//Brightmaps
+
+
+BrightMap Sprite APDPC1
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPC1"
+
+DisableFullBright
+}
+
+BrightMap Sprite APDPC2C8
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPC2"
+DisableFullBright
+}
+
+BrightMap Sprite APDPC3C7
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPC3"
+DisableFullBright
+}
+
+BrightMap Sprite APDPC4C6
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPC4"
+DisableFullBright
+}
+
+BrightMap Sprite APDPC5
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPC5"
+DisableFullBright
+}
+
+BrightMap Sprite APDPD1
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPD1"
+DisableFullBright
+}
+
+BrightMap Sprite APDPD2D8
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPD2"
+DisableFullBright
+}
+
+BrightMap Sprite APDPD3D7
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPD3"
+DisableFullBright
+}
+
+BrightMap Sprite APDPD4D6
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPD4"
+DisableFullBright
+}
+
+BrightMap Sprite APDPD5
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPD5"
+DisableFullBright
+}
+
+BrightMap Sprite APDPE1
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPE1"
+DisableFullBright
+}
+
+BrightMap Sprite APDPE2E8
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPE2"
+DisableFullBright
+}
+
+BrightMap Sprite APDPE3E7
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPE3"
+DisableFullBright
+}
+
+BrightMap Sprite APDPF0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPF0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPG0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPG0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPH0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPH0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPI0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPI0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPJ0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPJ0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPK0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPK0"
+DisableFullBright
+}
+
+BrightMap Sprite APDPL0
+{
+Map "brightmaps/monsters/apprenticeofdsparil/BMAPDPL0"
+DisableFullBright
+}

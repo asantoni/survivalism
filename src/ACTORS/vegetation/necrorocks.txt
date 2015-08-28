@@ -1,0 +1,249 @@
+ACTOR NRock1 16100
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK A -1
+    Stop
+  }
+}
+
+ACTOR NRock2 16101
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK B -1
+    Stop
+  }
+}
+
+ACTOR NRock3 16102
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK C -1
+    Stop
+  }
+}
+
+ACTOR NRock4 16103
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK D -1
+    Stop
+  }
+}
+
+ACTOR NRock5 16104
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK E -1
+    Stop
+  }
+}
+
+ACTOR NRock6 16105
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK F -1
+    Stop
+  }
+}
+
+ACTOR NRock7 16106
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK G -1
+    Stop
+  }
+}
+
+ACTOR NRock8 16107
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK H -1
+    Stop
+  }
+}
+
+ACTOR NRock9 16108
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK I -1
+    Stop
+  }
+}
+
+ACTOR NRock10 16109
+{
+  Radius 16
+  Height 16
+  States
+  {
+  Spawn:
+    NROK J -1
+    Stop
+  }
+}
+
+ACTOR NRock1small 16110
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK A -1
+    Stop
+  }
+}
+
+ACTOR NRock2small 16111
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK B -1
+    Stop
+  }
+}
+
+ACTOR NRock3small 16112
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK C -1
+    Stop
+  }
+}
+
+ACTOR NRock4small 16113
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK D -1
+    Stop
+  }
+}
+
+ACTOR NRock5small 16114
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK E -1
+    Stop
+  }
+}
+
+ACTOR NRock6small 16115
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK F -1
+    Stop
+  }
+}
+
+ACTOR NRock7small 16116
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK G -1
+    Stop
+  }
+}
+
+ACTOR NRock8small 16117
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK H -1
+    Stop
+  }
+}
+
+ACTOR NRock9small 16118
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK I -1
+    Stop
+  }
+}
+
+ACTOR NRock10small 16119
+{
+  Radius 16
+  Height 16
+  Scale 0.6
+  States
+  {
+  Spawn:
+    NROK J -1
+    Stop
+  }
+}

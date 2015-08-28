@@ -1,0 +1,104 @@
+actor Knife : Weapon 15000
+{
+  Game Doom
+  Weapon.SelectionOrder 3700
+  Weapon.SlotNumber 1
+  Weapon.SlotPriority 1
+  Weapon.Kickback 100
+  +WEAPON.WIMPY_WEAPON
+  +WEAPON.MELEEWEAPON
+  +NOEXTREMEDEATH
+  +SHOOTABLE
+  +NOBLOOD
+  //+CANPASS
+  +WINDTHRUST
+  +NOAUTOFIRE //Semi-automatic!
+
+  Health 10
+  Obituary "$OB_MPFIST" // "%o was cut up by %k's knife."
+  Inventory.PickupMessage "You found a knife!"
+  States
+  {
+  Spawn:
+    KNFE A 21000 //Disappear after 10 minutes -- Hax
+    stop
+  Ready:
+    KNFG A 1 A_WeaponReady
+    loop
+  Deselect:
+    KNFG A 1 A_Lower
+    loop
+  Select: 
+    KNFG A 1 A_Raise
+	TNT1 A 0 A_TakeInventory("KnifeMode", 10)
+    loop
+  Fire:
+	TNT1 A 0
+	TNT1 A 0 A_JumpIfInventory("KnifeMode", 2, "Fire3")
+	TNT1 A 0 A_JumpIfInventory("KnifeMode", 1, "Fire2")
+	KNFG B 2
+    KNFG C 3 A_CustomPunch (5,0,0,"KnifePuff")
+    KNFG D 1
+    KNFG E 1
+    KNFG F 1
+   // KNFG E 1
+    //KNFG D 1
+    KNFG A 1 //A_ReFire
+	KNFG A 0 A_GiveInventory("KnifeMode", 1)
+    goto Ready
+  Fire2:
+	TNT1 A 0
+    KNFG B 1 Offset(-40, 0)
+    KNFG C 1 Offset(-40, 0) A_CustomPunch (5,0,0,"KnifePuff")
+    KNFG D 1 Offset(-40, 0)
+    KNFG E 1 Offset(-40, 0)
+    KNFG F 1 Offset(-40, 0)
+    //KNFG E 1 Offset(-40, 0)
+    //KNFG D 1 Offset(-40, 0)
+    KNFG A 1 Offset(-40, 0) //A_ReFire
+	KNFG A 0 Offset(-40, 0) 
+	KNFG A 1 Offset(-35, 0) 
+	KNFG A 1 Offset(-25, 0) 
+	KNFG A 1 Offset(-10, 0) 
+	TNT1 A 0 A_GiveInventory("KnifeMode", 1)
+    goto Ready
+  Fire3:
+	TNT1 A 0
+	KNFG B 1 Offset(-20, 10)
+    KNFG B 1 Offset(-20, 20)
+    KNFG D 1 Offset(-20, 0) 
+    KNFG D 1 Offset(-20, -5) A_CustomPunch (3,0,0,"KnifePuff")
+    KNFG E 1 Offset(-20, -10)
+    KNFG F 1 Offset(-20, -15) 
+    KNFG E 1 Offset(-20, -10)
+    KNFG C 1 Offset(-20, 0) A_CustomPunch (5,0,0,"KnifePuff")
+    KNFG D 1 Offset(-20, 0) 
+    KNFG A 1 Offset(-20, 5) //A_ReFire
+	KNFG A 1 Offset(-20, 15) 
+	TNT1 A 0 A_TakeInventory("KnifeMode", 10)
+    goto Ready
+
+  }
+}
+
+actor KnifeMode : Inventory { Inventory.MaxAmount 4 }
+
+ACTOR KnifePuff
+{
+  +NOBLOCKMAP
+  +NOGRAVITY
+  +NOEXTREMEDEATH
+  +PUFFONACTORS
+  RenderStyle Translucent
+  Alpha 0.6
+  SeeSound "KnifeHitThing"
+  AttackSound "KnifeHitWall"
+  ActiveSound "KnifeMiss"
+  VSpeed 1
+  States
+  {
+  Spawn:
+    PUFF ABCD 4
+    Stop
+  }
+}  

@@ -1,0 +1,3 @@
+Submitted: Gothic
+Decorate: Gothic
+Sprites: Raven Software

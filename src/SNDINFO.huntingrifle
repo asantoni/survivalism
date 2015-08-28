@@ -1,0 +1,6 @@
+HUNTRIF1 HUNTRIF1
+HUNTRIF2 HUNTRIF2
+
+HuntingRifle/Fire HUNTRIF1
+HuntingRifle/Scope HUNTRIF2
+HuntingRifle/Reload HUNTRIF3

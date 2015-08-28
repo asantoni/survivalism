@@ -1,0 +1,8 @@
+Type: Bullet/shell casings
+Connections: None
+Spawn Offsets: Arguments
+Documentation: Yes
+Spawn Ceiling: No
+Variants: None
+Summon: CasingSpawner
+ACS: No

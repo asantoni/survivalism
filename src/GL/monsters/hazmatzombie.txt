@@ -1,0 +1,10 @@
+PointLight HazmatZombieAttack
+{
+Color 0.0 0.0 1.0
+Size 28
+}
+
+Object HazmatZombie
+{
+Frame HMZPF { Light HazmatZombieAttack }
+}

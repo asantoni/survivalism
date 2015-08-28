@@ -1,0 +1,318 @@
+ACTOR DaemoniumOverlord
+{
+  
+  Health 4000
+  Radius 40
+  Height 110
+  Mass 1000
+  Speed 16
+  PainChance 20
+  Monster
+  MinMissileChance 160
+  +BOSS
+  +MISSILEMORE
+  +FLOORCLIP
+  +float
+  +nogravity
+  +floatbob
+  +NORADIUSDMG
+  +DONTMORPH
+  +BOSSDEATH
+  SeeSound "cyber/sight"
+  PainSound "cyber/pain"
+  DeathSound "cyber/death"
+  ActiveSound "cyber/active"
+  translation "192:207=168:185" , "240:246=186:191"
+  Obituary "%o was extuingished by the Daemonium overlord." 
+  States
+  {
+  Spawn:
+    DAEM AB 10 A_Look
+    Loop
+  See:
+   
+    DAEM A 0 bright a_takeinventory("overlordtoken",1)
+    DAEM A 4 bright A_Chase
+    DAEM B 0 bright a_takeinventory("overlordtoken",1)
+    DAEM B 4 bright A_Chase
+    
+    Loop
+  Melee:
+    DAEM C 0 bright a_takeinventory("overlordtoken",2)
+    DAEM CDE 6 bright A_FaceTarget
+    DAEM FFFFFF 1 bright A_sargattack
+  Missile:
+    DAEM G 0 a_jump(255,"missile1","missile2","missile3")
+    missile1:
+    DAEM G 0 bright a_takeinventory("overlordtoken",3)
+    DAEM GHIJK 3 bright A_FaceTarget
+    DAEM L 3 bright A_custommissile("DaemoniumOverlordBfgBall",64,0,0)
+    DAEM MN 3 bright A_FaceTarget
+    Goto See
+  
+    missile2:
+    DAEM C 0 bright a_takeinventory("overlordtoken",3)
+    DAEM CDE 4 bright A_FaceTarget
+    DAEM F 0 bright A_custommissile("DaemoniumOverlordtracer",70,-10,0)
+    DAEM F 0 bright A_custommissile("DaemoniumOverlordtracer",70,10,0)
+    DAEM F 0 bright A_custommissile("DaemoniumOverlordtracer",50,-10,0)
+    DAEM F 4 bright A_custommissile("DaemoniumOverlordtracer",50,10,0)
+    Goto See
+    
+    missile3:
+    DAEM C 0 a_jumpifinventory("overlordtoken",1,"decideagain")
+    DAEM CDE 4 bright A_FaceTarget
+    DAEM F 0 bright a_giveinventory("overlordtoken",120)
+    DAEM F 0 bright A_custommissile("DaemoniumOverlordCube",70,-10,-10,CMF_AIMDIRECTION,-20)
+    DAEM F 4 bright A_custommissile("DaemoniumOverlordCube",70,10,10,CMF_AIMDIRECTION,-20)    
+    Goto See
+    
+    decideagain:
+    DAEM A 1 bright a_jump(255,"missile1","missile2")
+    goto see
+  Pain:
+    DAEM A 0 bright a_takeinventory("overlordtoken",5)
+    DAEM A 3 A_Pain
+    Goto See
+  unuseddeath:
+    DAEM O 10
+    DAEM P 10 A_Scream
+    DAEM Q 10
+    DAEM R 10 A_NoBlocking
+    DAEM S 10
+    DAEM T 10
+    DAEM U 10 A_BossDeath
+    Stop
+      Death:
+    DAEN A 10
+    DAEN B 10 A_Scream
+    DAEN C 10
+    DAEN D 10 A_NoBlocking
+    DAEN E 10
+    DAEN F 10
+    DAEN G 10 A_BossDeath
+    Stop
+  }
+}
+actor DaemoniumOverlordBlueball
+{
+    Radius 6
+    Height 8
+    Speed 35
+    Damage 1
+    PROJECTILE
+    RENDERSTYLE NORMAL
+    translation "112:127=200:207"
+    ALPHA 1.0
+    SeeSound "imp/attack"
+    DeathSound "imp/shotx"
+    Decal BaronScorch
+    translation "192:207=168:185" , "240:246=186:191"
+    States
+    {
+    Spawn:
+    PLSS AB 6 Bright a_bishopmissileweave
+    Loop
+  Death:
+    BAL7 CCCCCCCCCC 0 Bright a_spawnitemex("coldattackparticleoverlord",random(-180,180),random(-180,180),random(-180,180))
+    PLSE ABCDE 4 Bright
+    Stop
+    }
+}
+ACTOR DaemoniumOverlordBfgBall
+{
+ 
+  Radius 13
+  Height 8
+  Speed 25
+  Damage 100
+  Projectile
+  +RANDOMIZE
+  RenderStyle Add
+  Alpha 0.75
+  DeathSound "weapons/bfgx"
+  Obituary "$OB_MPBFG_BOOM"
+  translation "192:207=168:185" , "240:246=186:191"
+  States
+  {
+  Spawn:
+    IFS1 AB 4 Bright
+    Loop
+  Death:
+    IFE1 AAAAAAAA 0 a_custommissile("DaemoniumOverlordBlueball",0,0,random(1,364))
+    IFE1 AB 8 Bright
+    IFE1 C 8 Bright
+    IFE1 DEF 8 Bright
+    Stop
+  }
+}
+ACTOR DaemoniumOverlordTracer
+{
+  
+  Radius 11
+  Height 8
+  Speed 15
+  scale 0.75
+  Damage 10
+  Projectile
+  +SEEKERMISSILE
+  +RANDOMIZE
+  SeeSound "skeleton/attack"
+  DeathSound "skeleton/tracex"
+  RenderStyle translucent
+  alpha 0.55
+  translation "192:207=168:185" , "240:246=186:191"
+  States
+  {
+  Spawn:
+    FOCB ABC 2 Bright A_seekermissile(5,5)
+    Loop
+  Death:
+    FOCB DEF 8 Bright
+    FOCB GH 6 Bright
+    FOCB IJKLMN 4 Bright
+    Stop
+  }
+}
+ACTOR coldattackparticleoverlord
+{
+
+  Radius 28
+  Height 48
+  mass 1000
+ speed 0
+  damage 5
+  projectile
+  +nogravity
+  
+  translation "192:207=168:185" , "240:246=186:191"
+  States
+  {
+  Spawn:
+     
+     PLSS ABA 25 bright a_changeflag("noclip",0)
+   PLSS ABA 2 bright a_changeflag("nogravity",0)
+   PLSS A 1 bright 
+    goto death
+  }
+}
+ACTOR DaemoniumOverlordCube
+{
+   Radius 30
+   Height 3
+   Speed 30
+   Damage 0
+   PROJECTILE
+   +DONTREFLECT
+   +SKYEXPLODE
+   RENDERSTYLE Normal
+   ALPHA 1.0
+   States
+   {
+   Spawn:
+      
+      BOSF ABCD 4     
+      goto death
+   Death:
+      FIRE A 0 a_jump(255,"demon","doomimp","lostsoul","spectre","cacodemon","hellknight","baronofhell")
+      demon:
+      FIRE A 1 A_SpawnItemEx ("demon",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      doomimp:
+      FIRE A 1 A_SpawnItemEx ("doomimp",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      lostsoul:
+      FIRE A 1 A_SpawnItemEx ("lostsoul",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      spectre:
+      FIRE A 1 A_SpawnItemEx ("spectre",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      cacodemon:
+      FIRE A 1 A_SpawnItemEx ("cacodemon",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      hellknight:
+      FIRE A 1 A_SpawnItemEx ("hellknight",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      baronofhell:
+      FIRE A 1 A_SpawnItemEx ("baronofhell",0,0,0,0,0,0,0,28,0)
+      FIRE BCDEFG 2
+      FIRE H 1
+      stop
+      
+      
+   }
+}
+actor overlordtoken : Inventory
+{
+Inventory.MaxAmount 120
++INVENTORY.UNDROPPABLE
+}
+
+
+ACTOR DaemoniumMeteorspawner
+{
+  Radius 0
+  Height 0
+  Speed 12
+  PROJECTILE
+  +FloorClip
+  +Ripper
+  +DoomBounce
+  +CeilingHugger
+  +DontHurtSpecies
+  states
+  {
+  Spawn:
+    DAME E 0 a_jump(128,"death")
+    DAME EEEEEE 1 A_Wander
+    DAME F 8 A_CustomMissile("MeteorFall",-24,random(0,128),random(0,360),2,random(1,89))
+    Loop
+  Death:
+    DAME F 0
+    Stop
+  }
+}
+
+
+
+ACTOR Meteorfall
+{
+    Radius 6
+    Height 8
+    Speed 5
+    Damage 5
+    Scale 0.85
+    PROJECTILE
+    SEESOUND "pyro/comet"
+    DEATHSOUND "pyro/cometdeath"
+    -NoGravity
+    -Float
+    +FloorClip
+    +DontHurtSpecies 
+    +SpawnCeiling
+    Decal RevenantScorch
+    states
+    {
+    Spawn:
+        DAME AAAABBBBCCCC 1 BRIGHT A_SpawnItemEx("bulletpuff", 0, 0, 0, 0, 0, 0, 0, 128)
+        Loop
+    Death:
+        DAME DEFGHI 3 BRIGHT 
+        DAME J 3 BRIGHT A_Explode(136,136,0)
+        DAME KLMN 3 BRIGHT 
+        Stop
+    }
+}
+

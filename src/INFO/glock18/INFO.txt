@@ -1,0 +1,11 @@
+Name: Glock 18
+Class: 2
+Type: Hitscan
+Palette: Doom
+Summon: Glock18
+Ammo Type: Clip
+Altfire: No
+Powered Mode: No
+Brightmaps: No
+Added States: No
+ACS: No

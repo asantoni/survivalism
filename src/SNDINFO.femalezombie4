@@ -1,0 +1,9 @@
+fem/sight1 FEMZSIT
+fem/sight2 FEMZSI2
+fem/pain FEMZPAIN
+fem/death1 FEMZDHT
+fem/death2 FEMZDT2
+fem/active FEMZACT
+KnifeHit DSKNIFE
+$random	fem/death { fem/death1 fem/death2 }
+$random	fem/sight { fem/sight1 fem/sight2 }

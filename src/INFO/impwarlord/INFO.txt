@@ -1,0 +1,10 @@
+Name: Imp Warlord
+Difficulty: Medium
+Connection: Spawns Bat and Dragon Familiars, also included; uses Doom's Imp audio, included
+Summon: ImpWarlord
+Melee: Yes
+Distance: Projectile, Spawn
+Type: Demon, Medieval
+Brightmaps: No
+Added States: None
+ACS: N/A

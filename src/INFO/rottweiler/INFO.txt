@@ -1,0 +1,16 @@
+
+Name: Rottweiler
+Difficulty: Easy
+Connection: None
+Summon: DemonDog
+Melee: Yes
+Distance: No
+Type: Animal, Undead
+
+Submitted: Captain Toenail
+Decorate: Captain Toenail
+GLDEFs: N/A
+Sounds: id Software
+Sprites: id Software
+Sprite Edit: Captain Toenail
+Inspiration: Quake

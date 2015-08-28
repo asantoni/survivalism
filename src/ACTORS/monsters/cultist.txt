@@ -1,0 +1,201 @@
+Actor Thrall 
+{ 
+  Health 75
+  PainChance 200
+  DropItem Fire
+  Scale 0.90
+  Speed 8 
+  Radius 20 
+  Height 56 
+  Mass 100 
+  Monster
+  +FloorClip
+  +DontHurtSpecies
+  Obituary "%o was killed by a lowly Cultist."
+  SeeSound "monster/culsit" 
+  AttackSound "monster/culatk" 
+  PainSound "monster/culpai" 
+  DeathSound "monster/culdth" 
+  ActiveSound "monster/culact"
+  States 
+  { 
+  Spawn: 
+    CULT AB 10 A_Look 
+    Loop 
+  See: 
+    CULT AABBCCDD 2 A_Chase 
+    Loop 
+  Missile:
+    CULT EE 5 A_FaceTarget
+    CULT F 0 Bright A_CustomMissile("ThrallShot1",42,-6,0,1,0)
+    CULT F 0 Bright A_CustomMissile("ThrallShot1",42,6,0,1,0)
+    CULT F 8 Bright A_PlaySound("monster/culatk")
+    Goto See
+  Pain: 
+    CULT G 2 
+    CULT G 2 A_Pain 
+    Goto See 
+  Death: 
+    CULT H 8 
+    CULT I 8 A_Scream 
+    CULT J 4 
+    CULT K 4 A_NoBlocking 
+    CULT L 4 
+    CULT M -1 
+    Stop
+  XDeath:
+    CULT N 5 
+    CULT O 5 A_XScream 
+    CULT P 5 A_NoBlocking 
+    CULT QRSTUV 5 
+    CULT W -1 
+  Raise: 
+    CULT MLKJHI 5 
+    Goto See 
+  } 
+}
+
+Actor ThrallShot1
+{
+  Radius 4
+  Height 6
+  Speed 20
+  Damage 1
+  RenderStyle Add
+  Alpha 0.67
+  Projectile
+  +ThruGhost
+  DeathSound "monster/disht1"
+  States
+  {
+  Spawn:
+    CFX4 A 2 Bright
+    CFX4 B 2 Bright
+    Loop
+  Death:
+    CFX4 CDEF 3 Bright
+    Stop
+  }
+}
+
+Actor DeathShot1
+{
+  Radius 4
+  Height 6
+  Speed 20
+  Damage 1
+  Scale 2.0 //Hax Murd
+  RenderStyle Add
+  Alpha 0.67
+  Projectile
+  +ThruGhost
+  DeathSound "monster/disht1"
+  States
+  {
+  Spawn:
+    CFX4 A 2 Bright
+    CFX4 B 2 Bright
+    Loop
+  Death:
+    CFX4 CDEF 3 Bright
+    Stop
+  }
+}
+
+actor DoomZDeath : Thrall
+{
+  Health 10000
+  DropItem Fire
+  Scale 1.25
+  Speed 4 
+  Radius 28 
+  Height 48.4 
+  Mass 400 
+  Monster
+  MaxTargetRange 256
+  
+  PainChance 0 //Death should never go into the Pain state... :-)
+  
+  MaxDropOffHeight 8192
+  MaxStepHeight 8192
+  
+  +NOINFIGHTING //Do not retaliate against other monsters
+  +NOTARGET // Do not be targeted by other monsters!
+  +FloorClip
+  +DontHurtSpecies
+  +LOOKALLAROUND
+  +DROPOFF //Walk over edges with impunity
+  +NOCLIP //Yup, clips through walls so you can't block it by putting a box on it
+  //+NOTARGETSWITCH
+  Obituary "%o was killed by death itself"
+  //SeeSound "monster/culsit" 
+  //SeeSound "hunted"
+  AttackSound "monster/culatk" 
+  PainSound "monster/culpai" 
+  DeathSound "monster/culdth" 
+  //ActiveSound "monster/culact"
+  States 
+  { 
+  Spawn: 
+	CULT A 0
+	CULT A 1 A_PlaySound("hunted", CHAN_AUTO | CHAN_LISTENERZ, 1.0, true, ATTN_NORM)
+	CULT A 1 A_AlertMonsters
+  SpawnLook:
+    CULT AB 10 A_LookEx(0, 0, 0, 0, 360, "See")
+    Loop 
+  See: 
+    CULT AABBCCDD 4 A_Chase 
+    Loop
+  Missile:
+	TNT1 A 0
+	TNT1 A 0 A_Jump(128, "Missile2")
+    CULT EEEE 5 A_FaceTarget
+	CULT F 4 Bright
+    CULT F 0 Bright A_PlaySound("monster/culatk")
+    CULT F 3 Bright A_CustomMissile("ThrallShot1",42,-6,0,1,0)
+    CULT F 3 Bright A_CustomMissile("ThrallShot1",42,6,0,1,0)
+	CULT F 4
+	CULT E 4
+    Goto See
+  Missile2:
+  	TNT1 A 0
+    CULT EEEE 5 A_FaceTarget
+	CULT F 2 Bright
+    CULT F 0 Bright A_PlaySound("monster/culatk")
+    CULT F 2 Bright A_CustomMissile("ThrallShot1",42,-6,0,1,0)
+    CULT F 3 Bright A_CustomMissile("ThrallShot1",42,6,0,1,0)
+    CULT F 1 Bright A_PlaySound("monster/culatk")
+	CULT E 4
+	CULT F 3 Bright A_CustomMissile("ThrallShot1",42,-6,0,1,0)
+    CULT F 3 Bright A_CustomMissile("ThrallShot1",42,6,0,1,0)
+	CULT E 4
+    CULT F 0 Bright A_PlaySound("monster/culatk")
+	CULT F 3 Bright A_CustomMissile("ThrallShot1",42,-6,0,1,0)
+    CULT F 3 Bright A_CustomMissile("ThrallShot1",42,6,0,1,0)
+	CULT F 2
+	CULT E 4
+    Goto See
+  Pain: 
+    CULT G 2 
+    CULT G 2 A_Pain 
+    Goto See 
+  Death: 
+    CULT H 8 
+    CULT I 8 A_Scream 
+    CULT J 4 A_StopSound
+    CULT K 4 A_NoBlocking 
+    CULT L 4 A_StopSound
+    CULT M 100 
+    Stop
+  XDeath:
+    CULT N 5 A_StopSound
+    CULT O 5 A_XScream 
+    CULT P 5 A_NoBlocking 
+    CULT QRSTUV 5 
+    CULT W 100
+	Stop
+  Raise: 
+    CULT MLKJHI 5 
+    Goto See 
+  } 
+}

@@ -1,0 +1,362 @@
+actor GasCan : Weapon
+{
+  inventory.pickupmessage "You picked up a Can of Gas!"
+  weapon.selectionorder 9999
+  weapon.kickback 300
+  weapon.ammotype "GasolineAmmo"
+  weapon.ammouse 1
+  weapon.ammogive 250
+  Inventory.PickupSound "misc/i_pkup"
+  +WEAPON.NOALERT
+  +WEAPON.WIMPY_WEAPON
+  States
+  {
+  Select:
+  GASC A 1 A_Raise
+  loop  
+  Deselect:
+  GASC A 1 A_Lower
+  loop  
+  Ready:
+  GASC A 1 A_WeaponReady
+  loop  
+  Fire:
+  GASC A 6
+  GASC B 2  
+  Hold:
+  GASC A 0 A_PlaySound("Gasoline")
+  TNT1 A 0 A_FireCustomMissile("Gasoline",Random(5,-5), 1, 3, 10)
+  TNT1 AAAA 0 A_FireCustomMissile("Gasoline",Random(5,-5), 0, 3, 10)  
+  TNT1 A 0 A_Jump(128,3)
+  GASC C 10
+  GASC B 5 A_Refire
+  goto Ready
+  GASC D 10
+  GASC B 5 A_Refire
+  goto Ready
+  AltFire:
+  GASC A 1 OffSet(4,53)
+  GASC A 1 OffSet(12,70)
+  GASC A 1 OffSet(20,91)
+  GASC A 1 OffSet(30,128)
+  MATC A 1 OffSet(1,73)
+  MATC A 1 OffSet(1,53)
+  MATC A 1 OffSet(1,33)
+  MATC B 1 OffSet(1,33)
+  MATC B 1 OffSet(2,36)
+  MATC B 1 OffSet(3,40)
+  MATC C 1 OffSet(14,53)
+  MATC C 1 OffSet(7,45) A_PlaySound("DSMATCH")
+  MATC C 1 OffSet(5,40)
+  MATC C 1 OffSet(1,33)
+  //MATC D 0 A_SpawnItemEx("Match", 12,-1, 32, 8, 0, 2, 0)  
+  MATC D 0 A_FireCustomMissile("Match",Random(5,-5), 0, -1, 0)
+  MATC D 1 OffSet(14,53)
+  MATC D 1 OffSet(7,45)
+  MATC D 1 OffSet(-14,40)
+  MATC D 1 OffSet(-20,33)
+  MATC D 1 OffSet(-12,33)
+  MATC D 1 OffSet(-2,50)
+  MATC D 1 OffSet(1,91)
+  MATC D 1 OffSet(1,128)
+  GASC A 1 OffSet(30,128)
+  GASC A 1 OffSet(20,91)
+  GASC A 1 OffSet(12,70)
+  GASC A 1 OffSet(4,53)
+  goto Ready
+  Spawn:
+  GASC E -1
+  Stop  
+  }
+}
+
+Actor GasolineAmmo : Ammo
+{
+   Inventory.amount 250
+   inventory.maxamount 500
+   ammo.backpackamount 200
+   ammo.backpackmaxamount 1000
+   -inventory.invbar
+   inventory.pickupmessage "You picked up a can of chainsaw gas!"
+   Health 50
+   Scale 0.7
+   
+   States
+   {
+     Spawn:
+		GASC E 21000 //Only stick around for 10 minutes
+		Stop
+   }
+}
+
+actor Gasoline
+{
+Radius 1
+Height 1
+Damage 0
+Speed 12
+Scale 0.6
+DamageType Fire
+RenderStyle Translucent
+Alpha 0.2
+PROJECTILE
+-SOLID
+-NOGRAVITY
++DONTSPLASH
++WINDTHRUST
++SHOOTABLE
++NOTARGET
++RIPPER
++PAINLESS
++BLOODLESSIMPACT
++NODAMAGETHRUST
+Translation "176:191=112:127"
+states
+{
+spawn:
+BLUD C 4
+Loop
+Death:
+TNT1 A 1 A_SpawnItem("GasPuddle",5)
+stop
+}
+}
+
+actor Match
+{
+  Radius 1
+  Height 1
+  Speed 12
+  Damage 10
+  Projectile
+  Mass 1
+  -NOGRAVITY
+  +CORPSE
+  +NOEXTREMEDEATH
+  +BLOODLESSIMPACT
+  +NODAMAGETHRUST
+  ReactionTime 100
+  Obituary "%o was striked out by %k."
+  DamageType Fire
+  RenderStyle Add
+  Scale 0.2
+  States
+  {
+  Spawn:
+    MAT2 EF 1 Bright A_SpawnItemEx("MatchLite")
+    MAT2 E 0 A_Countdown
+    loop
+  Death:
+    MAT2 E 0 A_Jump(128,"Death2")
+    MAT2 E 0 Bright A_SpawnItemEx("MatchLite2")
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 1 Bright A_Jump(128,2)
+    MAT2 E 4 Bright A_Explode(8,8)
+    MAT2 E 5000
+    Stop
+  Death2:
+    MAT2 F 0 Bright A_SpawnItemEx("MatchLite2")
+    MAT2 F 0 A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 1 Bright A_Jump(128,2)
+    MAT2 F 4 Bright A_Explode(8,8)
+    MAT2 F 5000
+    Stop
+  }
+}
+
+actor GasPuddle
+{
+  Radius 4
+  Height 4
+  Damage 0
+  Health 1
+  Mass 9999999
+  Translation "176:191=112:127"
+  //Translation "176:191=96:111"
+  Scale 0.75
+  RenderStyle Translucent
+  Alpha 0.1
+  DamageType Fire
+  obituary "%o was torched by %k's flames."
+  -SOLID
+  +SHOOTABLE
+  +NOBLOOD
+  +NODAMAGETHRUST
+  +NOEXTREMEDEATH
+  +FORCERADIUSDMG
+  States
+  {
+  Spawn:
+  BLUD D 0
+  BLUD D 0 A_Jump(128,"Spawn2")
+  BLUD D 1800
+  stop
+  Spawn2:
+  BLUD E 1800
+  stop
+  Death:
+  BLUD D 2 A_SetTranslucent(0.07, 1)
+  BLUD D 2 A_SetTranslucent(0.05, 1)
+  TNT1 A 0 A_PlaySound("vile/firestrt")
+  TNT1 A 0 A_Explode(8, 38, 1)
+  TNT1 A 0 A_Jump(8,2)
+  TNT1 A 1 A_SpawnItem("IgnitedSurfacen", 5)
+  stop
+  TNT1 A 1 A_SpawnItem("IgnitedSurface", 5)
+  stop
+  }
+}
+
+actor MatchLite
+{ 
+  +NOINTERACTION
+  +CLIENTSIDEONLY
+  RenderStyle Add
+  Scale 0.3
+  States
+  {
+  Spawn:
+    MAT2 A 0
+    MAT2 A 0 A_Jump(192,"Spawn2","Spawn3","Spawn4")
+    MAT2 A 1 Bright
+    Stop
+  Spawn2:
+    MAT2 B 1 Bright
+    Stop
+  Spawn3:
+    MAT2 C 1 Bright
+    Stop
+  Spawn4:
+    MAT2 D 1 Bright
+    Stop
+  }
+}
+
+actor MatchLite2 : MatchLite
+{
+  States
+  {
+  Spawn:
+    MAT2 A 0
+    MAT2 A 0 A_Jump(128,3)
+    MAT2 ABCD 4 Bright A_FadeOut(.02)
+    loop
+  }
+}
+
+actor IgnitedSurfacen
+{ 
+  states
+  {
+  Spawn: 
+    TFIR A 0
+    TFIR A 0 A_Jump(192,2,3,4)
+    TFIR A 0 A_SpawnItemEx ("IgnitedSurface1")
+    goto Death
+    TFIR A 0 A_SpawnItemEx ("IgnitedSurface2")
+    goto Death
+    TFIR A 0 A_SpawnItemEx ("IgnitedSurface3")
+    goto Death
+    TFIR A 0 A_SpawnItemEx ("IgnitedSurface4")
+   Death: 
+    TNT1 A 5
+    Stop
+}
+}
+
+actor IgnitedSurface
+{
+ //Projectile
+ Height 5
+ Radius 2
+ Health 1
+ BounceFactor 0.0
+ obituary "%o got caught in %k's remaining flames."
+ RenderStyle Add
+ Alpha 0.3
+ XScale 0.3
+ YScale 0.3
+ ReactionTime 12
+ DamageType Fire
+ -SOLID
+ +NODAMAGETHRUST
+ +NOEXTREMEDEATH
+ +BLOODLESSIMPACT
+ +DONTSPLASH
+ +NOTARGET
+ ActiveSound "vile/firecrkl"
+ States
+ {
+ Spawn:
+ TFIR A 0 
+ TFIR A 0 A_Jump(128,"Spawn2")
+ Spawn0:
+ TFIR A 0 A_CountDown
+ TFIR A 0 A_LoopActiveSound
+ TFIR ABCDEFGHIJKLMN 2 BRIGHT A_Explode(3,18,1)
+ loop
+ Spawn2:
+ TFIR A 0 A_CountDown
+ TFIR A 0 A_LoopActiveSound
+ TFIR OPQRSTUVWXYZ 2 BRIGHT A_Explode(3,18,1)
+ TFIR "[\" 2 BRIGHT A_Explode(3, 18, 1)
+ loop
+ Death: 
+ TFIR A 0 A_Jump(128,"Death2")
+ Death1:
+ TFIR ABCDEFGHIJKLMN 2 BRIGHT A_FadeOut(0.01)
+ loop
+ Death2:
+ TFIR OPQRSTUVWXYZ 2 BRIGHT A_FadeOut(0.01)
+ TFIR "[\" 2 BRIGHT A_FadeOut(0.01)
+ loop 
+ }
+}
+
+actor IgnitedSurface1 : IgnitedSurface
+{
+ XScale 0.33
+ YScale 0.4
+ ActiveSound ""
+}
+
+actor IgnitedSurface2 : IgnitedSurface
+{
+ XScale 0.3
+ YScale 0.2
+ ActiveSound ""
+}
+
+actor IgnitedSurface3 : IgnitedSurface
+{
+ XScale 0.27
+ YScale 0.35
+ ActiveSound ""
+}
+
+actor IgnitedSurface4 : IgnitedSurface
+{
+ XScale 0.32
+ YScale 0.22
+ ActiveSound ""
+}
+

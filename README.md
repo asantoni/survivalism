@@ -13,6 +13,7 @@ Runs on the Zandronum engine.
 - Procedural vegetation system
 - Hunger system
 - Quest system
+- Giant bosses
 - **Full Multiplayer Support** - Survive with your friends!
 - Low system requirements - It even runs on Android with Doom Touch.
 

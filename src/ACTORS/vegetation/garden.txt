@@ -1,0 +1,64 @@
+Actor Gardentree1 14007
+{
+  Radius 20
+  Height 90
+  +Solid 
+  States
+  {
+  Spawn:
+    PLAN A -1
+    Stop
+  }
+}
+
+Actor Gardentree2 14008
+{
+  Radius 20
+  Height 90
+  +Solid
+  States
+  {
+  Spawn:
+    PLAN B -1
+    Stop
+  }
+}
+
+Actor Gardenbush1 14009
+{
+  Radius 24
+  Height 30
+  +Solid
+  States
+  {
+  Spawn:
+    PLAN C -1
+    Stop
+  }
+}
+
+Actor Gardenbush2 14010
+{
+  Radius 16
+  Height 30
+  +Solid
+  States
+  {
+  Spawn:
+    PLAN D -1
+    Stop
+  }
+}
+
+Actor Gardenbush3 14011
+{
+  Radius 16
+  Height 30
+  +Solid
+  States
+  {
+  Spawn:
+    PLAN E -1
+    Stop
+  }
+}

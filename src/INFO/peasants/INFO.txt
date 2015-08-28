@@ -1,0 +1,12 @@
+Name: Peasants Pack
+Difficulty: Very Easy
+Connections: Peasant Base Class
+Summon: BottlePeasant, GunPeasant, ComboPeasant
+Melee: Yes (Bottle Peasant)
+Distance: Hitscan (Gun Peasant)
+Type: Human
+Brightmaps: No
+Added States: No
+ACS: No
+Description: The pack contains 3 characters. Included
+are a peasant with a bottle, a gun, and both, and two workmen.

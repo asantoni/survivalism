@@ -1,0 +1,10 @@
+Name: Necrodome Rocks
+Connection: No
+Palette: Custom
+Summon: NRock[1-10], NRock[1-10]small
+Ambient Sound: No
+De-/Activatable: No
+Destroyable: No
+Special Effects: No
+Brightmaps: No
+ACS: No

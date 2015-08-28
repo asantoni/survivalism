@@ -1,0 +1,7 @@
+Name: Female Scientist (Syringe)
+Difficulty: Very Easy
+Connections: Female Zombie
+Summon: FemaleScientist4
+Melee: Yes
+Distance: None
+Type: Human, Undead

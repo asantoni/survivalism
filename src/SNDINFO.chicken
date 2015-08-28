@@ -1,0 +1,20 @@
+$pitchshiftrange 					0
+chicken/active			chicact
+chicken/attack			chicatk
+chicken/pain			chicpai
+chicken/death			chicdth
+chicken/peck1			chicpk1
+chicken/peck2			chicpk2
+chicken/peck3			chicpk3
+$random chicken/peck		{ chicken/peck1  chicken/peck2  chicken/peck3 }
+
+$playeralias	chicken male	*usefail		chicken/peck
+$playeralias	chicken male	*pain100		chicken/pain
+$playeralias	chicken male	*pain75			chicken/pain
+$playeralias	chicken male	*pain50			chicken/pain
+$playeralias	chicken male	*pain25			chicken/pain
+$playeralias	chicken male	*death			chicken/death
+$playeralias	chicken male	*wimpydeath		chicken/death
+$playeralias	chicken male	*crazydeath		chicken/death
+$playeralias	chicken male	*xdeath			chicken/death
+$playeralias	chicken male	*falling		chicken/active

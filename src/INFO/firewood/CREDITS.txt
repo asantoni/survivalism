@@ -1,0 +1,7 @@
+Submitted: ETTiNGRiNDER
+Decorate: ETTiNGRiNDER
+GLDefs: ETTiNGRiNDER
+Sounds: N/A
+Sprites: Raven Software
+Sprite Edit: ETTiNGRiNDER
+Idea Base: Hexen wads putting slimy swamp logs in fireplaces

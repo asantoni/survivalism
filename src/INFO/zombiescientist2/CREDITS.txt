@@ -1,0 +1,7 @@
+Submitted: scalliano
+Decorate: scalliano
+GLDefs: none
+Sounds: Id Software, Valve
+Sprites: Id Software (Zombieman), Xim (Jawless Zombie Head), JoeyTD (Player 6, 7 & 8 frames)
+Sprite Edit: scalliano
+Idea Base: The UAC's apparent lack of staff

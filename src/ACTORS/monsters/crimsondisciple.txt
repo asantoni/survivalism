@@ -1,0 +1,194 @@
+ACTOR CrimsonDisciple
+{
+	SpawnID 35
+	MONSTER
+	+TELESTOMP
+	+DONTOVERLAP
+	PainChance 100
+	Health 175
+	Height 64
+	Radius 16
+	Mass 250
+	Speed 12
+	SeeSound "DiscipleSee"
+	DeathSound "DiscipleDeath"
+	PainSound "DisciplePain"
+	ActiveSound "DiscipleActive"
+	Obituary "%o was slain by a crimson disciple."
+	States
+	{
+	Spawn:
+		CRMD A 0
+		CRMD AB 12 A_Look
+		Loop
+	See:
+		CRMD ABCD 6 A_Chase
+		Loop
+	Melee:
+		CRMD E 4 A_FaceTarget
+		CRMD F 1 A_PlaySound ( "DiscipleSwing" )
+		CRMD F 4 A_FaceTarget
+		CRMD G 1 BRIGHT A_CustomMissile( "FireWall", 0, 0, 90 )
+		CRMD G 0 BRIGHT A_CustomMissile( "FireWall", 0, 0, 180 )
+		CRMD G 0 BRIGHT A_CustomMissile( "FireWall", 0, 0, 270 )
+		CRMD G 0 BRIGHT A_CustomMissile( "FireWall", 0, 0 )
+		CRMD G 2 BRIGHT
+		CRMD I 4
+		CRMD F 4
+		Goto See
+	Missile:
+		TNT1 A 1 A_JumpIfCloser( 750, "NormalShot" )
+		CRMD E 1 A_PlaySound ( "DiscipleRain" )
+		Goto Rain
+	Rain:
+		CRMD E 4 A_FaceTarget
+		CRMD J 1 BRIGHT A_CustomMissile( "RainShot", 32 )
+		CRMD J 4 BRIGHT
+		CRMD J 0 BRIGHT A_JumpIfCloser( 750, "See" )
+		CRMD J 0 BRIGHT A_JumpIfTargetInLOS( "Rain", 0, JLOSF_DEADNOJUMP  )
+		Goto See
+	NormalShot:
+		CRMD E 4 A_FaceTarget
+		CRMD F 1 A_PlaySound ( "DiscipleSwing" )
+		CRMD F 4 A_FaceTarget
+		CRMD I 4
+		CRMD G 1 A_CustomMissile ( "BloodShot", 20 )
+		CRMD G 4 BRIGHT
+		CRMD I 2
+		CRMD F 4
+		Goto See
+	Pain:
+		CRMD H 1 A_Pain
+		CRMD H 9
+		Goto See
+	Death:
+		CRIM A 3
+		CRIM B 3 A_Scream
+		CRIM CD 6
+		CRIM E 3 A_NoBlocking
+		CRIM FG 6
+		CRIM H -1
+		Stop				
+	XDeath:
+		CRIM I 1 A_PlaySound ( "DiscipleSplatter" )
+		CLER I 5
+		CLER J 5
+		CLER K 5 A_NoBlocking
+		CLER LMNOP 5
+		CLER Q -1
+		Stop
+	}
+}
+
+ACTOR FireWall
+{
+	Projectile
+	Height 20
+	Radius 10
+	Speed 1
+	-ACTIVATEPCROSS
+	+RIPPER
+	+FLOORHUGGER
+	RenderStyle Add
+	Alpha 0.9
+	DamageType Fire
+	Damage 0
+	SeeSound "FireSpawn"
+	States
+	{
+	Spawn:
+		TNT1 A 0 BRIGHT
+		CFIR AB 1 BRIGHT
+		Goto Move
+	Move:
+		CFIR CDEFGHI 3 BRIGHT
+		TNT1 I 0 BRIGHT A_Explode ( 9, 32, 0 )
+		CFIR CDEFGHI 3 BRIGHT
+		TNT1 I 0 BRIGHT A_Explode ( 9, 32, 0 )
+		CFIR CDEFGHI 3 BRIGHT
+		TNT1 I 0 BRIGHT A_Explode ( 9, 32, 0 )
+		CFIR CDEFGHI 3 BRIGHT
+		TNT1 I 0 BRIGHT A_Explode ( 9, 32, 0 )
+		CFIR CDEFGHI 3 BRIGHT
+		TNT1 I 0 BRIGHT A_Explode ( 9, 32, 0 )
+		Goto Death
+	Death:
+		CFIR JKLM 2 BRIGHT
+		Stop
+	}
+}
+
+ACTOR BloodShot
+{
+	Projectile
+	Height 16
+	Radius 8
+	Speed 10
+	Damage 3
+	+SEEKERMISSILE
+	SeeSound "BloodShoot"
+	DeathSound "BloodBoom"
+	Decal DoomImpScorch
+	Alpha 0.6
+	Renderstyle Translucent
+	States
+	{
+	Spawn:
+		CBLD A 0 BRIGHT
+		CBLD AB 2 BRIGHT A_SeekerMissile( 325, 45 )
+		Loop
+	Death:
+		CBLD C 1 A_Explode( 10, 64 )
+		CBLD CDEFGHI 3 BRIGHT
+		Stop
+	}
+}
+
+ACTOR RainShot : HornRodFX2
+{
+	Projectile
+	Speed 50
+	Damage 0
+	DeathSound "Rain"
+	States
+	{
+	Spawn:
+		TNT1 A 1
+		Loop
+	Death:
+		TNT1 H 5 BRIGHT
+		TNT1 I 5 BRIGHT
+		TNT1 J 4 BRIGHT
+		TNT1 KLM 3 BRIGHT
+		TNT1 G 1 A_HideInCeiling
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		TNT1 G 1 A_SpawnItemEx ( "RainPillar2", random( 0, 64 ), random( 0, 64 ), 0, 0, 0, -10 )
+		Stop
+	}
+}
+
+ACTOR RainPillar2 : RainPillar
+{
+	+NOCLIP
+	+SPAWNCEILING
+	+NOGRAVITY
+	Damage ( random( 1, 6) )
+	States
+	{
+	Spawn:
+		FX22 A 0 BRIGHT
+		FX22 A 1 BRIGHT
+		FX22 A 1 A_ChangeFlag ("NOCLIP", 0 )
+		Loop
+	}
+}

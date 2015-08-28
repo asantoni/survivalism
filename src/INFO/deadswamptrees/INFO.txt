@@ -1,0 +1,10 @@
+Name: Dead/Swamp Trees
+Connection: None
+Palette: Custom
+Summon: NTreeDead1-2, NTreeSwamp1-2, NSwampLog, NSwampStump, NSwampRoot
+Ambient Sound: No
+De-/Activatable: No
+Destroyable: No
+Special Effects: No
+Brightmaps: No
+ACS: No

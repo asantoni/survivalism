@@ -1,0 +1,10 @@
+#library "axe"
+#include "zcommon.acs"
+
+/* Not compatible with Zandronum 1.0 - 2.0*/
+script 104 (void)
+{
+  int axe_charge = CheckInventory("AxeCharge");
+  TakeInventory("AxeCharge", 0x7FFFFFFF); // [Blue Shadow] Clear the charge counter
+  SetResultValue(axe_charge);
+}

@@ -1,0 +1,8 @@
+Name: Cultist
+Difficulty: Very Easy
+Connection: none
+Summon: Thrall
+Melee: No
+Distance: Projectile
+Type: Human, Magical
+Brightmaps: Yes

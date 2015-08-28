@@ -1,0 +1,54 @@
+ACTOR FemaleScientist2
+{
+  Game Doom
+  obituary "%o was bludgeoned to death by a zombie scientist."
+  health 15
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  States
+  {
+   Spawn:
+    FSZW AB 10 A_Look
+    loop
+  See:
+    FSZW AABBCCDD 4 A_Chase
+    loop
+  Melee:
+    FSZW E 4 A_FaceTarget
+    FSZW F 8 A_CustomMeleeAttack (random (1, 5) *5, "skeleton/melee", "skeleton/swing")
+    FSZW D 4
+    goto See
+  Pain:
+    FSZW G 3
+    FSZW G 3 A_Pain
+    goto See
+  Death:
+    FSZW H 5
+    FSZW I 5 A_Scream
+    FSZW J 5 A_NoBlocking
+    FSZW K 5
+    FSZW L 5
+    FSZW M 5
+    FSZW N -1
+    stop
+  XDeath:
+    FSZW O 5
+    FSZW P 5 A_XScream
+    FSZW Q 5 A_NoBlocking
+    FSZW RSTUV 5
+    FSZW W -1
+    stop
+  Raise:
+    FSZW MLKJIH 5
+    goto See
+  }
+}

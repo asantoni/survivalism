@@ -1,0 +1,174 @@
+/////ICEARROW
+flickerlight MFROSTSHARD
+{
+    color 0.3 0.3 1.0
+    size 32
+    secondarySize 40
+    chance 0.3
+}
+
+flickerlight MFROSTSHARD_X1
+{
+    color 0.3 0.3 1.0
+    size 40
+    secondarySize 48
+    chance 0.3
+}
+
+flickerlight MFROSTSHARD_X2
+{
+    color 0.2 0.2 0.8
+    size 48
+    secondarySize 56
+    chance 0.3
+}
+
+flickerlight MFROSTSHARD_X3
+{
+    color 0.1 0.1 0.5
+    size 56
+    secondarySize 64
+    chance 0.3
+}
+
+flickerlight MFROSTSHARD_X4
+{
+    color 0.0 0.0 0.2
+    size 64
+    secondarySize 68
+    chance 0.3
+}
+
+object IceArrow
+{
+	frame ARR2 { light MFROSTSHARD }
+	frame SHEXA { light MFROSTSHARD_X1 }
+    frame SHEXB { light MFROSTSHARD_X2 }
+    frame SHEXC { light MFROSTSHARD_X3 }
+    frame SHEXD { light MFROSTSHARD_X4 }
+}
+/////FIREARROW
+flickerlight THROWHAMMER
+{
+    color 1.0 0.2 0.0
+    size 48
+    secondarySize 52
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X1
+{
+    color 1.0 0.7 0.0
+    size 48
+    secondarySize 56
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X2
+{
+    color 1.0 0.7 0.0
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X3
+{
+    color 1.0 0.7 0.0
+    size 72
+    secondarySize 80
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X4
+{
+    color 0.8 0.8 0.0
+    size 80
+    secondarySize 84
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X5
+{
+    color 0.5 0.5 0.0
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight THROWHAMMER_X6
+{
+    color 0.2 0.2 0.0
+    size 40
+    secondarySize 48
+    chance 0.4
+}
+
+object FireArrow
+{
+    frame ARR3A { light THROWHAMMER }
+    frame FE01A { light THROWHAMMER_X1 }
+    frame FE01B { light THROWHAMMER_X2 }
+    frame FE01C { light THROWHAMMER_X3 }
+    frame FE01D { light THROWHAMMER_X4 }
+    frame FE01E { light THROWHAMMER_X4 }
+    frame FE01F { light THROWHAMMER_X4 }
+    frame FE01G { light THROWHAMMER_X4 }
+    frame FE01H { light THROWHAMMER_X4 }
+    frame FE01I { light THROWHAMMER_X5 }
+    frame FE01J { light THROWHAMMER_X6 }
+}
+/////THUNDERARROW
+flickerlight THUNDFX1
+{
+    color 0.5 0.5 0.0
+    size 32
+    secondarySize 48
+    chance 0.8
+}
+flickerlight THUNDFX2
+{
+    color 0.5 0.5 0.0
+    size 8
+    secondarySize 10
+    chance 0.8
+}
+
+object ShockArrow
+{
+	frame ARR4 { light THUNDFX1 }
+}
+object ElectroTrail2
+{
+	frame ZAPR { light THUNDFX2 }
+}
+/////SPELLS
+pointlight SPELLICE
+{
+    color 0.3 0.3 1.0
+    size 32
+}
+pointlight SPELLFIRE
+{
+    color 1.0 0.2 0.0
+    size 32
+}
+pointlight SPELLTHUNDER
+{
+    color 0.5 0.5 0.0
+    size 32
+}
+object FireSpell
+{
+	frame FRE1 { light SPELLFIRE }
+}
+
+object IceSpell
+{
+	frame ICE1 { light SPELLICE }
+}
+
+object ThunderSpell
+{
+	frame ELK1 { light SPELLTHUNDER }
+}

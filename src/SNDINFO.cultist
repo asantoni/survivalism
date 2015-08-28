@@ -1,0 +1,19 @@
+$RANDOM monster/culsit { monster/culsi1 monster/culsi2 monster/culsi3 monster/culsi4 }
+monster/culsi1 dsculsi1
+monster/culsi2 dsculsi2
+monster/culsi3 dsculsi3
+monster/culsi4 dsculsi4
+
+monster/culatk dsculatk
+monster/culpai dsculpai
+$RANDOM monster/culdth { monster/culdt1 monster/culdt2 }
+monster/culdt1 dsculdt1
+monster/culdt2 dsculdt2
+
+$RANDOM monster/culact { monster/culac1 monster/culac2 }
+monster/culac1 dsculac1
+monster/culac2 dsculac2
+
+hunted hunted
+$rolloff hunted 1024 1300
+$limit hunted 1 1300

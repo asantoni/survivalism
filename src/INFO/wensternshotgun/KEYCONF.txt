@@ -1,0 +1,4 @@
+//weaponsection "west"
+
+// Disabling this because it breaks slot 3 -- Albert
+//SetSlot 3 WensternShotgun

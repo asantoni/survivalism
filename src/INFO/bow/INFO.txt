@@ -1,0 +1,7 @@
+Name: Bow
+Class: 3
+Type: Projectile
+Summon: Bow, Firespell, Icespell, Thunderspell, Spellbreaker
+Palette: PNG Hexen paletted
+Ammo Type: ArrowAmmo
+Altfire: No

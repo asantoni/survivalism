@@ -1,0 +1,9 @@
+Submitted: Captain Toenail
+Decorate: Captain Toenail
+GLDefs: Captain Toenail
+Sounds: Valve, Id Software
+Sprites: Id Software, 3D Realms, Raven
+Sprite Edit: Captain Toenail
+New Sentry Edit: SenteyHunter
+
+For the wad: Doom-z made by HaxMurderer

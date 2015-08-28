@@ -1,0 +1,77 @@
+//Submitted: Captain Toenail
+//Decorate: Captain Toenail
+//GLDEFs: Captain Toenail
+//Sounds: Free Radical Design
+//Sprites: Raven Software
+//Sprite Edit: Captain Toenail
+
+actor UndeadPriest
+{
+  obituary "%o was bagged by an undead priest."
+  health 200
+  gibhealth 60
+  radius 20
+  height 56
+  mass 125
+  speed 8
+  painchance 30
+  dropitem "Shell" 96
+  dropitem "Shell" 128
+  decal BulletChip
+  painsound "UndeadPriest/Pain"
+  deathsound "UndeadPriest/Die"
+  DamageFactor "UndeadPriest", 0
+  MONSTER
+  +FLOORCLIP
+  states
+  {
+  Spawn:
+    UNDP A 10 A_Look
+    loop
+  See:
+    UNDP A 0 A_Jump (32, "Run")
+    UNDP AABBCCDD 3 A_Chase
+    loop
+  Run:
+    UNDP A 0 A_Jump (24, "See")
+    UNDP AABBCCDD 2 A_Chase
+    loop
+  Missile:
+    UNDP E 10 A_FaceTarget
+    UNDP F 5 bright A_CustomBulletAttack (7, 7, 5, 2, PriestPuff)
+    UNDP F 0 bright A_PlaySoundEx ("UndeadPriest/Shoot","SoundSlot6")
+    UNDP E 2 A_SentinelRefire
+    UNDP E 10 A_FaceTarget
+    UNDP F 5 bright A_CustomBulletAttack (7, 7, 5, 3, PriestPuff)
+    UNDP F 0 bright A_PlaySoundEx ("UndeadPriest/Shoot2","SoundSlot7")
+    UNDP E 10
+    goto See
+  Pain:
+    UNDP G 3
+    UNDP G 3 A_Pain
+    goto See
+  Death:
+    UNDP H 6
+    UNDP I 6 A_Scream
+    UNDP JK 6
+    UNDP L 6 A_NoBlocking
+    UNDP M 6
+    UNDP N -1
+    Stop
+  XDeath:
+    UNDP O 5 A_XScream
+    UNDP P 5
+    UNDP R 5 A_NoBlocking
+    UNDP STUVW 5
+    UNDP X -1
+    Stop
+  Raise:
+    UNDP NMLKJIH 6
+    goto See
+  }
+}
+
+Actor PriestPuff : BulletPuff
+{
+DamageType UndeadPriest
+}

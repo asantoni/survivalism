@@ -1,0 +1,7 @@
+Submitted: Batandy
+Decorate: Shotgun edit
+Sounds: reload took from FINDSOUNDS.com / firing sound took from Ubisoft's Call of Juarez Bound in Blood
+Sprites: Doom
+Sprite Edit: Sprites made by joining parts of the double barrel shotgun with parts of the normal shotgun. Pickup sprites by That_One_Doom_Mod 
+Idea Base: Western movies
+ACS: No

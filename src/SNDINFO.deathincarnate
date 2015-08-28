@@ -1,0 +1,19 @@
+monster/incsit                dsincsit
+monster/incdth                dsincdth
+monster/incexp                dsincexp
+monster/incact1               dsincact
+//monster/incact2               dsincac1
+monster/incact3               dsincac2
+monster/incact4               dsincac3
+monster/incact5               dsincac4
+monster/incact6               dsincac5
+monster/incatk                dsincatk
+monster/inchit                dsinchit
+monster/hadsit                dshadsit
+monster/haddth                dshaddth
+monster/hadexp                dshadexp
+monster/hadtel                dshadtel
+monster/hadwlk                dshadwlk
+
+
+$random monster/incact { monster/incact1 monster/incact3 monster/incact4 monster/incact5 monster/incact6  }

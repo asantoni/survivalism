@@ -1,0 +1,7 @@
+Submitted: scalliano
+Decorate: scalliano
+GLDefs: none
+Sounds: DavidRaven, Id Software, Konami
+Sprites: Id Software (Zombieman), the Skulltag Team (Illucia, Player II), DavidRaven
+Sprite Edit: scalliano
+Idea Base: The UAC's apparent lack of staff

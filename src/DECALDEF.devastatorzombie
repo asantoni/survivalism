@@ -1,0 +1,62 @@
+decal DevScorch
+{
+	pic BFGLITE1
+	shade "ff 00 00"
+	fullbright
+	randomflipx
+	animator GoAway2
+	lowerdecal BFGScorch
+}
+
+decal LiteScorch
+{
+	pic BFGLITE1
+	shade "ff 00 00"
+	fullbright
+	randomflipx
+	animator GoAway2
+	x-scale 0.50
+        y-scale 0.50
+}
+
+decal LiteScorch
+{
+	pic BFGLITE1
+	shade "ff 00 00"
+	fullbright
+	randomflipx
+	animator GoAway2
+	lowerdecal BFGScorch
+        x-scale 0.50
+        y-scale 0.50
+}
+
+decal BFGLightning3
+{
+	pic BFGLITE1
+	shade "00 ff 00"
+	fullbright
+	randomflipx
+	animator GoAway2
+	lowerdecal BFGScorch
+}
+
+decal BFGLightning4
+{
+	pic BFGLITE2
+	shade "00 ff 00"
+	fullbright
+	randomflipy
+	animator GoAway2
+	lowerdecal BFGScorch
+}
+
+decalgroup DEBFGLightning
+{
+	BFGLightning3	1
+	BFGLightning4	1
+}
+
+Generator DevastatorBall                DevScorch
+Generator DevastatorBall2               DoomImpScorch
+Generator LiteShot                      LiteScorch

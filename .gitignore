@@ -1,2 +1,5 @@
-*.o
+src/acs/*.o
 doomz.pk3
+src/temp/
+temp
+doomz.db
