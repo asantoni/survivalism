@@ -1,0 +1,209 @@
+Pointlight ShadowBall
+{
+Color 1.0 0.0 0.0
+Size 32
+}
+
+Pointlight ShadowBall2
+{
+Color 1.0 0.0 0.0
+Size 44
+}
+
+Pointlight ShadowBall3
+{
+Color 1.0 0.0 0.0
+Size 48
+}
+
+Pointlight ShadowBall4
+{
+Color 0.6 0.0 0.0
+Size 36
+}
+
+Pointlight ShadowBall5
+{
+Color 0.4 0.0 0.0
+Size 24
+}
+
+Object ShadowBall
+{
+Frame SBALA { Light ShadowBall }
+Frame SBALB { Light ShadowBall }
+Frame SBALC { Light ShadowBall }
+Frame SBALD { Light ShadowBall1 }
+Frame SBALE { Light ShadowBall2 }
+Frame SBALF { Light ShadowBall3 }
+Frame SBALG { Light ShadowBall4 }
+Frame SBALH { Light ShadowBall5 }
+}
+
+BrightMap Sprite SHDWA1
+{
+Map BMSHDWA1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWA2A8
+{
+Map BMSHDWA2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWA3A7
+{
+Map BMSHDWA3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWB1
+{
+Map BMSHDWB1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWB2B8
+{
+Map BMSHDWB2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWB3B7
+{
+Map BMSHDWB3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWB4B6
+{
+Map BMSHDWB4
+DisableFullBright
+}
+
+BrightMap Sprite SHDWC1
+{
+Map BMSHDWC1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWC2C8
+{
+Map BMSHDWC2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWC3C7
+{
+Map BMSHDWC3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWD1
+{
+Map BMSHDWD1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWD2D8
+{
+Map BMSHDWD2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWD3D7
+{
+Map BMSHDWD3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWE1
+{
+Map BMSHDWE1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWE2E8
+{
+Map BMSHDWE2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWE3E7
+{
+Map BMSHDWE3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWF1
+{
+Map BMSHDWF1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWF2F8
+{
+Map BMSHDWF2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWF3F7
+{
+Map BMSHDWF3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWG1
+{
+Map BMSHDWG1
+DisableFullBright
+}
+
+BrightMap Sprite SHDWG2G8
+{
+Map BMSHDWG2
+DisableFullBright
+}
+
+BrightMap Sprite SHDWG3G7
+{
+Map BMSHDWG3
+DisableFullBright
+}
+
+BrightMap Sprite SHDWG4G6
+{
+Map BMSHDWG4
+DisableFullBright
+}
+
+BrightMap Sprite SHDWG5
+{
+Map BMSHDWG5
+DisableFullBright
+}
+
+BrightMap Sprite SHDWI0
+{
+Map BMSHDWI0
+DisableFullBright
+}
+
+BrightMap Sprite SHDWJ0
+{
+Map BMSHDWJ0
+DisableFullBright
+}
+
+BrightMap Sprite SHDXA0
+{
+Map BMSHDXA0
+DisableFullBright
+}
+
+BrightMap Sprite SHDXB0
+{
+Map BMSHDXB0
+DisableFullBright
+}

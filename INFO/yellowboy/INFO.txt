@@ -1,0 +1,9 @@
+Name: Winchester Yellowboy
+Class: 3
+Type: Hitscan
+Palette: Custom
+Summon: Yellowboy
+Ammo Type: Shotgun Shells
+Altfire: No
+Powered Mode: No
+Added States: No

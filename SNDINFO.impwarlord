@@ -1,0 +1,37 @@
+$RANDOM implord/macehit { implord/macehit1 implord/macehit2 }
+implord/macehit1 macehit1
+implord/macehit2 macehit2
+
+implord/maceswing maceswng
+implord/shieldshot shldshot
+
+implord/shieldshothit shldhit
+
+implord/familiarspawn fspawn
+
+
+$RANDOM batfam/idle { batfam/idle1 batfam/idle2 }
+batfam/idle1 batidle1
+batfam/idle2 batidle2
+
+batfam/pain batpain
+batfam/death batdie
+batfam/crash batcrash
+dragonfam/see dfsee
+dragonfam/pain dfpain
+dragonfam/death dfdie
+dragonfam/idle dfidle
+dragonfam/attack dfattack
+
+//these assignments are taken from Doom; they are necessary for Heretic/Hexen usage
+//note that you don't need to copy these definitions over if you're using this creature in Doom, nor do you need to copy the associated sound files
+$random imp/sight		{ imp/sight1  imp/sight2 }
+$random imp/death		{ imp/death1  imp/death2 }
+imp/sight1			dsbgsit1
+imp/sight2			dsbgsit2
+imp/active			dsbgact
+imp/pain			dspopain
+imp/death1			dsbgdth1
+imp/death2			dsbgdth2
+imp/attack			dsfirsht
+imp/shotx			dsfirxpl

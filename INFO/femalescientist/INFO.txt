@@ -1,0 +1,7 @@
+Name: Female Scientist
+Difficulty: Very Easy
+Connections: Female Zombie
+Summon: FemaleScientist
+Melee: Yes
+Distance: None
+Type: Human, Undead

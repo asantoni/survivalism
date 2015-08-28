@@ -1,0 +1,17 @@
+; Dragon
+DragonSight             dragsit1
+DragonActive            dragsit1
+DragonWingflap          wing1
+DragonAttack            mage4
+DragonPain              dragpn2
+DragonDeath             dragdie2
+DragonFireballExplode   mageball
+ClericFlameCircle       firedhit
+
+$alias weapons/dragonball weapons/rocklf
+$rolloff weapons/dragonball 200 3200
+
+; Massive rolloff so you can hear it super far away.
+$rolloff DragonWingflap 200 3200
+$rolloff DragonSight 200 2000
+$rolloff DragonDeath 200 3000

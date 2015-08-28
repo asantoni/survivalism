@@ -1,0 +1,6 @@
+Decorate: Eriance, Blue Shadow, MagicWazard
+GLDefs: Ghastly Dragon, Sandypaper (Brightmaps)
+Sounds: Midway, Rogue Entertainment, Raven Software
+Sprites: id Software, Midway, Raven Software
+Sprite Edit: Eriance
+Idea Base: Hellstorm Death Incarnate

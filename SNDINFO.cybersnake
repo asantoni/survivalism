@@ -1,0 +1,10 @@
+; CyberSnake
+CyberSnakeSight         dsbossit
+CyberSnakeActive        dsbossit
+CyberSnakePain          dsdmpain
+CyberSnakeDeath         dsbosdth
+
+; Massive rolloff so you can hear it super far away.
+$rolloff CyberSnakeSight 2000 3000
+$rolloff CyberSnakeActive 2000 3000
+$rolloff CyberSnakeDeath 1000 3000

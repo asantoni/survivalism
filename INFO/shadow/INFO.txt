@@ -1,0 +1,8 @@
+Name: Shadow
+Difficulty: Easy
+Connection: Uses Etheral Soul projectiles
+Summon: Shadow
+Melee: No
+Distance: Projectile
+Type: Demon, Ghost
+Brightmaps: Yes

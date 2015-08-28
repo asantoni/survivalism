@@ -1,0 +1,11 @@
+
+The casing spawner uses three arguments. The first is the amount of bullet
+casings it spawns. The second is the area in which it spawns them, times 2 (32
+would spawn the casings in a 64x64 square). The third argument dictates the type
+of bullet casing. Currently, 0 is bullet, 1 is shotgun shell, and 2 is rifle
+shell.
+
+
+If you want to modify this to add your own casing spawners, copy one of the
+existing states, such as "BulletSpawning," set the A_SpawnItemEx to spawn the
+new casing actor, and add a new A_JumpIf(Args[2]) line to jump to the new state.

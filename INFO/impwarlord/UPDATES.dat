@@ -1,0 +1,5 @@
+02-21-2013 - MagicWazard
+*Converted audio to OGG format.
+*Added in the Imp sound effects that it uses from Doom.  Updated SNDINFO with appropriate definitions.
+*Added decal to green projectiles.
+*Added INFO and CREDITS lumps.

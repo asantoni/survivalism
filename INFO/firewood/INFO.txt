@@ -1,0 +1,9 @@
+Name: Firewood
+Connection: No
+Palette: Hexen
+Summon: CleanLog, CutLog, CharredLog, BurningLog, EmberLog
+Ambient Sound: No
+De-/Activatable: No
+Destroyable: No
+Special Effects: No
+ACS: No

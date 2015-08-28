@@ -1,0 +1,14 @@
+monsters/rifle DSPISTOL
+
+$random peasant/pain 	{ peasant/pain1 peasant/pain2 peasant/pain3 peasant/pain4 }
+peasant/pain1		dspespna
+peasant/pain2		dspespnb
+peasant/pain3		dspespnc
+peasant/pain4		dspespnd
+
+//$random peasant/death	{ peasant/death1 peasant/death2 peasant/death3 }
+$alias peasant/death	peasant/death1
+peasant/death1		dspsdtha
+
+misc/swish		dsswish
+misc/meathit		dsmeatht

@@ -1,0 +1,10 @@
+Name: Garden Plantations
+Connection: None
+Palette: Doom
+Summon: Gardentree[1-2], Gardenbush[1-3]
+Ambient Sound: N/A 
+De-/Activatable: N/A
+Destroyable: Yes
+Special Effects: N/A
+ACS: N/A
+

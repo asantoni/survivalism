@@ -1,0 +1,13 @@
+Name: Small trees & bushes
+Connection: No
+Palette: Hexen
+Summon: smalltree1/2, smallbush1/2, smallwintertree1/2
+Ambient Sound: No
+De-/Activatable: No
+Destroyable: No
+Special Effects: No
+ACS: No
+
+Submitted: CaptainToenail
+Decorate: CaptainToenail
+Sprites: Necrodome

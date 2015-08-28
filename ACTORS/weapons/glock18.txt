@@ -1,0 +1,99 @@
+ACTOR Glock18 : weapon
+{
+  obituary "%o was Killed by %k's Glock."
+  attacksound "Weapons/GLOKFIR"
+  decal BulletChip
+  Weapon.SlotNumber 2
+  weapon.kickback 50
+  inventory.pickupmessage "You got the Glock!"
+  weapon.ammotype "Clip"
+  Weapon.AmmoUse 1
+  weapon.ammogive 25
+  Health 10
+  +NOAUTOFIRE //Semi-automatic!
+  
+  Weapon.AmmoType2 "DoomZClipBoxItem"
+  Weapon.AmmoUse2 0
+  +WEAPON.ALT_AMMO_OPTIONAL
+  Tag "Glock 18"
+
+
+  states
+  {
+  	Ready:
+		GLOK A 1 A_WeaponReady(WRF_NOSWITCH)
+		CHGG A 0 A_JumpIfNoAmmo("NoAmmo")
+		CHGG A 0 A_WeaponReady
+		Loop
+	Deselect: 
+		GLOK A 1 A_Lower
+		loop
+	Select:
+		GLOK A 1 A_Raise
+		loop
+	NoAmmo:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadClipBox")
+		goto Ready
+	LoadClipBox:
+		TNT1 A 0 
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(0,38)
+		GLOK A 1 Offset(0,44)
+		GLOK A 1 Offset(0,52)
+		GLOK A 1 Offset(0,62)
+		GLOK A 1 Offset(0,72)
+		GLOK A 1 Offset(0,82)
+		GLOK A 2 Offset(-1,82) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		GLOK A 3 Offset(0,82) 
+		GLOK A 8 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		GLOK A 4 Offset(0,82)
+		GLOK A 5 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		GLOK A 4 Offset(0,82) 
+		TNT1 A 0 A_TakeInventory("DoomZClipBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
+		TNT1 A 0 A_GiveInventory("Clip", 50)
+		GLOK A 1 Offset(0,82)
+		GLOK A 1 Offset(0,72)
+		GLOK A 1 Offset(0,62)
+		GLOK A 1 Offset(0,52)
+		GLOK A 1 Offset(0,44)
+		GLOK A 1 Offset(0,38)
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(0,32)
+		goto Ready  
+	Fire:
+		GLOK B 0
+		GLOK B 0 A_GunFlash
+		GLOK B 0 Radius_Quake(2, 3, 0, 1, 0)
+		GLOF A 1 BRIGHT A_FireBullets(8.0, 4.0,-1,12, "BulletPuff", FBF_USEAMMO|FBF_NORANDOM)
+		GLOF C 0 A_SpawnItemEx("DeadBulletCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
+		GLOK C 1 A_SetPitch(pitch-0.5)
+		GLOK B 1
+		GLOK A 1
+		goto Ready
+	//Hold:
+	//	GLOK A 3
+	//	Wait
+		/*
+		GLOK B 0 A_GunFlash
+		GLOF B 1 BRIGHT A_FireBullets(4.0,3.0,-1,4)
+		GLOK C 2 A_SetPitch(pitch-0.5)
+		GLOK C 1
+		GLOK B 0 A_ReFire
+		*/
+		//Goto Ready
+	//Hold:
+		//Loop this function until they let go of the fire button so 
+		//this gun is semi-auto.
+		//GLOK A 1 A_Refire("Hold")
+		//goto Ready
+	Flash:
+		TNT1 A 2 bright A_Light1
+		TNT1 A 1 bright A_Light0
+		Stop
+	Spawn:
+		GLOI A -1
+		stop
+  }
+}
+

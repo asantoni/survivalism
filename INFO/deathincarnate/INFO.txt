@@ -1,0 +1,10 @@
+Name: Death Incarnate
+Difficulty: Medium
+Connection: Hades Spheres (included)
+Summon: Incarnate
+Melee: Yes
+Distance: Hitscan, Spawn
+Type: Demon, Undead
+Brightmaps: Yes
+Added States: No
+ACS: No

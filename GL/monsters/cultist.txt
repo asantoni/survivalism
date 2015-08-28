@@ -1,0 +1,213 @@
+
+//Dynamic lights
+
+Pointlight ThrallShot1
+{
+Color 0.0 0.0 1.0
+Size 20
+}
+
+Pointlight ThrallShot12
+{
+Color 0.0 0.0 1.0
+Size 25
+}
+
+Pointlight ThrallShot13
+{
+Color 0.0 0.0 0.8
+Size 20
+}
+
+Pointlight ThrallShot14
+{
+Color 0.0 0.0 0.6
+Size 15
+}
+
+Pointlight ThrallShot15
+{
+Color 0.0 0.0 0.4
+Size 10
+}
+
+Object ThrallShot1
+{
+Frame CFX4A { Light ThrallShot1 }
+Frame CFX4B { Light ThrallShot1 }
+Frame CFX4C { Light ThrallShot12 }
+Frame CFX4D { Light ThrallShot13 }
+Frame CFX4E { Light ThrallShot14 }
+Frame CFX4F { Light ThrallShot15 }
+}
+
+//Brightmaps
+
+
+BrightMap Sprite CULTA1C1
+{
+Map BMCULTA1
+DisableFullBright
+}
+
+BrightMap Sprite CULTA2C8
+{
+Map BMCULTA2
+DisableFullBright
+}
+
+BrightMap Sprite CULTA3C7
+{
+Map BMCULTA3
+DisableFullBright
+}
+
+BrightMap Sprite CULTA7C3
+{
+Map BMCULTA7
+DisableFullBright
+}
+
+BrightMap Sprite CULTA8C2
+{
+Map BMCULTA8
+DisableFullBright
+}
+
+BrightMap Sprite CULTB1D1
+{
+Map BMCULTB1
+DisableFullBright
+}
+
+BrightMap Sprite CULTB2D8
+{
+Map BMCULTB2
+DisableFullBright
+}
+
+BrightMap Sprite CULTB3D7
+{
+Map BMCULTB3
+DisableFullBright
+}
+
+BrightMap Sprite CULTB7D3
+{
+Map BMCULTB7
+DisableFullBright
+}
+
+BrightMap Sprite CULTB8D2
+{
+Map BMCULTB8
+DisableFullBright
+}
+
+BrightMap Sprite CULTE1
+{
+Map BMCULTE1
+DisableFullBright
+}
+
+BrightMap Sprite CULTE2
+{
+Map BMCULTE2
+DisableFullBright
+}
+
+BrightMap Sprite CULTE3
+{
+Map BMCULTE3
+DisableFullBright
+}
+
+BrightMap Sprite CULTE7
+{
+Map BMCULTE7
+DisableFullBright
+}
+
+BrightMap Sprite CULTE8
+{
+Map BMCULTE8
+DisableFullBright
+}
+
+BrightMap Sprite CULTF1
+{
+Map BMCULTF1
+DisableFullBright
+}
+
+BrightMap Sprite CULTF2
+{
+Map BMCULTF2
+DisableFullBright
+}
+
+BrightMap Sprite CULTF3
+{
+Map BMCULTF3
+DisableFullBright
+}
+
+BrightMap Sprite CULTF4
+{
+Map BMCULTF4
+DisableFullBright
+}
+
+BrightMap Sprite CULTF5
+{
+Map BMCULTF5
+DisableFullBright
+}
+
+BrightMap Sprite CULTF6
+{
+Map BMCULTF6
+DisableFullBright
+}
+
+BrightMap Sprite CULTF7
+{
+Map BMCULTF7
+DisableFullBright
+}
+
+BrightMap Sprite CULTF8
+{
+Map BMCULTF8
+DisableFullBright
+}
+
+BrightMap Sprite CULTG1
+{
+Map BMCULTG1
+DisableFullBright
+}
+
+BrightMap Sprite CULTG6
+{
+Map BMCULTG6
+DisableFullBright
+}
+
+BrightMap Sprite CULTG7
+{
+Map BMCULTG7
+DisableFullBright
+}
+
+BrightMap Sprite CULTG8
+{
+Map BMCULTG8
+DisableFullBright
+}
+
+BrightMap Sprite CULTH0
+{
+Map BMCULTH0
+DisableFullBright
+}

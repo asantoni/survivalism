@@ -1,0 +1,94 @@
+actor Yellowboy : Weapon 15001
+{
+  Weapon.SelectionOrder 904
+  Weapon.SlotNumber 3
+  Weapon.SlotPriority 0.3
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 8
+  Weapon.AmmoType "Shell"
+  Inventory.PickupMessage "You got the Winchester Yellowboy!"
+  Obituary "%o chewed on %k's yellowboy."
+  +SHOOTABLE
+  +NOBLOOD
+  //+CANPASS
+  +WINDTHRUST
+  
+  Weapon.AmmoType2 "DoomZShellBoxItem"
+  Weapon.AmmoUse2 0
+  +WEAPON.ALT_AMMO_OPTIONAL
+  //+WEAPON.AMMO_CHECKBOTH //Not in Zandronum 1.3
+
+  
+  Health 10
+  States
+  {
+    Ready:
+    WINC A 1 A_WeaponReady(WRF_NOSWITCH)
+    WINC A 0 A_JumpIfNoAmmo("NoAmmo")
+    WINC A 0 A_WeaponReady
+    Loop
+   NoAmmo:
+	TNT1 A 0
+	TNT1 A 0 A_JumpIfInventory("DoomZShellBoxItem", 1, "LoadShellBox")
+	goto Ready
+   LoadShellBox:
+    TNT1 A 0 
+	WINC B 1 Offset(0,35)
+	WINC B 1 Offset(0,38)
+	WINC B 1 Offset(0,44)
+	WINC C 1 Offset(0,52)
+	WINC C 1 Offset(0,62)
+	WINC C 1 Offset(0,72)
+	WINC C 1 Offset(0,82)
+	WINC C 2 Offset(-1,82) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+	WINC C 3 Offset(0,82) 
+	WINC C 2 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+	WINC C 3 Offset(0,82)
+	WINC C 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+	WINC C 3 Offset(0,82) 
+	WINC C 2 Offset(-3,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+	WINC C 3 Offset(0,82) 
+	WINC C 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+	WINC C 3 Offset(0,82) 
+	TNT1 A 0 A_TakeInventory("DoomZShellBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
+	TNT1 A 0 A_GiveInventory("Shell", 20)
+	WINC B 1 Offset(0,82)
+	WINC B 1 Offset(0,72)
+	WINC B 1 Offset(0,62)
+	WINC B 1 Offset(0,52)
+	WINC B 1 Offset(0,44)
+	WINC B 1 Offset(0,38)
+	WINC B 1 Offset(0,35)
+	WINC B 1 Offset(0,32)
+	WINC B 2 Offset(0,32)
+	goto Ready
+  Deselect:
+    WINC A 1 A_Lower
+    Loop
+  Select:
+    WINC A 1 A_Raise
+    Loop
+  Fire:
+    WINC A 3
+	WINC A 0 Radius_Quake(2, 7, 0, 2, 0)
+    WINC B 0 A_FireBullets (4, 4, 4, 12, "BulletPuff")
+    WINC B 0 A_PlayWeaponSound ("WCHFIRE")
+    WINC B 7 A_GunFlash
+	TNT1 A 0 A_JumpIfNoAmmo("NoAmmo")
+    WINC CDEFGH 1
+    WINC I 0 A_Playsound ("LEVER")
+    WINC IJKJI 3
+	WINC I 0 A_SpawnItemEx("DeadShotgunCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
+    WINC HGFEDC 1
+    WINC A 3
+    WINC A 7 A_ReFire
+    Goto Ready
+  Flash:
+    LAMZ A 3 Bright A_Light1
+    LAMZ B 4 Bright A_Light2
+    Goto LightDone
+  Spawn:
+    WHCE A -1
+    Stop
+  }
+}

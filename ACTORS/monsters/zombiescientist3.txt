@@ -1,0 +1,54 @@
+ACTOR ZombieScientist3
+{
+  Game Doom
+  obituary "%o was axe-murdered by a zombie scientist."
+  health 20
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MONSTER
+  +FLOORCLIP
+  States
+  {
+   Spawn:
+    SCZH AB 10 A_Look
+    loop
+  See:
+    SCZH AABBCCDD 4 A_Chase
+    loop
+  Melee:
+    SCZH E 8 A_FaceTarget
+    SCZH F 16 A_CustomMeleeAttack (random (2, 6) *5, "skeleton/melee", "skeleton/swing")
+    SCZH E 4
+    goto See
+  Pain:
+    SCZH G 3
+    SCZH G 3 A_Pain
+    goto See
+  Death:
+    SCZH H 5
+    SCZH I 5 A_Scream
+    SCZH J 5 A_NoBlocking
+    SCZH K 5
+    SCZH L 5
+    SCZH M 5
+    SCZH N -1
+    stop
+  XDeath:
+    SCZH O 5
+    SCZH P 5 A_XScream
+    SCZH Q 5 A_NoBlocking
+    SCZH RSTUV 5
+    SCZH W -1
+    stop
+  Raise:
+    SCZH MLKJIH 5
+    goto See
+  }
+}

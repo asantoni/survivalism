@@ -1,0 +1,194 @@
+FlickerLight2 YellowSkull
+{
+Offset 0 4 0
+Color 1.0 1.0 0
+Size 40
+SecondarySize 64
+Interval 2.0
+}
+
+PointLight YellowSkullX_1
+{
+Offset 0 4 0
+Color 1.0 1.0 0.0
+Size 56
+}
+
+PointLight YellowSkullX_2
+{
+Offset 0 4 0
+Color 1.0 1.0 0.0
+Size 64
+}
+
+PointLight YellowSkullX_3
+{
+Offset 0 4 0
+Color 1.0 1.0 0.0
+Size 32
+}
+
+Object YellowSkullSeeker
+{
+Frame WLP2A { Light YellowSkull }
+Frame WLP2B { Light YellowSkull }
+Frame WLP2C { Light YellowSkull }
+Frame WLP2D { Light YellowSkull }
+Frame WLP2E { Light YellowSkullX_1 }
+Frame WLP2F { Light YellowSkullX_2 }
+Frame WLP2G { Light YellowSkullX_3 }
+}
+
+PointLight GreenPoison
+{
+Offset 0 4 0
+Color 0.0 0.8 0.0
+Size 32
+}
+
+PointLight GreenPoisonX_1
+{
+Offset 0 4 0
+Color 0.0 0.8 0.0
+Size 24
+}
+
+PointLight GreenPoisonX_2
+{
+Offset 0 4 0
+Color 0.0 0.8 0.0
+Size 16
+}
+
+PointLight GreenPoisonX_3
+{
+Offset 0 4 0
+Color 0.0 0.8 0.0
+Size 8
+}
+
+Object GreenPoisonBall
+{
+Frame WLP1A { Light GreenPoison }
+Frame WLP1B { Light GreenPoison }
+Frame WLP1C { Light GreenPoison }
+Frame WLP1D { Light GreenPoison }
+Frame WLP1E { Light GreenPoisonX_1 }
+Frame WLP1F { Light GreenPoisonX_2 }
+Frame WLP1G { Light GreenPoisonX_3 }
+}
+
+FlickerLight2 RedSkull
+{
+Offset 0 4 0
+Color 1.0 0.0 0
+Size 32
+SecondarySize 48
+Interval 2.0
+}
+
+PointLight RedSkullX_1
+{
+Offset 0 4 0
+Color 1.0 0.0 0
+Size 48
+}
+
+PointLight RedSkullX_2
+{
+Offset 0 4 0
+Color 1.0 0.0 0
+Size 40
+}
+
+PointLight RedSkullX_3
+{
+Offset 0 2 0
+Color 1.0 0.0 0
+Size 24
+}
+
+Object RedSkullBall
+{
+Frame WLP4A { Light RedSkull }
+Frame WLP4B { Light RedSkull }
+Frame WLP4C { Light RedSkull }
+Frame WLP4D { Light RedSkull }
+Frame WLP4E { Light RedSkullX_1 }
+Frame WLP4F { Light RedSkullX_2 }
+Frame WLP4G { Light RedSkullX_3 }
+}
+
+FlickerLight2 MiniFire
+{
+Offset 0 1 0
+Color 1.0 0.5 0.0
+Size 16
+SecondarySize 24
+Interval 2.0
+}
+
+PointLight MiniFireX_1
+{
+Offset 0 1 0
+Color 1.0 0.5 0.0
+Size 24
+}
+
+PointLight MiniFireX_2
+{
+Offset 0 1 0
+Color 1.0 0.5 0.0
+Size 16
+}
+
+PointLight MiniFireX_3
+{
+Offset 0 2 0
+Color 1.0 0.5 0.0
+Size 8
+}
+
+Object MiniFirePuff
+{
+Frame DFFPA { Light MiniFire }
+Frame DFFPB { Light MiniFire }
+Frame DFFPC { Light MiniFire }
+Frame DFFPD { Light MiniFire }
+Frame DFFPE { Light MiniFire }
+Frame DFFPF { Light MiniFireX_1 }
+Frame DFFPG { Light MiniFireX_2 }
+Frame DFFPH { Light MiniFireX_3 }
+Frame DFFPI { Light MiniFireX_1 }
+Frame DFFPJ { Light MiniFireX_1 }
+Frame DFFPK { Light MiniFireX_1 }
+Frame DFFPL { Light MiniFireX_2 }
+Frame DFFPM { Light MiniFireX_2 }
+Frame DFFPN { Light MiniFireX_2 }
+Frame DFFPO { Light MiniFireX_3 }
+Frame DFFPP { Light MiniFireX_3 }
+Frame DFFPQ { Light MiniFireX_3 }
+Frame DFFPR { Light MiniFireX_3 }
+}
+
+Object MiniFirePuffNoDamage
+{
+Frame DFFPA { Light MiniFire }
+Frame DFFPB { Light MiniFire }
+Frame DFFPC { Light MiniFire }
+Frame DFFPD { Light MiniFire }
+Frame DFFPE { Light MiniFire }
+Frame DFFPF { Light MiniFireX_1 }
+Frame DFFPG { Light MiniFireX_2 }
+Frame DFFPH { Light MiniFireX_3 }
+Frame DFFPI { Light MiniFireX_1 }
+Frame DFFPJ { Light MiniFireX_1 }
+Frame DFFPK { Light MiniFireX_1 }
+Frame DFFPL { Light MiniFireX_2 }
+Frame DFFPM { Light MiniFireX_2 }
+Frame DFFPN { Light MiniFireX_2 }
+Frame DFFPO { Light MiniFireX_3 }
+Frame DFFPP { Light MiniFireX_3 }
+Frame DFFPQ { Light MiniFireX_3 }
+Frame DFFPR { Light MiniFireX_3 }
+}

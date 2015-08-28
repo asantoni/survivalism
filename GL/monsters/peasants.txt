@@ -1,0 +1,9 @@
+object GunPeasant
+{
+    frame GOVND { light HUMNDATK }
+}
+
+object ComboPeasant
+{
+    frame GOVND { light HUMNDATK }
+}

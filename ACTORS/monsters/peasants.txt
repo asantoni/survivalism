@@ -1,0 +1,106 @@
+ACTOR BottlePeasant : Peasant
+{
+	-FRIENDLY
+	AttackSound ""
+	States
+	{
+		See:
+		PEAS AABBCCDD 4 A_Chase
+		loop
+		Melee:
+		GOVN A 8 A_FaceTarget
+		GOVN B 8 A_CustomMeleeAttack(5, "misc/meathit", "misc/swish")
+		GOVN A 4 A_FaceTarget
+		Goto See
+		Pain:
+		PEAS O 3
+		PEAS O 3 A_Pain
+		Goto Melee
+	}
+}
+
+ACTOR GunPeasant : Peasant
+{
+	-FRIENDLY
+	States
+	{
+		See:
+		PEAS AABBCCDD 4 A_Chase
+		loop
+		Melee:
+		Missile:
+		GOVN C 8 A_FaceTarget
+		GOVN D 4 Bright A_ShootGun
+		GOVN C 16 A_FaceTarget
+		GOVN A 0 A_SentinelRefire
+		Goto Missile
+		Pain:
+		PEAS O 3
+		PEAS O 3 A_Pain
+		Goto Melee
+	}
+}
+
+ACTOR ComboPeasant : Peasant
+{
+	-FRIENDLY
+	AttackSound ""
+	States
+	{
+		See:
+		PEAS AABBCCDD 4 A_Chase
+		loop
+		Melee:
+		GOVN A 8 A_FaceTarget
+		GOVN B 8 A_CustomMeleeAttack(5, "misc/meathit", "misc/swish")
+		GOVN A 4 A_FaceTarget
+		GOVN A 0 A_JumpIfCloser(40, "Melee")
+		Goto See
+		Missile:
+		GOVN C 8 A_FaceTarget
+		GOVN D 4 Bright A_ShootGun
+		GOVN C 16 A_FaceTarget
+		GOVN A 0 A_SentinelRefire
+		Goto Missile
+		Pain:
+		PEAS O 3
+		PEAS O 3 A_Pain
+		PEAS O 0 A_JumpIfCloser(40, "Melee")
+		Goto Missile
+	}
+}
+
+
+ACTOR Hunter : Peasant
+{
+	+FRIENDLY
+	+USESPECIAL
+	+NODAMAGE //Don't actually take damage, even though we can go into the pain state
+	Health 2000
+	
+	States
+	{	
+		See:
+		PEAS AABBCCDD 4 A_Chase("Melee", "Missile", CHF_DONTMOVE) // - let's not chase
+		loop
+		Melee:
+		GOVN A 8 A_FaceTarget
+		GOVN B 8 A_CustomMeleeAttack(5, "misc/meathit", "misc/swish")
+		GOVN A 4 A_FaceTarget
+		GOVN A 0 A_JumpIfCloser(40, "Melee")
+		Goto See
+		Missile:
+		//I sped up his shooting - Hax
+		GOVN C 1 A_FaceTarget
+		GOVN D 0 A_PlaySound ("monsters/rifle", CHAN_WEAPON)
+		GOVN D 2 Bright A_CustomBulletAttack(8, 0, 1, 5*random(1,5), "BulletPuff", 2048, CBAF_NORANDOM)
+		GOVN C 1 A_FaceTarget
+		GOVN A 0 A_SentinelRefire
+		Goto Missile
+		Pain:
+		PEAS O 3
+		PEAS O 3 A_Pain
+		PEAS O 0 A_JumpIfCloser(40, "Melee")
+		Goto Missile
+	}
+}

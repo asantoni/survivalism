@@ -1,0 +1,16 @@
+Information:
+Name: Devastator Zombie
+Difficulty: Medium
+Connections: Devastator from Demon Eclipse
+Summon: DevastatorZombie
+Melee: None
+Distance: Projectile
+Type: Undead
+
+Credits:
+Submitted: scalliano
+Decorate: scalliano
+Sounds: Eriance (?)
+Sprites: Id Software, Eriance
+Sprite Edit: ItsNatureToDie, neoworm, Captain Toenail, Xim, Ghastly_dragon, scalliano
+Idea Base: Devastator from Demon Eclipse

@@ -1,0 +1,32 @@
+diablo2/goatman/attack		011att
+diablo2/goatman/death		011deth
+diablo2/goatman/sight		011sit
+$random diablo2/goatman/idle	{ diablo2/goatman/idle1 diablo2/goatman/idle2 diablo2/goatman/idle3 }
+$random diablo2/goatman/pain	{ diablo2/goatman/pain1 diablo2/goatman/pain2 }
+
+diablo2/goatman/idle1		011idle1
+diablo2/goatman/idle2		011idle2
+diablo2/goatman/idle3		011idle3
+diablo2/goatman/pain1		011pain1
+diablo2/goatman/pain2		011pain2
+
+Goat/Attack				goata2
+Goat/death				goatbd2
+Goat/Pain				goath2
+Goat/Madattack			goats2
+
+missile1charge	h20017
+missile2charge	h20016
+
+waitingballsspawn	purfire
+whiteballssee		acidfire
+whiteballsdeth		acidhit
+redballssee		purfire3
+redballsdeth		r_exp3
+
+redballbsee		mmfire
+redballbdeth	explode
+whiteballbsee	scream
+whiteballbdeth	scream2
+
+groundfirestart  flamstrt

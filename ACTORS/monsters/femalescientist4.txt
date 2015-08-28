@@ -1,0 +1,144 @@
+ACTOR FemaleScientist4
+{
+  Game Doom
+  obituary "%o was poisoned by a zombie scientist."
+  health 30
+  mass 90
+  speed 10
+  Radius 19
+  Height 52
+  painchance 200
+  seesound "fem/sight"
+  painsound "fem/pain"
+  deathsound "fem/death"
+  activesound "fem/active"
+  MONSTER
+  +FLOORCLIP
+  States
+  {
+   Spawn:
+    FSZS AB 10 A_Look
+    loop
+  See:
+    FSZS AABB 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    FSZS CCDD 4 A_Chase
+    TNT1 A 0 A_JumpIfCloser (128, "Squirt")
+    loop
+  Melee:
+    FSZS E 4 A_FaceTarget
+    FSZS E 0 A_SkelWhoosh
+    FSZS F 8 A_CustomMeleeAttack (random (1, 5) *3, "knifehit", "skeleton/swing")
+	// Not supported in Zandronum 1.2 -- Albert
+    //FSZS F 0 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 0 A_CustomMissile("PoisonDrop", 32, 8, 0, 0, 12) 
+	goto See
+  Squirt:
+    FSZS E 4 A_FaceTarget
+    FSZS F 0 A_PlaySound ("skeleton/swing")
+	/* Not supported in Zandronum 1.2 -- Albert
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, CMF_OFFSETPITCH, 12) */    
+	FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("PoisonDrop", 32, 8, 0, 0, 12) 
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12)  
+    FSZS F 1 A_CustomMissile ("DummyDrop", 32, 8, 0, 0, 12) 
+    FSZS D 4
+    goto See
+  Pain:
+    FSZS G 3
+    FSZS G 3 A_Pain
+    goto See
+  Death:
+    FSZS H 5
+    FSZS I 5 A_Scream
+    FSZS J 5 A_NoBlocking
+    FSZS K 5
+    FSZS L 5
+    FSZS M 5
+    FSZS N -1
+    stop
+  XDeath:
+    FSZS O 5
+    FSZS P 5 A_XScream
+    FSZS Q 5 A_NoBlocking
+    FSZS RSTUV 5
+    FSZS W -1
+    stop
+  Raise:
+    FSZS MLKJIH 5
+    goto See
+  }
+}
+
+
+
+actor PoisonDrop
+{
+  Game Doom
+  Radius 3
+  Height 3
+  Scale 0.5
+  Speed 10
+  FastSpeed 15
+  Damage 1
+  PoisonDamage 5
+  Alpha 1
+  bloodcolor "DarkGreen"
+  Decal "BloodSplat"
+  Projectile
+  -NOGRAVITY
+  +RANDOMIZE
+  states
+  {
+  Spawn:
+    POIS ABCD 4
+    goto Active
+  Active:
+    POIS D 4
+    loop
+  Death:
+    TNT1 A 0
+    stop
+  }
+}
+
+actor DummyDrop
+{
+  Game Doom
+  Radius 3
+  Height 3
+  Scale 0.5
+  Speed 10
+  FastSpeed 15
+  Damage 0
+  Alpha 1
+  bloodcolor "DarkGreen"
+  Decal "BloodSplat"
+  Projectile
+  -NOGRAVITY
+  +RANDOMIZE
+  states
+  {
+  Spawn:
+    POIS ABCD 4
+    goto Active
+  Active:
+    POIS D 4
+    loop
+  Death:
+    TNT1 A 0
+    stop
+  }
+}
+

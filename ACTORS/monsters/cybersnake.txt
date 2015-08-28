@@ -1,0 +1,88 @@
+ACTOR CyberSnake
+{
+  Health 4000
+  Radius 120
+  Height 330
+  Mass 1000
+  Speed 16
+  PainChance 20
+  Monster
+  MinMissileChance 80
+  //+BOSS
+  +MISSILEMORE
+  +FLOORCLIP
+  +NORADIUSDMG
+  +DONTMORPH
+  //+BOSSDEATH
+  Scale 3.0
+  SeeSound "CyberSnakeSight"
+  PainSound "CyberSnakePain"
+  DeathSound "CyberSnakeDeath"
+  ActiveSound "CyberSnakeActive"
+  Obituary "%o was set ablaze by Snake Demon."
+  States
+  {
+  Spawn:
+    CYSN A 70 //Give the player a little extra time since we're about to ambush them
+  LookAround:
+    CYSN AB 10 A_Look
+    Loop
+  See:
+    CYSN A 1 A_Hoof
+    CYSN ABBCC 3 A_Chase   
+    Loop
+  Missile:
+    CYSN D 6 A_FaceTarget
+    CYSN E 0 A_custommissile("snakeshot",240,-56,random(-1,1))
+    CYSN E 12 A_custommissile("snakeshot",240,56,random(-1,1))
+    CYSN D 12 A_FaceTarget
+    CYSN E 0 A_custommissile("snakeshot",240,-56,random(-1,1))
+    CYSN E 12 A_custommissile("snakeshot",240,56,random(-1,1))
+    CYSN D 12 A_FaceTarget
+    CYSN E 0 A_custommissile("snakeshot",240,-56,random(-1,1))
+    CYSN E 12 A_custommissile("snakeshot",240,56,random(-1,1))
+    Goto See
+  Pain:
+    CYSN A 10 A_Pain
+    Goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("CyberSnakeKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    CYSN F 10
+    CYSN G 10 A_Scream
+    CYSN H 10
+    CYSN I 10 A_NoBlocking
+    CYSN JK 10
+    CYSN L 30
+    CYSN M 2100 A_BossDeath
+	CYSN M 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  }
+}
+ACTOR SnakeShot
+{
+ 
+  Radius 6
+  Height 8
+  Speed 30
+  Damage 10
+  Projectile 
+  +RANDOMIZE
+  RenderStyle translucent
+  Alpha 0.8
+  scale 0.75
+  SeeSound "fatso/attack"
+  DeathSound "fatso/shotx"
+  States
+  {
+  Spawn:
+    MANF AB 4 Bright
+    Loop
+  Death:
+    MISL B 8 Bright a_explode(16,32)
+    MISL C 6 Bright
+    MISL D 4 Bright
+    Stop
+  }
+}

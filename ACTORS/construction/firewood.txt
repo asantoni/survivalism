@@ -1,0 +1,183 @@
+actor CleanLog : ZLog
+{
+	States
+	{
+		Spawn:
+			LOG2 A -1
+			Stop
+	}
+}
+
+actor DoomZLog : ZLog
+{
+	-SOLID
+	States
+	{
+		Spawn:
+			LOG2 A -1 A_Jump(128, 1) //Randomly choose one of two sprites
+			LOG2 I -1
+			Stop
+	}
+}
+actor LogItem : CustomInventory
+{
+	Tag "Wooden Log"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+BLOCKEDBYSOLIDACTORS Zandronum 2.0
+	//+CANPASS
+	Health 1000
+	Inventory.PickupMessage "Picked up a wooden log."
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "LOGITEM"
+	Inventory.MaxAmount 100
+	+INVENTORY.PICKUPFLASH
+	
+	DamageFactor "Axe", 100
+	DamageFactor "Fire", 10
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			LOG2 Z 42000 // 25 minutes
+			Stop
+		Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 A_SpawnItemEx("FlammableLog", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								64.0, 0.0, 16.0, 
+								0.0, 0.0, 0.0, //velocity 
+								0.0 //angle
+								) //SXF_NOCHECKPOSITION) //flags
+			Stop
+		Death.Axe:
+			TNT1 A 0
+			TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 64, 0, 0)
+			TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 136, 0, 0)
+			TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 192, 0, 0)
+			Stop
+	}
+}
+
+actor FlammableLog : DoomZLog
+{
+	Health 100
+    PainChance 255
+	Mass 0x7FFFFFFF
+	-PUSHABLE
+	-WINDTHRUST
+	-CANBLAST
+	+NOBLOOD
+	//+NOTARGET
+	+SOLID
+ 	+SHOOTABLE
+	+ISMONSTER //Needed for SXF_SETMASTER
+    -COUNTKILL
+	+FRIENDLY
+	+CANTSEEK
+	+STANDSTILL
+	
+	DamageFactor "Axe", 100
+	DamageFactor "Fire", 10
+
+	States
+	{
+	  Spawn:
+		TNT1 A 0
+		TNT1 A 0 ACS_ExecuteAlways(503, 0) //Zombies can attack it so you can't build a wall out of logs
+		TNT1 A 0 A_SpawnItemEx("DoomZSmallFlamePawn", 0, 0, -24, 0,0,0, 0, SXF_SETMASTER|SXF_NOCHECKPOSITION, 0)
+		goto Super::Spawn
+	  Burning:
+		LOG2 CDE 4 Bright
+		TNT1 A 0 A_JumpIfHealthLower(400, "Ember")
+		Loop	    
+	  Ember:
+		LOG2 FGH 4 Bright
+		TNT1 A 0 A_JumpIfHealthLower(200, "Charred")
+		Loop
+	  Charred:
+		LOG2 B -1
+		Stop
+	  //Pain:
+	  Pain.Axe:
+	  Pain.Water:
+	    TNT1 A 0
+		TNT1 A 0 A_RemoveChildren //Can't damage because the fire pawn needs to be invulnerable to break recursion
+		TNT1 A 0 A_KillChildren //Can't damage because the fire pawn needs to be invulnerable to break recursion
+		goto Ember
+	  Pain.Fire:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		TNT1 A 0 A_Jump(256, "Burning")
+		TNT1 A 0 A_Jump(256, "Burning")
+		TNT1 A 0 A_Jump(256, "Burning")
+		goto Spawn
+	  CatchOnFire:
+	 	TNT1 A 0 //Need the dummy frame!!
+		TNT1 A 0 A_Jump(256, "Burning") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Burning") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Burning") //A_Jump is evaluated at run-time so this makes inheritance work
+		TNT1 A 0 A_Jump(256, "Burning") //A_Jump is evaluated at run-time so this makes inheritance work 
+		goto Burning
+	  //Death: //Must be first Death state!
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_KillChildren
+		//Can't damage because the fire pawn needs to be invulnerable to break recursion
+		TNT1 A 0 A_RemoveChildren(true)
+		//TNT1 A 0 A_SpawnItemEx("LogItem", 0, 0, 0, 0, 0, 8.0, 0, 0, 0)
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 64, 0, 0)
+		TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 136, 0, 0)
+		TNT1 A 0 A_SpawnItemEx("CBoxItem", 0, 0, 0, 4.0, 0.0, 8.0, 192, 0, 0)
+		//LOG2 F 2
+		//LOG2 G 3
+	    Stop
+	  Death.Fire:
+		TNT1 A 0
+		TNT1 A 0 A_KillChildren
+		TNT1 A 0 A_RemoveChildren(true)
+		Stop	
+	}
+}
+
+actor CharredLog : ZLog
+{
+	States
+	{
+		Spawn:
+			LOG2 B -1
+			Stop
+	}
+}
+
+actor BurningLog : ZLog
+{
+	States
+	{
+		Spawn:
+			LOG2 CDE 4 Bright
+			Loop
+	}
+}
+
+actor EmberLog : ZLog
+{
+	States
+	{
+		Spawn:
+			LOG2 FGH 4 Bright
+			Loop
+	}
+}
+
+actor CutLog : ZLog
+{
+	States
+	{
+		Spawn:
+			LOG2 I -1
+			Stop
+	}
+}

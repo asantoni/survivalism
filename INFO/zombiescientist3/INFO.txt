@@ -1,0 +1,7 @@
+Name: Zombie Scientist 3
+Difficulty: Very Easy
+Connections: Zombieman, Shotgun Guy
+Summon: ZombieScientist3
+Melee: Yes
+Distance: None
+Type: Human, Undead

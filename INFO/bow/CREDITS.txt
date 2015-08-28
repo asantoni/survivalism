@@ -1,0 +1,6 @@
+Submitted: Gothic
+Decorate: Gothic
+GLDefs: Gothic
+Sounds: Raven Software, GvH
+Sprites: Bethesda, Raven Software, Monolith
+Sprite Edit: Gothic

@@ -1,0 +1,163 @@
+ACTOR Ghoul 
+{ 
+Health 200 
+PainChance 24
+Speed 9 
+Radius 24 
+Height 56 
+Mass 320
+MeleeDamage 4
+MinMissileChance 255 //Make missile attacks rare. Max is 255
+Meleethreshold 96
+MONSTER
+BloodColor "20 60 20"
++FLOORCLIP
++DONTHURTSPECIES
+//Obituary "A Ghoul poisoned %o with it's toxic projectiles."
+HitObituary "%o was beaten to death by a ghoul."
+SeeSound "monster/ghlsit" 
+MeleeSound "monster/ghlhit" 
+PainSound "monster/ghlpai" 
+DeathSound "monster/ghldth" 
+ActiveSound "monster/ghlact"
+States 
+   { 
+   Spawn: 
+       GHUL AB 10 A_Look 
+       Loop 
+   See: 
+       GHUL AABBCCDD 2 A_Chase 
+       Loop 
+   Melee:
+       GHUL E 0 A_Jump(128,5)
+       GHUL E 6 A_FaceTarget
+       GHUL F 0 A_PlaySound("monster/ghlswg")
+       GHUL F 6 A_FaceTarget
+       GHUL G 5 A_MeleeAttack
+       Goto See
+       GHUL R 6 A_FaceTarget
+       GHUL S 0 A_PlaySound("monster/ghlswg")
+       GHUL S 6 A_FaceTarget
+       GHUL T 5 A_MeleeAttack
+       Goto See
+	   
+   Missile:
+       GHUL Q 10 A_FaceTarget 
+	   /*
+       GHUL Q 0 A_CustomMissile ("ToxinShot",44,-16,0,0,0)
+       GHUL Q 8 A_CustomMissile ("ToxinShot",44,16,0,0,0)
+       */
+		GHUL Q 0 ThrustThingZ (0, 48, 0, 0)
+		GHUL Q 0 ThrustThing (angle*256/360, 24, 0, 0)
+	   Goto See
+   Pain: 
+       GHUL H 2 
+       GHUL H 2 A_Pain 
+       Goto See 
+   Death: 
+       GHUL I 5
+       GHUL J 0 A_CustomMissile ("ToxinCloud",40,0,0,0,0) 
+       GHUL J 5 A_Scream 
+       GHUL K 5 
+       GHUL L 5 A_NoBlocking 
+       GHUL M 5 
+       GHUL N 5
+       GHUL O 5
+       GHUL P -1
+       Stop 
+   Raise: 
+       GHUL PONMLKJI 5 
+       Goto See 
+   } 
+}
+
+ACTOR ToxinShot
+{
+   Radius 5
+   Height 5
+   Speed 15
+   Damage 2
+   poisondamage 16
+   RENDERSTYLE ADD
+   ALPHA 0.80
+   PROJECTILE
+   +THRUGHOST
+   +FLOATBOB
+   Seesound "weapons/skulfi"
+   DeathSound "weapons/bloodx"
+   States
+   {
+   Spawn:
+      GHFX A 1 Bright A_CustomMissile("Barbtrail",0,0,0,0)
+      GHFX A 1 Bright A_CStaffMissileSlither
+      GHFX B 1 Bright A_CustomMissile("Barbtrail",0,0,0,0)
+      GHFX B 1 Bright A_CStaffMissileSlither
+      loop
+   Death:
+      GHFX CDEF 4 Bright
+      stop
+   }
+}
+
+ACTOR ToxinCloud
+{
+   Radius 0
+   Height 48
+   ExplosionDamage 5
+   ExplosionRadius 42
+   RENDERSTYLE translucent
+   ReactionTime 20
+   ALPHA 0.67
+   MONSTER
+   -SOLID
+   -SHOOTABLE
+   -ACTIVATEMCROSS
+   -COUNTKILL
+   +NOTELEPORT
+   +THRUGHOST
+   +DROPOFF
+   +LOWGRAVITY
+   +NODAMAGETHRUST
+   Seesound "weapons/poof1"
+   States
+   {
+   Spawn:
+      GGAS ABCDEFGFD 5 A_Explode
+      GGAS A 0 A_Countdown
+      goto Spawn+2
+   Death:
+      GGAS C 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS D 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS E 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS F 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS G 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS F 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS E 5 A_FadeOut(0.10)
+      GGAS C 0 A_Explode
+      GGAS D 5 A_FadeOut(0.10)
+      loop
+   }
+}
+
+ACTOR Barbtrail
+{   
+   Radius 0
+   Height 1
+   PROJECTILE
+   RENDERSTYLE ADD
+   ALPHA 0.75
+   States
+   {
+   Spawn:
+      NULL A 1 Bright
+      SSFX ABCDEFGH 2 Bright
+      Stop 
+   }
+}
+

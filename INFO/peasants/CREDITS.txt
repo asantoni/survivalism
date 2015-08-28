@@ -1,0 +1,8 @@
+Submitted: TheMightyHeracross
+Decorate: TheMightyHeracross
+GLDefs: Graf Zhal (lights.pk3)
+Sounds: Rogue
+Sprites: Rogue, id, Xim
+Sprite Edit: TheMightyHeracross
+Idea Base: In a ditched project of mine you fought a corrupt governor at one
+point, the peasant with the bottle/gun.

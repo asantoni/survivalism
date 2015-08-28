@@ -1,0 +1,133 @@
+ACTOR ZombieScientist4
+{
+  Game Doom
+  obituary "%o was put out by a zombie scientist."
+  health 40
+  mass 90
+  speed 8
+  Radius 20
+  Height 52
+  painchance 200
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  MeleeRange 128
+  MONSTER
+  +FLOORCLIP
+  States
+  {
+   Spawn:
+    SCFE AB 10 A_Look
+    loop
+  See:
+    SCFE AABBCCDD 4 A_Chase
+    loop
+  Melee:
+    SCFE E 1 A_FaceTarget
+    SCFE E 1 A_PlaySound ("Steam/Fire")
+	/* Not supported in Zandronum 1.2 -- Albert
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), CMF_OFFSETPITCH, (0.1)*Random(-3, 3))
+    */
+	SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("HalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    SCFE F 1 A_CustomMissile ("DummyHalonParticle", 32, 8, (0.1)*Random(-3, 3), 0, (0.1)*Random(-3, 3))
+    goto See
+  Pain:
+    SCFE G 3
+    SCFE G 3 A_Pain
+    goto See
+  Death:
+    SCFE H 5
+    SCFE I 5 A_Scream
+    SCFE J 5 A_NoBlocking
+    SCFE K 5
+    SCFE L 5
+    SCFE M 5
+    SCFE N -1
+    stop
+  XDeath:
+    SCFE O 5
+    SCFE P 5 A_XScream
+    SCFE Q 5 A_NoBlocking
+    SCFE RSTUV 5
+    SCFE W -1
+    stop
+  Raise:
+    SCFE MLKJIH 5
+    goto See
+  }
+}
+Actor HalonParticle
+{
+  Height 1
+  Radius 1
+  Speed 5
+  +Missile
+  +NoGravity
+  +NoBlockMap
+  RenderStyle Add
+  Damage 2
+  DamageType Ice
+  Scale 0.4
+  Alpha 0.65
+  States
+  {
+  Spawn:
+    STEM A 2 A_SetTranslucent(0.6, 1)
+    STEM B 2 A_SetTranslucent(0.55, 1)
+    STEM C 2 A_SetTranslucent(0.5, 1)
+    STEM D 2 A_SetTranslucent(0.45, 1)
+    STEM E 2 A_SetTranslucent(0.4, 1)
+    STEM F 2 A_SetTranslucent(0.35, 1)
+    STEM G 2 A_SetTranslucent(0.3, 1)
+    STEM H 2 A_SetTranslucent(0.25, 1)
+    STEM I 2 A_SetTranslucent(0.2, 1)
+    STEM J 2 A_SetTranslucent(0.15, 1)
+    STEM K 2 A_SetTranslucent(0.1, 1)
+    STEM L 2 A_SetTranslucent(0.05, 1)
+    Stop
+  }
+}
+
+Actor DummyHalonParticle
+{
+  Height 1
+  Radius 1
+  Speed 5
+  +Missile
+  +NoGravity
+  +NoBlockMap
+  RenderStyle Add
+  Scale 0.4
+  Alpha 0.65
+  States
+  {
+  Spawn:
+    STEM A 2 A_SetTranslucent(0.6, 1)
+    STEM B 2 A_SetTranslucent(0.55, 1)
+    STEM C 2 A_SetTranslucent(0.5, 1)
+    STEM D 2 A_SetTranslucent(0.45, 1)
+    STEM E 2 A_SetTranslucent(0.4, 1)
+    STEM F 2 A_SetTranslucent(0.35, 1)
+    STEM G 2 A_SetTranslucent(0.3, 1)
+    STEM H 2 A_SetTranslucent(0.25, 1)
+    STEM I 2 A_SetTranslucent(0.2, 1)
+    STEM J 2 A_SetTranslucent(0.15, 1)
+    STEM K 2 A_SetTranslucent(0.1, 1)
+    STEM L 2 A_SetTranslucent(0.05, 1)
+    Stop
+  }
+}

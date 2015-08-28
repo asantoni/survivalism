@@ -1,0 +1,7 @@
+Name: Female Scientist (Wrench)
+Difficulty: Very Easy
+Connections: Female Zombie
+Summon: FemaleScientist2
+Melee: Yes
+Distance: None
+Type: Human, Undead
