@@ -1,3 +1,4 @@
-*.o
+src/acs/*.o
 doomz.pk3
-temp/
+src/temp/
+temp
