@@ -29,10 +29,30 @@
 // MONSTERS
 //================================================
 
-#include "actors/monsters/crimsondisciple.txt"				// Crimson Disciple
 #include "actors/monsters/apprenticeofdsparil.txt"			// Apprentice of D'Sparil
 #include "actors/monsters/azazel.txt"			            // Azazel
-#include "actors/monsters/deathincarnate.txt"			    // Death Incarnate (night zombie)
+#include "actors/monsters/crimsondisciple.txt"				// Crimson Disciple
+#include "actors/monsters/cultist.txt"				        // Cultist (Death)
+#include "actors/monsters/deathincarnate.txt"			    // Death Incarnate (Night Zombie Revenant)
+#include "actors/monsters/cybersnake.txt"			        // Cyber Snake (Chainsaw Lava Guardian)
+#include "actors/monsters/devastatorzombie.txt"			    // Devastator Zombie
+#include "actors/monsters/femalescientist.txt"			    // Female Scientist
+#include "actors/monsters/femalescientist2.txt"			    // Female Scientist 2
+#include "actors/monsters/femalescientist3.txt"			    // Female Scientist 3
+#include "actors/monsters/femalescientist4.txt"			    // Female Scientist 4
+#include "actors/monsters/ghoul.txt"			            // Ghoul (Swamp Ghoul)
+#include "actors/monsters/hazmatzombie.txt"			        // Hazmat Zombie
+#include "actors/monsters/impwarlord.txt"			        // Imp Warlord
+#include "actors/monsters/knife.txt"			            // Knife
+#include "actors/monsters/peasants.txt"			            // Peasants
+#include "actors/monsters/rottweiler.txt"			        // Rottweiler
+#include "actors/monsters/shadow.txt"			            // Shadow
+#include "actors/monsters/undeadpriest.txt"			        // Undead Priest
+#include "actors/monsters/zombiescientist.txt"			    // Zombie Scientist
+#include "actors/monsters/zombiescientist2.txt"			    // Zombie Scientist 2
+#include "actors/monsters/zombiescientist3.txt"			    // Zombie Scientist 3
+#include "actors/monsters/zombiescientist4.txt"			    // Zombie Scientist 4
+
 
 //================================================
 // WEAPONS
@@ -41,12 +61,30 @@
 #include "actors/weapons/axe.txt"
 #include "actors/weapons/bow.txt"
 #include "actors/weapons/casingspawners.txt"
+#include "actors/weapons/flaregun.txt"
+#include "actors/weapons/gascan.txt"
+#include "actors/weapons/glock18.txt"
+#include "actors/weapons/huntingrifle.txt"
+#include "actors/weapons/wensternshotgun.txt"
+#include "actors/weapons/yellowboy.txt"
 
 
 //================================================
 // VEGETATION
 //================================================
 
+#include "actors/vegetation/daggerfallfoliage.txt"
 #include "actors/vegetation/deadswamptrees.txt"
+#include "actors/vegetation/garden.txt"
+#include "actors/vegetation/necrorocks.txt"
+#include "actors/vegetation/smalltreesandbushes.txt"
+
+
+//================================================
+// CONSTRUCTION
+//================================================
+
+#include "actors/construction/firewood.txt"
+#include "actors/construction/sentry.txt"
 
 //================================================

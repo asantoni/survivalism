@@ -1,6 +1,6 @@
 ACC_INC_DIR := ../survivalism-tools
 ACC := ../survivalism-tools/acc.exe
-ZIP := ../survivalism-tools/zip.exe
+ZIP := ../survivalism-tools/7za.exe
 OBJ_DIR := ACS/*
 RM := rm
 OUTPUT_PK3 := doomz.pk3
@@ -14,7 +14,9 @@ acs/%.o: %.acs Makefile
 	$(ACC) -i $(ACC_INC_DIR) $< $@ 
 
 pk3:
-	$(ZIP) -v -r -u $(OUTPUT_PK3) *  -x *.bat 
+	$(RM) -f $(OUTPUT_PK3)
+	$(ZIP) a -tzip -r -xr!.bat -xr!.git -xr!doomz.pk3 -- $(OUTPUT_PK3) * 
+#   -mx 9 saves like 1 MB but is slower
 	echo "Created $(OUTPUT_PK3)"
     
 clean:

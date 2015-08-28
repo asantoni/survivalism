@@ -3,8 +3,18 @@
 #include "GL/monsters/azazel.txt"			            // Azazel
 #include "GL/monsters/cultist.txt"			            // Cultist
 #include "GL/monsters/deathincarnate.txt"			    // Death Incarnate (night zombie)
+#include "GL/monsters/undeadpriest.txt"			        // Undead Priest
+#include "GL/monsters/shadow.txt"			            // Shadow
+#include "GL/monsters/peasants.txt"			            // Peasants / Hunter
+#include "GL/monsters/impwarlord.txt"			        // Imp Warlord
+#include "GL/monsters/hazmatzombie.txt"			        // Hazmat Zombie
+#include "GL/monsters/ghoul.txt"			            // Ghoul
 
 #include "GL/weapons/bow.txt"			                // Bow
+
+#include "GL/construction/sentry.txt"			        // Sentry Turret
+#include "GL/construction/firewood.txt"			        // Wooden Logs / Firewood
+
 
 object SentryGun
 {
