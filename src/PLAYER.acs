@@ -24,7 +24,7 @@
 #define HUNGER_START_LEVEL 14
 
 
-#define PERSISTENT_INVENTORY_LEN 46
+#define PERSISTENT_INVENTORY_LEN 50
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 {
 	//YOU MUST UPDATE PERSISTENT_INVENTORY_TABLE_LENGTH WHEN YOU ADD
@@ -80,7 +80,12 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"GargoyleStatueItem",
 	"TechLampItem",
 	"FloorLampItem",
-	"SpikeItem"
+	"SpikeItem",
+	"BlueberryItem",
+	"StrawberryItem",
+	"CranberryItem",
+	"BerryMash"
+	//Don't forget to new items to PlayerDropStuff in DECORATE.PLAYERS!
 };
 
 #define NUM_XP_LEVELS 59 

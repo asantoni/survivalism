@@ -177,6 +177,11 @@ ACTOR  PlayerDropStuff : CustomInventory
       TNT1 A 0 A_DropInventory ("FloorLampItem")
       TNT1 A 0 A_DropInventory ("SpikeItem")
       TNT1 A 0 A_DropInventory ("Ankh")
+      TNT1 A 0 A_DropInventory ("BlueberryItem")
+      TNT1 A 0 A_DropInventory ("StrawberryItem")
+      TNT1 A 0 A_DropInventory ("CranberryItem")
+      TNT1 A 0 A_DropInventory ("BerryMash")
+
 
    //   TNT1 A 0 A_DropInventory ("Backpack")
    //   TNT1 A 0 A_DropInventory ("BlueCard")
