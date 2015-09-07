@@ -95,28 +95,40 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
   obituary "%o was Picked-Off By %k's Scoped Hunting Rifle."
   weapon.kickback 125
   weapon.ammotype "Clip"
-  weapon.ammouse 1
+  weapon.ammouse 4
   weapon.ammogive 0
   +DONTBOB
   +NOALERT
   +UNDROPPABLE
+  //+UNTOSSABLE -- Zandronum 3.0
   +NOAUTOFIRE //Semi-automatic!
 
   States
   {
   Spawn:
-    LDHR P -1
-    Loop
+    LDHR P 0
+	stop //Hacky way of implementing UNTOSSABLE for Zandronum < 3.0
+    //Loop
   Ready:
     LDHR T 0
     LDHR T 2 A_WeaponReady
     //LDHR T 0 A_TakeInventory("HuntingRifleToken2",1)
-    Loop
+	LDHR T 0 A_JumpIfInventory("HuntingRifle", 1, "Ready")
+	LDHR T 0 A_Jump(255, "ResetAndRemove")
+  ResetAndRemove:
+	TNT1 A 0
+  	LDHR T 0 A_ZoomFactor(1.0)
+	LDHR T 0 A_TakeInventory("HuntingRifleZoom", 10)
+	LDHR T 0 A_TakeInventory("HuntingRifleScope", 1)
+    stop //Remove the scope from inventory if the rifle is dropped
   Deselect:
     LDHR T 0
     LDHR T 0 
     Goto AltFireDeselect//AltFire+2
   Select:
+  	LDHR T 0 A_JumpIfInventory("HuntingRifle", 1, "ContinueSelecting")
+	LDHR T 0 A_Jump(255, "ResetAndRemove")
+  ContinueSelecting:
 	LDHR T 0 A_PlaySound("HuntingRifle/Scope", CHAN_BODY)
     LDHR T 0 A_ZoomFactor(4.0)
     LDHR T 0
@@ -219,13 +231,9 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
     LDHR T 0 A_ZoomFactor(1.0)
     LDHR T 0 A_SelectWeapon("HuntingRifle")
    Lower:
-    LDHR T 0 A_Lower
-    LDHR T 0 A_Lower
-    LDHR T 0 A_Lower
-    LDHR T 0 A_Lower
-    LDHR T 0 A_Lower
-    LDHR T 0
-    goto Lower
+	TNT1 A 0
+    LDHR T 1 A_Lower
+    loop
   }
 }
 
