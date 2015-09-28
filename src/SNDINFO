@@ -12,6 +12,7 @@ rocks ROCKS
 lava LAVA
 hey HEY
 thanks THX
+invguard INVGUARD
 
 xp XP
 misc/i_pkup INVP
@@ -34,10 +35,6 @@ ankhcure ANKHCURE
 
 //Objective completed sound.
 quest/objective QUESTOBJ
-
-$limit waterfall 1 1024 //only play 1 instance within 1024 units of each other.
-$limit waterstream 1 1024 //only play 1 instance within 1024 units of each other.
-$volume waterstream 0.5
 
 $volume misc/i_pkup 		0.6
 $volume misc/ammo_pkup 		0.6
@@ -73,5 +70,20 @@ $alias AmbientLava	lava	// Lava Gurgle
 //$AMBIENT 1 AmbientLava point continous 1.0
 //random 2.0 5.0 1.0
 //point continuous 1.0 
+$limit waterfall 1 1024 //only play 1 instance within 1024 units of each other.
+$limit waterstream 1 1024 //only play 1 instance within 1024 units of each other.
+$volume waterstream 0.5
 
-
+ambience/ambi1 ambi1
+$volume ambience/ambi1 0.2
+$limit ambience/ambi1 2 1024 //only play 1 instance within 1024 units of each other.
+ambience/ambi2 ambi2
+$volume ambience/ambi2 0.1
+$limit ambience/ambi2 2 1024 //only play 1 instance within 1024 units of each other.
+ambience/ocean1 ocean1
+ambience/swamp1 swamp1
+$volume ambience/swamp1 0.3
+$rolloff ambience/ambi1 2048 4096
+$rolloff ambience/ambi2 2048 3000
+$rolloff ambience/ocean1 200 2048
+$rolloff ambience/swamp1 1024 2048

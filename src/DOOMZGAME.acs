@@ -4,8 +4,11 @@ SERVER FLAGS TO USE:
 	sv_defaultdmflags false
 	sv_weaponstay false
 
+r14test15:
+- Berry system
+- Fixed a bunch of hunger related bugs.
+
 TODO r14:
-- Bullet puff sounds (use Crash and Death states to distinguish flesh hits from walls)
 - Actually make some good quests
 
 r14 test13:
@@ -311,8 +314,9 @@ DONE:
 #define MONSTERSPAWNERPROJ_TID 8400
 #libdefine MONSTER_REPELLER_TID 8401
 //555 is used by respawn points
-#libdefine SEED_TID 8402
-#libdefine FOOD_TID 8403
+#libdefine SEED_TID 		8402
+#libdefine FOOD_TID 		8403
+#libdefine BERRY_PLANT_TID 	8404
 
 #libdefine DAYSTATE_DAY 	0
 #libdefine DAYSTATE_NIGHT 	1
@@ -322,7 +326,10 @@ DONE:
 #DEFINE MONSTER_SPAWNER_MODE_OFF 3
 
 #define LOOT_SPAWNER_INTERVAL_SECONDS 20*60 //20 minutes
+#define BERRY_SPAWNER_INTERVAL_SECONDS 12*60
+#define BASE_BERRY_PLANTS 10
 
+#libdefine HUNGER_PERIOD_SECONDS 1080 //Time it takes to starve - 1.5 days
 
 
 //#libdefine kMainLoopPeriodSeconds 20
@@ -334,10 +341,11 @@ int g_dayState = DAYSTATE_DAY;
 int g_blockXP = false; //global lock for XP, to prevent players from getting free XP from monsters dying at daybreak
 
 
+
 #libdefine NUM_MONSTER_SPAWNER_MODES 6
 int g_maxBaddiesForSpawnerMode[NUM_MONSTER_SPAWNER_MODES] =
 	{ 16, //Default monsters (zombie mix)
-	  16, //Imps
+	  8, //Imps
 	  8,  //Swamp mudmen (ghouls)
 	  0,  //Safe zone (no monsters)
 	  8,  //Shadows
@@ -390,7 +398,7 @@ script 221 OPEN
 		ACS_ExecuteAlways(202, 0, 0, 0, 0);
 
 		//Sleep
-		Delay(140);
+		Delay(280);
 	}
 }
 
@@ -716,6 +724,9 @@ script 204 (int type, int preserveTID)
 				monster = getRandomZombie();
 			} while (StringContains(monster, "Cluster"));
 			break;
+		case 3:
+			monster = "BerryRandomizer";
+            break;
 	};
 	
 	//Log(s:"spawning... ", s:monster);
@@ -924,10 +935,11 @@ script 210 (void)
 			{
 				Thing_Damage2(tid, 1000, "NoXP"); //Kill everything and don't give any XP for it (second approach. Shouldn't need the global XP lock anymore.)
 				musicPlayDaytime();
-				//Spoil all the food:
-				ACS_ExecuteAlways(954, 0, 0);
 			}
 			g_blockXP = false; 
+			
+			//Spoil all the food a few minutes after sunrise:
+			ACS_ExecuteAlways(954, 0, 0);
 		}
 		//It's now day time!
 		g_dayState = DAYSTATE_DAY;
@@ -1766,11 +1778,17 @@ script 955 (void)
 		terminate;
 	}
 	
-	int numEasyQuestSpotsOnMap = countQuestSpots(MIN_EASYQUESTSPOT_TID, MAX_EASYQUESTSPOT_TID);
-	int questSpotTID = random(MIN_EASYQUESTSPOT_TID, MIN_EASYQUESTSPOT_TID + numEasyQuestSpotsOnMap - 1);
-
+	int questSpotTID = getRandomEasyQuestSpotTID();
+	
 	SpawnForced("Ankh", GetActorX(questSpotTID), GetActorY(questSpotTID), GetActorZ(questSpotTID), ankhTID, 0);
 	
+}
+
+function int getRandomEasyQuestSpotTID(void)
+{
+	int numEasyQuestSpotsOnMap = countQuestSpots(MIN_EASYQUESTSPOT_TID, MAX_EASYQUESTSPOT_TID);
+	int questSpotTID = random(MIN_EASYQUESTSPOT_TID, MIN_EASYQUESTSPOT_TID + numEasyQuestSpotsOnMap - 1);
+	return questSpotTID;
 }
 
 //Called by the Ankh of Life when it's used. Kills the Death actor chasing the player
@@ -1848,3 +1866,121 @@ script 958 (int playerTID)
 	}
 }
 
+
+//Inventory guardian activation script.
+//Deactivating the shield is only allowed if you were the one who dropped the guardian
+script 960 (void)
+{
+	//If the activator is not a player (like when the box itself dies),
+	//just return. NOTE: This is actually not used because of ActivateOwnDeathSpecials in MAPINFO.
+	if (PlayerNumber() < 0) {
+		terminate;
+	}	
+
+	//Don't allow this button to be pressed if you're spectating
+	int playerTID = ActivatorTID();
+	if (PlayerIsSpectator(PlayerNumber()) > 0 || PlayerIsPseudoSpec(PlayerNumber()))
+	{
+		terminate;
+	}
+	
+	//Needed for when the special gets called when a crafting box dies.
+	if ( CheckInventory("Health")<=0 )
+	{
+		terminate;
+	}
+
+	//Get the guardian TID
+	SetActivatorToTarget(0);
+	
+	if (PlayerNumber() >= 0) {
+		//Log(s:"Try pointing at the side of the inventory guardian to deactivate it!");
+		terminate;
+	}
+
+	int guardianTID = ActivatorTID();
+	
+	if (playerTID == GetActorProperty(guardianTID, APROP_Score)) {
+		//Thing_Remove(guardianTID);
+		SetActorState(guardianTID, "Death");
+	} else {
+		SetActivator(playerTID);
+		int guardOwnerPlayerNum = GetActorProperty(guardianTID, APROP_Score) - PLAYER_MIN_TID;
+		Print(s:"This inventory guard can only be deactivated by ", n:(guardOwnerPlayerNum+1));
+	}
+}
+
+//Inventory guardian spawn script.
+//This gets called when a player dies and they have it in their inventory.
+//We need to use a script to associate the guardian with the player.
+script 961 (int playerTID)
+{
+	if (CheckActorInventory(playerTID, "InventoryGuardItem") <= 0) {
+		terminate;
+	}
+	//TakeActorInventory(playerTID, "InventoryGuardItem", 1);
+	
+	int tempTID = UniqueTID();
+	int angle = GetActorAngle(playerTID);
+	int radius = 88.0; //Your inventory seems to drop 88 units in front of you when you die.
+	SpawnForced("InventoryGuard", 
+				GetActorX(playerTID) + FixedMul(radius, cos(angle)), 
+				GetActorY(playerTID) + FixedMul(radius, sin(angle)), 
+				GetActorZ(playerTID), 
+				tempTID, 0);
+	SetActorProperty(tempTID, APROP_Score, playerTID);
+	int playerVelX = GetActorVelX(playerTID);
+	int playerVelY = GetActorVelY(playerTID);
+	int playerVelZ = GetActorVelZ(playerTID);
+	SetActorVelocity(tempTID, playerVelX, playerVelY, playerVelZ, false, false);
+	
+	Thing_ChangeTID(tempTID, 0);
+	
+}
+
+
+//Berry spawner script
+script 962 OPEN
+{
+
+	int questSpotTID = -1;
+	
+	//Spawn some berry plants to initialize the world:
+	for (int i = 0; i < BASE_BERRY_PLANTS; i++)
+	{
+		questSpotTID = getRandomEasyQuestSpotTID();
+		SpawnProjectile(questSpotTID, "BerrySpawnerProjectile", random(0, 255), 50, 0, 1, 0);
+	}
+	
+	//Calculate 
+	int BERRY_PLAYER_SCALING = 5; //This works pretty well and gives nice integer numbers in the calculation below.
+	int MAX_BERRY_PLANTS_SCALED = ((PlayerCount()-1)*BASE_BERRY_PLANTS)/BERRY_PLAYER_SCALING + BASE_BERRY_PLANTS;
+
+	//Every N seconds, we pick a random easy quest spot and shoot some berry spawner projectiles 
+	//out of it to spawn berries around it. We also put all plants into this "MaybeDie" state
+	//if there's too many of them, which randomly kills off 5% of them. This prevents the plants
+	//from all becoming bunched up in part of the map you never visit.
+	while(true) {
+		Delay(BERRY_SPAWNER_INTERVAL_SECONDS*35);
+		
+		//print(d:ThingCount(T_NONE, BERRY_PLANT_TID));
+		while (ThingCount(T_NONE, BERRY_PLANT_TID) > MAX_BERRY_PLANTS_SCALED) {
+			SetActorState(BERRY_PLANT_TID, "MaybeDie");
+			Delay(2);
+		};
+		
+		//Spawn a bunch of berries to get us back up to the max amount.
+		//Note that in practice, some of these might land on other actors and won't spawn.
+		int numBerryPlantsNow = ThingCount(T_NONE, BERRY_PLANT_TID);
+		for (i = 0; i < MAX_BERRY_PLANTS_SCALED - numBerryPlantsNow; i++) {
+			questSpotTID = getRandomEasyQuestSpotTID();
+			SpawnProjectile(questSpotTID, "BerrySpawnerProjectile", random(0, 255), 50, 0, 1, 0);
+		}
+	};
+}
+
+//Set the activator to have the berry plant TID.
+script 963 (void)
+{
+	Thing_ChangeTID(0, BERRY_PLANT_TID);
+}

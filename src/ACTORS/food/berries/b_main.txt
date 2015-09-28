@@ -1,6 +1,6 @@
 /* Disabling this because I'm going to implement random berry plants in a different
-   way. -- Hax
-ACTOR BerryRandomizer replaces DaggerFallThing75
+   way. -- Hax */
+ACTOR BerryRandomizer /* replaces DaggerFallThing75 */
 {
 	-SOLID
 	+NOBLOCKMAP
@@ -10,7 +10,9 @@ ACTOR BerryRandomizer replaces DaggerFallThing75
 	{
 	Spawn:
 	TNT1 A 0
-	TNT1 AAAAAAAAAA 120
+	//TNT1 AAAAAAAAAA 120
+	//Make sure we're on dirt or grass:
+	TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Death")
 	TNT1 A 0 A_Jump(255,"Blueberry","Strawberry","Cranberry")
 	Goto Blueberry
 	
@@ -31,6 +33,47 @@ ACTOR BerryRandomizer replaces DaggerFallThing75
 	TNT1 A 0
 	TNT1 A 0 A_SpawnItemEx("CranberryPlant",0,0,0)
 	Stop
+	
+	Death:
+	TNT1 A 0
+	Stop
 	}
 }
-*/
+
+//Do not use directly, make your plant inherit from this.
+ACTOR BerryPlant : SwitchingDecoration
+{
+	+SOLID
+	+USESPECIAL
+	+FLOORCLIP
+	Activation THINGSPEC_ACTIVATE
+	Renderstyle Normal
+	Alpha 0.0
+	
+	+SHOOTABLE
+	Health 50
+	PainChance 255
+	Mass 0x7FFFFFFF
+
+	States
+	{
+		MaybeDie:
+			TNT1 A 0 
+			TNT1 A 0 A_Jump(12, "PostHarvest") //5% chance of it dying
+			TNT1 A 0 A_Jump(255, "Resting")
+			TNT1 A 0 A_Jump(255, "Resting")
+			TNT1 A 0 A_Jump(255, "Resting")
+			TNT1 A 0 A_Jump(255, "Resting")
+			TNT1 A 0 A_Jump(255, "Resting")
+			
+		
+		Pain.Axe:
+			TNT1 A 0 
+			TNT1 A 0 A_Jump(255, "Active")
+			TNT1 A 0 A_Jump(255, "Active")
+			TNT1 A 0 A_Jump(255, "Active")
+			TNT1 A 0 A_Jump(255, "Active")
+			TNT1 A 0 A_Jump(255, "Active")
+	}
+
+}

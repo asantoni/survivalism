@@ -10,9 +10,15 @@ actor Survivalist : DoomPlayer
 
 	States
 	{
+	  Pain.Hunger:
+		goto Pain
+	  Death.Hunger:
 	  Death:
 	    TNT1 A 0
 	//	Stop
+		//Drop an inventory guardian if the player has one
+		TNT1 A 0 ACS_ExecuteAlways(961, 0, tid)
+		PLAY J 0 A_Stop //Set velocity to zero so your inventory guard lands with your stuff
 	    PLAY H 0 A_GiveInventory("PlayerDropStuff", 1)
         PLAY H 0 A_PlayerSkinCheck("AltSkinDeath")
 		goto Death1
@@ -25,6 +31,9 @@ actor Survivalist : DoomPlayer
 		Stop
 	  XDeath:
 		TNT1 A 0
+		//Drop an inventory guardian if the player has one
+		TNT1 A 0 ACS_ExecuteAlways(961, 0, tid)
+		PLAY J 0 A_Stop //Set velocity to zero so your inventory guard lands with your stuff
 	    PLAY H 0 A_GiveInventory("PlayerDropStuff", 1)
 		PLAY O 0 A_PlayerSkinCheck("AltSkinXDeath")
 		goto XDeath1

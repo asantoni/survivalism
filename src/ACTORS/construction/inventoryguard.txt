@@ -1,0 +1,99 @@
+Actor InventoryGuard : Actor
+{
+	Tag "Inventory Guardian"
+	+SHOOTABLE
+	+NOBLOOD
+	+SOLID
+	+CANPASS
+	-WINDTHRUST
+	-PUSHABLE
+	//+NOGRAVITY
+	//+CANPASS ---> crazy CPU usage
+    //+USESPECIAL
+	+BUMPSPECIAL
+	+INVULNERABLE
+
+	+REFLECTIVE
+	+DEFLECT
+	+NORADIUSDMG
+	
+	+VISIBILITYPULSE
+
+	Health 200
+	Radius 64
+	Height 48
+	Mass 0x7FFFFFFF
+	
+	//DamageFactor "Axe", 100.0
+	
+	RenderStyle "Translucent"
+	Alpha 0.5
+
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 
+			//Make only the player who dropped this be able to unlock it
+			INVG A 1 Thing_SetSpecial(0, 226, 960, 0, 0)
+			INVG A 100 
+			INVG A 31500 //Protect your stuff for 15 minutes
+			Stop
+			//goto Closed
+		Death:
+			TNT1 A 0 //Dummy frame is needed
+			TNT1 A 0 A_PlaySound("invguard")
+		FadeOut:
+			TNT1 A 0 A_FadeOut(0.1)
+			loop
+	}
+}
+
+
+//The crafting box item you pick up off the ground.
+actor InventoryGuardItem : CustomInventory
+{
+	Tag "Inventory Guardian"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+CANPASS ---> crazy CPU usage
+	Health 50
+	Inventory.PickupMessage "Picked up an inventory guardian. This will auto-activate if you die."
+	Inventory.UseSound "misc/invuse"
+	-INVENTORY.INVBAR
+	//Inventory.Icon "CRAFTING" //"PISTI0"
+	Inventory.MaxAmount 1
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	DamageFactor "SentryTurret", 0.0
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			CRFT A 1
+			Wait
+		/*
+		Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 0 A_SpawnItemEx("CraftingBox", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								   64.0, 
+								   0.0, 0.0, 0.0, //velocity 
+								   0.0, //angle
+								   SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+			//Print these variables to the screen:
+			//TNT1 A 1 ACS_ExecuteAlways(933, 0, x, y, z)
+
+			//try the grid snapping express without absolute
+			//TNT1 A 0 A_SpawnItemEx("CBox", (x>>6)<<6, (y>>6)<<6, 256.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM, 0)
+			
+			//TNT1 A 1 A_Print("hi")
+			Stop
+		*/
+		Use:
+			TNT1 A 0
+			fail
+	}
+}

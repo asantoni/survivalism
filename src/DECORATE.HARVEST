@@ -457,7 +457,7 @@ ACTOR Turnip : CustomInventory
 	  Use:
 		TNT1 A 0
 		TNT1 A 0 A_GiveInventory("Health", 30)
-		TNT1 A 0 A_TakeInventory("HungerLevel", 10)
+		TNT1 A 0 A_TakeInventory("HungerLevel", 75)
 		TNT1 A 0 A_PlaySound("eat/crunch")
 		TNT1 A 0 ACS_ExecuteAlways(850, 0, 0) //Green screen flash - PLAYER.ACS
 		stop

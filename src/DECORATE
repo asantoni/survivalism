@@ -52,6 +52,7 @@
 #include "actors/monsters/zombiescientist2.txt"			    // Zombie Scientist 2
 #include "actors/monsters/zombiescientist3.txt"			    // Zombie Scientist 3
 #include "actors/monsters/zombiescientist4.txt"			    // Zombie Scientist 4
+#include "actors/monsters/crow.txt"			   			    // Crow
 
 
 //================================================
@@ -101,5 +102,6 @@
 
 #include "actors/construction/firewood.txt"
 #include "actors/construction/sentry.txt"
+#include "actors/construction/inventoryguard.txt"
 
 //================================================

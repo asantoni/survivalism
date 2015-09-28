@@ -9,3 +9,51 @@ actor AmbientSoundLava 22000
 			Wait
 	}
 }
+
+actor AmbientSoundDefault 22001
+{
+	+CLIENTSIDEONLY
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A -1 A_PlaySound("ambience/ambi1", CHAN_BODY, 0.6, true, 0.5)
+			Wait
+	}
+}
+
+actor AmbientSoundDefault2 22002
+{
+	+CLIENTSIDEONLY
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A -1 A_PlaySound("ambience/ambi2", CHAN_BODY, 0.6, true, 0.5)
+			Wait
+	}
+}
+
+actor AmbientSoundOcean1 22003
+{
+	+CLIENTSIDEONLY
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A -1 A_PlaySound("ambience/ocean1", CHAN_BODY, 0.6, true, 0.5)
+			Wait
+	}
+}
+
+actor AmbientSoundSwamp1 22004
+{
+	+CLIENTSIDEONLY
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A -1 A_PlaySound("ambience/swamp1", CHAN_BODY, 0.6, true, 0.5)
+			Wait
+	}
+}

@@ -3,3 +3,6 @@ doomz.pk3
 src/temp/
 temp
 doomz.db
+# GZDoomBuilder files
+src/maps/*.dbs
+src/maps/*.backup*

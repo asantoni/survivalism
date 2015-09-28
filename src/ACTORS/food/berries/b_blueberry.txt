@@ -1,21 +1,18 @@
-ACTOR BlueberryPlant : SwitchingDecoration
+ACTOR BlueberryPlant : BerryPlant
 {
-	+SOLID
-	+USESPECIAL
-	+FLOORCLIP
-	Activation THINGSPEC_ACTIVATE
 	Radius 8
 	Height 38
-	Renderstyle Normal
-	Alpha 0.0
+
 	States
 	{
 	Spawn:
-	BPLN AAAAAAAAAA 1 A_FadeIn(0.1)
+		TNT1 A 0
+		BPLN AAAAAAAAAA 1 A_FadeIn(0.1)
+		TNT1 A 0 ACS_ExecuteAlways(963, 0, 0) //Set our TID to BERRY_PLANT_TID
 	Resting:
-	BPLN AAAAAA 300
-	BPLN A 0 A_Jump(0,"ChangeToAnother")
-	Loop
+		BPLN A -1
+		//BPLN A 0 A_Jump(0,"ChangeToAnother")
+		Wait
 	
 	ChangeToAnother:
 	BPLN AAAAAAAAAA 1 A_FadeOut(0.1,false)
@@ -32,19 +29,25 @@ ACTOR BlueberryPlant : SwitchingDecoration
 	Active:
 	BPLN A 0
 	BPLN A 0
+	BPLN A 0 A_JumpIf(args[0] == 1, "PostHarvest")
 	Goto Harvest
 	
 	Harvest:
 	BPLN A 0
+	BPLN A 0 A_SetArg(0, 1)
 	BPLN A 0 A_SpawnItemEx("BlueberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
 	BPLN A 0 A_Jump(64,"PostHarvest")
 	BPLN A 1
 	Loop
 	
 	PostHarvest:
-	BPLN B 30
+	TNT1 A 0
+	TNT1 A 0 A_NoBlocking
+	TNT1 A 0 A_UnSetShootable
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Clear our TID so the 5% killoff doesn't send this plant into a weird state.
+	BPLN B 30 
 	BPLN BBBBBBBBBB 1 A_FadeOut(0.1, false)
-	TNT1 A 0 A_SpawnItemEx("BerryRandomizer",0,0,0)
+	//TNT1 A 0 A_SpawnItemEx("BerryRandomizer",0,0,0)
 	Stop
 	}
 }

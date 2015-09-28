@@ -19,12 +19,31 @@ actor DoomZChicken : Chicken 10808
 	  Spawn:
 		TNT1 A 0
 		CHKN A 0 Thing_SetSpecial(0, 80, 923, 0, 0)
-		CHKN A 0 A_GiveInventory("HungerLevel", 10)
+		//CHKN A 0 A_GiveInventory("HungerLevel", 10)
 		//goto Sleep
 	  SpawnLook:
 		TNT1 A 0 
-		CHKN AB 3 A_Wander
+		CHKN ABABABABABAB 3 A_Wander //~1 second in duration (36 tics)
 		CHKN A 0 A_Look
+		CHKN ABABABABABAB 3 A_Wander
+		CHKN A 0 A_Look
+		CHKN ABABABABABAB 3 A_Wander
+		CHKN A 0 A_Look
+		CHKN ABABABABABAB 3 A_Wander
+		CHKN A 0 A_Look
+		CHKN ABABABABABAB 3 A_Wander
+		CHKN A 0 A_Look
+		CHKN ABABABABABAB 3 A_Wander
+		CHKN A 0 A_Look
+		TNT1 A 0 A_JumpIfInventory("SleepinessLevel", 10, "Sleep")
+		TNT1 A 0
+		TNT1 A 0 A_JumpIfInventory("HungerLevel", 10, "Hungry")
+		TNT1 A 0 A_Jump(3, "LayEgg") //We don't lay eggs if we're hungry
+		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
+		TNT1 A 0 A_Jump(230, "SpawnLook") 
+		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
+		//TNT1 A 0 A_GiveInventory("HungerLevel", 5) //-> for testing
+		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
 		Loop
 	  See:
 		CHKN A 0
@@ -35,6 +54,7 @@ actor DoomZChicken : Chicken 10808
 		CHKN ABABABABABAB 3 A_Chase
 		CHKN ABABABABABAB 3 A_Chase
 		TNT1 A 0 A_JumpIfInventory("SleepinessLevel", 10, "Sleep")
+		TNT1 A 0
 		TNT1 A 0 A_JumpIfInventory("HungerLevel", 10, "Hungry")
 		TNT1 A 0 A_Jump(3, "LayEgg") //We don't lay eggs if we're hungry
 		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
@@ -308,7 +328,7 @@ ACTOR CookedChicken : CustomInventory
 	  Use:
 		TNT1 A 0
 		TNT1 A 0 A_GiveInventory("Health", 30)
-		TNT1 A 0 A_TakeInventory("HungerLevel", 10)
+		TNT1 A 0 A_TakeInventory("HungerLevel", 75)
 		TNT1 A 0 A_PlaySound("eat/crunch")
 		TNT1 A 0 ACS_ExecuteAlways(850, 0, 0) //Green screen flash - PLAYER.ACS
 		stop

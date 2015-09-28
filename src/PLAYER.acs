@@ -21,10 +21,15 @@
 #libdefine HUDMSG_ID_HUNGER	    10
 #libdefine HUDMSG_ID_QUEST_NAME 9
 
-#define HUNGER_START_LEVEL 14
+#define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
+
+#define HUNGER_GOOD_LEVEL 55 		//Less than this, you're "Well Nourished"
+#define HUNGER_PECKISH_LEVEL 65 	//"Getting hungry"
+#define HUNGER_STARVING_LEVEL 80 	//The level at which you start to "starve"
+#define MAX_HUNGER_LEVEL 100		//MaxAmount for the HungerLevel inventory item 
 
 
-#define PERSISTENT_INVENTORY_LEN 50
+#define PERSISTENT_INVENTORY_LEN 51
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 {
 	//YOU MUST UPDATE PERSISTENT_INVENTORY_TABLE_LENGTH WHEN YOU ADD
@@ -84,7 +89,8 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"BlueberryItem",
 	"StrawberryItem",
 	"CranberryItem",
-	"BerryMash"
+	"BerryMash",
+	"InventoryGuardItem"
 	//Don't forget to new items to PlayerDropStuff in DECORATE.PLAYERS!
 };
 
@@ -260,35 +266,18 @@ script 102 (void) CLIENTSIDE
 		int hungerLevel = CheckInventory("HungerLevel");
 		int hungerText = "Well Nourished";
 		int hungerColour = CR_GREEN;
-		switch (hungerLevel) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-				hungerText = "Well Nourished";
-				break;
-			case 8:
-			case 9:
-			case 10:
-				hungerText = "Getting Hungry";
-				hungerColour = CR_YELLOW;
-				break;
-			case 11:
-			case 12:
-			case 13:
-				hungerText = "Hungry";
-				hungerColour = CR_ORANGE;
-				break;
-			case 14:
-			case 15:
-			default: 
-				hungerText = "Starving";
-				hungerColour = CR_RED;
-				break;
+		
+		if (hungerLevel <= HUNGER_GOOD_LEVEL) {
+			hungerText = "Well Nourished";
+		} else if (hungerLevel <= HUNGER_PECKISH_LEVEL) {
+			hungerText = "Getting Hungry";
+			hungerColour = CR_YELLOW;
+		} else if (hungerLevel >= HUNGER_STARVING_LEVEL) {
+			hungerText = "Starving";
+			hungerColour = CR_RED;
+		} else {
+			hungerText = "Hungry";
+			hungerColour = CR_ORANGE;
 		}
 		
 		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
@@ -402,15 +391,17 @@ script 808 RESPAWN
 		//TakeActorInventory(playerTid, "PseudoSpectatorMorph", 99);
 		//TODO: Teleport to a spawn spot? Or just kill the pseudospectated player?
 
-		Delay(1);
-		//ClearActorInventory(playerTid);
-		SetActorProperty(playerTid, APROP_Invulnerable, 0);
-		Delay(1);
-		TakeActorInventory(playerTid, "MonsterSpawnerMode", 99999); // Just in case. Bugfix for craziness in multiplayer?
-		Delay(1);
 	}
 	
 	
+	Delay(1);
+	//ClearActorInventory(playerTid);
+	SetActorProperty(playerTid, APROP_Invulnerable, 0);
+	Delay(1);
+	TakeActorInventory(playerTid, "MonsterSpawnerMode", 99999); // Just in case. Bugfix for craziness in multiplayer?
+	Delay(1);
+
+
 	//READ: http://zdoom.org/wiki/About_Multiplayer,_Scripts,_and_TIDs
 	//All previously running scripts are inherited by the respawned player automatically!
 	
@@ -427,6 +418,9 @@ function void giveInitialInventory (int playerTid)
 	GiveActorInventory(playerTid, "DoomZBoxPlacer", 1);
 	GiveActorInventory(playerTid, "Axe", 1);
 	//GiveActorInventory(playerTid, "Fist", 1);
+	if (CheckActorInventory(playerTid, "XPLevel") > 14) {
+		GiveActorInventory(playerTid, "InventoryGuardItem", 1);
+	}
 }
 
 function void setupPlayer(int playerTid)
@@ -875,8 +869,7 @@ script 850 (void)
 //Hunger loop
 script 851 (void)
 {
-	int MAX_HUNGER_LEVEL = 15;
-	int hungerIntervalTics = 35 * kDayLengthSeconds / 10;
+	int hungerIntervalTics = (35 * HUNGER_PERIOD_SECONDS) / MAX_HUNGER_LEVEL; 
 
 	while (true)
 	{
@@ -889,12 +882,12 @@ script 851 (void)
 			GiveActorInventory(0, "HungerLevel", 1);
 			if (hungerLevel >= MAX_HUNGER_LEVEL) {
 				GiveActorInventory(0, "DeathCurse", 1);
-				Thing_Damage2(0, 300, "Hunger");
-				TakeActorInventory(0, "HungerLevel", 100);
+				Thing_Damage2(ActivatorTID(), 300, "Hunger");
+				TakeActorInventory(0, "HungerLevel", MAX_HUNGER_LEVEL);
 			} 
-			else if (hungerLevel > 12)
+			else if (hungerLevel >= HUNGER_STARVING_LEVEL)
 			{
-				Print(s:"You are starving and will die in ", d:((hungerIntervalTics/35)*(MAX_HUNGER_LEVEL-13)), s:" seconds\nif you don't eat.");
+				Print(s:"You are starving and will die in ", d:((hungerIntervalTics/35)*(MAX_HUNGER_LEVEL-hungerLevel)), s:" seconds\nif you don't eat.");
 			}
 		}
 	}

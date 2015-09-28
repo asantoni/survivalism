@@ -1,0 +1,14 @@
+Name: Crow
+Connection: None
+Palette: Heretic
+Summon: CrowWander1L/1R/2L/2R/3L/3R/4L/4R, CrowStill1L/1R/2L/2R/3L/3R/4L/4R
+Ambient Sound: Yes
+De-/Activatable: No
+Destroyable: Yes
+Special Effects: None
+Brightmaps: No
+ACS: No
+
+
+Crows with randomly selected animations. Includes a number of variations, such
+as wandering, stationary, and some that react to weapon sounds.
