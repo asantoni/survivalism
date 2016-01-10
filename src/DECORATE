@@ -5,7 +5,6 @@
 #include "DECORATE.GUNS"
 #include "DECORATE.AMMO"
 #include "DECORATE.BOXPLACER"
-#include "DECORATE.HARVEST"
 #include "DECORATE.MINING"
 #include "DECORATE.GRAPPLING"
 #include "DECORATE.MONSTERSPAWNER"
@@ -70,6 +69,16 @@
 #include "actors/weapons/yellowboy.txt"
 
 
+
+//================================================
+// HARVESTABLE VEGATATION (Trees, crops, etc.)
+//================================================
+
+#include "actors/harvest/trees.txt"
+#include "actors/harvest/hemp.txt"
+#include "actors/harvest/seeds.txt"
+#include "actors/harvest/turnips.txt"
+
 //================================================
 // VEGETATION
 //================================================
@@ -79,6 +88,9 @@
 #include "actors/vegetation/garden.txt"
 #include "actors/vegetation/necrorocks.txt"
 #include "actors/vegetation/smalltreesandbushes.txt"
+
+
+
 
 //========================================
 // Berry system

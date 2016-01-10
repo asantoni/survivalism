@@ -24,3 +24,4 @@ play: pk3
 
 clean:
 	$(RM) -rf $(OBJ_DIR)
+	$(RM) $(OUTPUT_PK3)

@@ -1,0 +1,186 @@
+
+
+
+
+ACTOR HempPlant : actor 10420 //ChoppableTree 10420
+{
+  PainChance 255
+  Radius 16
+  Height 96
+  scale 0.2
+  Health 100
+  Mass 0x7FFFFFFF
+  //DamageFactor "Axe", 10.0
+
+/*
+  +SHOOTABLE
+  +NOBLOOD
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+  +STANDSTILL
+  +SOLID
+
+*/
+//   Monster
+//FIXME: Trying to narrow down what part of the Monster combo breaks A_GiveToTarget:
+/* 
+OK, so here's the problem with A_GiveToTarget and monsters/actors:
+- If A_GiveToTarget is used with a regular monster, no problem
+- If A_GiveToTarget is used with a regular actor, no problem
+- If A_GiveToTarget is used with an actor that we've set +ISMOSNTER on,
+  it doesn't get a target correctly and doesn't work in the Death state. :-(
+  (We need +ISMONSTER for the master/child relationship to work for DoomZFlamePawn)
+
+*/   
+
+//So here I decided to sacrifice the flammability of hemp in order to make the
+//A_GiveToTarget thing work...
+//+ISMONSTER
+
+	+SHOOTABLE
+	+NOBLOOD
+	-COUNTKILL
+	-PUSHABLE
+	-WINDTHRUST
+	-CANBLAST
+
+/* I tried everything...
+	+LOOKALLAROUND
+	//+FRIENDLY
+	+STANDSTILL
+	+AMBUSH
+	-NOINFIGHTING
+	+JUSTHIT
+	Speed 0
+*/
+
+  States
+  {
+	  Spawn:
+	  	TNT1 A 0
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+		//TNT1 A 1 ACS_ExecuteAlways(937) //Heal us. HealThing doesn't have a max in Zandronum 1.2 :(
+		TREN A 0 A_SetSolid
+		TREN A 0 A_SetShootable
+		TNT1 A 0 A_KillChildren
+		//Disabled this because we're not giving Hemp +ISMONSTER so that A_GiveToTarget works
+		//TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+	  SpawnLook:
+	    //This is needed for A_GiveToTarget to work too.
+		HEMP A 10 A_LookEx(LOF_NOSOUNDCHECK , 0, 128.0, 0, 360, "See")
+		Loop
+	Melee:
+	Missile:
+			TNT1 A 0 A_FaceTarget
+			TNT1 A 0 A_FaceTarget
+			goto See
+	  See:
+		TNT1 A 0
+		HEMP A 35
+		loop
+	  //For some reason, actors that don't inherit from Monster but have +ISMONSTER (for master/child)
+	  //lose their targets in their Death state. To make A_GiveToTarget work, we use it
+	  //in the pain state instead and just drop straight into the Death state 
+	  //(so the hemp dies in one hit with the axe)
+	  Pain.Axe:
+	  	HEMP A 0 A_GiveToTarget("QuestHempHarvested", 1)
+	  Death.Axe:
+	  Death:
+		TNT1 A 0 
+		//A_GiveToTarget doesn't work here. See the note above.
+		TNT1 A 0 A_SpawnItemEx("GraplingAmmo", 0, 0, 0, 0, 0, 12.0)
+		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
+		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
+		TNT1 A 0 A_KillChildren
+	    Stop
+		//goto Grow
+		/*
+	  Grow:
+		TNT1 A 0 //Dummy frame so A_Jump works
+		//TNT1 A 0 HealThing(0x7FFFFFFF)
+		TNT1 A 1 ACS_ExecuteAlways(937) //Heal us. HealThing doesn't have a max in Zandronum 1.2 :(
+		//TNT1 A 5 A_NoBlocking
+		//TNT1 A 0 A_HideThing
+		TNT1 A 1 A_UnsetSolid
+		TNT1 A 1 A_UnsetShootable
+		//15% chance it'll regrow every 4 minutes
+		TNT1 A 8400
+		TNT1 A 1 A_Jump(64, "Spawn") //Dynamic dispatch
+		Loop
+	*/
+  }
+}
+
+
+ACTOR PlantedHemp //Sapling
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +NOTARGET
+  +FRIENDLY
+  +CANTSEEK
+
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 7.0
+  DamageFactor "Fire", 1.0
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 1 
+		//Check if we planted on soil or grass
+		TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Wilt")
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+	//Ripening will take 10 mins by default. If you water your plant 10 times, you can cut it down to 3 minutes.
+	WaitUntilRipe:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP C 2100 // Progress every 1 minute
+		TRNP C 1 A_GiveInventory("Ripeness", 10) //Ripen the plant a bit
+		goto WaitUntilRipe
+	WaitUntilRipeWatered:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP D 2100 // Progress every 1 minute
+		TRNP D 1 A_GiveInventory("Ripeness", 34) //Ripen the plant a bit
+	Pain.Water:
+		TNT1 A 0 
+		goto WaitUntilRipeWatered
+	  Ripe:
+		TNT1 A 0 A_SpawnItemEx("HempPlant", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		Stop
+	  Death.Axe:
+	  Death:
+	  Wilt:
+	    TRNP E 350
+		Stop
+  }
+}
+
+
+actor RespawningPlantedHemp : PlantedHemp 10752
+{
+	States
+	{
+		Spawn:
+			TNT1 A 0 
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_UnsetShootable
+			TNT1 A 42000 //Every 20 minutes
+			goto Super::Spawn
+		Pain.Axe:
+			TNT1 A 0 A_SpawnItemEx("RespawningPlantedHemp")
+			goto Super::Pain.Axe
+	    Death.Axe:
+			goto Pain.Axe //avoids A_Jump netcode madness
+	}
+}
+

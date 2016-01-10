@@ -1,0 +1,100 @@
+
+ACTOR TurnipSeeds : CustomInventory
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  +BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+
+  Tag "Turnip Seeds"
+  Inventory.MaxAmount 50
+  Inventory.Icon "SEED3"
+  Inventory.PickupMessage "You picked up turnip seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+  Mass 0x7FFFFFFF //No knockback when pecked by chickens
+
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED C 0 A_SetShootable
+		SEED C 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED C -1
+		Stop
+	  Pain.Peck:
+		//SEED C 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED C -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedTurnip", 64.0, 0.0, 8.0)
+		Stop
+  }
+}
+
+ACTOR TreeSeeds : TurnipSeeds
+{ 
+  Tag "Tree Seeds"
+  Inventory.MaxAmount 300
+  Inventory.Icon "SEED2"
+  Inventory.PickupMessage "You picked up tree seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+	
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED B 0 A_SetShootable
+		SEED B 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED B -1
+		Stop
+	  Pain.Peck:
+		//SEED B 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED B -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedTree", 64.0, 0.0, 8.0)
+		TNT1 A 0 A_GiveInventory("QuestTreePlanted", 1)
+		Stop
+  }
+}
+
+
+ACTOR HempSeeds : TurnipSeeds
+{ 
+  Tag "Hemp Seeds"
+  Inventory.MaxAmount 300
+  Inventory.Icon "SEED1"
+  Inventory.PickupMessage "You picked up hemp seeds."
+  Inventory.UseSound "misc/invuse"
+  +INVENTORY.INVBAR
+  +INVENTORY.PICKUPFLASH
+  Health 30
+  
+  //Setting the hemp seeds to friendly makes the chickens not peck them... 
+  
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		SEED A 0 A_SetShootable
+		SEED A 0 ACS_ExecuteAlways(511, 0, 0) //Give us the seed TID so chickens can hate us
+		SEED A -1
+		Stop
+	  Pain.Peck:
+		//SEED B 0 A_TakeFromTarget("HungerLevel", 1)
+		SEED B -1
+		Wait
+	  Use:
+	    TNT1 A 0 A_SpawnItemEx("PlantedHemp", 64.0, 0.0, 8.0)
+		//TNT1 A 0 A_GiveInventory("QuestTreePlanted", 1)
+		Stop
+  }
+}

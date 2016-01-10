@@ -1,75 +1,10 @@
-Actor NTreeDead1 : ChoppableTree 24000
-{
-Radius 13
-Height 160
-+SOLID
+/*
+Note: NTreeDead1/2 and NTreeSwamp1/2 were moved to harvest/trees.txt 
+-- Hax 
 
-  States
-  {
-	  Spawn:
-		TNT1 A 0 A_KillChildren
-		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
-		NTRE A 0 A_SetSolid
-		NTRE A 0 A_SetShootable
-		NTRE A -1
-		Stop
-	}
-}
+*/
 
-Actor NTreeDead2 : ChoppableTree 24001
-{
-Radius 13
-Height 160
-+SOLID
 
-  States
-  {
-	  Spawn:
-		TNT1 A 0 A_KillChildren
-		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
-		NTRE B 0 A_SetSolid
-		NTRE B 0 A_SetShootable
-	  SpawnStill:
-		NTRE B -1
-		Stop
-	}
-}
-
-Actor NTreeSwamp1 : ChoppableTree 24002
-{
-Radius 13
-Height 140
-+SOLID
-  States
-  {
-	  Spawn:
-		TNT1 A 0 A_KillChildren
-		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
-		NTRE C 0 A_SetSolid
-		NTRE C 0 A_SetShootable
-	  SpawnStill:
-		NTRE C -1
-		Stop
-	}
-}
-
-Actor NTreeSwamp2 : ChoppableTree 24003
-{
-Radius 10
-Height 120
-+SOLID
-  States
-  {
-	  Spawn:
-		TNT1 A 0 A_KillChildren
-		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
-		NTRE D 0 A_SetSolid
-		NTRE D 0 A_SetShootable
-	  SpawnStill:
-		NTRE D -1
-		Stop
-	}
-}
 
 Actor NSwampLog 24004
 {
@@ -79,7 +14,7 @@ Height 17
 States
 {
 Spawn:
-	NTRE E -1
+	NTRI A -1
 	Stop
 }
 }
@@ -92,7 +27,7 @@ Height 20
 States
 {
 Spawn:
-	NTRE F -1
+	NTRJ A -1
 	Stop
 }
 }
@@ -105,7 +40,7 @@ Height 20
 States
 {
 Spawn:
-	NTRE G -1
+	NTRK A -1
 	Stop
 }
 }

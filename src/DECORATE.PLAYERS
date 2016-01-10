@@ -4,7 +4,7 @@ actor Survivalist : DoomPlayer
   Speed 0.5
   Player.ViewHeight 51 // Default is 41
   //Player.StartItem "Pistol"
-  Player.StartItem "" 
+  Player.StartItem "Axe" 
   //Player.StartItem "Clip", 50
   	DamageFactor "SentryTurret", 0.0
 

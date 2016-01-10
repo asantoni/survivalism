@@ -4,7 +4,7 @@ ACTOR Axe : Weapon
 	Weapon.SelectionOrder 2000
 	Weapon.SlotNumber 1
 	Weapon.SlotPriority 5
-	Weapon.KickBack 500000
+	Weapon.KickBack 5000
 	Inventory.Icon "AXEPA0"
 	Inventory.PickupMessage "You claimed yourself a powerful axe!"
 	Tag "Axe"

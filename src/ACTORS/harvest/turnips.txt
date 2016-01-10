@@ -1,0 +1,184 @@
+
+ACTOR PlantedTurnip 10750
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  +SOLID
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 1.0
+  DamageFactor "Fire", 1.0
+  DamageFactor "Water", 1.0
+  
+  States
+  {
+	Spawn:
+		TNT1 A 1 
+		//Check if we planted on soil or grass
+		TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(941), "Wilt")
+		//Make monsters attack us:
+		TNT1 A 0 ACS_ExecuteAlways(503, 0)
+	
+	//Ripening will take 10 mins by default. If you water your plant 10 times, you can cut it down to 3 minutes.
+	WaitUntilRipe:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP C 2100 // Progress every 1 minute
+		TRNP C 1 A_GiveInventory("Ripeness", 10) //Ripen the plant a bit
+		goto WaitUntilRipe
+	WaitUntilRipeWatered:
+		TNT1 A 0 A_JumpIfInventory("Ripeness", 0, "Ripe") //Max ripeness is 100
+		TRNP D 2100 // Progress every 1 minute
+		TRNP D 1 A_GiveInventory("Ripeness", 34) //Ripen the plant a bit
+	Pain.Water:
+		TNT1 A 0 
+		goto WaitUntilRipeWatered
+	Ripe:
+		TNT1 A 0 A_SpawnItemEx("RipePlantedTurnip", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+		Stop
+	Death.Axe:
+	Death:
+	Wilt:
+		TRNP E 2100 // 1 minute
+		Stop
+  }
+}
+
+actor Ripeness : Inventory
+{
+	Inventory.MaxAmount 100
+}
+
+
+actor RipePlantedTurnip
+{
+  Radius 16
+  Height 16
+  
+  +SHOOTABLE
+  +NOBLOOD
+  +SOLID
+  
+  Mass 0x7FFFFFFF
+  Health 200
+  PainChance 255 //100% chance of going into Pain state
+  DamageFactor "Axe", 1.0
+  DamageFactor "Fire", 1.0
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 0
+		TRNP A 16800 // only stay ripe for 8 minutes then die
+		goto Death
+	  Pain.Axe:
+	    TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("Turnip", 0, 0, 0, 0, 0, 12.0)
+		TNT1 A 0 A_Jump(128, "SpawnSeeds")
+		//goto Grow --> Respawning turnip
+		Stop
+	  Pain:
+	    TNT1 A 0
+		goto Spawn
+	  SpawnSeeds:
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
+		Stop
+	  Death.Axe:
+		TNT1 A 0 
+		TNT1 A 0 A_JumpIfInventory("Ripe", 1, "Pain.Axe")
+	    goto Death //otherwise wilt
+	  Death:
+	  Wilt:
+	    TRNP E 350
+		Stop
+  }
+}
+
+actor RespawningPlantedTurnip : PlantedTurnip 10751
+{
+	-SHOOTABLE
+	-SOLID
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 
+			TNT1 A 0 A_UnsetSolid
+			TNT1 A 0 A_UnsetShootable
+			TNT1 A 42000 //Every 20 minutes
+			goto Super::Spawn
+		Pain.Axe:
+			TNT1 A 0 A_SpawnItemEx("RespawningPlantedTurnip")
+			goto Super::Pain.Axe
+	    Death.Axe:
+			goto Pain.Axe //avoids A_Jump netcode madness
+	}
+}
+
+
+/* Pre DoomZ r14 test 12 - uses HealthPickup and only gives health
+ACTOR Turnip : HealthPickup
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  
+  HealthPickup.AutoUse 0
+  Inventory.MaxAmount 10
+  Inventory.Icon "TRNI0"
+  Inventory.PickupMessage "You picked up a delicious turnip."
+
+  Health 30
+  
+  States
+  {
+	  Spawn:
+//		TRNP A 0 A_SetSolid
+		TRNP B 0 A_SetShootable
+		TRNP B -1
+		Stop
+  }
+}
+*/
+
+ACTOR Turnip : CustomInventory
+{
+  +SHOOTABLE
+  +NOBLOOD
+  -SOLID
+  +CANPASS
+  +WINDTHRUST
+  
+  +INVENTORY.INVBAR
+  
+  Inventory.MaxAmount 10
+  Inventory.Icon "TRNI0"
+  Inventory.PickupMessage "You picked up a delicious turnip."
+
+  Health 30
+  
+  States
+  {
+	  Spawn:
+		TNT1 A 0
+		TNT1 A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
+//		TRNP A 0 A_SetSolid
+		TRNP B 0 A_SetShootable
+		TRNP B -1
+		Stop
+	  Use:
+		TNT1 A 0
+		TNT1 A 0 A_GiveInventory("Health", 30)
+		TNT1 A 0 A_TakeInventory("HungerLevel", 75)
+		TNT1 A 0 A_PlaySound("eat/crunch")
+		TNT1 A 0 ACS_ExecuteAlways(850, 0, 0) //Green screen flash - PLAYER.ACS
+		stop
+  }
+}
