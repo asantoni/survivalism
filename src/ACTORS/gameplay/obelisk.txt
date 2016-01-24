@@ -1,0 +1,285 @@
+
+
+/** Spawns an obelisk that summons a monster at the map spot with TID given by the obelisk's first arg (in the map editor)
+    and when the monster dies, it lowers a sector with a tag matching that TID number.
+*/
+actor StoneObelisk : ShortRedColumn 10810
+{
+    Tag "Stone Obelisk"
+	+SHOOTABLE
+	//+NOBLOOD
+	+SOLID
+	+CANPASS
+    +USESPECIAL
+	+DONTRIP
+    +FRIENDLY
+    
+    PainChance 256
+
+	Health 4000
+	Radius 24
+	Height 38
+	Mass 0x7FFFFFFF
+	
+	//DamageFactor "Axe", 500.0
+	DamageFactor "SentryTurret", 0.0
+    
+    States
+    {
+    	Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+            TNT1 A 0 A_GiveInventory("Health", 8000)
+            TNT1 A 0 Floor_RaiseAndCrush(args[0], 8, 1000)
+		Red:
+        	TNT1 A 0 A_ChangeFlag("NOBLOOD", 1)
+            TNT1 A 0 A_ChangeFlag("INVULNERABLE", 1)
+            TNT1 A 0 A_ChangeFlag("NOTARGET", 1) //Don't let monsters attack it now
+            TNT1 A 0 A_ChangeFlag("CORPSE", 1) //Make monsters think we're dead
+            TNT1 A 0 Thing_ChangeTID(0, 0) //Remove our construction TID so monsters don't attack us. Makes monsters currently attacking us give up???
+            COL4 A 1 Thing_SetSpecial(0, 226, 964, 0, args[0]) //ACS_ExecuteAlways - Also moves our args[0] to args[2]!
+            COL4 A -1
+			Wait
+        SitDisabledSpecial:
+            TNT1 A 0
+            COL4 A 1 Thing_SetSpecial(0, 0, args[0], args[1], args[2])
+            COL4 A -1
+            Wait
+        Active:
+            TNT1 A 0 
+            TNT1 A 0 A_PlaySound("click")
+            TNT1 A 0 A_ChangeFlag("NOBLOOD", 0)
+            TNT1 A 0 A_ChangeFlag("INVULNERABLE", 0)
+            TNT1 A 0 A_ChangeFlag("NOTARGET", 0) //Let monsters attack it now
+            TNT1 A 0 A_ChangeFlag("CORPSE", 0)
+            //Set the TID to CONSTRUCTION_TID so that monsters can
+			//attack it (baddies.acs)
+            TNT1 A 0 ACS_ExecuteAlways(503, 0)
+            COL2 A 1 Thing_SetSpecial(0, 0, args[2], 0, 0) //Need the args[2] here to save our original ars[0] back in that spot again.
+        ActiveWait:
+            COL2 A 35 A_GiveInventory("Health", 4) //Regenerative health for the obelisk
+            Loop
+        Pain:
+            TNT1 A 0
+            TNT1 A 0 ACS_Execute(965, 0, 0)
+            TNT1 A 0 A_JumpIfHealthLower(3000, "Spawn")
+            TNT1 A 0
+            goto ActiveWait
+        Death:
+            TNT1 A 0
+            stop
+    }
+}
+
+actor SiliconObelisk : StoneObelisk 10811
+{
+    Tag "Silicon Obelisk"
+}
+
+actor IronObelisk : StoneObelisk 10812
+{
+    Tag "Iron Obelisk"
+    
+    states
+    {
+        Pain:
+            TNT1 A 0
+            TNT1 A 0 ACS_Execute(965, 0, 0)
+            TNT1 A 0 A_JumpIfHealthLower(2000, "Spawn") //Give it like 2000 health (4000 - 2000 = 2000)
+            TNT1 A 0
+            goto ActiveWait
+    }
+}
+
+actor ObeliskBeam 
+{
+    +CLIENTSIDEONLY
+    -SOLID
+    +NOINTERACTION
+    +FORCEYBILLBOARD
+    
+    Alpha 0.0
+    
+    YScale 4.0
+    
+    States
+    {
+        Spawn:
+            OBBM A 0 
+            OBBM A 0 //A_PlaySound("OBELISK1")
+            OBBM A 0 A_Quake(6, 375, 0, 1024, "world/quake")
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiSpawner", 0, 0, 32, 0, 0, 0, 0, SXF_CLIENTSIDE)
+            
+//Seconds - ticks - waveform state
+/*
+10.38	363.3	Off
+10.44	365.4	On
+10.57	369.95	off
+10.625	371.875	On
+10.75	376.25	off
+10.875	380.625	On
+10.945	383.075	Off
+11	385	On
+11.07	387.45	Off
+11.125	389.375	On
+11.19	391.65	Off
+12	420	Big On!
+*/
+            OBBM AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 3 A_FadeIn(0.00363) //300
+            OBBM A 75 A_FadeIn(0.2)
+            //363
+            TNT1 A 2
+            //365
+            OBBM A 5
+            //774
+            TNT1 A 2
+            //777
+            OBBM A 4
+            //784
+            TNT1 A 5
+            //791
+            OBBM A 2
+            //795
+            TNT1 A 2
+            //805
+            OBBM A 2
+            //809
+            TNT1 A 2
+            //812
+            OBBM A 2
+            //816
+            TNT1 A 28
+            OBBM A 0 A_Quake(6, 100, 0, 1024, "world/quake")
+            
+            //Big ass smoke explosion in a circle
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(0), 32*cos(0), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(15), 32*cos(15), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(30), 32*cos(30), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(45), 32*cos(45), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(60), 32*cos(60), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(75), 32*cos(75), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(90), 32*cos(90), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(115), 32*cos(115), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(130), 32*cos(130), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(145), 32*cos(145), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(320), 32*cos(320), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(175), 32*cos(175), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(190), 32*cos(190), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(205), 32*cos(205), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(220), 32*cos(220), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(235), 32*cos(235), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(250), 32*cos(250), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(265), 32*cos(265), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(280), 32*cos(280), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(295), 32*cos(295), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(310), 32*cos(310), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(325), 32*cos(325), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(340), 32*cos(340), 0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(355), 32*cos(355), 0, 0, SXF_CLIENTSIDE)
+
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(0), 32*cos(0), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(15), 32*cos(15), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(30), 32*cos(30), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(45), 32*cos(45), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(60), 32*cos(60), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(75), 32*cos(75), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(90), 32*cos(90), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(115), 32*cos(115), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(130), 32*cos(130), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(145), 32*cos(145), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(320), 32*cos(320), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(175), 32*cos(175), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(190), 32*cos(190), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(205), 32*cos(205), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(220), 32*cos(220), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(235), 32*cos(235), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(250), 32*cos(250), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(265), 32*cos(265), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(280), 32*cos(280), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(295), 32*cos(295), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(310), 32*cos(310), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(325), 32*cos(325), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(340), 32*cos(340), -16.0, 0, SXF_CLIENTSIDE)
+            OBBM A 0 A_SpawnItemEx("ObeliskConfettiRed", 0, 0, 256, 32*sin(355), 32*cos(355), -16.0, 0, SXF_CLIENTSIDE)
+
+            
+            OBBM A 0 A_SetTranslucent(1.0)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.09)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.08)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.079)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.07)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.069)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.06)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.059)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.05)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.049)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.04)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.039)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.03)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.029)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.02)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.019)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.02)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.019)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.015)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.014)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.010)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.009)
+            OBBM A 0 A_SetTranslucent(0.0)
+            OBBM AAAAAAAAAA 1 A_FadeIn(0.005)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.004)
+            OBBM AAAAAAAAAA 1 A_FadeOut(0.001)
+            Stop
+    }
+}
+
+
+actor ObeliskConfettiSpawner
+{
+    +CLIENTSIDEONLY
+    -SOLID
+    +NOINTERACTION
+    
+    Args 75 //75 * 5 = 375 ticks for the countdown
+        
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            //Goes for 375 ticks to match the timing of the Obelisk sound/animation:
+            TNT1 A 5 A_SpawnItemEx("ObeliskConfettiRed", 64, 0, (75-args[0])*6.0, (75-args[0])*0.1, 0, -16.0, 0, SXF_CLIENTSIDE)
+            TNT1 A 0 A_SpawnItemEx("ObeliskConfettiRed", -64, 0, (75-args[0])*6.0, (75-args[0])*0.1, 0, -16.0, 0, SXF_CLIENTSIDE)
+            TNT1 A 0 A_SetAngle(angle + 1*(75-args[0]))
+            TNT1 A 0 A_CountDownArg(0)
+            loop
+    }
+}
+
+
+actor ObeliskConfettiRed
+{
+    +CLIENTSIDEONLY
+    -SOLID
+    +NOINTERACTION
+    //+FORCEYBILLBOARD
+    
+    Scale 2.0
+
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            CRED A 3
+            CRED B 2
+            CRED CDEFGHIJKL 3
+            stop
+    }
+}
