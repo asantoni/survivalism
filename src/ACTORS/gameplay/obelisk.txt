@@ -24,10 +24,13 @@ actor StoneObelisk : ShortRedColumn 10810
 	//DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
     
+    ActiveSound "obelisk1" //TRICK: A_PlaySound (and Ex) ain't working in multiplayer on this actor for some reason, but A_ActiveSound does...
+                            // (even in ACS the PlaySound isn't working... Too many actions in one tick or something??)
+                            
     States
     {
     	Spawn:
-			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			TNT1 A 1 //Dummy frame is needed for A_Jump to work
             TNT1 A 0 A_GiveInventory("Health", 8000)
             TNT1 A 0 Floor_RaiseAndCrush(args[0], 8, 1000)
 		Red:
@@ -42,11 +45,11 @@ actor StoneObelisk : ShortRedColumn 10810
         SitDisabledSpecial:
             TNT1 A 0
             COL4 A 1 Thing_SetSpecial(0, 0, args[0], args[1], args[2])
+            COL4 A 0 A_ActiveSound //A_PlaySound("obelisk1", CHAN_BODY, 1.0, 0, ATTN_NORM)
             COL4 A -1
             Wait
         Active:
             TNT1 A 0 
-            TNT1 A 0 A_PlaySound("click")
             TNT1 A 0 A_ChangeFlag("NOBLOOD", 0)
             TNT1 A 0 A_ChangeFlag("INVULNERABLE", 0)
             TNT1 A 0 A_ChangeFlag("NOTARGET", 0) //Let monsters attack it now
@@ -105,7 +108,7 @@ actor ObeliskBeam
     {
         Spawn:
             OBBM A 0 
-            OBBM A 0 //A_PlaySound("OBELISK1")
+            OBBM A 0 //A_PlaySound("obelisk1")
             OBBM A 0 A_Quake(6, 375, 0, 1024, "world/quake")
             OBBM A 0 A_SpawnItemEx("ObeliskConfettiSpawner", 0, 0, 32, 0, 0, 0, 0, SXF_CLIENTSIDE)
             
@@ -269,7 +272,7 @@ actor ObeliskConfettiRed
     +CLIENTSIDEONLY
     -SOLID
     +NOINTERACTION
-    //+FORCEYBILLBOARD
+    +FORCEXYBILLBOARD 
     
     Scale 2.0
 

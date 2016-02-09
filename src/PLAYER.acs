@@ -8,7 +8,7 @@
 #libdefine PLAYER_MIN_TID 1010
 #define PLAYER_SPEED 0.3
 
-#define MAX_PLAYERS 64
+#libdefine MAX_PLAYERS 64
 #define SPAWN_MAPSPOT_TID 555
 
 #libdefine HUDMSG_ALIVE_TIMER 	1
@@ -20,6 +20,11 @@
 #libdefine HUDMSG_ID_COMPASS 	6
 #libdefine HUDMSG_ID_HUNGER	    10
 #libdefine HUDMSG_ID_QUEST_NAME 9
+#libdefine HUDMSG_WORDS_ID      11
+#libdefine HUDMSG_ART_ID        12
+#libdefine HUDMSG_BGART_ID      13
+#libdefine HUDMSG_ID_DEBUGMODE 14
+
 
 #define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
 
@@ -28,6 +33,8 @@
 #define HUNGER_STARVING_LEVEL 80 	//The level at which you start to "starve"
 #define MAX_HUNGER_LEVEL 100		//MaxAmount for the HungerLevel inventory item 
 
+
+int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
 #define PERSISTENT_INVENTORY_LEN 51
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
@@ -155,14 +162,19 @@ int playerHasLoadedInventory[MAX_PLAYERS] = {
 0,0,0,0,0,0,0,0,
 };
 
-/*
+
 script 99 OPEN
 {
+    /*
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		isPlayerPseudoSpectator[i] = false;
-	}
-}*/
+	}*/
+    for (int playerIdx = 0; playerIdx < MAX_PLAYERS; playerIdx++)
+    {
+        g_secondsSincePlayerJoined[playerIdx] = 0;
+    }
+}
 
 //Called when the player enters
 script 100 ENTER
@@ -176,6 +188,8 @@ script 100 ENTER
 	int playerTid = PLAYER_MIN_TID+PlayerNumber();
 
 	setupPlayer(playerTid);
+    
+    g_secondsSincePlayerJoined[PlayerNumber()] = 0;
 	
 	//restorePersistentInventory(playerTid);
 	
@@ -284,6 +298,11 @@ script 102 (void) CLIENTSIDE
 			HudMessage(s:hungerText;
 			HUDMSG_PLAIN, HUDMSG_ID_HUNGER, hungerColour, 359.2, 18.1, 2.0);
 		}
+        
+        if (DEBUG_MODE==1) {
+            HudMessage(s:"DEBUG MODE";
+                HUDMSG_PLAIN, HUDMSG_ID_DEBUGMODE, CR_ORANGE, 359.2, 26.1, 2.0);    
+        }
 		
 		SetHudSize(0, 0, false);
 		Delay(3);
@@ -434,6 +453,11 @@ function void setupPlayer(int playerTid)
 	//Summon Death to stalk the player if they're cursed by it.
 	if (CheckActorInventory(playerTid, "DeathCurse") > 0) {
 		ACS_ExecuteAlways(955, 0, 0);
+	}
+    
+    if (CheckActorInventory(playerTid, "XPLevel") >= 15) {
+		SetActorProperty(playerTid, APROP_SpawnHealth, 120);
+        GiveActorInventory(playerTid, "Health", 20);
 	}
 }
 
@@ -882,7 +906,7 @@ script 851 (void)
 			GiveActorInventory(0, "HungerLevel", 1);
 			if (hungerLevel >= MAX_HUNGER_LEVEL) {
 				GiveActorInventory(0, "DeathCurse", 1);
-				Thing_Damage2(ActivatorTID(), 300, "Hunger");
+				Thing_Damage2(0, 1000, "Hunger");
 				TakeActorInventory(0, "HungerLevel", MAX_HUNGER_LEVEL);
 			} 
 			else if (hungerLevel >= HUNGER_STARVING_LEVEL)

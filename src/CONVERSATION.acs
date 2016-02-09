@@ -5,6 +5,7 @@
 //#libray must go last!!!!!!!!!!
 #library "conversation"
 
+
 /* Script 520-530 Reserved for CONVERSATION.acs 
 */
 
@@ -84,8 +85,6 @@ Can you protect me from it?";
 			break;
 	}
 	
-	int HUDMSG_ART_ID = 11;
-	int HUDMSG_WORDS_ID = 12;
 	//Log(s:words);
 	SetFont(art);
 	SetHudSize(640, 480, TRUE); //Read this: http://zdoom.org/wiki/SetHudSize#Coordinate_Behaviour

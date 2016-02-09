@@ -65,8 +65,21 @@ ACTOR DoomZFemaleScientist
 	FSZK A 0 A_CheckSight("Remove")
     loop
   Melee:
+    TNT1 A 0 
+    TNT1 A 0 A_JumpIfInventory("bananas", 1, "MeleeBananas")
     FSZK E 4 A_FaceTarget
     FSZK F 8 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    goto See
+  MeleeBananas:
+    FSZK E 4 A_FaceTarget
+    FSZK F 4 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    FSZK F 8 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    FSZK F 8 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
+    FSZK E 4
+    FSZK F 4 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
     FSZK E 4
     goto See
   Pain:

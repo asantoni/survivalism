@@ -3,7 +3,7 @@
 
 actor DoomZBoxPlacer : DoomWeapon 15006
 {
-  Tag "Wooden Box Placer"
+  Tag "Box Placer"
   Game Doom
   Weapon.SelectionOrder 9999
   Weapon.SlotNumber 0

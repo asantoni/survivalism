@@ -55,6 +55,69 @@ actor SentryGun
   }
 }
 
+actor AdvancedSentryGun
+{
+  obituary "%o was ventilated by an auto-sentry."
+  health 300
+  radius 20
+  height 56
+  mass 200
+  speed 0
+  MaxTargetRange 500
+  MinMissileChance 0
+  MeleeRange 0
+  attacksound "sentry/attack"
+  DamageType "SentryTurret"
+  MONSTER
+  +FLOORCLIP
+  +FRIENDLY
+  +NOBLOOD
+  //+LOOKALLAROUND
+  +NEVERRESPAWN
+  +STANDSTILL
+  states
+  {
+  Spawn:
+    TNT1 A 0
+    TNT1 A 0 A_SetArg(0, 100)
+  SpawnLook:
+    //Oscillate back and forth
+    SENT A 3 A_SetAngle(360*sin(args[0]))
+    SENT A 0 A_SetArg(0, args[0] + 5)
+    SENT A 0 A_JumpIf(args[0] == 0, "Spawn")
+    //600 units max distance to see for advanced turrets
+	SENT AAAAA 3 A_LookEx(0, 0, 600, 600, 360, "See") //360 degree FOV for advanced turrets
+	loop
+  See:
+    TNT1 A 0
+    SENT AAAAA 3 A_Chase(0, "Missile", CHF_DONTMOVE)
+    SENT A 0 A_GiveInventory("Forgettimer", 1) // A dummy inventory for tracking how long the imp has been searching.
+    SENT A 0 A_JumpIfInventory("Forgettimer", 4, "Forget") // Jump to the Forget state every 2 seconds
+    loop
+  Missile:
+    SENT A 1 A_FaceTarget
+    SENT B 2 bright A_CustomBulletAttack(3, 0, 2, random(3,8), "SentryPuff", 0, CBAF_NORANDOM)
+	SENT A 1 A_MonsterRefire(0, "See")
+    SENT A 0 A_GiveInventory("Forgettimer", 1) // A dummy inventory for tracking how long the imp has been searching.
+    SENT A 0 A_JumpIfInventory("Forgettimer", 10, "Forget") // Jump to the Forget state every 5 seconds 
+	goto Missile+1
+	//SENT A 2 A_CposRefire
+	//goto See
+  Forget:
+     SENT A 0 A_TakeInventory("Forgettimer", 0x7FFFFFFF)
+     SENT A 3 A_ClearTarget
+     Goto Spawn
+  Death:
+    SENT C 1 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
+    SENT C 0 A_PlaySoundEx ("weapons/rocklx", "SoundSlot6")
+    SENT C 0 A_SpawnItem ("SentryBoom", 0, 48)
+    SENT C 512
+  FadeOut:
+    SENT C 2 A_FadeOut (0.1)
+    loop
+  }
+}
+
 actor SentryPuff : BulletPuff
 {
   +PUFFONACTORS
@@ -106,7 +169,29 @@ ACTOR SentryBox : CustomInventory 12369
   }
 }
 
+ACTOR AdvancedSentryBox : CustomInventory 12369
+{
+  +COUNTITEM
+  +INVENTORY.INVBAR
+  Inventory.MaxAmount 5
+  Inventory.Icon "SENCB0"
+  Inventory.PickupMessage "You picked up an advanced sentry gun! Gnarly!"
+  States
+  {
+  Spawn:
+    SENC A -1
+    Stop
+  Use:
+    TNT1 A 1 A_SpawnItemEx ("AdvancedSentryGun", 56, 0, 8, 0, 0, 0, 0, 1)
+    Stop
+  }
+}
+
 actor Forgettimer : Inventory 
 {
 	Inventory.MaxAmount 0x7FFFFFFF
 } /* Dummy item */
+
+
+
+

@@ -87,3 +87,9 @@ $rolloff ambience/ambi1 2048 4096
 $rolloff ambience/ambi2 2048 3000
 $rolloff ambience/ocean1 200 2048
 $rolloff ambience/swamp1 1024 2048
+
+// Obelisk
+obelisk1 obelisk1
+$rolloff obelisk1 2048 4096
+
+$rolloff weapons/bfgx 2048 3000

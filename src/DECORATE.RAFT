@@ -110,6 +110,7 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
 	+SLIDESONWALLS
 	+DONTFALL
 	+DONTRIP
+    +NOTARGETSWITCH
 
 	
 	//+RELATIVETOFLOOR would be awesome here but that's beyond Zandronum 2.0 even.
@@ -141,9 +142,10 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
 			//CFLO A -1
 		Idle:
 			TNT1 A 0
-			CFLO A 0 A_ClearTarget
+			//CFLO A 0 A_ClearTarget
 			//CFLO A 8 A_LookEx(LOF_NOSOUNDCHECK, 0, 64.0, 0, 256, "StartMoving")
-			CFLO A 8
+			//CFLO A 8 ThrustThingZ(0, 4, 0, 1) //Buoyancy
+            CFLO A 8
 			Loop
 			//goto Inactive
 			//TNT1 A A_
@@ -152,16 +154,20 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
 			//CFLO A 0 ACS_Terminate(943, 0)
 			CBOX A 0 A_PlaySound("click") //A_PlaySound("DSDOROPN")
 			//CFLO A 0 ACS_ExecuteAlways(945, 0, tid)
+            
 		Decelerate:
 			CFLO A 70
 			CFLO A 35 ThrustThing(angle*256/360, -1, 1, 0)
 			CFLO A 0 A_JumpIf((momx == 0) && (momy == 0), "Idle")
 			Loop
 
-		Pain.Axe:
+            //FIXME: The axe's lack of CPF_NOTURN in Zandronum 2.0 causes the player to turn after axing the raft and always
+            //       makes the raft face one particular direction. This worked fine in Zandronum 1.3. In Zandronum 3.0, we
+            //       can use A_CustomPunch's CPF_NOTURN to prevent the player from turning towards the raft when hitting it with the axe (or paddle?)
+		//Pain.Axe:
+        //FIXME: Temporarily just making it so you can move it with bullets:
+        Pain:
 			TNT1 A 0
-			//CFLO A 1 A_SetAngle(angle+180)
-			//CFLO A 1 A_CustomMissile("BoatMelee", 48.0, 0, angle, CMF_AIMDIRECTION | CMF_AIMOFFSET, 0)
 			CFLO A 1 ThrustThing(angle*256/360, 5, 1, 0)
 			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 0.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
 			CFLO A 0 A_SpawnItemEx("BoatMelee", 172.0, 64.0, 0.0, momx+50.0, 0.0, 0.0, 0.0, 0, 0)
@@ -231,6 +237,7 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
 			//CFLO A 4 ThrustThing(angle*256/360, 8, 1, 0)
 			//CFLO A 8 ThrustThing(angle*256/360 + 128, 1, 0)
 			goto Idle
+            
 		Active:
 		Open:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work

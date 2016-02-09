@@ -20,6 +20,18 @@ Model CStoneBox
     FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
 }
 
+Model CSteelBox
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3steel.png"  // Model index, texture 
+	Scale 12.5 12.5 12.5    // Scale values
+	ZOffset 23 //Needed this when I inverted Z scale
+
+    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+
 Model CBoxGhost
 {
     Path "MODELS"  // Path to model in PK3
@@ -41,6 +53,18 @@ Model CStoneBoxGhost
 
     FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
 }
+
+Model CSteelBoxGhost
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3steel.png"  // Model index, texture 
+	Scale 12.5 12.5 12.5    // Scale values
+	ZOffset 23 //Needed this when I inverted Z scale
+
+    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
 
 Model CraftingBox
 {

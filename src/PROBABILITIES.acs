@@ -70,7 +70,7 @@ str lootBoxDropChanceTable[LOOTBOX_TABLE_LENGTH][3] =
 	{ "TurnipSeeds", 		10,		0 },
 };
 
-#define ZOMBIE_TABLE_LENGTH 22
+#define ZOMBIE_TABLE_LENGTH 11
 #libdefine NUM_DAYZOMBIETYPES ZOMBIE_TABLE_LENGTH
 str g_zombieTable[ZOMBIE_TABLE_LENGTH] =
 {
@@ -84,7 +84,7 @@ str g_zombieTable[ZOMBIE_TABLE_LENGTH] =
 	"DoomZHazmatZombie", //"DevastatorZombie",
 	"ZombieRevenant",
 	"DogCluster",
-	"ZombieMancubus",
+	//"ZombieMancubus",
 	"ZombieCluster",
 };
 
@@ -101,7 +101,7 @@ int zombieChanceTable[ZOMBIE_TABLE_LENGTH] =
 	10,
 	10,
 	3, //DogCluster
-	1, //ZombieMancubus
+	//1, //ZombieMancubus
 	10, //ZombieCluster
 };
 

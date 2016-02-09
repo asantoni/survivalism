@@ -81,6 +81,7 @@ actor ScrollLevel14 : Scroll {States{Use:TNT1 A 0
 
 actor ScrollLevel15 : Scroll {States{Use:TNT1 A 0
  TNT1 A 0 ACS_ExecuteAlways(531, 0, 15)
+ TNT1 A 0 ACS_ExecuteAlways(531, 0, 155)
  TNT1 A 0 A_GiveInventory("TurnipSeeds", 4)
 stop}}
 

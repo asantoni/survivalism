@@ -144,11 +144,26 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
 actor ImpWarlordKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
 
+actor BossImpKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 1000)stop}}
+
+actor BossCacodemonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 800)stop}}
+
 actor BaronOfHellKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 2000)stop}}
 
 actor HellKnightKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 800)stop}}
+
+actor HellKnightCommonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 500)stop}}
+
+actor BaronOfHellCommonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 800)stop}}
+
+actor BossCyberDemonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}
 
 actor BossKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}
@@ -164,3 +179,4 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 5)stop}}
 
 actor AzazelKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 1500)stop}}
+

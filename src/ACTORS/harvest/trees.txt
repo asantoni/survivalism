@@ -377,7 +377,7 @@ DaggerFallThing52 - "Daggerfall Tree - Dead"
 
 
 
-Actor NTreeDead1 : ChoppableTree 24000
+Actor NTreeDead1 : ChoppableTree 
 {
 Radius 13
 Height 160
@@ -395,7 +395,7 @@ Height 160
 	}
 }
 
-Actor NTreeDead2 : ChoppableTree 24001
+Actor NTreeDead2 : ChoppableTree 
 {
 Radius 13
 Height 160
@@ -450,7 +450,7 @@ Height 120
 	}
 }
 
-Actor ZedTreeDead1 : ChoppableTree replaces NTreeDead1
+Actor ZedTreeDead1 : ChoppableTree replaces NTreeDead1 24000
 {
 Radius 13
 Height 160
@@ -513,7 +513,7 @@ Height 160
 	}
 }
 
-Actor ZedTreeDead2 : ChoppableTree replaces NTreeDead2
+Actor ZedTreeDead2 : ChoppableTree replaces NTreeDead2 24001
 {
 Radius 13
 Height 160

@@ -38,6 +38,67 @@ Actor MinableRock
 		TNT1 A 0 A_PlaySound("rocks")
 		TNT1 A 0 A_SpawnItemEx("CStoneBoxItem")
 	  Death:
+        TNT1 A 0 
+	    Stop
+  }
+}
+
+
+Actor MinableSilica : MinableRock
+{  
+
+  Height 90
+  
+  States
+  {
+	  Spawn:
+        TNT1 A 0
+		SCRK ABCB 7 
+		Loop
+	  Pain.Axe:
+	    TNT1 A 0
+		//TNT1 A 0 A_Jump(40, 3)
+		TNT1 A 0 A_SpawnItemEx("Silica", 0.0, 0.0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		//TNT1 A 0 A_SpawnItemEx("Coal", 0.0, 0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		goto Spawn
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_PlaySound("rocks")
+		TNT1 A 0 A_SpawnItemEx("Silica")
+	  Death:
+        TNT1 A 0
+	    Stop
+  }
+}
+
+Actor MinableIron : MinableSilica
+{    
+  States
+  {
+	  Spawn:
+        TNT1 A 0
+		IRRK A -1
+		Wait
+	  Pain.Axe:
+	    TNT1 A 0
+		//TNT1 A 0 A_Jump(40, 3)
+		TNT1 A 0 A_SpawnItemEx("IronOre", 0.0, 0.0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		//TNT1 A 0 A_SpawnItemEx("Coal", 0.0, 0, 32.0, random(2.0,4.0), random(2.0,4.0), 8.0, random(0.0, 255.0))
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		TNT1 A 0 A_Jump(256, "Spawn")
+		goto Spawn
+	  Death.Axe:
+		TNT1 A 0
+		TNT1 A 0 A_PlaySound("rocks")
+		TNT1 A 0 A_SpawnItemEx("IronOre")
+	  Death:
+        TNT1 A 0 
 	    Stop
   }
 }
@@ -101,13 +162,96 @@ Actor MineDestroyer
 	}
 }
 
+Actor SilicaMineMananger 10771
+{
+    Game Doom
+	Tag "Silica Mine Manager"
+	+NOGRAVITY
+	+FRIENDLY
+	-NOTARGET
+	-SHOOTABLE
+	+STANDSTILL
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_SpawnItemEx("SilicaMineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 10500 // 5 minutes
+			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 0 Thing_Remove(554) //Rocks
+			TNT1 A 8 
+			Loop
+	}
+}
+
+Actor SilicaMineItemGenerator
+{
+	Speed 0
+	Damage 1000
+	-SOLID
+	+NOBLOOD
+	-SHOOTABLE
+	+NOGRAVITY
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 5 ACS_ExecuteAlways(936, 0, 1) //Has to be a bit of a delay here for Zandronum 2.0, no idea why...
+			Stop
+	}
+}
+
+Actor IronMineMananger 10772
+{
+    Game Doom
+	Tag "Iron Mine Manager"
+	+NOGRAVITY
+	+FRIENDLY
+	-NOTARGET
+	-SHOOTABLE
+	+STANDSTILL
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 0 A_SpawnItemEx("IronMineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 21000 // 10 minutes for iron! 
+			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 0 Thing_Remove(554) //Rocks
+			TNT1 A 8 
+			Loop
+	}
+}
+
+Actor IronMineItemGenerator
+{
+	Speed 0
+	Damage 1000
+	-SOLID
+	+NOBLOOD
+	-SHOOTABLE
+	+NOGRAVITY
+	+NOBLOCKMAP
+	States
+	{
+		Spawn:
+			TNT1 A 0
+			TNT1 A 5 ACS_ExecuteAlways(936, 0, 2) //Has to be a bit of a delay here for Zandronum 2.0, no idea why...
+			Stop
+	}
+}
+
+
 actor Coal : Inventory
 {
 	Tag "Coal"
 	+SHOOTABLE
 	+NOBLOOD
     +WINDTHRUST
-	+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	//+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
 	+CANPASS // ---> crazy CPU usage
 	
 	
@@ -125,6 +269,92 @@ actor Coal : Inventory
 		Spawn:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
 			COAL A -1
+			Wait
+	}
+}
+
+
+actor IronOre : Inventory
+{
+	Tag "Iron Ore"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	+CANPASS // ---> crazy CPU usage
+	
+	
+	Health 200
+	Inventory.PickupMessage "Picked up iron ore"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "IRON" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			IRON A -1
+			Wait
+	}
+}
+
+
+actor Silica : Inventory
+{
+	Tag "Silica"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	+CANPASS // ---> crazy CPU usage
+	
+	
+	Health 200
+	Inventory.PickupMessage "Picked up silica"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "SILICA" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			SLCA A -1
+			Wait
+	}
+}
+
+actor ComputerChip : Inventory
+{
+	Tag "Computer Chip"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	+CANPASS // ---> crazy CPU usage
+	
+	
+	Health 200
+	Inventory.PickupMessage "Picked up a computer chip"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "CHIPI" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			CHIP A -1
 			Wait
 	}
 }

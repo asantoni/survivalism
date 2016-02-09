@@ -1,3 +1,8 @@
+//Dummy inventory
+actor Bananas : Inventory
+{
+}
+
 ACTOR ZombieRevenant : Revenant 16000
 {
   Game Doom
@@ -633,6 +638,7 @@ actor LongRangeZombieFatShot : ZombieFatShot
 ACTOR DoomZHellKnight : HellKnight
 {
   Tag "Hell Knight"
+  MaxTargetRange 300.0
 
   States
   {
@@ -685,9 +691,47 @@ ACTOR DoomZHellKnight : HellKnight
   }
 }
 
+actor DoomZHellKnightCommon : DoomZHellKnight
+{
+  MaxTargetRange 600.0
+  Alpha 0
+
+    states
+    {
+      	Spawn:
+            TNT1 A 0
+            BOS2 O 8 A_FadeIn(0.2)
+            BOS2 N 1 
+            BOS2 NMLKJI 8 A_FadeIn(0.2)
+        SpawnLook:
+            BOS2 AABBCCDD 4 A_Wander
+            BOS2 A 0 A_Look
+            BOS2 A 0 A_CheckSight("Remove")
+            loop
+        Death:
+            TNT1 A 0 A_GiveToTarget("HellKnightCommonKillXP", 1)
+        Death.NoXP:
+        Death.SentryTurret:
+            BOS2 I 8
+            BOS2 J 8 A_Scream
+            BOS2 K 8
+            BOS2 L 8 A_NoBlocking
+            BOS2 MN 8
+            //Loot dropping:
+            BOS2 N 1 A_SpawnItemEx("HellKnightCommonLoot", 0, 32.0)
+            //ACS_ExecuteAlways(922)
+            //Remove ourselves after 60 seconds
+            BOS2 O 2100
+            BOS2 O 0 ACS_ExecuteAlways(501, 0)    
+            Stop
+        
+    }
+}
+
 ACTOR DoomZBaronOfHell : BaronOfHell
 {
   Tag "Baron of Hell"
+  MaxTargetRange 300.0
 
 	Speed 12
 	  Health 1500
@@ -749,6 +793,82 @@ ACTOR DoomZBaronOfHell : BaronOfHell
   }
 }
 
+
+ACTOR DoomZBaronOfHellCommon : BaronOfHell
+{
+  Tag "Baron of Hell"
+  MaxTargetRange 300.0
+
+	Speed 12
+	  Health 1500
+  States
+  {
+   Idle:
+   SpawnLook:
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS AABBCCDD 4 A_Wander
+    BOSS A 0 A_Look
+	BOSS A 0 A_CheckSight("Remove")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+    BOSS AABBCCDD 2 A_Chase
+	BOSS A 0 A_ClearTarget
+	BOSS A 0 A_CheckSight("Remove")
+    loop
+  Remove:
+    TNT1 A 1 
+    //Remove ourselves if we're too far from the player frustrum.
+    TNT1 A 5 ACS_ExecuteAlways(501, 0)
+    Stop
+  Death:
+	TNT1 A 0 A_GiveToTarget("BaronOfHellCommonKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    BOSS I 8
+    BOSS J 8 A_Scream
+    BOSS K 8
+    BOSS L 8 A_NoBlocking
+    BOSS MN 8
+	BOSS N 1 A_SpawnItemEx("MediumHightLoot", 0, 32.0)
+	//Remove ourselves after 60 seconds
+	BOSS O 2100
+	BOSS O 0 ACS_ExecuteAlways(501, 0)    
+    Stop
+  }
+}
+
+
+
 ACTOR DoomZImp : DoomImp
 {
   //Mass 20 //For epic kickback
@@ -756,7 +876,8 @@ ACTOR DoomZImp : DoomImp
   +WINDTHRUST
   +FIXMAPTHINGPOS //Testing for r14 test12
   +DONTOVERLAP 	  //Ditto
-  
+  MaxTargetRange 512.0
+
   States
   {
   Spawn:
@@ -857,6 +978,55 @@ actor DoomZImpBall : DoomImpBall replaces DoomImpBall
 	+NOBLOOD
 }
 
+actor DoomZBossImpBall : DoomZImpBall
+{
+    Health 30
+    Scale 2.0
+    Radius 16
+    Height 10
+    Damage 10
+    Speed 25
+}
+
+actor DoomZMeleeImp : DoomZImp
+{
+  MaxTargetRange 1024.0
+    Speed 16
+    
+    MinMissileChance 160
+
+    states {
+      See:
+        //Randomly decide to attack your base or not
+        TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+        TNT1 A 0 ACS_ExecuteAlways(502, 0)
+        //Only check to remove ourselves and change attack modes every 6 seconds
+        TROO AABBCCDD 2 A_Chase
+        TROO AABBCCDD 2 A_Chase
+        TROO AABBCCDD 2 A_Chase
+        TROO AABBCCDD 2 A_Chase
+        TROO AABBCCDD 2 A_Chase
+        TROO AABBCCDD 2 A_Chase
+        TROO A 0 A_CheckSight("Idle")
+        loop
+      Melee:
+        TROO EF 8 A_FaceTarget
+        TROO G 6 A_CustomMeleeAttack(3 * random(1, 5), "imp/melee")
+        Goto See
+      Missile:
+        TNT1 A 0 
+        TROO E 0 A_JumpIfInTargetLOS("Lunge", 0, JLOSF_CLOSENOJUMP, 512.0, 128.0)
+        goto See
+      Lunge:
+        TROO E 0 A_FaceTarget
+        TROO E 0 A_PlaySound("imp/sight2")
+        TROO E 0 ThrustThingZ(0, 48, 0, 0)
+        TROO E 8 ThrustThing(angle*256/360, 14, 0, 0)
+        TROO F 8 A_FaceTarget
+        TROO G 12 A_CustomMeleeAttack(3 * random(1, 5), "imp/melee")
+        goto See
+    }
+}
 
 ACTOR DoomZNightImp : DoomZImp
 {
@@ -865,6 +1035,8 @@ ACTOR DoomZNightImp : DoomZImp
   Mass 5 //Very light though, huge kickback
   Health 100 //More health
   
+  MaxTargetRange 1500.0
+
   States
   {
    Missile:
@@ -902,6 +1074,97 @@ ACTOR DoomZNightImp : DoomZImp
     Stop
   }
 }
+
+actor DoomZBossImp : DoomZImp
+{
+    //MaxTargetRange 512.0
+    Speed 24
+    Scale 2.0
+    Health 2000
+    Radius 40
+    Height 100
+    PainChance 90
+    
+    MinMissileChance 160
+
+    states {
+       Spawn:
+        TNT1 A 0 //dummy frame
+        TNT1 A 0 A_ChangeFlag("SHOOTABLE", 0)
+        TNT1 A 0 A_SetTranslucent(0.0, 2)
+        TROO M 6 A_SetTranslucent(0.2, 2)
+        TROO M 6 A_SetTranslucent(0.4, 2)
+        TROO M 6 A_SetTranslucent(0.6, 2)
+        TROO M 6 A_SetTranslucent(0.8, 2)
+        TROO M 6 A_SetTranslucent(1.0, 0) //opaque
+        TROO MLKJI 7 //Play death animation in reverse so it looks
+                      //like it's coming out of the ground
+        TNT1 A 0 A_ChangeFlag("SHOOTABLE", 1)
+        TNT1 A 0 A_ActiveSound
+      See:
+        //Randomly decide to attack your base or not
+        TROO AABBCCDD 4 A_Chase
+        loop
+      Melee:
+        TROO EF 8 A_FaceTarget
+        TROO G 6 A_CustomMeleeAttack(3 * random(1, 5), "imp/melee")
+        Goto See
+      Missile:
+        TNT1 A 0 
+        TROO E 0 A_JumpIfInTargetLOS("Lunge", 0, JLOSF_CLOSENOJUMP, 512.0, 128.0)
+        TROO G 0 A_FaceTarget
+        TROO G 12 A_CustomMissile("DoomZBossImpBall", 64, 20, 0)
+        TROO E 4 A_FaceTarget
+        TROO G 12 A_CustomMissile("DoomZBossImpBall", 64, 20, 0)
+        TROO E 4 A_FaceTarget
+        TROO G 12 A_CustomMissile("DoomZBossImpBall", 64, 20, 0)
+        TROO E 4 A_FaceTarget
+        TROO G 4 A_CustomMissile("DoomZBossImpBall", 64, 20, random(-10, 10))
+        TROO G 4 A_CustomMissile("DoomZBossImpBall", 64, 20, random(-10, 10))
+        TROO G 12 A_CustomMissile("DoomZBossImpBall", 64, 20, random(-10, 10))
+        TROO E 4
+        TROO F 2
+        goto See
+      Lunge:
+        TROO E 8 A_FaceTarget
+        TROO E 0 A_PlaySound("imp/sight2")
+        TROO E 1 ThrustThing(angle*256/360, 20, 0, 0)
+        TROO E 1 ThrustThingZ(0, 48, 0, 1)
+        TROO F 8 A_FaceTarget
+        TROO G 6 A_CustomMeleeAttack(5 * random(4, 5), "imp/melee")
+        TROO E 1 ThrustThing(angle*256/360, 20, 0, 0)
+        TROO F 0 A_FaceTarget
+        TROO F 4 A_Chase
+        TROO G 4 A_CustomMeleeAttack(5 * random(4, 5), "imp/melee")
+        TROO F 0 A_FaceTarget
+        TROO F 4 A_Chase
+        TROO G 4 A_CustomMeleeAttack(5 * random(4, 5), "imp/melee")
+        TROO F 0 A_FaceTarget
+        TROO F 4 A_Chase
+        TROO G 4 A_CustomMeleeAttack(5 * random(4, 5), "imp/melee")
+        TROO F 0 A_FaceTarget
+        TROO F 4 A_Chase
+        goto See
+      Death:
+        TNT1 A 0 A_GiveToTarget("BossImpKillXP", 1)
+      Death.NoXP:
+      Death.SentryTurret:
+        TROO I 8
+        TROO J 8 A_Scream
+        TROO K 6
+        TROO L 6 A_NoBlocking
+        //Loot dropping for the ZombieRevenant:
+        //TROO M 1 ACS_ExecuteAlways(921)
+        TNT1 A 0 A_SpawnItemEx("NightImpLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+        //Remove ourselves after 60 seconds
+        TROO M 2100
+        TROO M 0 ACS_ExecuteAlways(501, 0)
+        Stop
+    }
+}
+
+
+
 
 actor DoomZBaronBall : BaronBall Replaces BaronBall
 {
@@ -1346,3 +1609,194 @@ actor DoomZDragonSpot6 : MapSpot { States { Spawn: TNT1 A 0
 			SVXP A -1 
 			Wait}}
 		
+        
+actor DoomZCacodemon : Cacodemon replaces Cacodemon
+{
+  Health 600
+  Speed 8
+  
+  States
+  {
+  Spawn:
+    HEAD A 10 A_Look
+    Loop
+  Death:
+	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    HEAD G 8
+    HEAD H 8 A_Scream
+    HEAD IJ 8
+    HEAD K 8 A_NoBlocking
+    HEAD L 1 A_SetFloorClip
+	TNT1 A 0 A_SpawnItemEx("CacodemonLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0)
+	HEAD Q 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	HEAD L 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	HEAD L 6 A_SetTranslucent(0.8, 2)
+	HEAD L 6 A_SetTranslucent(0.6, 2)
+	HEAD L 6 A_SetTranslucent(0.4, 2)
+	HEAD L 6 A_SetTranslucent(0.2, 2)
+	HEAD L 6 A_SetTranslucent(0.0, 0) 
+	HEAD L 0 ACS_ExecuteAlways(501, 0)
+    Stop
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+actor DoomZBossCacodemon : DoomZCacodemon
+{
+    Health 1200
+    Speed 10
+    Scale 2.0
+    Radius 62
+    Height 112
+    PainChance 40
+    
+    states
+    {
+      Missile:
+          HEAD BC 4 A_FaceTarget
+          HEAD D 4 Bright A_HeadAttack
+          HEAD BC 4 A_FaceTarget
+          HEAD D 2 Bright A_CustomComboAttack("FastCacodemonBall", 32, 10 * random(1, 6))
+          HEAD BC 4 A_FaceTarget
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, random(-20, 20))
+          HEAD B 4 A_FaceTarget
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, random(-20, 20))
+          HEAD B 4 A_FaceTarget
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, random(-20, 20))
+          HEAD BC 4 A_FaceTarget
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, -20)
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, -15)
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, 0)
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, 15)
+          HEAD D 2 Bright A_CustomMissile("FastCacodemonBall", 32, 0, 20)
+          
+          Goto See
+     Death:
+            TNT1 A 0 A_GiveToTarget("BossCacodemonKillXP", 1)
+            goto Death.NoXP
+
+    }
+}
+
+actor FastCacodemonBall : CacodemonBall
+{
+    Speed 20
+}
+
+
+actor DoomZBossCyberdemon : Cyberdemon
+{
+    Scale 4.0
+    
+    Radius 160
+    Height 440
+    Speed 96
+    
+    MinMissileChance 10
+    PainChance 2
+    
+    +DONTHARMCLASS
+    
+    States
+    {
+      Spawn:
+        CYBR A 0
+        CYBR A 0 A_Explode(5000, 300, 0, 0, 300, 0, 0) //Destroy any blocks in our way
+        CYBR A 0 //A_ActiveSound
+      SpawnLook:
+      
+        CYBR AB 10 A_Look
+        Loop
+
+      See:
+        TNT1 A 0 
+        TNT1 A 0 A_Quake(4, 25, 256, 2048)
+        TNT1 A 0 A_PlaySound("cyber/hoof", CHAN_AUTO, 1.0, 0, 0.2)
+        CYBR A 25 A_Chase //A_Hoof
+        CYBR A 0 A_JumpIf(momx == momy == 0, "Spawn") //If we're stuck, blow up shit again
+        CYBR B 0 A_PlaySound("spider/walk", CHAN_AUTO, 1.0, 0, 0.3)   //A_Metal
+        CYBR B 0 A_Chase
+        CYBR B 12 A_Chase
+        CYBR B 13        //Metal up, hoof down
+        TNT1 A 0 A_Quake(4, 25, 256, 2048)
+        TNT1 A 0 A_PlaySound("cyber/hoof", CHAN_AUTO, 1.0, 0, 0.2)
+        CYBR C 25 A_Chase //A_Hoof
+        CYBR D 0 
+        CYBR D 0 A_Chase
+        CYBR D 12 A_Chase //Metal down, hoof up
+        CYBR D 13 
+        Loop
+
+      //Missile:
+      //  TNT1 A 0
+      //  TNT1 A 0 A_Jump(128, "BigAssMissile")
+      //  goto See
+      Missile:
+        CYBR E 6 A_FaceTarget
+        CYBR E 12 A_FaceTarget
+        CYBR E 12
+        CYBR E 12 A_FaceTarget
+        CYBR F 0 A_PlaySound("weapons/rocklf", CHAN_AUTO, 1.0, 0, 0.2)
+        CYBR F 12 A_CustomMissile("BossCyberdemonBall", 200.0, -128.0, 0, 0)
+        CYBR F 0 A_CustomMissile("BossCyberdemonBall", 200.0, -128.0, 20, 0)
+        CYBR F 0 A_CustomMissile("BossCyberdemonBall", 200.0, -128.0, -20, 0)
+        Goto See
+
+      Pain:
+        CYBR G 10 A_Pain
+        CYBR G 0 A_ClearTarget //Acquire new target
+        Goto See
+      Death:
+        TNT1 A 0 A_GiveToTarget("BossCyberDemonKillXP", 1)
+      Death.NoXP:
+      Death.SentryTurret:
+        CYBR E 0 A_ChangeFlag("NOGRAVITY", 0)
+        CYBR H 10
+        CYBR I 10 A_Scream
+        CYBR JKL 10
+        CYBR M 10 A_NoBlocking
+        CYBR NO 10
+        CYBR P 30
+        CYBR P 3 A_BossDeath
+        CYBR P 2100
+        CYBR P 0 ACS_ExecuteAlways(501, 0)
+        Stop
+    }
+}
+
+actor BossCyberdemonBall
+{
+  Radius 64
+  Height 64
+  Speed 12
+  Damage 1000
+  Projectile
+  +RANDOMIZE
+  +DONTHARMCLASS
+  RenderStyle Add
+  Alpha 0.75
+  DeathSound "weapons/bfgx"
+  Obituary "$OB_MPBFG_BOOM"
+  
+  Scale 4.0
+  
+  States
+  {
+  Spawn:
+    BFS1 AB 4 Bright
+    Loop
+  Death:
+    BFE1 AB 8 Bright A_Quake(4, 32, 0, 0)
+    BFE1 C 8 Bright A_Explode(300, 512, 0, 0, 256)
+    BFE1 DEF 8 Bright
+    Stop
+  }
+}

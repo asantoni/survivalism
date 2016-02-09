@@ -50,12 +50,14 @@ actor MediumHighLootBox : LootBox
 
 actor LightAmmoLoot : RandomSpawner
 {
-	DropItem "DoomZShellBoxItem",	255, 2
+	DropItem "DoomZShellBoxItem",	255, 3
 	DropItem "Shell",				255, 10
 	DropItem "ArrowAmmo", 			255, 10
 	DropItem "ArrowHefty", 			255, 2
 	DropItem "Clip", 				255, 10
-	DropItem "DoomZClipBoxItem", 	255, 2
+	DropItem "DoomZClipBoxItem", 	255, 3
+	DropItem "DoomZShotgun",	    255, 2
+	DropItem "DoomZPistol",		    255, 2
 }
 
 actor MediumLoot : RandomSpawner
@@ -119,7 +121,11 @@ actor IncarnateLoot : RandomSpawner
 	//DropItem "LightAmmoLoot",	128, 50
 	//DropItem "MediumLoot",	128, 30
 	
-	DropItem "MediumHighLoot",	25, 85 // 10% chance of dropping
+    //r14 - Sometimes you get absolutely nothing at night and it sucks :-(
+	//DropItem "MediumHighLoot",	25, 85 // 10% chance of dropping
+    
+	DropItem "LightAmmoLoot",	128, 50
+	DropItem "MediumLoot",	128, 30
 }
 
 actor ImpLoot : RandomSpawner
@@ -165,6 +171,18 @@ actor DemonDogLoot : RandomSpawner
 {
 	DropItem "LightAmmoLoot",	200, 50
 	DropItem "MediumLoot",		255, 5
+}
+
+actor CacodemonLoot : RandomSpawner
+{
+    DropItem "MediumLoot",      255, 20
+	DropItem "MediumHighLoot",	255, 5
+	DropItem "VanityLoot",		255, 5
+}
+
+actor HellKnightCommonLoot : RandomSpawner
+{
+    DropItem "MediumLoot"
 }
 
 actor LootBoxLoot : RandomSpawner

@@ -317,6 +317,7 @@ DONE:
 #libdefine SEED_TID 		8402
 #libdefine FOOD_TID 		8403
 #libdefine BERRY_PLANT_TID 	8404
+#libdefine WILD_BIRD_TID    8405
 
 #libdefine DAYSTATE_DAY 	0
 #libdefine DAYSTATE_NIGHT 	1
@@ -331,6 +332,10 @@ DONE:
 
 #libdefine HUNGER_PERIOD_SECONDS 1080 //Time it takes to starve - 1.5 days
 
+#define BASE_CROW_COUNT 25
+#define BIRD_SPAWNER_INTERVAL_SECONDS 5*60
+
+#libdefine DEBUG_MODE 0
 
 //#libdefine kMainLoopPeriodSeconds 20
 int kMainLoopPeriodSeconds = 20;
@@ -341,15 +346,15 @@ int g_dayState = DAYSTATE_DAY;
 int g_blockXP = false; //global lock for XP, to prevent players from getting free XP from monsters dying at daybreak
 
 
-
-#libdefine NUM_MONSTER_SPAWNER_MODES 6
+#libdefine NUM_MONSTER_SPAWNER_MODES 7
 int g_maxBaddiesForSpawnerMode[NUM_MONSTER_SPAWNER_MODES] =
 	{ 16, //Default monsters (zombie mix)
 	  8, //Imps
 	  8,  //Swamp mudmen (ghouls)
 	  0,  //Safe zone (no monsters)
 	  8,  //Shadows
-	  10  //Forest zone
+	  10, //Forest zone
+      8  //Hell Knight zone (Iron Mine)
 	};
 
 //Called when the level loads
@@ -385,6 +390,11 @@ script 200 OPEN
 		//Mission spawner - see MISSIONS.acs
 		ACS_ExecuteAlways(820, 0, 0, 0, 0);
 		
+        //Track how long each player has been playing for.
+        for (int playerIdx = 0; playerIdx < MAX_PLAYERS; playerIdx++) {
+            g_secondsSincePlayerJoined[playerIdx] += kMainLoopPeriodSeconds;
+        }
+        
 		//Sleep
 		Delay(35*kMainLoopPeriodSeconds);
 	}
@@ -398,7 +408,7 @@ script 221 OPEN
 		ACS_ExecuteAlways(202, 0, 0, 0, 0);
 
 		//Sleep
-		Delay(280);
+		Delay(8*35);
 	}
 }
 
@@ -496,20 +506,31 @@ script 201 (void)
 //Monster Spawner V3:
 script 202 (void)
 {
-	int kNumBadGuysPerPlayer = 10; //rsomething-r12: 10 //First versions: 3
-
-	if (g_dayState == DAYSTATE_NIGHT)
-	{
-		kNumBadGuysPerPlayer = 40; //12
-	}
-
 	for (int playerTid = PLAYER_MIN_TID;
 		 playerTid < PLAYER_MIN_TID+PlayerCount();
 		 playerTid++)
 	{
-		int playerOffset = playerTid - PLAYER_MIN_TID;
+    
+    	int playerOffset = playerTid - PLAYER_MIN_TID;
 		int tid = BADDIES_TID_MIN + playerOffset;
-		
+
+    	int kNumBaseBadGuysPerPlayer = 5; //rsomething-r12: 10 //First versions: 3
+      
+        if (g_dayState == DAYSTATE_NIGHT)
+        {
+            //Ramp up difficulty at night but only after your first day
+            if ((g_secondsSincePlayerJoined[playerOffset] < kDayLengthSeconds) && (DEBUG_MODE==0)) { 
+                kNumBaseBadGuysPerPlayer = 6;
+            } else {
+                kNumBaseBadGuysPerPlayer = 16; //12
+            }
+        }
+        //Ramp it up linearly over the first day...
+        int kNumBadGuysPerPlayer = math_min(kNumBaseBadGuysPerPlayer, FixedMul(kNumBaseBadGuysPerPlayer<<16, FixedDiv(g_secondsSincePlayerJoined[playerOffset] << 16, kDayLengthSeconds << 16))>>16);
+        if (DEBUG_MODE==1) {
+            kNumBadGuysPerPlayer = kNumBaseBadGuysPerPlayer;
+        }
+
 		//Ignore spectators, pseudospectators (players who haven't respawned yet),
 		//and dead players!
 		if ((PlayerIsSpectator(playerOffset) > 0) || (PlayerIsPseudoSpec(playerOffset))
@@ -602,26 +623,29 @@ script 203 (void)
 	//Spawn("DoomZFemaleScientist", x, y, z-128.0, tid, randomFacingAngle);//, tid, randomFacingAngle); //--> not working
 
 	int zOffset = 0.0; //-128.0;
-	
+    
+    int tempTID = UniqueTID();
+	int randomSpawnType = 0;
+    
 	switch (monsterSpawnerModeForPlayer)
 	{
 		case 1: //Imp zone
 			if (g_dayState == DAYSTATE_NIGHT) {
 				//SpawnProjectile(0, "DoomZNightImp", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZNightImp", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZNightImp", x, y, z+zOffset, tempTID, randomFacingAngle);
 			} else {
 				//SpawnProjectile(0, "DoomZImp", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZImp", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZMeleeImp", x, y, z+zOffset, tempTID, randomFacingAngle);
 			}
 			break;
 
 		case 2: //Ghoul zone
 			if (g_dayState == DAYSTATE_NIGHT) {
 				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tempTID, randomFacingAngle);
 			} else {
 				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tempTID, randomFacingAngle);
 			}
 			break;
 			
@@ -630,24 +654,36 @@ script 203 (void)
 		case 4: //Shadow zone
 			if (g_dayState == DAYSTATE_NIGHT) {
 				//SpawnProjectile(0, "DoomZGhoul", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZGhoul", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZGhoul", x, y, z+zOffset, tempTID, randomFacingAngle);
 			} else {
 				//SpawnProjectile(0, "DoomZShadow", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("DoomZShadow", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZShadow", x, y, z+zOffset, tempTID, randomFacingAngle);
 			}
 			break;
 		case 5: //Forest zone
 			if (g_dayState == DAYSTATE_NIGHT) {
-				Spawn("DoomZIncarnate", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZIncarnate", x, y, z+zOffset, tempTID, randomFacingAngle);
 			} else {
-				Spawn("DoomZDemonDog", x, y, z+zOffset, tid, randomFacingAngle);
+				Spawn("DoomZDemonDog", x, y, z+zOffset, tempTID, randomFacingAngle);
+			}
+			break;
+		case 6: //Hell knight zone (Iron Mine)
+			if (g_dayState == DAYSTATE_NIGHT) {
+				Spawn("DoomZBaronOfHellCommon", x, y, z+zOffset, tempTID, randomFacingAngle);
+			} else {
+            	randomSpawnType = random(1, 100);
+                if (randomSpawnType % 3 == 0) {
+                    Spawn("ImpWarlord", x, y, z+zOffset, tempTID, randomFacingAngle);
+                } else {
+                    Spawn("DoomZHellKnightCommon", x, y, z+zOffset, tempTID, randomFacingAngle);
+                }
 			}
 			break;
 		default: //0 too
-			int randomSpawnType = random(1, 100);
+			randomSpawnType = random(1, 100);
 			if (randomSpawnType % 30 == 0) {
 				//SpawnProjectile(0, "Creeper", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("Creeper", x, y, z+zOffset, tid, randomFacingAngle);			
+				Spawn("Creeper", x, y, z+zOffset, tempTID, randomFacingAngle);			
 			}
 			else 
 			{
@@ -655,29 +691,40 @@ script 203 (void)
 					if (g_dayNumber % 4 == 0)
 					{
 						if (random(0, 100) <= 5) {
-							Spawn("ZombieMancubus", x, y, z+zOffset, tid, randomFacingAngle);			
+							Spawn("ZombieMancubus", x, y, z+zOffset, tempTID, randomFacingAngle);			
 						} else {
-							Spawn("ZombieIncarnate", x, y, z+zOffset, tid, randomFacingAngle);			
+							Spawn("ZombieIncarnate", x, y, z+zOffset, tempTID, randomFacingAngle);			
 						}
 					}
 					else
 					{
+                        //In r15, we spawn only incarnates at night again.
+                    	Spawn("ZombieIncarnate", x, y, z+zOffset, tempTID, randomFacingAngle);			
+
+                        /* r12-ish to r14 
 						if (random(0, 10) <= 3) {
 							str zombie2 = getRandomZombie();
-							//SpawnProjectile(0, zombie2, randomFacingAngle, 0, 0, 1.0, tid);
-							Spawn(zombie2, x, y, z+zOffset, tid, randomFacingAngle);			
+							//SpawnProjectile(0, zombie2, randomFacingAngle, 0, 0, 1.0, tempTID);
+							Spawn(zombie2, x, y, z+zOffset, tempTID, randomFacingAngle);			
 						} else {
-							//SpawnProjectile(0, "ZombieIncarnate", randomFacingAngle, 0, 0, 1.0, tid);
-							Spawn("ZombieIncarnate", x, y, z+zOffset, tid, randomFacingAngle);			
+							//SpawnProjectile(0, "ZombieIncarnate", randomFacingAngle, 0, 0, 1.0, tempTID);
+							Spawn("ZombieIncarnate", x, y, z+zOffset, tempTID, randomFacingAngle);			
 						}
+                        */
 					}
 				} else {
 					str zombie = getRandomZombie();
-					Spawn(zombie, x, y, z+zOffset, tid, randomFacingAngle);			
+					Spawn(zombie, x, y, z+zOffset, tempTID, randomFacingAngle);			
 				}
 			}
 			break;
 	}	
+    
+    //Give the monster special dummy inventory items that determine its random behaviours for the day!
+    GiveActorInventory(tempTID, "bananas", 1);
+    
+    //Set the TID of the spawned monster to the special one assigned to all monsters for that player.
+    Thing_ChangeTID(tempTID, tid);
 }
 
 //Spawn a dog from a cluster.
@@ -726,6 +773,9 @@ script 204 (int type, int preserveTID)
 			break;
 		case 3:
 			monster = "BerryRandomizer";
+            break;
+		case 4:
+			monster = "Crow";
             break;
 	};
 	
@@ -957,7 +1007,7 @@ script 210 (void)
 
     Light_ChangeToValue(sectorTag, lightLevel);
 	
-	//DoomZ2 hack :-(
+	//DoomZ2 hack :-( - Another one below too.
     Light_ChangeToValue(12, lightLevel);
     Light_ChangeToValue(13, lightLevel);
 	Light_ChangeToValue(14, lightLevel);
@@ -1126,20 +1176,49 @@ script 935 (int doorTID)
 }
 
 // Mine generation
-script 936 (void)
+script 936 (int resourceType)
 {
 	int x = GetActorX(0);
 	int y = GetActorY(0);
 	int z = GetActorZ(0);
 	int maxDist = 640.0;
-	for (int i = 0; i < 2; i++)
-	{
-		Spawn("DaggerFallThing41", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
-		Spawn("DaggerFallThing42", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
-		Spawn("DaggerFallThing60", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
-		Spawn("DaggerFallThing139", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
-		Spawn("DaggerFallThing143", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
-	}
+    
+    if (resourceType == 1)
+    {
+        //Silica!
+        for (int i = 0; i < 2; i++)
+        {
+            Spawn("MinableSilica", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableSilica", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableSilica", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableSilica", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableSilica", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+        }
+    } 
+    else if (resourceType == 2)
+    {
+        //Iron!
+        for (i = 0; i < 2; i++)
+        {
+            Spawn("MinableIron", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableIron", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableIron", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableIron", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("MinableIron", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+        }
+    }
+    else 
+    {
+        //Stone!
+        for (i = 0; i < 2; i++)
+        {
+            Spawn("DaggerFallThing41", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("DaggerFallThing42", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("DaggerFallThing60", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("DaggerFallThing139", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+            Spawn("DaggerFallThing143", x+random(-maxDist, maxDist), y+random(-maxDist, maxDist), z, MINE_ROCK_TID, 0);
+        }
+    }
 }
 
 //Heal trees back to their full health so regrowing works
@@ -1429,13 +1508,10 @@ script 945 (void)
 	}
 	int boatTID = ActivatorTID();
 	Log(s:"Boat TID:", d:boatTID);
-	//int furnaceFuelAmount = CheckActorInventory(furnaceTID, "FurnaceFuel");
 	
 	//Set the activator back to being the player
 	SetActivator(playerTID);
 	
-
-
 	ThingSound(playerTID, "click", 127);
 
 	if (GetActorVelY(boatTid) > 0)
@@ -1466,13 +1542,15 @@ script 945 (void)
 			}
 		}*/
 		
+
 		SetActorAngle(boatTid, GetActorAngle(playerTid));
 		//SetActorVelocity(boatTid, 
 		
 		//Alternative mode: Freezing the player to the boat.
 		SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
-		Delay(1);
-				
+			
+        Delay(1);
+            
 		int buttons = GetPlayerInput(-1, INPUT_BUTTONS);
 
 		//Exit if you hit the jump button
@@ -1983,4 +2061,117 @@ script 962 OPEN
 script 963 (void)
 {
 	Thing_ChangeTID(0, BERRY_PLANT_TID);
+}
+
+
+/* Obelisk activation script */
+script 964 (int bossSpawnSpotTID) //Can only have one parameter in practice because Thing_SetSpecial only has one from DECORATE
+{
+    int playerTID = ActivatorTID();
+
+    if (!SetActivatorToTarget(0)) {
+        terminate;
+    }
+    
+    //The activator is the obelisk now.
+    
+    //GiveActorInventory(playerTID, "Berserk", 1);
+    
+    int sectorFloorLowerTag = bossSpawnSpotTID;
+    
+    int bossTID = UniqueTID(5000);
+    
+    if (CheckActorClass(0, "IronObelisk")) {
+        if (CheckActorInventory(playerTID, "XPLevel")+1 < 12) {
+            SetActivator(playerTID);
+            PrintBold(s:"You must be at least level 12 to activate this obelisk.");
+            terminate;
+        }
+    }
+
+    //Prevent reuse without using ACS_Execute (instead of ACS_ExecuteAlways).
+    //We need this so that multiple boss fights can be ongoing at the same time from different obelisks!
+    SetActorState(0, "SitDisabledSpecial");
+    
+    Radius_Quake2(0, 6, 375, 0, 256, "world/quake");
+    //PlaySound(0, "obelisk1", CHAN_BODY, 1.0, 0, ATTN_NORM);
+    SpawnForced("ObeliskBeam", GetActorX(0), GetActorY(0), GetActorZ(0), 0, 0);
+    Delay(375 + 56);
+    
+    str message = "The stone obelisk has been captured.";
+    if (CheckActorClass(0, "SiliconObelisk")) {
+        SpawnSpotFacingForced("DoomZBossImp", bossSpawnSpotTID, bossTID);
+        message = "The silicon obelisk has been restored.";
+    } else if (CheckActorClass(0, "IronObelisk")) {
+        SpawnSpotFacingForced("DoomZBossCyberdemon", bossSpawnSpotTID, bossTID);
+        message = "The iron obelisk has been restored.";
+    } else {
+        SpawnSpotFacingForced("DoomZBossCacodemon", bossSpawnSpotTID, bossTID);
+    }
+    
+    //Wait until the boss is dead.
+    while (ThingCount(T_NONE, bossTID) > 0) {
+        delay(35);
+    };
+    
+
+    Radius_Quake2(0, 3, 120, 0, 256, "world/quake");
+
+    //Lower the floor in the arg...
+    //Log(s:"Boss dead!");
+    Floor_LowerToNearest(sectorFloorLowerTag, 8);
+    
+    //Set the obelisk to the active state
+    SetActorState(0, "Active");
+        
+    SetActivator(playerTID);
+    PrintBold(s:message);
+}
+
+script 965 (int message)
+{
+    PrintBold(s:"The ", n:0, s:" is under attack! Protect it!");
+    Delay(35*10);
+}
+
+
+//Crow/bird spawner script
+//This is based on the berry spawner script. See script 962 for comments!
+script 966 OPEN
+{
+	int questSpotTID = -1;
+	
+	//Spawn some crows to initialize the world:
+	for (int i = 0; i < BASE_CROW_COUNT; i++)
+	{
+		questSpotTID = getRandomEasyQuestSpotTID();
+		SpawnProjectile(questSpotTID, "CrowSpawnerProjectile", random(0, 255), 50, 0, 1, 0);
+	}
+	
+	//int BERRY_PLAYER_SCALING = 5; //This works pretty well and gives nice integer numbers in the calculation below.
+	//int MAX_BERRY_PLANTS_SCALED = ((PlayerCount()-1)*BASE_BERRY_PLANTS)/BERRY_PLAYER_SCALING + BASE_BERRY_PLANTS;
+    int MAX_CROWS_SCALED = BASE_CROW_COUNT;
+
+	while(true) {
+		Delay(BIRD_SPAWNER_INTERVAL_SECONDS*35);
+		
+		//print(d:ThingCount(T_NONE, BERRY_PLANT_TID));
+		while (ThingCount(T_NONE, WILD_BIRD_TID) > MAX_CROWS_SCALED) {
+			SetActorState(WILD_BIRD_TID, "MaybeDie");
+			Delay(2);
+		};
+		
+		//Spawn a bunch of crows to get us back up to the max amount.
+		int numCrowsNow = ThingCount(T_NONE, WILD_BIRD_TID);
+		for (i = 0; i < MAX_CROWS_SCALED - numCrowsNow; i++) {
+			questSpotTID = getRandomEasyQuestSpotTID();
+			SpawnProjectile(questSpotTID, "CrowSpawnerProjectile", random(0, 255), 50, 0, 1, 0);
+		}
+	};
+}
+
+//Set the activator TID to WILD_BIRD_TID
+script 967 (void)
+{
+    Thing_ChangeTID(0, WILD_BIRD_TID);
 }

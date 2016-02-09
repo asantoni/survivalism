@@ -1,4 +1,3 @@
-#include "DECORATE.CBOX"
 
 //The crafting box item you pick up off the ground.
 actor QuestBoxItem : CustomInventory

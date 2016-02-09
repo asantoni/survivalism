@@ -116,4 +116,11 @@
 #include "actors/construction/sentry.txt"
 #include "actors/construction/inventoryguard.txt"
 
+
+//================================================
+// GAMEPLAY
+//================================================
+
+#include "actors/gameplay/obelisk.txt"
+
 //================================================

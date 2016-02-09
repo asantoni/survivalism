@@ -86,6 +86,7 @@ CLICK - gify
 LavaFlow - BouncyTEM, XV Sound Effect Library
 HEY, THX - Streets of Rage 2
 Waterfall and water stream - Soundjay.com
+Obelisk - gify. Uses explosion sound "Explosion Ultra Bass Sound" from Mark DiAngelo (CC Attribution 3.0) / Soundbible.com
 
 Music:
 Survivalism Day 1, Boss, and Night - gify
@@ -94,7 +95,7 @@ The Cave - gify
 Survivalism Theme - gify
 
 Other Art:
-Bed and crate 3d model - Sitters Electronics (CC-BY) - www.md2.sitters-electronics.nl
+Bed 3D model - Sitters Electronics (CC-BY) - www.md2.sitters-electronics.nl
 
 Other ACS Code:
 Player drop stuff - bagheadspidey
@@ -107,6 +108,8 @@ Special Thanks:
 - noob_one for his tweaks and chainsaw!
 - bagheadspidey for his fsqrt function
 - Visual Vincent for his awesome ACS.NET library
+- Zedek the Plague Doctor for his Zed Patch fork
+- Aenima for the grappling rope and gameplay ideas
 
 Release 5 helpers:
 

@@ -19,12 +19,14 @@
 /* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
    up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
   */
-#define FURNACE_OPTIONS_LENGTH 4 //<--- Edit me if you add more craftable stuff
+#define FURNACE_OPTIONS_LENGTH 6 //<--- Edit me if you add more craftable stuff
 str craftingOptions[FURNACE_OPTIONS_LENGTH] = {
 	"Return",
 	"Load a wooden log",
 	"Load with coal",
 	"Cook a chicken",
+    "Smelt iron ore",
+    "Refine silica",
 };
 	
 int craftingScripts[FURNACE_OPTIONS_LENGTH] = {
@@ -32,6 +34,8 @@ int craftingScripts[FURNACE_OPTIONS_LENGTH] = {
 	773, //Load with a log
 	773, //Load with coal
 	772, //Cook a chicken
+	772, //Smelt iron ore
+	772, //Refine silica
 };
 
 
@@ -43,9 +47,11 @@ int craftingScripts[FURNACE_OPTIONS_LENGTH] = {
 str craftingResults[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] = 
 {
 	{"", "", "", ""},	//Return
-	{"", 	"", "You loaded the furnace with firewood.", "You need a log."},
-	{"", 	"", "You loaded the furnace with coal.",  "You need coal."},
+	{"", 	"vile/firecrkl", "You loaded the furnace with firewood.", "You need a log."},
+	{"", 	"vile/firecrkl", "You loaded the furnace with coal.",  "You need coal."},
 	{"CookedChicken", "chicken/death", "You cooked a chicken!",  "You need a chicken to cook.\nTip: Press spacebar on a chicken to pick it up."},
+	{"CSteelBoxItem", "misc/i_pkup", "You smelted iron into steel!",  "You need 2 iron ore to smelt.\nTip: Find the iron mine!"},
+	{"ComputerChip", "misc/i_pkup", "You made a computer chip with your l33t refining skillz!",  "You need 2 silica to refine.\nTip: Find the silica mine!"},
 };
 
 //ghetto enum
@@ -58,12 +64,16 @@ str craftingIngredients[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{"LogItem", 	"", 			""}, //Load log
 	{"Coal", 		"", 			""}, //Load coal
 	{"ChickenItem", "", 			"FurnaceFuel"}, //Cook a chicken
+	{"IronOre", "", 			    "FurnaceFuel"}, //Smelt iron ore
+	{"Silica", "", 			        "FurnaceFuel"}, //Refine silica
 };
 int craftingIngrAmounts[FURNACE_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{0,	 0,  0}, //Return
 	{1,  0,  0}, //Load log
 	{1, 0,  0}, //Load coal
 	{1, 0,  1}, //Cook a chicken
+	{2, 0,  1}, //Smelt iron ore
+	{2, 0,  1}, //Refine silica
 };
 
 

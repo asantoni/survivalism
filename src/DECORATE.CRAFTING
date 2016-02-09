@@ -1,4 +1,3 @@
-#include "DECORATE.CBOX"
 
 //dummy item
 Actor ShowCraftingScreen : Inventory {}

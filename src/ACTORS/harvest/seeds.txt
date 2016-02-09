@@ -6,6 +6,9 @@ ACTOR TurnipSeeds : CustomInventory
   -SOLID
   +CANPASS
   +WINDTHRUST
+  //XXX: Neither of these two flags prevent turrets from shooting us after chickens start to hate us (in Zandronum 2.0, at least)
+  //+FRIENDLY 
+  //+NOTARGET
   +BLOCKEDBYSOLIDACTORS //Zandronum 2.0
 
   Tag "Turnip Seeds"
@@ -17,6 +20,8 @@ ACTOR TurnipSeeds : CustomInventory
   +INVENTORY.PICKUPFLASH
   Health 30
   Mass 0x7FFFFFFF //No knockback when pecked by chickens
+  
+  DamageFactor "SentryTurret", 0.0
 
   States
   {

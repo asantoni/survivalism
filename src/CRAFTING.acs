@@ -20,7 +20,7 @@
 /* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
    up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
   */
-#libdefine CRAFTING_OPTIONS_LENGTH 13 //<--- Edit me if you add more craftable stuff
+#libdefine CRAFTING_OPTIONS_LENGTH 14 //<--- Edit me if you add more craftable stuff
 str craftingOptions[CRAFTING_OPTIONS_LENGTH] = {
 	"Return",
 	"Craft a torch",
@@ -35,6 +35,7 @@ str craftingOptions[CRAFTING_OPTIONS_LENGTH] = {
 	"Craft a magic quest box",
 	"Craft a spike",
 	"Craft a bucket",
+	"Craft an advanced sentry",
 };
 	
 int craftingScripts[CRAFTING_OPTIONS_LENGTH] = {
@@ -51,7 +52,8 @@ int craftingScripts[CRAFTING_OPTIONS_LENGTH] = {
 	752, //Quest Box
 	752, //Spike
 	752, //Water Bucket
-	
+    752, //Advanced Sentry
+
 	//TODO: Crafting for:
 		// Turrets - should be chaingun + computer chip + steel?
 };
@@ -70,6 +72,7 @@ int craftingXPLevels[CRAFTING_OPTIONS_LENGTH] = {
 	11, //Quest Box
 	12, //Spike
 	14, //Water Bucket
+	15, //Advanced Sentry
 
 	//TODO: Crafting for:
 		// Turrets - should be chaingun + computer chip + steel?
@@ -95,6 +98,7 @@ str craftingResults[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] =
 	{"QuestBoxItem","misc/i_pkup", "You crafted a quest box!", "You need 24 wood and 8 stone to craft a quest box."},
 	{"SpikeItem",   "misc/i_pkup", "You crafted a wooden spike!", "You need 7 wood to craft a spike."},
 	{"Bucket",      "misc/w_pkup", "You crafted a water bucket!", "You need 4 wood to craft a bucket."},
+	{"AdvancedSentryBox", "misc/w_pkup", "You crafted an advanced sentry turret!", "You need 2 computer chips and 6 stone to craft this."},
 };
 
 //ghetto enum
@@ -117,6 +121,7 @@ str craftingIngredients[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{"CBoxItem", 	"CStoneBoxItem", ""}, //Quest Box
 	{"CBoxItem", 	"", ""}, //Wooden Spike
 	{"CBoxItem", 	"", ""}, //Water Bucket
+	{"ComputerChip", 	"CStoneBoxItem", ""}, //Advanced Sentry
 };
 //Quantities needed to craft the above
 int craftingIngrAmounts[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
@@ -133,6 +138,7 @@ int craftingIngrAmounts[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{24,  8,  0}, //Quest Box
 	{7,  0,  0}, //Wooden Spike
 	{4,  0,  0}, //Water Bucket
+	{2,  6,  0}, //Advanced Sentry Turret
 };
 
 script 777 (void)

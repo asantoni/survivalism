@@ -37,12 +37,12 @@ actor DoomZChicken : Chicken 10808
 		CHKN A 0 A_Look
 		TNT1 A 0 A_JumpIfInventory("SleepinessLevel", 10, "Sleep")
 		TNT1 A 0
+        //TNT1 A 0 A_GiveInventory("HungerLevel", 10) //-> for testing XXXXXXXXXXXXXXXXXXXXX
 		TNT1 A 0 A_JumpIfInventory("HungerLevel", 10, "Hungry")
 		TNT1 A 0 A_Jump(3, "LayEgg") //We don't lay eggs if we're hungry
 		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
 		TNT1 A 0 A_Jump(230, "SpawnLook") 
 		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
-		//TNT1 A 0 A_GiveInventory("HungerLevel", 5) //-> for testing
 		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
 		Loop
 	  See:

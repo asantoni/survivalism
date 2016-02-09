@@ -22,10 +22,6 @@ script 531 (int xpLevel)
 	//Grey the background
 	FadeTo (0, 0, 0, 0.8, 0.2);
 	
-	int HUDMSG_BGART_ID = 13;
-	int HUDMSG_ART_ID = 12;
-	int HUDMSG_WORDS_ID = 11;
-
 	int words = 0;
 	int bgArt = "SCROLL";
 	int art = "SCROLLI"; //Default - just show a scroll icon
@@ -47,11 +43,12 @@ script 531 (int xpLevel)
 		case 13: words = "Level 13:\nYou've unlocked\nAxe heavy swing (alt-fire)!"; break;
 		case 14: words = "Level 14:\nYou've learned to craft\nwater buckets!"; art="BCKTI"; break;
 		case 15: words = "Level 15:\nYou now need to eat every day,\nor you'll die.\n\nHere's some turnip seeds for you!"; art="SEED3"; break;
-		case 16: words = "Level 16:\nYou should suggest some more\nunlockables ideas to\nHaxMurderer"; break;
-		case 17: words = "Level 17:\nYou are just beginning\nto live."; break;
-		case 18: words = "Level 18:\nYou are careful & systematic\nin your business\narrangements."; break;
-		case 19: words = "Level 19:\nYou will travel\nto many places."; break;
-		case 20: words = "Level 20:\n"; break;
+		case 155: words = "Level 15:\nYou have learned to craft\nadvanced turrets!"; art="SENART"; break;
+		case 16: words = "Level 16:\nHealth boost!\nYou now feel stronger."; break;
+        case 17: words = "Level 17: You should suggest some more\nunlockables ideas to\nHaxMurderer"; break;
+		case 18: words = "Level 18:\nYou are just beginning\nto live."; break;
+		case 19: words = "Level 19:\nYou are careful & systematic\nin your business\narrangements."; break;
+		case 20: words = "Level 20:\nYou will travel\nto many places."; break;
 		case 21: words = "Level 21:\n"; break;
 		case 22: words = "Level 22:\nYour wisdom has kept you\nfar away from danger."; break;
 		case 23: words = "Level 23:\n"; break;
