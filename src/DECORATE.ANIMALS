@@ -19,6 +19,7 @@ actor DoomZChicken : Chicken 10808
 	  Spawn:
 		TNT1 A 0
 		CHKN A 0 Thing_SetSpecial(0, 80, 923, 0, 0)
+        TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
 		//CHKN A 0 A_GiveInventory("HungerLevel", 10)
 		//goto Sleep
 	  SpawnLook:
@@ -40,13 +41,16 @@ actor DoomZChicken : Chicken 10808
         //TNT1 A 0 A_GiveInventory("HungerLevel", 10) //-> for testing XXXXXXXXXXXXXXXXXXXXX
 		TNT1 A 0 A_JumpIfInventory("HungerLevel", 10, "Hungry")
 		TNT1 A 0 A_Jump(3, "LayEgg") //We don't lay eggs if we're hungry
-		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
+		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry about every 10 minutes
 		TNT1 A 0 A_Jump(230, "SpawnLook") 
 		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
 		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
+        TNT1 A 0 A_Jump(100, "SpawnLook") //Play the sound 39% of the time
+        TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
 		Loop
 	  See:
 		CHKN A 0
+		TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
 		CHKN ABABABABABAB 3 A_Chase //~1 second in duration (36 tics)
 		CHKN ABABABABABAB 3 A_Chase
 		CHKN ABABABABABAB 3 A_Chase
@@ -60,8 +64,9 @@ actor DoomZChicken : Chicken 10808
 		//Only a 10% chance of increasing the chicken's hunger/sleepiness level every 6 seconds - so get hungry every 10 minutes
 		TNT1 A 0 A_Jump(230, "See") 
 		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
-		//TNT1 A 0 A_GiveInventory("HungerLevel", 5) //-> for testing
 		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
+        TNT1 A 0 A_Jump(100, "See") //Play the sound 39% of the time
+        TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
 		Loop
 	  Melee:
 		CHKN A 8 A_FaceTarget
