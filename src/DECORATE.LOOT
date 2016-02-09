@@ -74,10 +74,10 @@ actor MediumHighLoot : RandomSpawner
 	DropItem "DoomZChaingun",	255, 5
 	DropItem "Bow",				255, 10
 	DropItem "GreenArmor", 		255, 5
-	DropItem "TurnipSeeds", 	255, 5		
+	DropItem "TurnipSeeds", 	255, 10		
 	DropItem "DoomZEgg", 		255, 5		
 	DropItem "TorchItem", 		255, 5		
-	DropItem "TurnipSeeds", 	255, 5
+	DropItem "HempSeeds", 	    255, 4
 	DropItem "Medikit", 		255, 5		
 	DropItem "SentryBox"		255, 5
 	DropItem "CKitItem"			255, 5

@@ -193,6 +193,7 @@ ACTOR  PlayerDropStuff : CustomInventory
       TNT1 A 0 A_DropInventory ("IronOre")
       TNT1 A 0 A_DropInventory ("Silica")
       TNT1 A 0 A_DropInventory ("ComputerChip")
+      TNT1 A 0 A_DropInventory ("CSteelBoxItem")
 
 
    //   TNT1 A 0 A_DropInventory ("Backpack")
