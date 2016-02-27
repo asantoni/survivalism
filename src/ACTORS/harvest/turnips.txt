@@ -73,20 +73,23 @@ actor RipePlantedTurnip
   {
 	  Spawn:
 		TNT1 A 0
-		TRNP A 16800 // only stay ripe for 8 minutes then die
+		TRNP A 252000 // - 2 hours now ---- old: 16800 - only stay ripe for 8 minutes then die
 		goto Death
 	  Pain.Axe:
 	    TNT1 A 0
 		TNT1 A 0 A_SpawnItemEx("Turnip", 0, 0, 0, 0, 0, 12.0)
-		TNT1 A 0 A_Jump(128, "SpawnSeeds")
+		TNT1 A 0 //A_Jump(128, "SpawnSeeds")
+        goto SpawnSeeds 
 		//goto Grow --> Respawning turnip
-		Stop
+		//Stop
 	  Pain:
 	    TNT1 A 0
 		goto Spawn
 	  SpawnSeeds:
-		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
-		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255)) 
+        TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255), 0, 128) 
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255), 0, 128) 
+		TNT1 A 0 A_SpawnItemEx("TurnipSeeds", 0, 1.0, 0, 2.0, 0.0, 12.0, random(0,255), 0, 128) 
 		Stop
 	  Death.Axe:
 		TNT1 A 0 

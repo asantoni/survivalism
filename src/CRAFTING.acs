@@ -20,7 +20,7 @@
 /* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
    up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
   */
-#libdefine CRAFTING_OPTIONS_LENGTH 14 //<--- Edit me if you add more craftable stuff
+#libdefine CRAFTING_OPTIONS_LENGTH 17 //<--- Edit me if you add more craftable stuff
 str craftingOptions[CRAFTING_OPTIONS_LENGTH] = {
 	"Return",
 	"Craft a torch",
@@ -36,6 +36,9 @@ str craftingOptions[CRAFTING_OPTIONS_LENGTH] = {
 	"Craft a spike",
 	"Craft a bucket",
 	"Craft an advanced sentry",
+	"Craft a parachute",
+	"Craft a jack",
+	"Craft a hoist",
 };
 	
 int craftingScripts[CRAFTING_OPTIONS_LENGTH] = {
@@ -53,6 +56,9 @@ int craftingScripts[CRAFTING_OPTIONS_LENGTH] = {
 	752, //Spike
 	752, //Water Bucket
     752, //Advanced Sentry
+    752, //Parachute
+    752, //Jack
+    752, //Hoist
 
 	//TODO: Crafting for:
 		// Turrets - should be chaingun + computer chip + steel?
@@ -73,6 +79,9 @@ int craftingXPLevels[CRAFTING_OPTIONS_LENGTH] = {
 	12, //Spike
 	14, //Water Bucket
 	15, //Advanced Sentry
+	17, //Parachute
+	18, //Jack
+	19, //Hoist
 
 	//TODO: Crafting for:
 		// Turrets - should be chaingun + computer chip + steel?
@@ -99,6 +108,9 @@ str craftingResults[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] =
 	{"SpikeItem",   "misc/i_pkup", "You crafted a wooden spike!", "You need 7 wood to craft a spike."},
 	{"Bucket",      "misc/w_pkup", "You crafted a water bucket!", "You need 4 wood to craft a bucket."},
 	{"AdvancedSentryBox", "misc/w_pkup", "You crafted an advanced sentry turret!", "You need 2 computer chips and 6 stone to craft this."},
+	{"ParachuteItem", "misc/i_pkup", "You crafted a parachute!", "You need 4 hemp to craft this item."},
+	{"JackItem", "misc/i_pkup", "You crafted a jack!", "You need 8 stone and 4 wood to craft this item."},
+	{"HoistItem", "misc/i_pkup", "You crafted a hoist!", "You need 8 stone and 2 steel to craft this item."},
 };
 
 //ghetto enum
@@ -122,6 +134,9 @@ str craftingIngredients[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{"CBoxItem", 	"", ""}, //Wooden Spike
 	{"CBoxItem", 	"", ""}, //Water Bucket
 	{"ComputerChip", 	"CStoneBoxItem", ""}, //Advanced Sentry
+	{"GraplingAmmo", 	"", ""}, //Parachute
+	{"CStoneBoxItem", 	"CBoxItem", ""}, //Jack
+	{"CStoneBoxItem", 	"CSteelBoxItem", ""}, //Hoist
 };
 //Quantities needed to craft the above
 int craftingIngrAmounts[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
@@ -139,6 +154,9 @@ int craftingIngrAmounts[CRAFTING_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{7,  0,  0}, //Wooden Spike
 	{4,  0,  0}, //Water Bucket
 	{2,  6,  0}, //Advanced Sentry Turret
+	{4,  0,  0}, //Parachute
+	{8,  4,  0}, //Jack
+	{8,  2,  0}, //Hoist
 };
 
 script 777 (void)

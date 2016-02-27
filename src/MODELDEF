@@ -32,6 +32,19 @@ Model CSteelBox
 }
 
 
+Model CGlassBox
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3glass.png"  // Model index, texture 
+	Scale 12.5 12.5 12.5    // Scale values
+	ZOffset 23 //Needed this when I inverted Z scale
+
+    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+
+
 Model CBoxGhost
 {
     Path "MODELS"  // Path to model in PK3
@@ -59,6 +72,18 @@ Model CSteelBoxGhost
     Path "MODELS"  // Path to model in PK3
     Model 0 "box.md2" // Model index, model file
     Skin 0 "box3steel.png"  // Model index, texture 
+	Scale 12.5 12.5 12.5    // Scale values
+	ZOffset 23 //Needed this when I inverted Z scale
+
+    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+
+Model CGlassBoxGhost
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3glass.png"  // Model index, texture 
 	Scale 12.5 12.5 12.5    // Scale values
 	ZOffset 23 //Needed this when I inverted Z scale
 
@@ -364,3 +389,47 @@ Model InventoryGuard
     FrameIndex INVG A 0 0 // The sprite lump, sprite frame, model index, frame number
 }
 
+
+Model JackBase
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3hoist.png"  // Model index, texture 
+	Scale 12.5 12.5 9.375    // Scale values
+	ZOffset 18 //Needed this when I inverted Z scale
+
+    FrameIndex JACK A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+Model JackTop
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3.png"  // Model index, texture 
+	Scale 12.5 12.5 3.125    // Scale values
+	ZOffset 10 //Needed this when I inverted Z scale
+
+    FrameIndex JACK B 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+Model HoistBase
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3hoist.png"  // Model index, texture 
+	Scale 12.5 12.5 12.5    // Scale values
+	ZOffset 23 //Needed this when I inverted Z scale
+
+    FrameIndex HOIS A 0 0 // The sprite lump, sprite frame, model index, frame number
+}
+
+Model HoistLift
+{
+    Path "MODELS"  // Path to model in PK3
+    Model 0 "box.md2" // Model index, model file
+    Skin 0 "box3steel.png"  // Model index, texture 
+	Scale 12.5 12.5 2    // Scale values
+	ZOffset 4 //Needed this when I inverted Z scale
+
+    FrameIndex HOIS B 0 0 // The sprite lump, sprite frame, model index, frame number
+}

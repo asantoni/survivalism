@@ -36,7 +36,7 @@ ACTOR BlueberryPlant : BerryPlant
 	BPLN A 0
 	BPLN A 0 A_SetArg(0, 1)
 	BPLN A 0 A_SpawnItemEx("BlueberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
-	BPLN A 0 A_Jump(64,"PostHarvest")
+	BPLN A 0 A_Jump(96,"PostHarvest")
 	BPLN A 1
 	Loop
 	
@@ -72,8 +72,8 @@ ACTOR BlueberryItem : CustomInventory
   States
   {
 	  Spawn:
-	    CCHN A 0
-		TNT1 A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
+	    ZSEP A 0
+		ZSEP A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
 		ZSEP A 10500 //Disappear after 5 minutes
 		Stop
 	  Use:

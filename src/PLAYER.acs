@@ -36,7 +36,7 @@
 
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
-#define PERSISTENT_INVENTORY_LEN 56
+#define PERSISTENT_INVENTORY_LEN 60
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 {
 	//YOU MUST UPDATE PERSISTENT_INVENTORY_TABLE_LENGTH WHEN YOU ADD
@@ -89,7 +89,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"DoomZEgg",
 	"ChickenItem",
 	"CookedChicken",
-    "LogItem"
+    "LogItem",
 	"GargoyleStatueItem",
 	"TechLampItem",
 	"FloorLampItem",
@@ -102,7 +102,11 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
     "IronOre",
     "CSteelBoxItem",
     "Silica",
-    "ComputerChip"
+    "ComputerChip",
+    "JackItem",
+    "HoistItem",
+    "CGlassBoxItem",
+    "ParachuteItem"
 	//Don't forget to new items to PlayerDropStuff in DECORATE.PLAYERS!
 };
 
@@ -184,6 +188,7 @@ script 99 OPEN
 //Called when the player enters
 script 100 ENTER
 {
+
 	//I'm going to hell for this but there should be a way to force this to be on.
 	ConsoleCommand("gl_use_models 1");
 
@@ -202,7 +207,10 @@ script 100 ENTER
 	ACS_ExecuteAlways(102, 0, 0);
 	
 	//Hunger loop
-	ACS_ExecuteAlways(851, 0, 0);
+	ACS_ExecuteAlways(851, 0, playerTid);
+    
+    //Parachute auto-deploy
+    ACS_ExecuteAlways(971, 0, 0);
 }
 
 //Clientside variables
@@ -529,6 +537,21 @@ function bool restorePersistentInventory (int playerTid)
 	return true;
 }
 
+function bool validateSaveAction(int playerNum)
+{
+	if (!PlayerIsLoggedIn(playerNum)) {
+        return false;
+    }
+
+    //Don't allow the player to save if they already have a saved character with a higher XP level.
+	str accountName = GetPlayerAccountName(playerNum);
+	str namespace = strparam(s:accountName, s:"_inventory");
+    if (GetDBEntry(namespace, "XPLevel") > CheckInventory("XPLevel")) {
+        return false;
+    }
+    return true;
+}
+
 script 810 /*savePersistentInventoryAndXP*/ (void)
 {
 	int playerTid = PLAYER_MIN_TID + PlayerNumber();
@@ -540,6 +563,15 @@ script 810 /*savePersistentInventoryAndXP*/ (void)
 		SetResultValue(false);
 		terminate;
 	}
+    
+    if (!validateSaveAction(PlayerNumber()) )
+    {
+    	print(s:"You should load your inventory before you save over it.");
+		ActivatorSound("menu/invalid", 127);
+		SetResultValue(false);
+		terminate;
+    }
+    
 	str accountName = GetPlayerAccountName(PlayerNumber());
 	str namespace = strparam(s:accountName, s:"_inventory");
 	
@@ -725,12 +757,9 @@ script 816 (int player) DISCONNECT
 	{
 		//Log(s:"Player is spectating");
 	}
-	else
-	{
-		//Log(s:"Player quit");
-		playerHasLoadedInventory[player] = 0;
-	}
 	
+	playerHasLoadedInventory[player] = 0;
+    
 	//Remove death stalker and ankh
 	int deathTID = DEATH_TID_MIN + player;
 	Thing_Remove(deathTID);
@@ -867,6 +896,16 @@ script 819 (void)
 		SetResultValue(false);
 		terminate;
 	}
+    
+    if (!validateSaveAction(PlayerNumber()))
+    {
+    	print(s:"You should load your inventory before you save over it.");
+		ActivatorSound("menu/invalid", 127);
+		SetResultValue(false);
+		terminate;
+    }
+    
+    
 	str accountName = GetPlayerAccountName(PlayerNumber());
 	str namespace = strparam(s:accountName, s:"_inventory");
 	
@@ -896,23 +935,23 @@ script 850 (void)
 }
 
 //Hunger loop
-script 851 (void)
+script 851 (int playerTid)
 {
 	int hungerIntervalTics = (35 * HUNGER_PERIOD_SECONDS) / MAX_HUNGER_LEVEL; 
-
+    
 	while (true)
 	{
 		Delay(hungerIntervalTics);
-
+    
 		int hungerLevel = CheckInventory("HungerLevel");
-		
+
 		//Only apply hunger to XP levels > 14		
 		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
-			GiveActorInventory(0, "HungerLevel", 1);
+			GiveActorInventory(playerTid, "HungerLevel", 1);
 			if (hungerLevel >= MAX_HUNGER_LEVEL) {
-				GiveActorInventory(0, "DeathCurse", 1);
-				Thing_Damage2(0, 1000, "Hunger");
-				TakeActorInventory(0, "HungerLevel", MAX_HUNGER_LEVEL);
+				GiveActorInventory(playerTid, "DeathCurse", 1);
+				Thing_Damage2(playerTid, 1000, "Hunger");
+				TakeActorInventory(playerTid, "HungerLevel", MAX_HUNGER_LEVEL);
 			} 
 			else if (hungerLevel >= HUNGER_STARVING_LEVEL)
 			{

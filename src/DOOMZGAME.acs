@@ -301,6 +301,7 @@ DONE:
 #import "quests.acs"
 #import "ACSNET.acs"
 
+#libdefine MISSION_MONSTER_TID 5000
 #define RANDOM_LOOT_TID_MIN 8000
 #define RANDOM_LOOT_TID_MAX 8099
 #define BADDIES_TID_MIN 8200
@@ -309,6 +310,8 @@ DONE:
 #libdefine DEATH_TID_MAX 8499
 #libdefine ANKH_TID_MIN 8500
 #libdefine ANKH_TID_MAX 8549
+#define PARACHUTE_TID_MIN 8550
+#define PARACHUTE_TID_MAX 8604
 #libdefine CONSTRUCTION_TID 99
 #libdefine MINE_ROCK_TID 554
 #define MONSTERSPAWNERPROJ_TID 8400
@@ -318,6 +321,10 @@ DONE:
 #libdefine FOOD_TID 		8403
 #libdefine BERRY_PLANT_TID 	8404
 #libdefine WILD_BIRD_TID    8405
+//Reserve a thousand TIDs for UniqueTID calls. You must use these with that so it doesn't take one of our other reserved TIDs!
+#libdefine SAFE_UNIQUE_TID_MIN  19000
+#libdefine SAFE_UNIQUE_TID_MAX  22999
+
 
 #libdefine DAYSTATE_DAY 	0
 #libdefine DAYSTATE_NIGHT 	1
@@ -327,8 +334,8 @@ DONE:
 #DEFINE MONSTER_SPAWNER_MODE_OFF 3
 
 #define LOOT_SPAWNER_INTERVAL_SECONDS 20*60 //20 minutes
-#define BERRY_SPAWNER_INTERVAL_SECONDS 12*60
-#define BASE_BERRY_PLANTS 10
+#define BERRY_SPAWNER_INTERVAL_SECONDS 6*60 //12 minutes (1 day) in r15 originally
+#define BASE_BERRY_PLANTS 12
 
 #libdefine HUNGER_PERIOD_SECONDS 1080 //Time it takes to starve - 1.5 days
 
@@ -624,7 +631,7 @@ script 203 (void)
 
 	int zOffset = 0.0; //-128.0;
     
-    int tempTID = UniqueTID();
+    int tempTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
 	int randomSpawnType = 0;
     
 	switch (monsterSpawnerModeForPlayer)
@@ -1315,9 +1322,9 @@ script 941 (void)
 script 942 (void)
 {
 	//int oldTid = ActivatorTID();
-	//int master = UniqueTID();
+	//int master = UniqueTID(SAFE_UNIQUE_TID_MIN);
 	//Thing_ChangeTID(0, );
-	//int masterTID = UniqueTID();
+	//int masterTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
 	SetActivator(0);//, AAPTR_MASTER);
 	TakeInventory("OnFire", 0x7FFFFFFF);
 	SetActorState(0, "Grow");
@@ -1327,6 +1334,7 @@ script 942 (void)
 
 
 //From GZDoomBuilder's commonFuncs.h 
+/* XXX: Use UniqueTID instead!
 function int unusedTID(int start, int end)
 {
     int ret = start - 1;
@@ -1344,6 +1352,7 @@ function int unusedTID(int start, int end)
     
     return -1;
 }
+*/
 
 //int lastPlayerBoatActivator = 0;
 
@@ -1390,7 +1399,7 @@ script 943 (void)
 	int boatTid = ActivatorTID();
 	
 	if (boatTid == 0) {
-		boatTid = unusedTID(5000, 6000);
+		boatTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 		Thing_ChangeTID(0, boatTid);
 	}
 	//Log(s:"Raft TID:", d:boatTid);
@@ -1489,7 +1498,7 @@ script 945 (void)
 	int boatTid = ActivatorTID();
 	
 	if (boatTid == 0) {
-		boatTid = unusedTID(5000, 6000);
+		boatTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 		Thing_ChangeTID(0, boatTid);
 	}
 	Log(s:"Boat TID:", d:boatTid);
@@ -1822,6 +1831,9 @@ script 954 (void)
 		int playerOffset = playerTid - PLAYER_MIN_TID;
 		TakeActorInventory(playerTid, "CookedChicken", 0x7FFFFFFF);
 		TakeActorInventory(playerTid, "Turnip", 0x7FFFFFFF);		
+		TakeActorInventory(playerTid, "CranberryItem", 0x7FFFFFFF);		
+		TakeActorInventory(playerTid, "BlueberryItem", 0x7FFFFFFF);		
+		TakeActorInventory(playerTid, "StrawberryItem", 0x7FFFFFFF);
 	}
 	
 	PrintBold(s:"Any food you had has spoiled.");
@@ -1847,7 +1859,7 @@ script 955 (void)
 	SpawnForced("DoomZDeath", GetActorX(playerTid)+512.0, GetActorY(playerTid)+512.0, getActorZ(playerTid), deathTID, 0);
 	Thing_Hate(deathTID, playerTID, 5); //Hunt and attack the player
 	
-	Delay(100);
+	Delay(160);
 	Print(s:"Find the Ankh to cheat death!");
 	
 	//Summon the ankh at a random easy questspot on the map:
@@ -1998,7 +2010,7 @@ script 961 (int playerTID)
 	}
 	//TakeActorInventory(playerTID, "InventoryGuardItem", 1);
 	
-	int tempTID = UniqueTID();
+	int tempTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
 	int angle = GetActorAngle(playerTID);
 	int radius = 88.0; //Your inventory seems to drop 88 units in front of you when you die.
 	SpawnForced("InventoryGuard", 
@@ -2031,7 +2043,7 @@ script 962 OPEN
 	}
 	
 	//Calculate 
-	int BERRY_PLAYER_SCALING = 5; //This works pretty well and gives nice integer numbers in the calculation below.
+	int BERRY_PLAYER_SCALING = 2; //This works pretty well and gives nice integer numbers in the calculation below.
 	int MAX_BERRY_PLANTS_SCALED = ((PlayerCount()-1)*BASE_BERRY_PLANTS)/BERRY_PLAYER_SCALING + BASE_BERRY_PLANTS;
 
 	//Every N seconds, we pick a random easy quest spot and shoot some berry spawner projectiles 
@@ -2039,7 +2051,6 @@ script 962 OPEN
 	//if there's too many of them, which randomly kills off 5% of them. This prevents the plants
 	//from all becoming bunched up in part of the map you never visit.
 	while(true) {
-		Delay(BERRY_SPAWNER_INTERVAL_SECONDS*35);
 		
 		//print(d:ThingCount(T_NONE, BERRY_PLANT_TID));
 		while (ThingCount(T_NONE, BERRY_PLANT_TID) > MAX_BERRY_PLANTS_SCALED) {
@@ -2054,6 +2065,8 @@ script 962 OPEN
 			questSpotTID = getRandomEasyQuestSpotTID();
 			SpawnProjectile(questSpotTID, "BerrySpawnerProjectile", random(0, 255), 50, 0, 1, 0);
 		}
+
+        Delay(BERRY_SPAWNER_INTERVAL_SECONDS*35);
 	};
 }
 
@@ -2079,7 +2092,7 @@ script 964 (int bossSpawnSpotTID) //Can only have one parameter in practice beca
     
     int sectorFloorLowerTag = bossSpawnSpotTID;
     
-    int bossTID = UniqueTID(5000);
+    int bossTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
     
     if (CheckActorClass(0, "IronObelisk")) {
         if (CheckActorInventory(playerTID, "XPLevel")+1 < 12) {
@@ -2174,4 +2187,175 @@ script 966 OPEN
 script 967 (void)
 {
     Thing_ChangeTID(0, WILD_BIRD_TID);
+}
+
+
+//Jack script
+script 968 (int direction) //Default (0) is up, 1 is down
+{
+    if (direction == 0) 
+    {
+        //SetActorProperty(0, APROP_Height, GetActorProperty(0, APROP_Height) + 4.0);
+        SetActorVelocity(0, 0.0, 0.0, 2.0, false, false);
+        Delay(4);
+        SetActorVelocity(0, 0.0, 0.0, 0.0, false, false);
+    }
+    else {
+        SetActorVelocity(0, 0.0, 0.0, -2.0, false, false);
+        Delay(4);
+        SetActorVelocity(0, 0.0, 0.0, 0.0, false, false);
+    }
+}
+
+// Jack top/base script for when they're hit with the axe or activated.
+script 969 (void)
+{
+
+    SetActivatorToTarget(0);
+    
+    if (CheckActorClass(0, "JackBase")) {
+        SetActorState(0, "Pain.GoDown");
+    } else if (CheckActorClass(0, "JackTop")) {
+        SetActorState(0, "Pain.Down");
+    } else {
+        //Log(s:"JackBase nor JackTop are not activator, bailing");
+        terminate;
+    }
+}
+
+//Parachute script
+script 970 (void)
+{
+    int origGravity = GetActorProperty(0, APROP_GRAVITY);
+    if (origGravity == 0.0) {
+        //Already parachuting, so abort!
+        terminate;
+    }
+    SetActorProperty(0, APROP_GRAVITY, 0.0);
+    
+    int exitConditionCounter = 0;
+    
+    //SetActorState(0, "SpawnParachute");
+    
+    int parachuteTID = PARACHUTE_TID_MIN + PlayerNumber();
+    
+    int paraX = GetActorX(0);
+    int paraY = GetActorY(0);
+    int paraZ = GetActorZ(0) + GetActorViewHeight(0);
+    int paraAngle = GetActorAngle(0);
+    
+    SpawnForced("Parachute", paraX, paraY, paraZ, parachuteTID, paraAngle);
+    //PlaySound(0, "parachute/pull", CHAN_AUTO, 1.0);
+    Delay(3);
+    //PlaySound(parachuteTID, "parachute/unfurl", CHAN_AUTO, 1.0);
+
+    while (true)
+    {    
+        int z = GetActorZ(0) - GetActorFloorZ(0);
+
+        int velZ = GetActorVelZ(0);
+
+        if (velZ < -4.0) {
+            ThrustThingZ(0, 10, 0, 1);
+        }
+        
+        if (z <= 0 || velZ >= 0) {
+            exitConditionCounter++;
+            
+            //Allow some leeway so if you activate the parachute at the height of your jump, you'll still be OK.
+            if (exitConditionCounter >= 1) { // 1 = no leeway
+                SetActorProperty(0, APROP_GRAVITY, origGravity);
+                //Thing_Destroy(parachuteTID, 0, 0);
+                SetActorState(parachuteTID, "Death");
+                //PlaySound(parachuteTID, "parachute/flop", CHAN_AUTO, 1.0);
+                terminate;
+            }
+        }
+        
+        paraX = GetActorX(0);
+        paraY = GetActorY(0);
+        paraZ = GetActorZ(0) + GetActorViewHeight(0);
+        paraAngle = GetActorAngle(0);
+        SetActorPosition(parachuteTID, paraX, paraY, paraZ, false);
+        SetActorAngle(parachuteTID, paraAngle);
+        SetActorVelocity(parachuteTID, GetActorVelX(0), GetActorVelY(0), GetActorVelZ(0), false, false);
+
+        Delay(5);
+    }
+}
+
+//Parachute auto-deploy script (called from the player)
+script 971 (void)
+{
+    int fallingCounter = 0;
+
+    while (true)
+    {
+        Delay(8);
+        if (GetActorVelZ(0) <= -8.0) {
+            fallingCounter++;
+        } else {
+            fallingCounter = 0;
+        }
+        
+        if (fallingCounter >= 2) {
+            UseActorInventory(0, "ParachuteItem");
+            Delay(3*35); //Don't let it happen again for 3 seconds.
+            fallingCounter = 0;
+        }
+    }
+
+
+    /*
+    int tempTID = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
+    Thing_ChangeTID(0, tempTID);
+
+    //FIXME: Give ourselves a TID so we can set the parachute as the activator again below?
+    SetActivator(tempTID, AAPTR_MASTER);
+    int x = GetActorX(0);
+    int y = GetActorY(0);
+    int z = GetActorZ(0);
+    
+    Log(f:x, s:" ", f:y, s:" ", f:z);
+    
+    SetActivator(tempTID);
+    SetActorPosition(tempTID, x, y, z, 0);
+    
+    //Remove the TID
+    Thing_ChangeTID(tempTID, 0);
+    */
+}
+
+
+//Hoist script
+script 972 (int direction) //Default (0) is up, 1 is down
+{
+    
+    if (direction == 0) 
+    {
+        //SetActorProperty(0, APROP_Height, GetActorProperty(0, APROP_Height) + 4.0);
+        SetActorVelocity(0, 0.0, 0.0, 2.0, false, false);
+        //Delay(4);
+        //SetActorVelocity(0, 0.0, 0.0, 0.0, false, false);
+    }
+    else {
+        SetActorVelocity(0, 0.0, 0.0, -2.0, false, false);
+        //Delay(4);
+        //SetActorVelocity(0, 0.0, 0.0, 0.0, false, false);
+    }
+}
+
+// Hoist base script, when it's hit with an axe
+script 973 (void)
+{
+
+    SetActivatorToTarget(0);
+    
+    if (CheckActorClass(0, "HoistBase")) {
+        SetActorState(0, "Pain.GoDown");
+    } else if (CheckActorClass(0, "HoistLift")) {
+        SetActorState(0, "Pain.Lift");
+    } else {
+        terminate;
+    }
 }

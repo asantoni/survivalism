@@ -45,7 +45,7 @@ actor DoomZChicken : Chicken 10808
 		TNT1 A 0 A_Jump(230, "SpawnLook") 
 		TNT1 A 0 A_GiveInventory("HungerLevel", 1)
 		TNT1 A 0 A_GiveInventory("SleepinessLevel", random(0,2))
-        TNT1 A 0 A_Jump(100, "SpawnLook") //Play the sound 39% of the time
+        TNT1 A 0 A_Jump(30, "SpawnLook") //Play the sound 10% of the time
         TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
 		Loop
 	  See:

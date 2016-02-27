@@ -194,7 +194,10 @@ ACTOR  PlayerDropStuff : CustomInventory
       TNT1 A 0 A_DropInventory ("Silica")
       TNT1 A 0 A_DropInventory ("ComputerChip")
       TNT1 A 0 A_DropInventory ("CSteelBoxItem")
-
+      TNT1 A 0 A_DropInventory ("JackItem")
+      TNT1 A 0 A_DropInventory ("HoistItem")
+      TNT1 A 0 A_DropInventory ("CGlassBoxItem")
+      TNT1 A 0 A_DropInventory ("ParachuteItem")
 
    //   TNT1 A 0 A_DropInventory ("Backpack")
    //   TNT1 A 0 A_DropInventory ("BlueCard")

@@ -34,8 +34,8 @@ ACTOR CranberryPlant : BerryPlant
 	Harvest:
 	BPLN A 0
 	BPLN A 0 A_SetArg(0, 1)
-	BPLN A 0 A_SpawnItemEx("CranberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
-	BPLN A 0 A_Jump(64,"PostHarvest")
+	BPLN AAA 0 A_SpawnItemEx("CranberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
+	BPLN A 0 A_Jump(96,"PostHarvest")
 	BPLN F 1
 	Loop
 	
@@ -62,8 +62,8 @@ ACTOR CranberryItem : BlueberryItem
   States
   {
 	  Spawn:
-	    CCHN A 0
-		TNT1 A 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
+	    ZSEP C 0
+		ZSEP C 0 ACS_ExecuteAlways(953, 0, 0) //Set our TID to FOOD_TID so we can spoil
 		ZSEP C 10500 //Disappear after 5 minutes
 		Stop
 	  Use:

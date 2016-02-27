@@ -685,7 +685,7 @@ script 615 (int player) DISCONNECT
 function void failQuest(int questIdx)
 {
 	int oldActivator = ActivatorTID();
-	SetActivator(g_activeQuestStats[questIdx][QUEST_STATS_PLAYER]);
+	SetActivator(PLAYER_MIN_TID + g_activeQuestStats[questIdx][QUEST_STATS_PLAYER]);
 	if (g_activeQuestStats[questIdx][QUEST_STATS_PLAYER] >= 0) {
 		HudMessage(s:"Quest failed!"; HUDMSG_FADEOUT, 0, CR_RED, 0.5, 0.6, 3.0, 2.0, 1.0);
 	}
@@ -703,6 +703,7 @@ function void cancelQuest(int questIdx)
 	
 	Log(s:"Cancelling quest ", d:questIdx, s:"...");
 
+    
 	//Run the cleanup scripts for each quest objective
 	for (int questSpotIdx = 0; questSpotIdx < MAX_QUEST_DEPTH; questSpotIdx++)
 	{
@@ -739,7 +740,7 @@ function void cancelQuest(int questIdx)
 
 //
 //
-//Easy Quest Scripts: Script 620 - 624 are 
+//Easy Quest Scripts: Script 620 - 623 are 
 //
 //
 
@@ -915,7 +916,7 @@ script 623 (int questScriptMode, int questIdx, int questSpotIdx)
 	{
 		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
 
-		hunterTid = unusedTID(900, 1000);
+		hunterTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 				
 		//The conversation ID is the same as the script # for the NEXT step in the quest!
 		int conversationId = g_activeQuestData[questIdx][questSpotIdx];
@@ -1006,7 +1007,7 @@ script 630 (int questScriptMode, int questIdx, int questSpotIdx)
 	{
 		TakeInventory(TALKED_TO_HUNTER_INV, 0x7FFFFFFF);
 
-		hunterTid = unusedTID(100, 1000);
+		hunterTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 		
 		//The conversation ID is the same as the script # for the NEXT step in the quest!
 		int conversationId = g_activeQuestData[questIdx][questSpotIdx];
@@ -1083,12 +1084,12 @@ script 640 (int questScriptMode, int questIdx, int questSpotIdx)
 		//Just in case...
 		g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = 0;
 		//Spawn the dragon
-		monsterTid = ACS_ExecuteWithResult(505, g_activeQuestSpots[questIdx][questSpotIdx], 0);//unusedTID(100, 1000);
+		monsterTid = ACS_ExecuteWithResult(505, g_activeQuestSpots[questIdx][questSpotIdx], 0);
 		//Dynamically spawning things with TIDs doesn't inform the client about the TID in Zandronum 1.3,
 		//so as a workaround, we invoke Thing_ChangeTID() to make sure the client gets the TID for the thing!
 		Thing_ChangeTID(monsterTid,monsterTid); 
 
-		//ACS_ExecuteAlways(505, 0, questSpotTID, questIdx);//unusedTID(100, 1000);
+		//ACS_ExecuteAlways(505, 0, questSpotTID, questIdx);
 		Log(s:"Monster TID:", d:monsterTid);
 		//The dragon TID is actually kinda useless right now because it initially shares the same
 		//TID as the first mapspot. Also, the dragon magically changes its own TID as it
@@ -1187,7 +1188,7 @@ script 640 (int questScriptMode, int questIdx, int questSpotIdx)
 	}
 	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
 	{
-		SetResultValue(30*60); // 30 minutes to find and slay the dragon
+		SetResultValue(45*60); // 45 minutes to find and slay the dragon
 		terminate;
 	}
 	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)
@@ -1210,7 +1211,7 @@ script 680 (int questScriptMode, int questIdx, int questSpotIdx)
 	//Give that to the player on the pickup state in LogItem
 	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
 	{
-		impWarlordsTid = unusedTID(100, 1000);
+		impWarlordsTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 		//Store the Imp Warlords' TID in the g_activeQuestStats array in the extradata field
 		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = impWarlordsTid;
 		g_activeQuestData[questIdx][questSpotIdx] = impWarlordsTid;
@@ -1291,7 +1292,7 @@ script 681 (int questScriptMode, int questIdx, int questSpotIdx)
 	//Give that to the player on the pickup state in LogItem
 	if (questScriptMode == QUESTSCRIPTMODE_INITIALIZE)
 	{
-		monsterTid = unusedTID(100, 1000);
+		monsterTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 		//Store the Imp Warlords' TID in the g_activeQuestStats array in the extradata field
 		//g_activeQuestStats[questIdx][QUEST_STATS_EXTRADATA] = impWarlordsTid;
 		g_activeQuestData[questIdx][questSpotIdx] = monsterTid;
@@ -1343,7 +1344,7 @@ script 681 (int questScriptMode, int questIdx, int questSpotIdx)
 	}
 	else if (questScriptMode == QUESTSCRIPTMODE_ALLOWEDTIME)
 	{
-		SetResultValue(12*60); // 12 minutes to find and eliminate Azazel
+		SetResultValue(22*60); // 22 minutes to find and eliminate Azazel
 		terminate;
 	}
 	else if (questScriptMode == QUESTSCRIPTMODE_GETNEXTQUEST)

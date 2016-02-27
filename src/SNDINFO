@@ -93,3 +93,12 @@ obelisk1 obelisk1
 $rolloff obelisk1 2048 4096
 
 $rolloff weapons/bfgx 2048 3000
+
+// Jack
+jack/move dormov
+jack/stop dorcls
+
+//Parachute
+parachute/pull velcro1
+parachute/unfurl slide1
+parachute/flop slide2

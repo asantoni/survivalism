@@ -9,7 +9,6 @@
 
 //#define MISSION_SCRIPT_MIN 825
 //#define MISSION_SCRIPT_MAX 826
-#define MISSION_MONSTER_TID 5000
 
 #define MISSION_INTERVAL_SECONDS 540 //9 minutes
 int g_missionIntervalTimer = 0;
@@ -168,7 +167,7 @@ script 826 (void)
 }
 
 //Imp Storm!
-script 827 (void)
+script 827 (void) NET
 {
 	int numImpsToSpawnPerPlayer = 12;
 	

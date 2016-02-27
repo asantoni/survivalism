@@ -83,19 +83,19 @@ script 505 (int spawnTID, int questIdx)
 	
 	int MIN_TID = 250;
 	int MAX_TID = 500;
-	int dragonTID = unusedTID(MIN_TID, MAX_TID);
-	int spotTID1 = dragonTID; //unusedTID(250, 500);
+	int dragonTID = uniqueTID(MIN_TID, MAX_TID-MIN_TID);
+	int spotTID1 = dragonTID; //UniqueTID(250, 500);
 	//The dragonTID has to be shared with the first waypoint map spot.
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.16)), y+FixedMul(r, cos(0.16)), z, spotTID1);
-	int spotTID2 = unusedTID(spotTID1+1, MAX_TID);
+	int spotTID2 = uniqueTID(spotTID1+1, MAX_TID-MIN_TID);
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.32)), y+FixedMul(r, cos(0.32)), z, spotTID2);
-	int spotTID3 = unusedTID(spotTID2+1, MAX_TID);
+	int spotTID3 = uniqueTID(spotTID2+1, MAX_TID-MIN_TID);
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.48)), y+FixedMul(r, cos(0.48)), z, spotTID3);
-	int spotTID4 = unusedTID(spotTID3+1, MAX_TID);
+	int spotTID4 = uniqueTID(spotTID3+1, MAX_TID-MIN_TID);
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.64)), y+FixedMul(r, cos(0.64)), z, spotTID4);
-	int spotTID5 = unusedTID(spotTID4+1, MAX_TID);
+	int spotTID5 = uniqueTID(spotTID4+1, MAX_TID-MIN_TID);
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.72)), y+FixedMul(r, cos(0.72)), z, spotTID5);
-	int spotTID6 = unusedTID(spotTID5+1, MAX_TID);
+	int spotTID6 = uniqueTID(spotTID5+1, MAX_TID-MIN_TID);
 	Spawn("DoomZDragonSpot", x+FixedMul(r, sin(0.96)), y+FixedMul(r, cos(0.96)), z, spotTID6);
 	
 	Log(s:"Dragon spots:");
@@ -186,7 +186,7 @@ script 506 (void)
 
 	int oldTid = ActivatorTID();
 	Log(s:"Dragon old TID: ", d: oldTid);
-	int newTid=unusedTID(500, 1000);
+	int newTid=UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
 	Thing_ChangeTID(0, newTid);
 	//Thing_SetSpecial(0, 0, newTid, 0, 0);
 }
@@ -338,7 +338,7 @@ script 925 (void)
     
     //(The crow can have multiple children, but the vector can only have one master, so we do it this way.)
     
-    int newFlightVectorTID = UniqueTID();
+    int newFlightVectorTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
     Thing_ChangeTID(0, newFlightVectorTID);
     
     //Make the crow the activator, because it should be the CrowFlightVector's master

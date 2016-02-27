@@ -75,6 +75,8 @@ Actor Furnace : Actor //: SwitchableDecoration
 	Radius 24
 	Height 38
 	Mass 0x7FFFFFFF
+    
+    ActiveSound "vile/firecrkl"
 	
 	DamageFactor "Axe", 100.0
 //SetActivatorToTarget
@@ -100,6 +102,7 @@ Actor Furnace : Actor //: SwitchableDecoration
 			//About 1 seconds of burn for 1 FurnaceFuel
 			FURN BCDEFGH 10
 			TNT1 A 0 A_TakeInventory("FurnaceFuel", 1)
+            TNT1 A 0 A_ActiveSound
 			FURN EFG 10
 			FURN H 10
 			goto Idle

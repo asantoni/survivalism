@@ -162,6 +162,7 @@ Actor MineDestroyer
 	}
 }
 
+/** You must have a StoneMineManager on your map for SilicaMineManager and IronMineManager to work too!!! */
 Actor SilicaMineMananger 10771
 {
     Game Doom
@@ -178,8 +179,8 @@ Actor SilicaMineMananger 10771
 			TNT1 A 0
 			TNT1 A 0 A_SpawnItemEx("SilicaMineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
 			TNT1 A 10500 // 5 minutes
-			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
-			TNT1 A 0 Thing_Remove(554) //Rocks
+			//TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			//TNT1 A 0 Thing_Remove(554) //Rocks
 			TNT1 A 8 
 			Loop
 	}
@@ -219,8 +220,8 @@ Actor IronMineMananger 10772
 			TNT1 A 0
 			TNT1 A 0 A_SpawnItemEx("IronMineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
 			TNT1 A 21000 // 10 minutes for iron! 
-			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
-			TNT1 A 0 Thing_Remove(554) //Rocks
+			//TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			//TNT1 A 0 Thing_Remove(554) //Rocks
 			TNT1 A 8 
 			Loop
 	}

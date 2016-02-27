@@ -78,10 +78,12 @@ actor MediumHighLoot : RandomSpawner
 	DropItem "DoomZEgg", 		255, 5		
 	DropItem "TorchItem", 		255, 5		
 	DropItem "HempSeeds", 	    255, 4
-	DropItem "Medikit", 		255, 5		
+	DropItem "Medikit", 		255, 4		
 	DropItem "SentryBox"		255, 5
 	DropItem "CKitItem"			255, 5
+	DropItem "HoistItem"		255, 3
 	DropItem "GasolineAmmo"		255, 1
+    DropItem "ParachuteItem"	255, 4
 }
 
 //Super rare good stuff :D
@@ -89,7 +91,7 @@ actor HighLoot : RandomSpawner
 {
 	DropItem "WensternShotgun",		255, 10
 	DropItem "HuntingRifle",		255, 10
-	DropItem "SentryBox"			255, 1
+	DropItem "AdvancedSentryBox"	255, 1
 	DropItem "BlueArmor"			255, 3
 }
 

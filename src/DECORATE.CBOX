@@ -326,6 +326,37 @@ actor CSteelBox : CBox
 	}
 }
 
+actor CGlassBox : CBox
+{
+	Tag "Glass Box"
+	+SHOOTABLE
+	+NOBLOOD
+	+SOLID
+	//+NOGRAVITY
+	//+CANPASS ---> crazy CPU usage
+    +USESPECIAL
+    
+	RenderStyle "Translucent"
+	Alpha 0.2
+
+    
+	Health 3000
+	Radius 24
+	Height 38
+	Mass 0x7FFFFFFF
+	
+	DamageFactor "Axe", 400.0
+	
+	States
+	{
+		DeathDrop:
+			//Turn back into a CBoxItem when we get destroyed
+			TNT1 A 0 A_SpawnItemEx("CGlassBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
+			Stop	
+	}
+}
+
+
 //The steel box item you pick up off the ground.
 actor CSteelBoxItem : CustomInventory
 {
@@ -410,3 +441,90 @@ actor CSteelBoxGhost
 			Stop
 	}
 }
+
+
+//The glass box item you pick up off the ground.
+actor CGlassBoxItem : CustomInventory
+{
+	Tag "Glass Box"
+	+SHOOTABLE
+	+NOBLOOD
+    +WINDTHRUST
+	//-SOLID
+	//+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
+	//+CANPASS //---> crazy CPU usage
+	Health 50
+	Inventory.PickupMessage "Picked up glass"
+	Inventory.UseSound "misc/invuse"
+	+INVENTORY.INVBAR
+	Inventory.Icon "GLASI" //"PISTI0"
+	Inventory.MaxAmount 400
+	//+COUNTITEM
+	+INVENTORY.PICKUPFLASH
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			GLAS A -1
+			Wait
+		Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			//Fail if the construction mutex is already held, to prevent you from 
+			//dropping too many blocks from the sky too fast (they'd get stuck together in the sky)
+			//TNT1 A 0 A_JumpIfInventory("ConstructionMutex", 1, "FailState")
+			TNT1 A 0 A_JumpIf(ACS_ExecuteWithResult(938), "ReallyUse") 
+			Fail
+		ReallyUse:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			
+			//This is a bit insane because SXF_ABSOLUTEPOSITION doesn't
+			//actually work. There's no way to position something absolutely,
+			//so we call scripts that convert each coordinate into an absolute
+			//coordinate relative to the map's origin. We then snap it to the grid
+			//and translate it back to where the player is.
+			TNT1 A 0 A_SpawnItemEx("CGlassBox", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
+								   256.0, 
+								   0.0, 0.0, 0.0, //velocity 
+								   0.0, //angle
+								   SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+
+			//Release the construction mutex
+			TNT1 A 0 ACS_ExecuteAlways(939, 0, 10) //Delay release by 10/35 tics
+
+			//try the grid snapping express without absolute
+			//TNT1 A 0 A_SpawnItemEx("CBox", (x>>6)<<6, (y>>6)<<6, 256.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM, 0)
+			
+			//TNT1 A 1 A_Print("hi")
+			Stop
+	}
+}
+
+actor CGlassBoxGhost
+{
+	-SOLID
+	-SHOOTABLE
+    //+USESPECIAL
+	+NOGRAVITY	
+	+NOBLOCKMAP //New in r13
+	
+	Health 0x7FFFFFFF
+	Radius 24
+	Height 38
+	Mass 0x7FFFFFFF
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+			//Move it slightly towards the player so it
+			//doesn't end up inside another box
+			//TNT1 A 0 ACS_Execute(934, 0)
+			GLAS A 4
+			goto Death
+		Death:
+			TNT1 A 0 //Dummy frame is needed
+			Stop
+	}
+}
+

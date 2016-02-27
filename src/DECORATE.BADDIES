@@ -1702,6 +1702,7 @@ actor DoomZBossCyberdemon : Cyberdemon
     
     MinMissileChance 10
     PainChance 2
+    PainThreshold 50
     
     +DONTHARMCLASS
     
