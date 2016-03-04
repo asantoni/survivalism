@@ -2298,7 +2298,9 @@ script 971 (void)
             fallingCounter = 0;
         }
         
-        if (fallingCounter >= 2) {
+        int heightDifference = GetActorZ(0) - GetActorFloorZ(0);
+        
+        if (fallingCounter >= 2 && heightDifference > 400.0) {
             UseActorInventory(0, "ParachuteItem");
             Delay(3*35); //Don't let it happen again for 3 seconds.
             fallingCounter = 0;
