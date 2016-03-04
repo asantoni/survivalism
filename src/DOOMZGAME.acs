@@ -337,7 +337,7 @@ DONE:
 #define BERRY_SPAWNER_INTERVAL_SECONDS 6*60 //12 minutes (1 day) in r15 originally
 #define BASE_BERRY_PLANTS 12
 
-#libdefine HUNGER_PERIOD_SECONDS 1080 //Time it takes to starve - 1.5 days
+#libdefine HUNGER_PERIOD_SECONDS 5040 //Time it takes to starve - 1.5 days originally (1080 s), changed to 7 days to nerf the hunger system
 
 #define BASE_CROW_COUNT 25
 #define BIRD_SPAWNER_INTERVAL_SECONDS 5*60
