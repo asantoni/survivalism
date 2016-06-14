@@ -2723,7 +2723,7 @@ ACTOR DaggerFallThing180 : ChoppableTree 16309
     TNT1 A 0 A_KillChildren
     TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
   SpawnStill:
-    DFFG X -1
+    DFFG Z -1
     Stop
   }
 }

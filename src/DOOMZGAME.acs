@@ -957,7 +957,8 @@ script 210 (void)
 	//by plugging it into a sigmoid function so that it's no longer linear.
 	//Whole rescaling equation is a sigmoid:
 	//	y = 0.5*(1 + (10x-5)/ (1+abs(10x-5)))
-	//Rescale it:
+    //These next couple lines of code are the equation done in fixed point.
+	//Rescaling the day fraction:
 	int nightShortnessFactor = 10.0; //Higher = shorter night
 	int fX = FixedMul(nightShortnessFactor, fDayFraction) - FixedDiv(nightShortnessFactor, 2.0);
 	//int fX = FixedMul(10.0, fDayFraction) - 5.0;
@@ -1630,10 +1631,16 @@ script 949 (int ammoType)
 int gridSize = 4096.0;
 int kVegDisappearDistance = 2896.5; // sqrt(2*gridSize*gridSize)
 
+//FIXME: This runs once per player, and never terminates, so rejoining causes it to run again!
 script 950 ENTER CLIENTSIDE
 {
+    //Only run for the local player!
+    if (PlayerNumber() != ConsolePlayerNumber()) {
+        terminate;
+    }
+    
 	while (true)
-	{
+	{   
 		int playerTID = ActivatorTID();
 		int playerX = GetActorX(playerTID);
 		int playerY = GetActorY(playerTID);
@@ -1645,6 +1652,11 @@ script 950 ENTER CLIENTSIDE
 
 		int gridCellSpacing = 256.0;
 		int gridCellCountWide = 16;
+        
+        //Sanity check
+        if (PlayerIsSpectator(ConsolePlayerNumber())) {
+            terminate;
+        }
 		
 		//The vegetation is generated on a square grid. This grid is populated with cells,
 		//with a plant on each cell vertex. The origin of the grid is shifted such that the
@@ -2150,7 +2162,7 @@ script 965 (int message)
 
 //Crow/bird spawner script
 //This is based on the berry spawner script. See script 962 for comments!
-script 966 OPEN
+script 966 OPEN CLIENTSIDE
 {
 	int questSpotTID = -1;
 	
@@ -2223,9 +2235,13 @@ script 969 (void)
     }
 }
 
-//Parachute script
-script 970 (void)
+//Parachute deployment script
+script 970 (int delayTics)
 {
+    if (delayTics > 0) {
+        Delay(delayTics);
+    }
+    
     int origGravity = GetActorProperty(0, APROP_GRAVITY);
     if (origGravity == 0.0) {
         //Already parachuting, so abort!
@@ -2234,9 +2250,7 @@ script 970 (void)
     SetActorProperty(0, APROP_GRAVITY, 0.0);
     
     int exitConditionCounter = 0;
-    
-    //SetActorState(0, "SpawnParachute");
-    
+        
     int parachuteTID = PARACHUTE_TID_MIN + PlayerNumber();
     
     int paraX = GetActorX(0);

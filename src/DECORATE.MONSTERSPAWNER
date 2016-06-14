@@ -429,12 +429,15 @@ actor BerrySpawnerProjectile : DoomZMonsterSpawnerProjectile
 actor CrowSpawnerProjectile : DoomZMonsterSpawnerProjectile
 {	
 	+FLOORHUGGER
+    //Make crows clientside only to save bandwidth!
+    +CLIENTSIDEONLY
+    -SERVERSIDEONLY
 
 	States
 	{
 		ReallySpawnMonster:
 			TNT1 A 1 //A_UnsetSolid //So we don't block the spawning below
-			//Spawn random berries:
+			//Spawn a crow:
 			TNT1 A 5 ACS_ExecuteAlways(204, 0, 4, 1) //200 tic duration so our TID sticks around
 			Stop
 	}

@@ -449,6 +449,8 @@ function void giveInitialInventory (int playerTid)
 {
 	GiveActorInventory(playerTid, "DoomZBoxPlacer", 1);
 	GiveActorInventory(playerTid, "Axe", 1);
+    GiveActorInventory(playerTid, "SpawnParachuteItem", 1);
+
 	//GiveActorInventory(playerTid, "Fist", 1);
 	if (CheckActorInventory(playerTid, "XPLevel") > 14) {
 		GiveActorInventory(playerTid, "InventoryGuardItem", 1);
@@ -463,6 +465,13 @@ function void setupPlayer(int playerTid)
 	SetActorProperty(playerTid, APROP_Alpha, 1.0);
 	giveInitialInventory(playerTid);
 	
+    //Move the actor to the ceiling because UsePlayerStartZ in MAPINFO isn't working in Zandronum 2.0 (Try without this in Zandronum 3.0?)
+    SetActorPosition(playerTid, GetActorX(playerTid), GetActorY(playerTid), GetActorCeilingZ(playerTid) - 128.0, false);
+    
+    //Make the player parachute in, if they're not spawning on ground.
+    UseActorInventory(playerTid, "SpawnParachuteItem");
+
+    
 	//Summon Death to stalk the player if they're cursed by it.
 	if (CheckActorInventory(playerTid, "DeathCurse") > 0) {
 		ACS_ExecuteAlways(955, 0, 0);

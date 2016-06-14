@@ -163,7 +163,7 @@ script 777 (void)
 {
 }
 
-script 750 (void) //ENTER
+script 750 (void)
 { 
 	int buttons;
 	int selectedItemIdx = 0;

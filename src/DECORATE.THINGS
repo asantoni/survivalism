@@ -1155,6 +1155,18 @@ actor ParachuteItem : CustomInventory
     }
 }
 
+actor SpawnParachuteItem : ParachuteItem 
+{
+
+	States
+	{
+		Use:
+			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+            TNT1 A 1 ACS_ExecuteAlways(970, 0, 10) //Deploy after 10 tics, unlike the regular ParachuteItem which requires momentum before triggering
+            stop
+    }
+}
+
 actor Parachute
 {
     //+NONINTERACTIVE
@@ -1181,6 +1193,7 @@ actor Parachute
             TNT1 A 0
             TNT1 A 0 A_Gravity
             TNT1 A 0 A_PlayWeaponSound("parachute/flop")
+            TNT1 A 0 A_RearrangePointers(AAPTR_NULL, AAPTR_NULL, AAPTR_DEFAULT) //Clear the player as our master
             PARA B 4
             PARA C 3
             PARA D 400
