@@ -15,6 +15,7 @@ actor SentryGun
   +FLOORCLIP
   +FRIENDLY
   +NOBLOOD
+  +USESPECIAL
   //+LOOKALLAROUND
   +NEVERRESPAWN
   +STANDSTILL
@@ -22,9 +23,20 @@ actor SentryGun
   {
   Spawn:
     TNT1 A 0
+    //Use door open script to make this drop a SentryBox when we activate it:
+    SENT A 0 Thing_SetSpecial(tid, 226, 935, tid, 0)
+  SpawnLook:
+    TNT1 A 0
 	//300 units max distance to see, 0 fov = 180 FOV
 	SENT AAAAA 3 A_LookEx(0, 0, 300, 300, 0, "See")
 	loop
+  Active:
+  Open:
+    TNT1 A 0 //Dummy frame is needed for A_Jump to work
+    //Don't actually open unless we have the player as our target, so
+    //we can detect when they walk away.
+    SENT A 0 A_SpawnItemEx("SentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 4.0)
+    goto Death
   See:
     TNT1 A 0
     SENT AAAAA 3 A_Chase(0, "Missile", CHF_DONTMOVE)
@@ -43,7 +55,7 @@ actor SentryGun
   Forget:
      SENT A 0 A_TakeInventory("Forgettimer", 0x7FFFFFFF)
      SENT A 3 A_ClearTarget
-     Goto Spawn
+     Goto SpawnLook
   Death:
     SENT C 1 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
     SENT C 0 A_PlaySoundEx ("weapons/rocklx", "SoundSlot6")
@@ -72,6 +84,7 @@ actor AdvancedSentryGun
   +FLOORCLIP
   +FRIENDLY
   +NOBLOOD
+  +USESPECIAL
   //+LOOKALLAROUND
   +NEVERRESPAWN
   +STANDSTILL
@@ -79,15 +92,25 @@ actor AdvancedSentryGun
   {
   Spawn:
     TNT1 A 0
-    TNT1 A 0 A_SetArg(0, 100)
+    //Use door open script to make this drop a SentryBox when we activate it:
+    SENT A 0 Thing_SetSpecial(tid, 226, 935, tid, 0)
+  SpawnReset:
+    TNT1 A 0 A_SetArg(4, 100)
   SpawnLook:
     //Oscillate back and forth
-    SENT A 3 A_SetAngle(360*sin(args[0]))
-    SENT A 0 A_SetArg(0, args[0] + 5)
-    SENT A 0 A_JumpIf(args[0] == 0, "Spawn")
+    SENT A 3 A_SetAngle(360*sin(args[4]))
+    SENT A 0 A_SetArg(4, args[4] + 5)
+    SENT A 0 A_JumpIf(args[4] == 0, "Spawn")
     //600 units max distance to see for advanced turrets
 	SENT AAAAA 3 A_LookEx(0, 0, 600, 600, 360, "See") //360 degree FOV for advanced turrets
 	loop
+  Active:
+  Open:
+    TNT1 A 0 //Dummy frame is needed for A_Jump to work
+    //Don't actually open unless we have the player as our target, so
+    //we can detect when they walk away.
+    SENT A 0 A_SpawnItemEx("AdvancedSentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 4.0)
+    goto Death
   See:
     TNT1 A 0
     SENT AAAAA 3 A_Chase(0, "Missile", CHF_DONTMOVE)
@@ -106,7 +129,7 @@ actor AdvancedSentryGun
   Forget:
      SENT A 0 A_TakeInventory("Forgettimer", 0x7FFFFFFF)
      SENT A 3 A_ClearTarget
-     Goto Spawn
+     Goto SpawnReset
   Death:
     SENT C 1 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
     SENT C 0 A_PlaySoundEx ("weapons/rocklx", "SoundSlot6")
