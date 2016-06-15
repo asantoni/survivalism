@@ -120,7 +120,7 @@ Actor MineMananger 10770
 			TNT1 A 0
 			TNT1 A 0 A_SpawnItemEx("MineItemGenerator", 0, 0, 0, 0.0, 0.0, 0.0)
 			TNT1 A 10500 // 5 minutes
-			TNT1 A 1 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
+			TNT1 A 0 A_SpawnItemEx("MineDestroyer", 0, 0, 0, 0.0, 0.0, 0.0)
 			TNT1 A 0 Thing_Remove(554) //Rocks
 			TNT1 A 8 
 			Loop
