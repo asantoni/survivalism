@@ -51,6 +51,8 @@ actor Torch : ShortRedTorch
 	//+DORMANT
 	Damage 0
 	DamageFactor "SentryTurret", 0.0
+    
+    Height 38.0 //Make it match the height of boxes, which is really close anyways.
 
 	States
 	{
@@ -634,21 +636,19 @@ actor JackItem : CustomInventory
   +INVENTORY.INVBAR
   +INVENTORY.PICKUPFLASH
 
-    States
-    {
-        Spawn:
-            JACG A 0
-            JACG A -1
-            Wait
-        Use:
-            TNT1 A 0
-            TNT1 A 0 A_SpawnItemEx("JackBase", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-                       64.0, 
-                       0.0, 0.0, 0.0, //velocity 
-                       0.0, //angle
-                       SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM | SXF_SETMASTER)
-            stop
-    }
+   States {
+      Spawn:
+         JACG A 1
+         Wait
+      Use:
+         TNT1 A 0 A_JumpIfInventory("ConstructionMutex",1,"Cancel")
+         TNT1 A 0 A_SpawnItemEx("JackBase", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 256.0, 0.0, 0.0, -8.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+         TNT1 A 0 ACS_ExecuteAlways(256,0)      //Give ConstructionMutex, Wait, Take ConstructionMutex
+         Stop
+      Cancel:
+         TNT1 A 0
+         Fail
+   }
 }
 
 actor JackBase
@@ -666,7 +666,7 @@ actor JackBase
     +USESPECIAL
 
     Radius 24
-	Height 28.5
+	Height 28
     
     Mass 0x7FFFFFFF
     Health 400 //0x7FFFFFFF
@@ -693,7 +693,7 @@ actor JackBase
             JACK A 4
             JACK A 4 A_JumpIf(momz != 0, "WaitUntilLanded")
             TNT1 A 0 A_SetArg(2, z)
-            TNT1 A 0 A_SpawnItemEx("JackTop", 0, 0, 30.0, 0, 0, 0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION)
+            TNT1 A 0 A_SpawnItemEx("JackTop", 0, 0, 28.0, 0, 0, 0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION)
         Idle:
             TNT1 A 0
             JACK A 70 A_JumpIf(z != args[2], "ResetJackTop")
@@ -744,7 +744,7 @@ actor JackTop
     +NOTARGET
     
     Radius 24
-	Height 9.5
+	Height 10
     
     Mass 0x7FFFFFFF
     Health 0x7FFFFFFF
@@ -921,21 +921,19 @@ actor HoistItem : CustomInventory
   +INVENTORY.INVBAR
   +INVENTORY.PICKUPFLASH
 
-    States
-    {
-        Spawn:
-            HOIG A 0
-            HOIG A -1
-            Wait
-        Use:
-            TNT1 A 0
-            TNT1 A 0 A_SpawnItemEx("HoistBase", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-                       64.0, 
-                       0.0, 0.0, 0.0, //velocity 
-                       (angle/90.0)-(angle%90.0), //angle
-                       SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEMOMENTUM /*| SXF_ABSOLUTEANGLE */)
-            stop
-    }
+   States {
+      Spawn:
+         HOIG A 1
+         Wait
+      Use:
+         TNT1 A 0 A_JumpIfInventory("ConstructionMutex",1,"Cancel")
+         TNT1 A 0 A_SpawnItemEx("HoistBase", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 256.0, 0.0, 0.0, 0.0, -angle%90+((angle%90)>45)*90-90, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEMOMENTUM)
+         TNT1 A 0 ACS_ExecuteAlways(256,0)      //Give ConstructionMutex, Wait, Take ConstructionMutex
+         Stop
+      Cancel:
+         TNT1 A 0
+         Fail
+   }
 }
 
 actor HoistBase

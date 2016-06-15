@@ -96,13 +96,12 @@
 
 //========================================
 // Berry system
-// By Zedek the Plague Doctor
+// Originally by Zedek the Plague Doctor
+// Rewritten by Mr_Xerxes
 //========================================
 
-#include "actors/food/berries/b_main.txt"			// Initial plant randomizer
-#include "actors/food/berries/b_blueberry.txt"		// Blueberry
-#include "actors/food/berries/b_strawberry.txt"		// Strawberry
-#include "actors/food/berries/b_cranberry.txt"		// Cranberry
+#include "actors/food/berries/berries.txt"			// Berries and berry randomizer
+
 
 // HIGH-TIER FOOD
 

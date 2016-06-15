@@ -1268,6 +1268,14 @@ script 939 (int delayTics)
 	SetResultValue(true);
 }
 
+//Mr_Xerxes' simplified construction mutex
+script 256 (void) {
+   GiveInventory("ConstructionMutex",1);
+   Delay(10);      //Delay release by 10/35 tics
+   TakeInventory("ConstructionMutex",0x7FFFFFFF);
+}
+
+
 //Check if actor has been placed on soil. This is used
 //to see if turnips have been planted on soil or not.
 script 940 (void)

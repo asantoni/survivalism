@@ -18,41 +18,20 @@ actor QuestBoxItem : CustomInventory
 	
 	DamageFactor "SentryTurret", 0.0
 	
-	States
-	{
-		Spawn:
-			TNT1 A 0 //Dummy frame is needed for A_Jump to work
-			//PLAY A 200 A_Jump(256, "DropYellowboy")
-			//CRTG AAAA 6
-			QBOX A 1
-			Wait
-		Use:
-			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+   States {
+      Spawn:
+         QBOX A 1
+         Wait
+      Use:
+         TNT1 A 0 A_JumpIfInventory("ConstructionMutex",1,"Cancel")
+         TNT1 A 0 A_SpawnItemEx("QuestBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 256.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
+         TNT1 A 0 ACS_ExecuteAlways(256,0)      //Give ConstructionMutex, Wait, Take ConstructionMutex
+         Stop
+      Cancel:
+         TNT1 A 0
+         Fail
+   }
 
-			//TNT1 A 0 ACS_Execute(920) // A_SpawnItemEx("Yellowboy", 8, 0, 8, 0, 0, 0, 0, 0, 0) //128 = 50% chance			
-			//TNT1 A 0 A_SpawnItemEx("CBox", 100, 0, 8, 0, 0, 0, 0, 0, 0)
-			//TNT1 A 0 A_SpawnItemEx("CBox", ACS_ExecuteWithResult(930), ACS_ExecuteWithResult(931), 256.0, 0, 0, 0, 0, SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM, 0)
-			//TNT1 A 1 ACS_ExecuteAlways(933, 0, ((x>>8)<<8)<<16, ((y>>8)<<8)<<16, z)
-			
-			//This is a bit insane because SXF_ABSOLUTEPOSITION doesn't
-			//actually work. There's no way to position something absolutely,
-			//so we call scripts that convert each coordinate into an absolute
-			//coordinate relative to the map's origin. We then snap it to the grid
-			//and translate it back to where the player is.
-			TNT1 A 0 A_SpawnItemEx("QuestBox", ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-								   64.0, 
-								   0.0, 0.0, 0.0, //velocity 
-								   0.0, //angle
-								   SXF_ABSOLUTEPOSITION | SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM)
-			//Print these variables to the screen:
-			//TNT1 A 1 ACS_ExecuteAlways(933, 0, x, y, z)
-
-			//try the grid snapping express without absolute
-			//TNT1 A 0 A_SpawnItemEx("CBox", (x>>6)<<6, (y>>6)<<6, 256.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEMOMENTUM, 0)
-			
-			//TNT1 A 1 A_Print("hi")
-			Stop
-	}
 }
 
 // A deployed crafting box

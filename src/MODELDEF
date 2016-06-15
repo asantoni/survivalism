@@ -1,435 +1,324 @@
-Model CBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
+// ------------- //
+// --- CUBES --- //
+// ------------- //
 
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-Model CStoneBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3stone.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CStoneBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-stone.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-Model CSteelBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3steel.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CSteelBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-steel.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-
-Model CGlassBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3glass.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CGlassBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-glass.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-
-
-Model CBoxGhost
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CBoxGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-Model CStoneBoxGhost
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3stone.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CStoneBoxGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-stone.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-Model CSteelBoxGhost
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3steel.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CSteelBoxGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-steel.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
-
-Model CGlassBoxGhost
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3glass.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CBOX A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CGlassBoxGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-glass.png"
+   Scale 1 1 1.2
+   FrameIndex GLAS A 0 0
 }
 
+// ------------- //
+// --- CRAFT --- //
+// ------------- //
 
-Model CraftingBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-crafting.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CRFT A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CPillar {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 0.08 0.08 2.4         //W:48(1.0) H:38(1.2) => W:4(0.08) H:76(2.4)
+   FrameIndex CPIL A 0 0
 }
 
-Model QuestBox
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "questbox.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex CRFT A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CPillarGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 0.08 0.08 2.4         //W:48(1.0) H:38(1.2) => W:4(0.08) H:76(2.4)
+   FrameIndex CPIL A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnace.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CFloor {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   FrameIndex CFLO A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnacea0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN B 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CFloorGhost {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   FrameIndex CFLO A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnaceb0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
+// ------------- //
+// --- TOOLS --- //
+// ------------- //
 
-    FrameIndex FURN C 0 0 // The sprite lump, sprite frame, model index, frame number
+Model CraftingBox {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-craft.png"
+   Scale 1 1 1.2
+   FrameIndex CRFT A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnacec0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN D 0 0 // The sprite lump, sprite frame, model index, frame number
+Model QuestBox {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-quest.png"
+   Scale 1 1 1.2
+   FrameIndex CRFT A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnaced0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN E 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnace.png"
+   Scale 1 1 1.2
+   FrameIndex FURN A 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnacee0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN F 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnacea0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN B 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnacef0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN G 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnaceb0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN C 0 0
 }
 
-Model Furnace
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-furnaceg0.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex FURN H 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnacec0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN D 0 0
 }
 
-Model CPillar
-{
-    Path "MODELS"  // Path to model in PK3
-    /*
-	Model 0 "crate2.md2" // Model index, model file
-    Skin 0 "crate2.jpg"  // Model index, texture 
-	Scale 0.2 0.2 -4.0    // Scale values
-	ZOffset 68 //Needed this when I inverted Z scale
-	*/
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 1 1 23.0    // Scale values
-	ZOffset 36 //Needed this when I inverted Z scale
-
-    FrameIndex CPIL A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnaced0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN E 0 0
 }
 
-Model CPillarGhost
-{
-    Path "MODELS"  // Path to model in PK3
-	
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 1 1 26.0    // Scale values
-	ZOffset 36 //Needed this when I inverted Z scale
-
-    FrameIndex CPIL A 0 0 // The sprite lump, sprite frame, model index, frame number
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnacee0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN F 0 0
 }
 
-Model CDoor
-{
-    Path "models/door"  // Path to model in PK3
-	Model 0 "ZedekDoor.md3" // Model index, model file
-	Scale 1.0 1.0 1.0    // Scale values
-	ZOffset 42 //Needed this when I inverted Z scale
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnacef0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN G 0 0
+}
+
+Model Furnace {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-furnaceg0.png"
+   Scale 1 1 1.2
+   FrameIndex FURN H 0 0
+}
+
+Model JackBase {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-jack.png"
+   Scale 1 1 0.88            //W:48(1.0) H:38(1.2) => W:48(1.0) H:28(0.88)
+   FrameIndex JACK A 0 0
+}
+
+Model JackTop {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 1 1 0.32            //W:48(1.0) H:38(1.2) => W:48(1.0) H:10(0.32)
+   FrameIndex JACK B 0 0
+}
+
+Model HoistBase {
+   Path "MODELS"
+   Model 0 "tool.md2"
+   Skin 0 "tool-hoist.png"
+   Scale 1 1 1.2
+   FrameIndex HOIS A 0 0
+}
+
+Model HoistLift {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-steel.png"
+   Scale 1 1 0.32            //W:48(1.0) H:38(1.2) => W:48(1.0) H:10(0.32)
+   FrameIndex HOIS B 0 0
+}
+
+// ------------- //
+// --- BOATS --- //
+// ------------- //
+
+Model Raft {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   FrameIndex CFLO A 0 0
+}
+
+Model Boat {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-wood.png"
+   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   FrameIndex CFLO A 0 0
+}
+
+// ------------- //
+// --- DOORS --- //
+// ------------- //
+
+Model CDoor {
+   Path "models/door"
+   Model 0 "ZedekDoor.md3"
+   Scale 1.0 1.0 1.0
+   ZOffset 42
 
     FrameIndex CDOR A 0 0
-	FrameIndex CDOR B 0 1
-	FrameIndex CDOR C 0 2
-	FrameIndex CDOR D 0 3
-	FrameIndex CDOR E 0 4
-	FrameIndex CDOR F 0 5
-	FrameIndex CDOR G 0 6
-	FrameIndex CDOR H 0 7
-	FrameIndex CDOR I 0 8
-	FrameIndex CDOR J 0 9
+   FrameIndex CDOR B 0 1
+   FrameIndex CDOR C 0 2
+   FrameIndex CDOR D 0 3
+   FrameIndex CDOR E 0 4
+   FrameIndex CDOR F 0 5
+   FrameIndex CDOR G 0 6
+   FrameIndex CDOR H 0 7
+   FrameIndex CDOR I 0 8
+   FrameIndex CDOR J 0 9
 }
 
-Model CDoorGhost
-{
-    Path "MODELS"  // Path to model in PK3
-	
-    Path "models/door"  // Path to model in PK3
-	Model 0 "ZedekDoor.md3" // Model index, model file
-	Scale 1.0 1.0 1.0    // Scale values
-	ZOffset 42 //Needed this when I inverted Z scale
+Model CDoorGhost {
+   Path "models/door"
+   Model 0 "ZedekDoor.md3"
+   Scale 1.0 1.0 1.0
+   ZOffset 42
 
-    FrameIndex CDOR A 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-/*
-Model CDoorGhost
-{
-    Path "MODELS"  // Path to model in PK3
-	
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3-door2.png"  // Model index, texture 
-	Scale 13 13 24.0    // Scale values
-	ZOffset 42 //Needed this when I inverted Z scale
-
-    FrameIndex CDOR A 0 0 // The sprite lump, sprite frame, model index, frame number
-}*/
-
-
-Model CFloor
-{
-    Path "MODELS"  // Path to model in PK3
-	/*
-    Model 0 "crate2.md2" // Model index, model file
-    Skin 0 "crate2.jpg"  // Model index, texture 
-	Scale 8.0 8.0 -0.2   // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-	*/
-	
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 63.0 63.0 2    // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-
-    FrameIndex CFLO A 0 0 // The sprite lump, sprite frame, model index, frame number
+   FrameIndex CDOR A 0 0
 }
 
-Model CFloorGhost
-{
-    Path "MODELS"  // Path to model in PK3
+// ------------- //
+// --- OTHER --- //
+// ------------- //
 
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 63.0 63.0 2.0    // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-
-    FrameIndex CFLO A 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-
-Model HempPlant
-{ 
-   Path "Models" 
-   MODEL 0 "weed.md3"
-   SKIN 0 "weed.png"
+Model HempPlant {
+   Path "Models"
+   model 0 "weed.md3"
+   Skin 0 "weed.png"
    Scale 5.0 5.0 5.0
    ZOffset -1
-   
+
    FrameIndex HEMP A 0 0
 }
 
+Model WaterfallSpray2 {
+   Path "MODELS"
+   Model 0 "waterfall.md2"
+   Skin 0 "waterfall2.png"
+   Scale 192.0 64.0 300.0
+   ZOffset 464
 
-Model Raft
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 63.0 63.0 8    // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-
-    FrameIndex CFLO A 0 0 // The sprite lump, sprite frame, model index, frame number
+   FrameIndex WTFL B 0 0
 }
 
+Model WaterfallSpray3 {
+   Path "MODELS"
+   Model 0 "waterfall.md2"
+   Skin 0 "waterfall4.png"
+   Scale 192.0 64.0 300.0
+   ZOffset 464
 
-Model Boat
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 63.0 63.0 8    // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-
-    FrameIndex CFLO A 0 0 // The sprite lump, sprite frame, model index, frame number
+   FrameIndex WTFL C 0 0
 }
 
+Model WaterfallSpray4 {
+   Path "MODELS"
+   Model 0 "waterfall.md2"
+   Skin 0 "waterfall5.png"
+   Scale 192.0 64.0 300.0
+   ZOffset 464
 
-
-Model WaterfallSpray2
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "waterfall.md2" // Model index, model file
-    Skin 0 "waterfall2.png"  // Model index, texture 
-
-	Scale 192.0 64.0 300.0   // Scale values
-	ZOffset 464
-
-    FrameIndex WTFL B 0 0 //Model index 0 would would draw all 4 models!!!
+   FrameIndex WTFL D 0 0
 }
 
-Model WaterfallSpray3
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "waterfall.md2" // Model index, model file
-    Skin 0 "waterfall4.png"  // Model index, texture 
-	
-	Scale 192.0 64.0 300.0   // Scale values
-	ZOffset 464
+Model InventoryGuard {
+   Path "MODELS"
+   Model 0 "inventory_guardian2.md2"
+   Skin 0 "inventory_guardian2.png"
+   Scale 4.0 4.0 4.0      //64.0 64.0 64.0
+   ZOffset -24
 
-    FrameIndex WTFL C 0 0 //Model index 0 would would draw all 4 models!!!
-}
-
-Model WaterfallSpray4
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "waterfall.md2" // Model index, model file
-    Skin 0 "waterfall5.png"  // Model index, texture 
-
-	Scale 192.0 64.0 300.0   // Scale values
-	ZOffset 464
-
-    FrameIndex WTFL D 0 0 //Model index 0 would would draw all 4 models!!!
-
-}
-
-Model InventoryGuard
-{
-    Path "MODELS"  // Path to model in PK3
-	Model 0 "inventory_guardian2.md2" // Model index, model file
-    Skin 0 "inventory_guardian2.png"  // Model index, texture 
-	Scale 4.0 4.0 4.0 //64.0 64.0 64.0   // Scale values
-	ZOffset -24 
-	
-    FrameIndex INVG A 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-
-
-Model JackBase
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3hoist.png"  // Model index, texture 
-	Scale 12.5 12.5 9.375    // Scale values
-	ZOffset 18 //Needed this when I inverted Z scale
-
-    FrameIndex JACK A 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-
-Model JackTop
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3.png"  // Model index, texture 
-	Scale 12.5 12.5 3.125    // Scale values
-	ZOffset 10 //Needed this when I inverted Z scale
-
-    FrameIndex JACK B 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-
-Model HoistBase
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3hoist.png"  // Model index, texture 
-	Scale 12.5 12.5 12.5    // Scale values
-	ZOffset 23 //Needed this when I inverted Z scale
-
-    FrameIndex HOIS A 0 0 // The sprite lump, sprite frame, model index, frame number
-}
-
-Model HoistLift
-{
-    Path "MODELS"  // Path to model in PK3
-    Model 0 "box.md2" // Model index, model file
-    Skin 0 "box3steel.png"  // Model index, texture 
-	Scale 12.5 12.5 2    // Scale values
-	ZOffset 4 //Needed this when I inverted Z scale
-
-    FrameIndex HOIS B 0 0 // The sprite lump, sprite frame, model index, frame number
+   FrameIndex INVG A 0 0
 }
