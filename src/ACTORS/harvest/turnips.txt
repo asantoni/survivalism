@@ -93,8 +93,7 @@ actor RipePlantedTurnip
 		Stop
 	  Death.Axe:
 		TNT1 A 0 
-		TNT1 A 0 A_JumpIfInventory("Ripe", 1, "Pain.Axe")
-	    goto Death //otherwise wilt
+	    goto Death // Wilt
 	  Death:
 	  Wilt:
 	    TRNP E 350

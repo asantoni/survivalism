@@ -1,3 +1,4 @@
+/*
 #include "DECORATE.BADDIES"
 #include "DECORATE.ANIMALS"
 #include "DECORATE.PLAYERS"
@@ -23,6 +24,7 @@
 #include "DECORATE.CPILLAR"
 #include "DECORATE.CDOOR"
 #include "DECORATE.CFLOOR"
+*/
 
 //================================================
 // MONSTERS

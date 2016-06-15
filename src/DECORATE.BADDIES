@@ -859,7 +859,7 @@ ACTOR DoomZBaronOfHellCommon : BaronOfHell
     BOSS K 8
     BOSS L 8 A_NoBlocking
     BOSS MN 8
-	BOSS N 1 A_SpawnItemEx("MediumHightLoot", 0, 32.0)
+	BOSS N 1 A_SpawnItemEx("MediumHighLoot", 0, 32.0)
 	//Remove ourselves after 60 seconds
 	BOSS O 2100
 	BOSS O 0 ACS_ExecuteAlways(501, 0)    
