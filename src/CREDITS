@@ -17,11 +17,37 @@ zombies and other surprises. Gather weapons and resources to
 survive! And watch out for other players - Are they friends or foes?
 
 - Maps: doomz1, doomz2
-- Server flags to use:
-	alwaysapplydmflags true
-	sv_defaultdmflags false
-	sv_weaponstay false
-	
+
+SERVER FLAGS FOR MULTIPLAYER
+==============
+
+alwaysapplydmflags true
+sv_defaultdmflags false
+sv_weaponstay false
+sv_noautoaim true
+sv_disallowbots true
+sv_nodrop false
+dmflags 1232
+dmflags2 514
+dmflags3 0
+compatflags 0
+//This is important so that crafting menus work in multiplayer
+compatflags2 2
+// Other stuff:
+sv_nomaprotation true
+sv_nokickvote true
+authhostname auth.zandronum.com:16666
+databasefile doomz.db
+
+# Other
+sv_chasecam 1
+sv_useteamstartsindm 1
+
+// DMFlag migration 1.x -> 2.x:
+// compat_clientssendfullbuttoninfo moved from compatflags2 to zacompatflags
+zacompatflags 2
+compatflags2 0
+
 
 CREDITS:
 ================
@@ -112,6 +138,7 @@ Special Thanks:
 - Visual Vincent for his awesome ACS.NET library
 - Zedek the Plague Doctor for his Zed Patch fork
 - Aenima for the grappling rope and gameplay ideas
+- Mr_Xerxes for a big bunch of rewritten DECORATE, new cube models, and great attention to detail!
 
 Release 5 helpers:
 
