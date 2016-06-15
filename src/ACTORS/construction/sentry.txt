@@ -57,6 +57,8 @@ actor SentryGun
      SENT A 3 A_ClearTarget
      Goto SpawnLook
   Death:
+    SENT C 0
+    SENT C 0 Thing_SetSpecial(0,0,0,0,0) //Prevent activation again
     SENT C 1 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
     SENT C 0 A_PlaySoundEx ("weapons/rocklx", "SoundSlot6")
     SENT C 0 A_SpawnItem ("SentryBoom", 0, 48)
@@ -131,6 +133,8 @@ actor AdvancedSentryGun
      SENT A 3 A_ClearTarget
      Goto SpawnReset
   Death:
+    SENT C 0 
+    SENT C 0 Thing_SetSpecial(0,0,0,0,0) //Prevent activation again
     SENT C 1 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
     SENT C 0 A_PlaySoundEx ("weapons/rocklx", "SoundSlot6")
     SENT C 0 A_SpawnItem ("SentryBoom", 0, 48)
