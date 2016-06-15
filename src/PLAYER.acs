@@ -282,13 +282,11 @@ script 102 (void) CLIENTSIDE
 		
 		int hudWidth = 320;
 		SetHudSize(hudWidth, 240, false);
-		HudMessage(s:"[==========]"; 
-					HUDMSG_PLAIN, HUDMSG_ID_XPMETER, CR_GREY, 300.1, 2.1, 0, 64);
-		int pixelsPerCharacter = 5;
-		HudMessage(s:">"; HUDMSG_PLAIN, HUDMSG_ID_XPMETERTICK, CR_GREEN, 304.1+((progressDecigrade*pixelsPerCharacter)<<16), 2.1, 0, 64);
+        HudMessage(s:"[==========]"; HUDMSG_PLAIN, HUDMSG_ID_XPMETER, CR_GREY, 320.2, 2.1, 0);
+        int pixelsPerCharacter = 5;
+        HudMessage(s:">"; HUDMSG_PLAIN, HUDMSG_ID_XPMETERTICK, CR_GREEN, 320.2-(pixelsPerCharacter*10.0)+((progressDecigrade*pixelsPerCharacter)<<16), 2.1, 0);
 	
-		HudMessage(s:"Level: ", d:CheckInventory("XPLevel")+1;
-		HUDMSG_PLAIN, HUDMSG_XP_LEVEL, CR_GREEN, 304.1, 10.1, 2.0);
+        HudMessage(s:"Level: ", d:CheckInventory("XPLevel")+1; HUDMSG_PLAIN, HUDMSG_XP_LEVEL, CR_GREEN, 320.2, 10.1, 0);
 
 		int hungerLevel = CheckInventory("HungerLevel");
 		int hungerText = "Well Nourished";
@@ -307,10 +305,10 @@ script 102 (void) CLIENTSIDE
 			hungerColour = CR_ORANGE;
 		}
 		
-		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
-			HudMessage(s:hungerText;
-			HUDMSG_PLAIN, HUDMSG_ID_HUNGER, hungerColour, 359.2, 18.1, 2.0);
-		}
+        if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
+            HudMessage(s:hungerText; HUDMSG_PLAIN, HUDMSG_ID_HUNGER, hungerColour, 320.2, 18.1, 0);
+        }
+
         
         if (DEBUG_MODE==1) {
             HudMessage(s:"DEBUG MODE";
