@@ -16,3 +16,6 @@ addkeysection "Survivalism" foobar
 addmenukey "Show Basic Crafting Menu" dz_basiccrafting
 alias dz_basiccrafting "puke 760;"
 defaultbind e dz_basiccrafting
+
+addmenukey "Toggle vegetation" dz_toggleveggies
+alias dz_toggleveggies "puke 974;"

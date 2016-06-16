@@ -321,6 +321,7 @@ DONE:
 #libdefine FOOD_TID 		8403
 #libdefine BERRY_PLANT_TID 	8404
 #libdefine WILD_BIRD_TID    8405
+#libdefine VEGETATION_TID   8888
 //Reserve a thousand TIDs for UniqueTID calls. You must use these with that so it doesn't take one of our other reserved TIDs!
 #libdefine SAFE_UNIQUE_TID_MIN  19000
 #libdefine SAFE_UNIQUE_TID_MAX  22999
@@ -351,6 +352,9 @@ int g_timeOfDaySeconds = 0;
 int g_dayNumber = 1;
 int g_dayState = DAYSTATE_DAY;
 int g_blockXP = false; //global lock for XP, to prevent players from getting free XP from monsters dying at daybreak
+
+//Clientside preferences:
+int g_vegetationEnabled = true;
 
 
 #libdefine NUM_MONSTER_SPAWNER_MODES 7
@@ -1639,10 +1643,10 @@ script 949 (int ammoType)
 int gridSize = 4096.0;
 int kVegDisappearDistance = 2896.5; // sqrt(2*gridSize*gridSize)
 
-//FIXME: This runs once per player, and never terminates, so rejoining causes it to run again!
 script 950 ENTER CLIENTSIDE
 {
     //Only run for the local player!
+    //If we don't do this, it'll run once per player, and never terminates, so any player rejoining from spectating causes it to run again!
     if (PlayerNumber() != ConsolePlayerNumber()) {
         terminate;
     }
@@ -1653,7 +1657,6 @@ script 950 ENTER CLIENTSIDE
 		int playerX = GetActorX(playerTID);
 		int playerY = GetActorY(playerTID);
 		
-		int VEGETATION_TID = 8888;
 		int MAX_VEGETATION_COUNT = 1024; //Per quadrant
 		int currentVegCount = ThingCount(T_NONE, VEGETATION_TID);
 		int numVeggiesToGenerate = MAX_VEGETATION_COUNT - currentVegCount;
@@ -1664,6 +1667,13 @@ script 950 ENTER CLIENTSIDE
         //Sanity check
         if (PlayerIsSpectator(ConsolePlayerNumber())) {
             terminate;
+        }
+        
+        if (!g_vegetationEnabled) {
+            //Reset vegetation
+            Thing_Remove(VEGETATION_TID);
+            Delay(8);
+            continue;
         }
 		
 		//The vegetation is generated on a square grid. This grid is populated with cells,
@@ -1776,7 +1786,7 @@ script 950 ENTER CLIENTSIDE
 					Thing_Remove(tempTID);
 					continue;
 				}*/
-				
+
 				//We use the actor's score to store the player TID
 				SetActorProperty(tempTID, APROP_SCORE, playerTID);
 				Thing_ChangeTID(tempTID, VEGETATION_TID);
@@ -1784,8 +1794,6 @@ script 950 ENTER CLIENTSIDE
 			} else {
 				Thing_Remove(tempTID);
 			}
-			
-
 		}
 
 		Delay(8);
@@ -2381,5 +2389,16 @@ script 973 (void)
         SetActorState(0, "Pain.Lift");
     } else {
         terminate;
+    }
+}
+
+// Client-side vegetation toggle (dz_toggleveggies)
+script 974 (void) NET CLIENTSIDE
+{
+    g_vegetationEnabled = !g_vegetationEnabled;
+    if (g_vegetationEnabled) {
+        Print(s:"Procedural vegetation enabled");
+    } else {
+        Print(s:"Procedural vegetation disabled");
     }
 }
