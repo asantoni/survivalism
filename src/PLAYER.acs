@@ -80,6 +80,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"Coal",
 	"Steel",
 	"SentryBox",
+	"AdvancedSentryBox",
 	"TorchItem",
 	"TurnipSeeds",
 	"Turnip",
