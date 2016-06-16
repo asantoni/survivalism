@@ -38,6 +38,7 @@ actor DoomZShotgun : Shotgun 15004
    NoAmmo:
 	TNT1 A 0
 	TNT1 A 0 A_JumpIfInventory("DoomZShellBoxItem", 1, "LoadShellBox")
+    TNT1 A 0 A_WeaponReady //So the user can switch weapons if they're out of ammo
 	goto Ready
    LoadShellBox:
     TNT1 A 0 
