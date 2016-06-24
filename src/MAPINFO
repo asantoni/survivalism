@@ -67,7 +67,7 @@ map DOOMZ3 "DoomZ 3"
 }
 
 
-map BOATTEST "Boat Test"
+map BOATTEST2 "Boat Test"
 {
    next = "DOOMZ2"
    sky1 = "SKY1"
