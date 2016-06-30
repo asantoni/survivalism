@@ -126,7 +126,7 @@ ACTOR BlueberryPlant : BerryPlant {
          BPLN A 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN A 0 A_SetArg(0,1)
       Harvest:
-         BPLN A 0 A_SpawnItemEx("BlueberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
+         BPLN A 1 A_SpawnItemEx("BlueberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
          BPLN A 0 A_Jump(96,"Harvested")
          Loop
       Death:
@@ -154,7 +154,7 @@ ACTOR StrawberryPlant : BerryPlant {
          BPLN C 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN C 0 A_SetArg(0,1)
       Harvest:
-         BPLN C 0 A_SpawnItemEx("StrawberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
+         BPLN C 1 A_SpawnItemEx("StrawberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
          BPLN C 0 A_Jump(96,"Harvested")
          Loop
       Death:
@@ -182,7 +182,7 @@ ACTOR CranberryPlant : BerryPlant {
          BPLN E 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN E 0 A_SetArg(0,1)
       Harvest:
-         BPLN E 0 A_SpawnItemEx("CranberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
+         BPLN E 1 A_SpawnItemEx("CranberryItem",random(-2,2),random(-2,2),random(5,25),random(-4,4),random(-4,4),random(5,12))
          BPLN E 0 A_Jump(96,"Harvested")
          Loop
       Death:
