@@ -6,6 +6,10 @@
 
 script 950 ENTER
 {
+    //Skip tutorial if OpenGL is off because we're going to put up a big overlay.
+    if (!GetCVar("vid_renderer")) {
+        terminate;
+    }
 
 	/*
 	SetFont("BIGFONT");

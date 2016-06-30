@@ -35,9 +35,10 @@ actor SentryGun
     TNT1 A 0 //Dummy frame is needed for A_Jump to work
     //Don't actually open unless we have the player as our target, so
     //we can detect when they walk away.
-    SENT A 3 A_SpawnItemEx("SentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 4.0)
     SENT A 0 Thing_SetSpecial(tid, 0, 0, 0, 0) //Prevent it from being activated again - Important!
-    goto Death
+    SENT C 0 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
+    SENT C 3 A_SpawnItemEx("SentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 8.0)
+    Stop
   See:
     TNT1 A 0
     SENT AAAAA 3 A_Chase(0, "Missile", CHF_DONTMOVE)
@@ -113,9 +114,10 @@ actor AdvancedSentryGun
     TNT1 A 0 //Dummy frame is needed for A_Jump to work
     //Don't actually open unless we have the player as our target, so
     //we can detect when they walk away.
-    SENT A 3 A_SpawnItemEx("AdvancedSentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 4.0)
     SENT A 0 Thing_SetSpecial(tid, 0, 0, 0, 0) //Prevent it from being activated again - Important!
-    goto Death
+    SENT C 0 A_PlaySoundEx ("Sentry/Death", "SoundSlot5")
+    SENT C 3 A_SpawnItemEx("AdvancedSentryBox", 0.0, 0.0, 0.0, 0.0, 0.0, 8.0)
+    Stop
   See:
     TNT1 A 0
     SENT AAAAA 3 A_Chase(0, "Missile", CHF_DONTMOVE)

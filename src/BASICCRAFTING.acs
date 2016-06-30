@@ -10,21 +10,17 @@
 /* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this
    up into arrays by type. See: http://forum.zdoom.org/viewtopic.php?f=3&t=28111
   */
-#define BASIC_OPTIONS_LENGTH 5 //<--- Edit me if you add more craftable stuff
+#define BASIC_OPTIONS_LENGTH 3 //<--- Edit me if you add more craftable stuff
 str basicOptions[BASIC_OPTIONS_LENGTH] = {
 	"Return",
 	"Build a crafting box",
-	"Save my XP",
-	"Save my inventory, XP, and disconnect.",
-	"Load my inventory and XP",
+	"Inventory now automatically\nsaves/loads when you're\nlogged in!"
 };
 	
 int basicScripts[BASIC_OPTIONS_LENGTH] = {
 	751, //Return
 	762, //Crafting box
-	819, //Save my XP (PLAYER.ACS
-	815, //Save inventory and XP(PLAYER.ACS)
-	814, //Load inventory (PLAYER.ACS)
+    763, //Auto save message
 };
 
 
@@ -32,33 +28,25 @@ str basicResults[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_RESULT] =
 {
 	{"", "", "", ""},	//Return
 	{"CraftingBoxItem", 		"misc/i_pkup", "You built a crafting box!", "You need 8 wood to make a crafting box.\nTry chopping some logs to get wood."},
-	{"", "", "Your XP has been saved.", ""},
-	{"", "", "Your inventory and XP has been saved.", ""},
-	{"", "", "Your inventory has been loaded. Don't die.", ""},
+    {"", "", "Sweet!", "Sweet!"},	//Auto save message
 };
 
 
 str basicIngredients[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{"", 			"", 			""}, //Return
 	{"CBoxItem", 	"", ""}, //Crafting Box
-	{"", 	"", ""}, //Save XP
-	{"", 	"", ""}, //Save Inventory
-	{"", 	"", ""}, //Load Inventory
+    {"", "", ""},	//Auto save message
 };
 int basicIngrAmounts[BASIC_OPTIONS_LENGTH][MAX_CRAFTING_INGREDIENTS] = {
 	{0,	 0,  0}, //Return
 	{8,  0,  0}, //Crafting Box
-	{0,  0,  0}, //Save XP
-	{0,  0,  0}, //Save Inventory
-	{0,  0,  0}, //Load Inventory
+    {"", "", ""},	//Auto save message
 };
 
 int basicXPLevels[BASIC_OPTIONS_LENGTH] = {
 	0, //Return
 	2, //Crafting Box
-	0, //Save Inventory
-	0, //Save Inventory
-	0, //Load Inventory
+    0, //Auto save message
 };
 
 
@@ -287,4 +275,9 @@ function bool basicCheckRequirements(int optionIdx)
 	}
 	
 	return RETVAL_BAD_INGR;
+}
+
+script 763 (void)
+{
+    Print(s:"Woohoo!");
 }

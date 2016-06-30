@@ -40,6 +40,11 @@ object LootBox
     frame BOX1A { light BOXLIGHT }
 }
 
+object DoomZBackpack
+{
+    frame BPAK { light BOXLIGHT }
+}
+
 object Ankh
 {
 	frame AKOLA { light ANKHLIGHT }

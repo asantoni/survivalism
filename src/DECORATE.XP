@@ -2,7 +2,8 @@
 actor XP : Inventory
 {
 	Inventory.MaxAmount 2100000
-	//+INVENTORY.UNTOSSABLE // Zandronum 2.0 ?
+	//+INVENTORY.UNTOSSABLE // Zandronum 3.0 ?
+    +INVENTORY.UNDROPPABLE
 	-INVENTORY.INVBAR
 	-COUNTITEM
 	Inventory.PickupSound "XP"
@@ -65,7 +66,8 @@ Stop }}
 
 actor XPLevel : Inventory
 {
-	//+INVENTORY.UNTOSSABLE // Zandronum 2.0 ?
+	//+INVENTORY.UNTOSSABLE // Zandronum 3.0 ?
+    +INVENTORY.UNDROPPABLE
 	-INVENTORY.INVBAR
 	-COUNTITEM
 	Inventory.MaxAmount 60

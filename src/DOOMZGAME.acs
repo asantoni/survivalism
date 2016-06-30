@@ -2033,6 +2033,7 @@ script 960 (void)
 //We need to use a script to associate the guardian with the player.
 script 961 (int playerTID)
 {
+    Log(s:"Inventory guard script! ", d:CheckActorInventory(playerTID, "InventoryGuardItem"));
 	if (CheckActorInventory(playerTID, "InventoryGuardItem") <= 0) {
 		terminate;
 	}
@@ -2040,7 +2041,7 @@ script 961 (int playerTID)
 	
 	int tempTID = UniqueTID(SAFE_UNIQUE_TID_MIN);
 	int angle = GetActorAngle(playerTID);
-	int radius = 88.0; //Your inventory seems to drop 88 units in front of you when you die.
+	int radius = 0.0; //88.0; //Your inventory seems to drop 88 units in front of you when you die.
 	SpawnForced("InventoryGuard", 
 				GetActorX(playerTID) + FixedMul(radius, cos(angle)), 
 				GetActorY(playerTID) + FixedMul(radius, sin(angle)), 
@@ -2268,6 +2269,7 @@ script 970 (int delayTics)
     int exitConditionCounter = 0;
         
     int parachuteTID = PARACHUTE_TID_MIN + PlayerNumber();
+    Thing_Remove(parachuteTID); //Remove any old parachutes for this player.
     
     int paraX = GetActorX(0);
     int paraY = GetActorY(0);
@@ -2401,4 +2403,31 @@ script 974 (void) NET CLIENTSIDE
     } else {
         Print(s:"Procedural vegetation disabled");
     }
+}
+
+//Nobody reads, so force people to turn on OpenGL, and force models to be on.
+script 975 ENTER CLIENTSIDE
+{
+	if (!GetCVar("vid_renderer")) {
+        SetFont("HELP");
+        SetHudSize(1,1,0);
+        HudMessage(s:"A"; HUDMSG_PLAIN, 964, 0, 0, 0, 0);
+        
+        SetHudSize(0,0,0);
+
+        SetFont("BIGFONT");
+        HudMessage(s:"You must turn on OpenGL to play!"; 
+                    HUDMSG_PLAIN, 955, CR_GOLD, 0.5, 0.5, 0.0);
+        HudMessage(s:"Press Escape, and go to Options->Set Video Mode\nand set Renderer to OpenGL"; 
+                    HUDMSG_PLAIN, 956, CR_RED, 0.5, 0.6, 0.0);
+        SetFont("SMALLFONT");
+    }
+    
+    //Force models to be on.
+    ConsoleCommand("gl_use_models 1");
+}
+
+script 1001 (void) CLIENTSIDE
+{
+    ConsoleCommand("connect 192.168.0.1");
 }

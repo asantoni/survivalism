@@ -1155,6 +1155,7 @@ actor ParachuteItem : CustomInventory
 
 actor SpawnParachuteItem : ParachuteItem 
 {
+    -INVBAR
 
 	States
 	{

@@ -402,6 +402,7 @@ actor DoomZChainsaw : Chainsaw replaces Chainsaw
   Inventory.PickupMessage "$GOTCHAINSAW"
   Obituary "$OB_MPCHAINSAW"
   Tag "$TAG_CHAINSAW"
+
   +WEAPON.MELEEWEAPON
   +SHOOTABLE
   Health 100
@@ -409,6 +410,7 @@ actor DoomZChainsaw : Chainsaw replaces Chainsaw
   Weapon.AmmoUse 1
   Weapon.AmmoGive 500
   Radius 32 //Makes it easier to pick up --- Hax
+  Height 16
 
   States
   {
