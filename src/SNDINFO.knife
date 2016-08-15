@@ -1,3 +1,6 @@
 KnifeHitThing		DSKNIFE
 KnifeHitWall		DSKNIFE3	
 KnifeMiss		DSKNIFE2
+
+knife/draw DSKNIFE4
+$volume knife/draw 0.5

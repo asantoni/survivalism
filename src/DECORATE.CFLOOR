@@ -45,6 +45,7 @@ actor CFloor : SwitchableDecoration
 		Death:
 			TNT1 A 0 //Dummy frame is needed
 			//Turn back into a CFloorItem when we get destroyed
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnelSpawner", 0.0, 0, 0.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
 			TNT1 A 0 A_SpawnItemEx("CFloorItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
 			Stop
 
@@ -112,4 +113,35 @@ actor CFloorGhost
 			Stop
 
 	}
+}
+
+actor BossCFloor : CFloor
+{
+    +INVULNERABLE
+    +MISSILE //So it goes into BOUNCE state when it hits the floor
+    Speed 0
+    +CANPASS
+    //+USEBOUNCESTATE -> Unsupported in Zandronum 2.0
+    +ACTLIKEBRIDGE
+    
+	RenderStyle "Translucent"
+	Alpha 0.2
+    
+    Radius 160
+    
+    States
+    {
+        Bounce:
+        Death:
+            TNT1 A 0
+            TNT1 A 0 A_PlaySound("glass/break1")
+            TNT1 A 0 A_UnSetInvulnerable
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnelSpawner", -32.0, 0, 0.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnelSpawner", 32.0, 0, 0.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnelSpawner", 0.0, 32.0, 0.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnelSpawner", 0.0, -32.0, 0.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+			//Turn back into a CBoxItem when we get destroyed
+            //TNT1 A 0 A_Die
+            stop
+    }
 }

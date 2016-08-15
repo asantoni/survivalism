@@ -1,9 +1,10 @@
-#library "player"
 #include "zcommon.acs"
 #import "math.acs"
 #import "music.acs"
 #import "doomzgame.acs"
 #import "quests.acs"
+#library "player" //Must be last!
+
 
 #libdefine PLAYER_MIN_TID 1010
 #define PLAYER_SPEED 0.3
@@ -24,6 +25,7 @@
 #libdefine HUDMSG_ART_ID        12
 #libdefine HUDMSG_BGART_ID      13
 #libdefine HUDMSG_ID_DEBUGMODE 14
+#libdefine HUDMSG_ID_MSCHARGE 15
 
 
 #define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
@@ -36,8 +38,10 @@
 
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
-#define DROPPABLE_INVENTORY_START 4 //DeathCurse
-#define PERSISTENT_INVENTORY_LEN 63
+#define DROPPABLE_INVENTORY_START 5 //DeathCurse
+#define PERSISTENT_INVENTORY_LEN 76 
+//XXX: You must update DECORATE.PLAYER too! It also has PERSISTENT_INVENTORY_LEN.
+
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 {
 	//YOU MUST UPDATE PERSISTENT_INVENTORY_TABLE_LENGTH WHEN YOU ADD
@@ -47,6 +51,9 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
     "XPLevel",
 	"InventoryGuardItem",
 	"HungerLevel", //Hunger is saved with your inventory. Helps dissuade cheating.
+    "HealthBooster1",
+    "HealthBooster2",
+    "HealthBooster3",
 //DROPPABLE_INVENTORY_START offset starts here!
 //Put only items that are dropped into the backpack on death below this line:
 	"DeathCurse", //Being cursed by death is saved too.
@@ -60,13 +67,21 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"DoomZChaingun",
 	"HuntingRifle",
 	"WensternShotgun",
+    "WesternShotgun",
 	"Bucket",
 	"Bow",
 	"GraplingAmmo",//Rope
 	"GasolineAmmo",
 	"WaterAmmo",
-	"DoomZShellBoxItem",
-	"DoomZClipBoxItem",
+	"PistolClip",
+	"ChaingunClip",
+	"HuntingRifleClip",
+    "9mmPistolBullet",
+    "GlockBullet",
+    "ChaingunBullet",
+    "HuntingRifleBullet",
+    "LoadedShotgunShell",
+    "LoadedYellowboyShell",
 	"LootBox",
 	"CBoxItem",
 	"CKitItem",
@@ -107,11 +122,9 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
     "HoistItem",
     "CGlassBoxItem",
     "ParachuteItem",
-    // Ammo needs to be accounted for  
-//	"Clip",
 	"ArrowAmmo",
-//	"Shell",
-	//Don't forget to new items to PlayerDropStuff in DECORATE.PLAYERS!
+	"Cotton",
+    "BoatItem",
 };
 
 #define NUM_XP_LEVELS 59 
@@ -319,7 +332,9 @@ script 102 (void) CLIENTSIDE
         
         if (DEBUG_MODE==1) {
             HudMessage(s:"DEBUG MODE";
-                HUDMSG_PLAIN, HUDMSG_ID_DEBUGMODE, CR_ORANGE, 359.2, 26.1, 2.0);    
+                HUDMSG_PLAIN, HUDMSG_ID_DEBUGMODE, CR_ORANGE, 312.2, 26.1, 2.0);    
+            HudMessage(d:CheckInventory("MonsterSpawnerCharge");
+                HUDMSG_PLAIN, HUDMSG_ID_MSCHARGE, CR_GREEN, 312.2, 34.1, 2.0);   
         }
 		
 		SetHudSize(0, 0, false);
@@ -341,6 +356,45 @@ script 103 (int playerNum, int questTimeLeft, int compassTID) CLIENTSIDE
 
 //104 is reserved for Axe.wad
 //script 104
+
+//Melee action
+script 105 (void) NET
+{
+    if (CheckInventory("XPLevel") >= 20) { //Level 21
+        GiveInventory("AxeMeleeAction", 1);
+    } else {
+        GiveInventory("FistMeleeAction", 1);    
+    }
+}
+
+//Melee puff thrust
+//Needs its own script because kickback is determined by damage and the weapon's primary
+//fire kickback. There's no kickback for A_CustomPunch...
+script 106 (void)
+{
+    SetActivator(0,AAPTR_TARGET); //Get the puff's target, which is the player due to +PUFFGETSOWNER
+    int playerAngle = GetActorAngle(0);
+    int playerTID = ActivatorTID();
+    
+    //Push the actor the player was looking at
+    if (SetActivator(0, AAPTR_PLAYER_GETTARGET)) {
+    
+        int flags = ClassifyActor(0);
+        if (((flags & ACTOR_MONSTER) && (flags & ACTOR_ALIVE)) || (flags & ACTOR_PLAYER))
+        {
+            //TODO: Use CheckFlags in Zandronum 3.0 to check if the target has
+            //      +WINDTHRUST. Everything that can be WINDTHRUST should be punchable.
+            //      As a workaround, we're just going to check if the TID is a monster TID.
+            int targetTID = ActivatorTID();
+            if (targetTID >= BADDIES_TID_MIN && targetTID <= BADDIES_TID_MAX) {
+                if (fdistance(0, playerTID) < 128.0) { 
+                    ThrustThing((playerAngle >> 8), 16, 0, 0);
+                }      
+            }
+        }
+    }
+}
+
 
 
 script 807 DEATH
@@ -458,6 +512,7 @@ function void giveInitialInventory (int playerTid)
 
 	//GiveActorInventory(playerTid, "Fist", 1);
 	if (CheckActorInventory(playerTid, "XPLevel") > 14) {
+        Log(s:"Player XP level is: ", d:CheckActorInventory(playerTid, "XPLevel"));
 		GiveActorInventory(playerTid, "InventoryGuardItem", 1);
 	}
 }
@@ -485,6 +540,11 @@ function void setupPlayer(int playerTid)
     if (CheckActorInventory(playerTid, "XPLevel") >= 15) {
 		SetActorProperty(playerTid, APROP_SpawnHealth, 120);
         GiveActorInventory(playerTid, "Health", 20);
+	}
+    
+    Log(s:"Dude got dis many: ", d:CheckActorInventory(playerTid, "HealthBooster1"));
+    if (CheckActorInventory(playerTid, "HealthBooster1") > 0) {
+        ACS_ExecuteAlways(900, 0, playerTid); //See ARTIFACTS.acs
 	}
 }
 
@@ -1008,6 +1068,7 @@ script 818 (void)
 }
 
 /* saveXP */
+/** DEPRECATED - DO NOT USE */
 script 819 (void)
 {
 	int playerTid = PLAYER_MIN_TID + PlayerNumber();
@@ -1164,3 +1225,5 @@ script 854 (int backpackTid, int blarg)
 
     SetResultValue(true);
 }
+
+//script 900-920 reserved for ARTIFACTS.acs

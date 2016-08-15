@@ -125,7 +125,7 @@ actor RapidsSprayer 10302
 			TNT1 A 4 A_Jump(128, "Spray")
 			loop
 		Spray:
-			TNT1 A 16 A_SpawnItemEx("RapidsSpray", 0, 0, 16.0, random(-2.0, 2.0), random(-2.0, 2.0), 4.0, 0, SXF_NOCHECKPOSITION, 32)
+			TNT1 A 16 A_SpawnItemEx("RapidsSpray", 0, 0, 16.0, random(-2.0, 2.0), random(-2.0, 2.0), 4.0, 0, SXF_NOCHECKPOSITION | SXF_CLIENTSIDE, 32)
 			goto Procrastinate
 	}
 }
@@ -233,19 +233,67 @@ actor WaterfallSpray4 : WaterfallSpray2
 
 
 
-actor DoomZFogSpawner : FogSpawner 10301
+actor DoomZFogSpawner /* : FogSpawner */ 10301
 {
 	+CLIENTSIDEONLY
-	/*
+    +NOBLOCKMAP
+    -SHOOTABLE
+    +NOINTERACTION
+
 	States
 	{
 		Spawn:
 			TNT1 A 0
-			TNT1 A 0 A_PlaySound("waterfall", CHAN_BODY, 1.0, true, 0.5)
 		Spray:
-			TNT1 A 16 A_SpawnItemEx("WaterfallSpray", 0, 0, 16.0, random(-2.0, 2.0), random(-2.0, 2.0), 16.0, 0, SXF_NOCHECKPOSITION, 32)
+			TNT1 A 70 A_SpawnItemEx("BigFog", 0, 0, 16.0, random(1.0, 3.0), 0.0, 0.0, random(0, 65535), SXF_NOCHECKPOSITION | SXF_CLIENTSIDE, 32)
 			Loop
-	}*/
+	}
+}
+
+actor BigFog
+{
+    +CLIENTSIDEONLY
+    +NOBLOCKMAP
+    -SHOOTABLE
+    +NOINTERACTION
+    +NOGRAVITY
+    -SOLID
+    +MISSILE //So bounce works
+    
+    BounceType "Doom"
+    +BOUNCEONWALLS
+    
+    Scale 8.0
+    RenderStyle "Translucent"
+    Alpha 0.4
+    
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            TNT1 A 0 A_Jump(256, "Fog1", "Fog2", "Fog3", "Fog4", "Fog5")
+        Fog1:
+            FOGL AAAAAAAA 70
+            FOGL AAAAAAAAAA 10 A_FadeOut(0.1)
+            stop
+        Fog2:
+            FOGL BBBBBBBB 70
+            FOGL BBBBBBBBBB 10 A_FadeOut(0.1)
+            stop
+        Fog3:
+            FOGL CCCCCCCC 70
+            FOGL CCCCCCCCCC 10 A_FadeOut(0.1)
+            stop
+        Fog4:
+            FOGL DDDDDDDD 70
+            FOGL DDDDDDDDDD 10 A_FadeOut(0.1)
+            stop
+        Fog5:
+            FOGL EEEEEEEE 70
+            FOGL EEEEEEEEEE 10 A_FadeOut(0.1)
+            stop
+            
+    }
 }
 
 
@@ -956,6 +1004,7 @@ actor HoistBase
     Mass 0x7FFFFFFF
     Health 400 //0x7FFFFFFF
     PainChance 255
+    DropItem "HoistItem"
     
     Args 10
     
@@ -994,7 +1043,7 @@ actor HoistBase
             TNT1 A 0
             TNT1 A 0 A_KillChildren
             TNT1 A 0 //A_RemoveChildren
-			TNT1 A 0 A_SpawnItemEx("HoistItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
+			TNT1 A 0
             stop
 
     }
@@ -1063,17 +1112,29 @@ actor HoistLift
             loop
         Lower:
             HOIS B 0
-            HOIS B 0 A_ChangeFlag("SOLID", 0)
+            //HOIS B 0 A_ChangeFlag("SOLID", 0) //r16 - Removed this
             HOIS B 0 A_ChangeFlag("NOGRAVITY", 0)
         LowerLoop:
             HOIS B 0 
             HOIS B 0 A_JumpIf(z <= floorz, "StopMovingAndLift")
+            HOIS B 0 A_JumpIf(velz == 0, "Unblock") 
+            HOIS B 0 A_ChangeFlag("SOLID", 1)
+        LowerInnerLoop:
             HOIS B 0 A_PlaySound("jack/move", CHAN_BODY, 1.0, true)
             HOIS B 0 A_SpawnItemEx("JackChain", 0, 0, 16.0, 0.0, 0.0, 0.0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION /*| SXF_CLIENTSIDE*/)
             HOIS B 4 ACS_ExecuteAlways(972, 0, 1, 0)
             HOIS B 0 
             HOIS B 0 A_SetArg(0, args[0]-1)
+            HOIS B 0 A_Jump(256, "LowerLoop")
+            goto LowerLoop
             loop
+        //If the platform hits something on the way down (z > 0 but velz == 0),
+        //then we make it noclip through it and keep moving down.
+        Unblock:
+            HOIS B 0 
+            HOIS B 0 A_ChangeFlag("SOLID", 0)
+            HOIS B 0 A_Jump(256, "LowerInnerLoop")
+            goto LowerInnerLoop
         StopMoving:
             TNT1 A 0
             TNT1 A 0 A_CheckFloor(0) //Just trying to fix desync bug
@@ -1201,5 +1262,133 @@ actor Parachute
     }
 
 }
+
+
+//Only the regular Inventory class works with UNDROPPABLE for some reason.
+//"Inventory" is required for an item to stay after death. Dunno why...
+actor HealthBooster1 : Inventory 10304
+{
+    //Green Soulsphere: Translation "192:207=112:127", "240:247=%[0.00,0.00,0.00]:[2.00,2.00,2.00]"
+    //Red Soulsphere:
+    Translation "192:207=168:191", "240:247=5:8"
+    Inventory.MaxAmount 1
+    +INVENTORY.FANCYPICKUPSOUND
+    Inventory.PickupMessage "You picked up an enchanted orb! Your max health is now permanently boosted."
+    //-INVENTORY.AUTOACTIVATE
+    +INVENTORY.UNDROPPABLE
+    //Armor.MaxSaveAmount 20
+    -INVENTORY.INVBAR
+	-COUNTITEM
+
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            TNT1 A 0 Thing_SetSpecial(0, 226, 900, 0, 0)
+        Idle:
+            SOUL ABCDCB 6 Bright
+            loop
+    }
+}
+
+actor HealthBooster2 : HealthBooster1 10305
+{
+}
+actor HealthBooster3 : HealthBooster1 10306
+{
+}
+
+actor DoomZRadSuit : RadSuit replaces RadSuit 10307
+{
+    Tag "Radiation Suit"
+    //+NONINTERACTIVE
+    //+NOBLOCKMAP
+    -SOLID
+    +SHOOTABLE
+    -NOGRAVITY
+    +FLOORCLIP
+    -INVENTORY.AUTOACTIVATE
+    Inventory.Icon "SUITI"
+  +INVENTORY.INVBAR
+  +INVENTORY.FANCYPICKUPSOUND
+
+    Health 100
+    Inventory.MaxAmount 10
+    
+  States
+  {
+  Spawn:
+    SUIT A -1 Bright
+    Stop
+  }
+}
+
+
+Actor Cotton : Inventory
+{
+    Tag "Cotton"
+    +SHOOTABLE
+    +NOBLOOD
+    +CANPASS
+    +WINDTHRUST
+    Health 10
+
+    Scale 0.5
+    
+    Inventory.PickupMessage "You picked up cotton!"
+    Inventory.Amount 1
+    Inventory.MaxAmount 30
+    Inventory.Icon "CTTNI"
+    +INVENTORY.INVBAR
+    +INVENTORY.PICKUPFLASH
+        
+    States
+    {
+    Spawn:
+        TNT1 A 0
+        CTTN A 52500 // 25 minutes
+        Stop
+    }
+}
+
+
+actor SparkEmitter 10310
+{
+    +NOBLOCKMAP
+    +NOGRAVITY
+    +CLIENTSIDEONLY
+
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            TNT1 A 4 A_SpawnItemEx("SparkEmitterSpark", 0, 0, 0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+            loop
+    }
+}
+actor SparkEmitterSpark
+{
+    +WINDTHRUST
+    +CLIENTSIDEONLY
+    //+NOGRAVITY
+    //+NOBLOCKMAP
+    
+    Scale 0.25
+
+        States
+    {
+        Spawn:
+            ZP01 A 0
+            ZP01 ABCBABCBABCB 5 Bright
+            ZP01 A 0 A_Jump(100, "Death")
+            Loop
+        Death:
+            ZP01 A 0
+            ZP01 DEF 5 Bright  A_SpawnItemEx("ElectroTrail",0,0,0,1,0,random(-1,1),random(1,360), SXF_CLIENTSIDE)
+            stop
+    }
+}
+
+//10308 is TornadoJet - See actors/misc/tornadojet.txt
 
 //11500-11599 is for quests

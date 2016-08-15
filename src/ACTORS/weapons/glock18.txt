@@ -1,41 +1,50 @@
 ACTOR Glock18 : weapon
 {
   obituary "%o was Killed by %k's Glock."
-  attacksound "Weapons/GLOKFIR"
   decal BulletChip
   Weapon.SlotNumber 2
   weapon.kickback 50
   inventory.pickupmessage "You got the Glock!"
-  weapon.ammotype "Clip"
   Weapon.AmmoUse 1
-  weapon.ammogive 25
+  Weapon.AmmoGive 12
+  Weapon.AmmoGive2 1 //Give 1 clip
+  Weapon.AmmoType "GlockBullet"
   Health 10
   +NOAUTOFIRE //Semi-automatic!
   
-  Weapon.AmmoType2 "DoomZClipBoxItem"
+  Weapon.AmmoType2 "PistolClip"
   Weapon.AmmoUse2 0
   +WEAPON.ALT_AMMO_OPTIONAL
+
   Tag "Glock 18"
 
+  Weapon.UpSound "glock/clip1"
+  AttackSound "" //"Weapons/GLOKFIR"
 
   states
   {
   	Ready:
-		GLOK A 1 A_WeaponReady(WRF_NOSWITCH)
-		CHGG A 0 A_JumpIfNoAmmo("NoAmmo")
-		CHGG A 0 A_WeaponReady
+		GLOK A 0 
+        GLOK A 1 A_WeaponReady(WRF_NOSWITCH)
+        GLOK A 0 A_JumpIfInventory("AxeMeleeAction", 1, "AxeMelee")
+        GLOK A 0 A_JumpIfInventory("FistMeleeAction", 1, "FistMelee")
+		GLOK A 0 A_JumpIfNoAmmo("NoAmmo")
+		GLOK A 0 A_WeaponReady
 		Loop
 	Deselect: 
 		GLOK A 1 A_Lower
 		loop
-	Select:
+      Select:
+        TNT1 A 0
 		GLOK A 1 A_Raise
 		loop
+    AltFire:
 	NoAmmo:
 		TNT1 A 0
-		TNT1 A 0 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadClipBox")
+		TNT1 A 0 A_JumpIfInventory("PistolClip", 1, "LoadClip")
+        GLOK A 1 A_WeaponReady(WRF_NOFIRE)
 		goto Ready
-	LoadClipBox:
+	LoadClip:
 		TNT1 A 0 
 		GLOK A 1 Offset(0,35)
 		GLOK A 1 Offset(0,38)
@@ -44,15 +53,20 @@ ACTOR Glock18 : weapon
 		GLOK A 1 Offset(0,62)
 		GLOK A 1 Offset(0,72)
 		GLOK A 1 Offset(0,82)
-		GLOK A 2 Offset(-1,82) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		GLOK A 3 Offset(-1,82) A_PlaySound ("glock/clip2", CHAN_WEAPON)
 		GLOK A 3 Offset(0,82) 
-		GLOK A 8 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		GLOK A 4 Offset(-2,84) A_PlaySound ("glock/clip3", CHAN_WEAPON)
+		GLOK A 3 Offset(0,82)
+		GLOK A 3 Offset(3,81) 
+		GLOK A 4 Offset(-2,84) 
+		GLOK A 3 Offset(1,83)
+		GLOK A 4 Offset(-1,84) A_PlaySound("glock/clip4", CHAN_WEAPON)
+		GLOK A 4 Offset(-2,84) 
 		GLOK A 4 Offset(0,82)
-		GLOK A 5 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		GLOK A 4 Offset(0,82) 
-		TNT1 A 0 A_TakeInventory("DoomZClipBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-		TNT1 A 0 A_GiveInventory("Clip", 50)
-		GLOK A 1 Offset(0,82)
+		GLOK A 4 Offset(-1,84) A_TakeInventory("PistolClip", 1)//ACS_ExecuteAlways(949, 0, 0)
+		GLOK AC 4 Offset(0,82) 
+        GLOK A 1 Offset(0,0) A_GiveInventory("GlockBullet", 12)
+		GLOK A 1 Offset(0,82) 
 		GLOK A 1 Offset(0,72)
 		GLOK A 1 Offset(0,62)
 		GLOK A 1 Offset(0,52)
@@ -65,32 +79,94 @@ ACTOR Glock18 : weapon
 		GLOK B 0
 		GLOK B 0 A_GunFlash
 		GLOK B 0 Radius_Quake(2, 3, 0, 1, 0)
-		GLOF A 1 BRIGHT A_FireBullets(8.0, 4.0,-1,12, "BulletPuff", FBF_USEAMMO|FBF_NORANDOM)
+        GLOF A 0 A_PlaySound("Weapons/GLOKFIR", CHAN_WEAPON)
+		GLOF A 1 BRIGHT A_FireBullets(8.0, 4.0,-1,6.5, "BulletPuff", FBF_USEAMMO|FBF_NORANDOM)
 		GLOF C 0 A_SpawnItemEx("DeadBulletCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
 		GLOK C 1 A_SetPitch(pitch-0.5)
 		GLOK B 1
 		GLOK A 1
+		GLOK A 0 A_JumpIfNoAmmo("NoAmmo")
+        GLOK A 0 A_ReFire("Fire")
 		goto Ready
-	//Hold:
-	//	GLOK A 3
-	//	Wait
-		/*
-		GLOK B 0 A_GunFlash
-		GLOF B 1 BRIGHT A_FireBullets(4.0,3.0,-1,4)
-		GLOK C 2 A_SetPitch(pitch-0.5)
-		GLOK C 1
-		GLOK B 0 A_ReFire
-		*/
-		//Goto Ready
-	//Hold:
-		//Loop this function until they let go of the fire button so 
-		//this gun is semi-auto.
-		//GLOK A 1 A_Refire("Hold")
-		//goto Ready
+
 	Flash:
 		TNT1 A 2 bright A_Light1
 		TNT1 A 1 bright A_Light0
 		Stop
+
+  AxeMelee:
+        TNT1 A 0
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(-12,38)
+		GLOK A 1 Offset(-24,47)
+		GLOK A 1 Offset(-32,62)
+		GLOK A 1 Offset(-48,72)
+		GLOK A 1 Offset(-50,90)
+
+		AXEG A 0 Offset(1,1) ThrustThing((angle)*256/360, 4, 0, 0)
+		AXEG E 3
+        AXEG I 3 //A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		//AXEG I 0 A_SetAngle(angle+30)
+		AXEG J 3 A_CustomPunch(20+random(4, 16), 1, 0, "AxeHitPuff")
+        TNT1 A 0 A_PlaySound("weapons/axeswing", CHAN_WEAPON) //Kills pistol sound
+		//Small screen shake :D
+		AXEG K 2 A_SetPitch(pitch+2)
+		AXEG K 1 A_SetPitch(pitch-2)
+		TNT1 A 4
+		//AXEG EDCBA 1
+		//AXEG A 6
+        
+		GLOK A 1 Offset(0,82)
+		GLOK A 1 Offset(0,72)
+		GLOK A 1 Offset(0,62)
+		GLOK A 1 Offset(0,52)
+		GLOK A 1 Offset(0,44)
+		GLOK A 1 Offset(0,38)
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("AxeMeleeAction", 1)
+        goto Ready
+        
+  FistMelee:
+        TNT1 A 0
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(-12,38)
+		GLOK A 1 Offset(-24,47)
+		GLOK A 1 Offset(-32,62)
+		GLOK A 1 Offset(-48,72)
+		GLOK A 1 Offset(-50,90)
+        
+        PUNR A 1 Offset(190, 170)
+        PUNR B 1 Offset(183, 165)
+        PUNR B 1 Offset(173, 160)
+        PUNR C 1 Offset(161, 155)
+        PUNR C 1 Offset(150, 152)
+        TNT1 A 0 A_CustomPunch(10, true, CPF_PULLIN, "FistPuff")
+        TNT1 A 0 A_PlaySound("melee/swing", CHAN_WEAPON)
+        PUNR D 1 Offset(137, 145) 
+        PUNR D 1 Offset(135, 142) 
+        PUNR D 1 Offset(133, 138) 
+        PUNR D 1 Offset(130, 130) 
+        
+        PUNR D 2 Offset(120, 155) 
+        PUNR D 2 Offset(100, 160) 
+        PUNR D 1 Offset(80, 170)
+        
+		GLOK A 1 Offset(1,82)
+		GLOK A 1 Offset(0,72)
+		GLOK A 1 Offset(0,62)
+		GLOK A 1 Offset(0,52)
+		GLOK A 1 Offset(0,44) 
+		GLOK A 1 Offset(0,38)
+		GLOK A 1 Offset(0,35)
+		GLOK A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("FistMeleeAction", 1)
+        goto Ready
+        
+                
+   
 	Spawn:
 		GLOI A -1
 		stop

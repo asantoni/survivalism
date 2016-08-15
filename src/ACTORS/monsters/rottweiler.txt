@@ -94,6 +94,8 @@ ACTOR DemonDog
 
 ACTOR DoomZDemonDog : DemonDog
 {
+  Health 40
+  
   States
   {
   Spawn:

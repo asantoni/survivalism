@@ -2,19 +2,23 @@
    located inside this .pk3. Check them out!
 */
 
+actor DoomZBulletPuff : BulletPuff replaces BulletPuff
+{
+    DamageType "Bullet"
+}
+
 actor DoomZShotgun : Shotgun 15004
 {
   //+INVENTORY.INVBAR
   Obituary "%o was gunned down by %k's shotgun."
-  //AttackSound "Weapons/MP5KFIR"
   Inventory.PickupMessage "You got the shotgun!"
   Weapon.SlotNumber 3
   Weapon.KickBack 100
   Weapon.SelectionOrder 905
   Weapon.SlotPriority 0.4
-  //Weapon.AmmoType "Clip"
   Weapon.AmmoUse 1
   Weapon.AmmoGive 10
+  Weapon.AmmoType "LoadedShotgunShell"
   Weapon.UpSound "Weapons/C_EQLT"
   AttackSound ""
   Decal "BulletChip"
@@ -23,24 +27,24 @@ actor DoomZShotgun : Shotgun 15004
   Health 10
   +NOAUTOFIRE
   
-  Weapon.AmmoType2 "DoomZShellBoxItem"
+
+  Weapon.AmmoType2 "Shell"
   Weapon.AmmoUse2 0
   +WEAPON.ALT_AMMO_OPTIONAL
-  //+WEAPON.AMMO_CHECKBOTH //Not in Zandronum 1.3
   
   States
   {
     Ready:
     SHTG A 1 A_WeaponReady(WRF_NOSWITCH)
-    SHTG A 0 A_JumpIfNoAmmo("NoAmmo")
+    //SHTG A 0 A_JumpIfNoAmmo("NoAmmo") //Only works in Fire state
     SHTG A 0 A_WeaponReady
     Loop
    NoAmmo:
 	TNT1 A 0
-	TNT1 A 0 A_JumpIfInventory("DoomZShellBoxItem", 1, "LoadShellBox")
-    TNT1 A 0 A_WeaponReady //So the user can switch weapons if they're out of ammo
+	TNT1 A 0 A_JumpIfInventory("Shell", 1, "LoadShells")
+    SHTG A 1 A_WeaponReady //So the user can switch weapons if they're out of ammo
 	goto Ready
-   LoadShellBox:
+   LoadShells:
     TNT1 A 0 
 	SHTG C 1 Offset(0,35)
 	SHTG C 1 Offset(0,38)
@@ -49,18 +53,35 @@ actor DoomZShotgun : Shotgun 15004
 	SHTG C 1 Offset(0,62)
 	SHTG C 1 Offset(0,72)
 	SHTG C 1 Offset(0,82)
-	SHTG C 2 Offset(-1,82) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+   LoadShell:
+    TNT1 A 0
+    TNT1 A 0 A_Jump(256, "LoadShell1", "LoadShell2", "LoadShell3", "LoadShell4", "LoadShell5")
+   LoadShell1:
+	SHTG C 2 Offset(-1,82) A_PlaySound ("shotgun/load", CHAN_WEAPON)
 	SHTG C 3 Offset(0,82) 
-	SHTG C 2 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+    SHTG C 0 A_Jump(256, "FinishLoading")
+   LoadShell2:
+	SHTG C 2 Offset(-2,84) A_PlaySound ("shotgun/load", CHAN_WEAPON)
 	SHTG C 3 Offset(0,82)
-	SHTG C 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+    SHTG C 0 A_Jump(256, "FinishLoading")
+   LoadShell3:
+	SHTG C 2 Offset(-1,84) A_PlaySound ("shotgun/load", CHAN_WEAPON)
 	SHTG C 3 Offset(0,82) 
-	SHTG C 2 Offset(-3,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+    SHTG C 0 A_Jump(256, "FinishLoading")
+   LoadShell4:
+	SHTG C 2 Offset(-3,84) A_PlaySound ("shotgun/load", CHAN_WEAPON)
 	SHTG C 3 Offset(0,82) 
-	SHTG C 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+    SHTG C 0 A_Jump(256, "FinishLoading")
+   LoadShell5:
+	SHTG C 2 Offset(-1,84) A_PlaySound ("shotgun/load", CHAN_WEAPON)
 	SHTG C 3 Offset(0,82) 
-	TNT1 A 0 A_TakeInventory("DoomZShellBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-	TNT1 A 0 A_GiveInventory("Shell", 20)
+    SHTG C 0 A_Jump(256, "FinishLoading")
+   FinishLoading:
+	SHTG C 1 A_TakeInventory("Shell", 1)
+	SHTG C 1 A_GiveInventory("LoadedShotgunShell", 1)
+    SHTG C 0 A_JumpIfInventory("LoadedShotgunShell", 0, "DoneLoading")
+    SHTG C 1 A_JumpIfInventory("Shell", 1, "LoadShell")
+   DoneLoading:
 	SHTG B 1 Offset(0,82)
 	SHTG B 1 Offset(0,72)
 	SHTG B 1 Offset(0,62)
@@ -77,7 +98,7 @@ actor DoomZShotgun : Shotgun 15004
 	TNT1 A 0 A_JumpIfInventory("ShotgunFireState", 1, "Cha")
 	SHTG A 0 A_PlaySound ("weapons/shotgf1", CHAN_WEAPON)
 	SHTG A 0 Radius_Quake(1, 7, 0, 2, 0)
-	SHTG A 0 A_FireBullets (7.5, 5.0, 7, 4, "BulletPuff")
+	SHTG A 0 A_FireBullets (7.5, 5.0, 7, 3, "BulletPuff")
     SHTG A 7 A_GunFlash
     SHTG A 2 A_GiveInventory("ShotgunFireState", 1)
 	SHTG A 0 A_JumpIfNoAmmo("NoAmmo")
@@ -118,68 +139,31 @@ actor DoomZSuperShotgun : SuperShotgun
   Weapon.SlotNumber 3
   Weapon.SelectionOrder 900
   Weapon.SlotPriority 0
-  Weapon.AmmoUse 1 //Not using 2 here so A_JumpIfNoAmmo() doesn't get stuck if you have 1 shell left
+  Weapon.AmmoUse 2
+  //Weapon.AmmoUse 1 //Not using 2 here so A_JumpIfNoAmmo() doesn't get stuck if you have 1 shell left
   Weapon.AmmoGive 15
   +SHOOTABLE
   +NOBLOOD
   Health 40
   +NOAUTOFIRE
     
-  Weapon.AmmoType2 "DoomZShellBoxItem"
-  Weapon.AmmoUse2 0
-  +WEAPON.ALT_AMMO_OPTIONAL
-
   States
   {
 	Ready:
 		SHT2 A 1 A_WeaponReady//(WRF_NOSWITCH)
-		SHT2 A 0 A_JumpIfNoAmmo("NoAmmo")
-		SHT2 A 0 A_JumpIfInventory("Shell", 2, "Ready2") //Skip over the next line
-		SHT2 A 0 A_JumpIfInventory("Shell", 1, "NoAmmo") //If we only have 1 shell left....
+		//SHT2 A 0 A_JumpIfNoAmmo("NoAmmo")
+		//SHT2 A 0 A_JumpIfInventory("Shell", 2, "Ready2") //Skip over the next line
+		//SHT2 A 0 A_JumpIfInventory("Shell", 1, "NoAmmo") //If we only have 1 shell left....
 	Ready2:
 		SHT2 A 1 A_WeaponReady
 		Loop
-   NoAmmo:
-		TNT1 A 0
-		TNT1 A 0 A_JumpIfInventory("DoomZShellBoxItem", 1, "LoadShellBox")
-		goto Ready
-   LoadShellBox:
-		TNT1 A 0 
-		SHT2 C 1 Offset(0,35)
-		SHT2 C 1 Offset(0,38)
-		SHT2 C 1 Offset(0,44)
-		SHT2 C 1 Offset(0,52)
-		SHT2 C 1 Offset(0,62)
-		SHT2 C 1 Offset(0,72)
-		SHT2 C 1 Offset(0,82)
-		SHT2 C 3 Offset(-1,82) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		SHT2 C 4 Offset(0,82) 
-		SHT2 C 3 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		SHT2 C 4 Offset(0,82)
-		SHT2 C 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		SHT2 C 4 Offset(0,82) 
-		SHT2 C 3 Offset(-3,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		SHT2 C 4 Offset(0,82) 
-		SHT2 C 3 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		SHT2 C 4 Offset(0,82) 
-		TNT1 A 0 A_TakeInventory("DoomZShellBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-		TNT1 A 0 A_GiveInventory("Shell", 20)
-		SHT2 A 1 Offset(0,82)
-		SHT2 A 1 Offset(0,72)
-		SHT2 A 1 Offset(0,62)
-		SHT2 A 1 Offset(0,52)
-		SHT2 A 1 Offset(0,44)
-		SHT2 A 1 Offset(0,38)
-		SHT2 A 1 Offset(0,35)
-		SHT2 A 1 Offset(0,32)
-		goto Ready
 	Fire:
 		SHT2 A 3
 		SHT2 A 0 Radius_Quake(2, 7, 0, 3, 0)
 		SHT2 A 0 ThrustThing(angle*256/360, -3, 0)
-		SHT2 A 0 A_TakeInventory("Shell", 1)
+		//SHT2 A 0 A_TakeInventory("Shell", 1)
 		SHT2 A 7 A_FireShotgun2
-		TNT1 A 0 A_JumpIfNoAmmo("NoAmmo")
+		//TNT1 A 0 A_JumpIfNoAmmo("NoAmmo")
 		SHT2 B 7 
 		SHT2 C 7 A_CheckReload
 		SHT2 D 7 A_OpenShotgun2
@@ -194,15 +178,46 @@ actor DoomZSuperShotgun : SuperShotgun
   }
 }
 
+//Dummy inventory
+actor AxeMeleeAction : Inventory 
+{
+    Inventory.MaxAmount 1
+}
+actor FistMeleeAction : Inventory 
+{
+    Inventory.MaxAmount 1
+}
+
+actor FistPuff : BulletPuff
+{
+  +PUFFONACTORS // this is necessary for it to still make sound on enemies
+  +PUFFGETSOWNER
+    SeeSound "player/male/fist"
+    
+    DamageType "Fist"
+    
+    States {
+        Spawn:
+        Melee:
+            TNT1 A 0
+            //Kickback function:
+            TNT1 A 0 ACS_ExecuteAlways(106, 0, 0, 0, 0)
+            goto Super::Spawn
+    }
+}
+
 //Can't use the "replaces" keyword on Pistol or Fist.
 //It's only for replaces items spawned in the map. 
 actor DoomZPistol : Pistol 15003
 {
+  Decal BulletChip
   Weapon.SelectionOrder 2000
   Weapon.SlotNumber 2
   Weapon.AmmoUse 1
-  Weapon.AmmoGive 44
-  Weapon.AmmoType "Clip"
+  Weapon.AmmoGive 12
+  Weapon.AmmoGive2 1 //Give 1 clip
+  Weapon.AmmoType "9mmPistolBullet"
+
   Obituary "$OB_MPPISTOL"
   //+WEAPON.WIMPY_WEAPON
   Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED"
@@ -212,8 +227,11 @@ actor DoomZPistol : Pistol 15003
   +WINDTHRUST
   Health 10
   +NOAUTOFIRE //Semi-automatic!
-
-  Weapon.AmmoType2 "DoomZClipBoxItem"
+  
+  Weapon.UpSound "pistol/ready2"
+  AttackSound ""
+  
+  Weapon.AmmoType2 "PistolClip"
   Weapon.AmmoUse2 0
   +WEAPON.ALT_AMMO_OPTIONAL
   Tag "9mm Pistol"
@@ -221,15 +239,21 @@ actor DoomZPistol : Pistol 15003
   States
   {
 	Ready:
-		PISG A 1 A_WeaponReady(WRF_NOSWITCH)
+		PISG A 0 
+        PISG A 1 A_WeaponReady(WRF_NOSWITCH)
+        PISG A 0 A_JumpIfInventory("AxeMeleeAction", 1, "AxeMelee")
+        PISG A 0 A_JumpIfInventory("FistMeleeAction", 1, "FistMelee")
 		PISG A 0 A_JumpIfNoAmmo("NoAmmo")
 		PISG A 0 A_WeaponReady
 		Loop
 	NoAmmo:
+    AltFire:
 		TNT1 A 0
-		TNT1 A 0 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadClipBox")
+		TNT1 A 0 A_JumpIfInventory("PistolClip", 1, "LoadClip")
+		PISG A 1 A_WeaponReady(WRF_NOFIRE)
 		goto Ready
-	LoadClipBox:
+    Reload:
+	LoadClip:
 		TNT1 A 0 
 		PISG A 1 Offset(0,35)
 		PISG A 1 Offset(0,38)
@@ -238,15 +262,16 @@ actor DoomZPistol : Pistol 15003
 		PISG A 1 Offset(0,62)
 		PISG A 1 Offset(0,72)
 		PISG A 1 Offset(0,82)
-		PISG A 2 Offset(-1,82) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		PISG A 2 Offset(-1,82) A_PlaySound ("pistol/clip1", CHAN_WEAPON)
 		PISG A 3 Offset(0,82) 
-		PISG A 2 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		PISG A 2 Offset(-2,84) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
 		PISG A 3 Offset(0,82)
-		PISG A 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		PISG AC 3 Offset(0,82) 
-		TNT1 A 0 A_TakeInventory("DoomZClipBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-		TNT1 A 0 A_GiveInventory("Clip", 50)
-		PISG A 1 Offset(0,82)
+		PISG A 4 Offset(-1,84) A_PlaySound("pistol/ready", CHAN_WEAPON)
+		PISG A 4 Offset(-2,84) 
+		PISG A 4 Offset(0,82)
+		PISG A 4 Offset(-1,84) A_TakeInventory("PistolClip", 1)
+		PISG AC 4 Offset(0,82) 
+		PISG A 1 Offset(0,82) A_GiveInventory("9mmPistolBullet", 12)
 		PISG A 1 Offset(0,72)
 		PISG A 1 Offset(0,62)
 		PISG A 1 Offset(0,52)
@@ -255,10 +280,83 @@ actor DoomZPistol : Pistol 15003
 		PISG A 1 Offset(0,35)
 		PISG A 1 Offset(0,32)
 		goto Ready  
+  AxeMelee:
+        TNT1 A 0
+		PISG A 1 Offset(0,35)
+		PISG A 1 Offset(-12,38)
+		PISG A 1 Offset(-24,47)
+		PISG A 1 Offset(-32,62)
+		PISG A 1 Offset(-48,72)
+		PISG A 1 Offset(-50,90)
+
+		AXEG A 0 Offset(1,1) ThrustThing((angle)*256/360, 4, 0, 0)
+		AXEG E 3
+        AXEG I 3 //A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		//AXEG I 0 A_SetAngle(angle+30)
+		AXEG J 3 A_CustomPunch(20+random(4, 16), 1, 0, "AxeHitPuff")
+        TNT1 A 0 A_PlaySound("weapons/axeswing", CHAN_WEAPON) //Kills pistol sound
+		//Small screen shake :D
+		AXEG K 2 A_SetPitch(pitch+2)
+		AXEG K 1 A_SetPitch(pitch-2)
+		TNT1 A 4
+		//AXEG EDCBA 1
+		//AXEG A 6
+        
+		PISG A 1 Offset(0,82)
+		PISG A 1 Offset(0,72)
+		PISG A 1 Offset(0,62)
+		PISG A 1 Offset(0,52)
+		PISG A 1 Offset(0,44)
+		PISG A 1 Offset(0,38)
+		PISG A 1 Offset(0,35)
+		PISG A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("AxeMeleeAction", 1)
+        goto Ready
+        
+  FistMelee:
+        TNT1 A 0
+		PISG A 1 Offset(0,35)
+		PISG A 1 Offset(-12,38)
+		PISG A 1 Offset(-24,47)
+		PISG A 1 Offset(-32,62)
+		PISG A 1 Offset(-48,72)
+		PISG A 1 Offset(-50,90)
+        
+        PUNR A 1 Offset(190, 170)
+        PUNR B 1 Offset(183, 165)
+        PUNR B 1 Offset(173, 160)
+        PUNR C 1 Offset(161, 155)
+        PUNR C 1 Offset(150, 152)
+        TNT1 A 0 A_CustomPunch(10, true, CPF_PULLIN, "FistPuff")
+        TNT1 A 0 A_PlaySound("melee/swing", CHAN_WEAPON) //Kills pistol sound
+        PUNR D 1 Offset(137, 145) 
+        PUNR D 1 Offset(135, 142) 
+        PUNR D 1 Offset(133, 138) 
+        PUNR D 1 Offset(130, 130) 
+        
+        PUNR D 2 Offset(120, 155) 
+        PUNR D 2 Offset(100, 160) 
+        PUNR D 1 Offset(80, 170)
+        
+		PISG A 1 Offset(1,82)
+		PISG A 1 Offset(0,72)
+		PISG A 1 Offset(0,62)
+		PISG A 1 Offset(0,52)
+		PISG A 1 Offset(0,44) 
+		PISG A 1 Offset(0,38)
+		PISG A 1 Offset(0,35)
+		PISG A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("FistMeleeAction", 1)
+        goto Ready
+        
+        
   Deselect:
     PISG A 1 A_Lower
     Loop
   Select:
+    TNT1 A 0
     PISG A 1 A_Raise
     Loop
   Fire:
@@ -266,15 +364,15 @@ actor DoomZPistol : Pistol 15003
 	PISG B 0 Radius_Quake(1, 6, 0, 1, 0)
     //PISG B 1 A_FirePistol
 	PISG B 0 A_GunFlash
-	//PISG B 0 A_PlaySound("weapons/pistol", CHAN_WEAPON)
-	PISG B 2 A_FireBullets(6.0, 4.0, -1, 3.5, "BulletPuff")
+	PISG B 0 A_PlaySound("weapons/pistol", CHAN_WEAPON)
+	PISG B 2 A_FireBullets(4.0, 4.0, -1, 2.5, "BulletPuff")
     PISG B 0 //A_PlayWeaponSound ("pistol")
     PISG B 1 
 	PISG C 0 A_SetPitch(pitch-0.5)
 	PISG C 1 A_SpawnItemEx("DeadBulletCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
     PISG C 0
-    PISG B 1
-    PISG A 1
+    //PISG B 1
+    //PISG A 1
     //PISG B 5 A_ReFire
     Goto Ready
   Flash:
@@ -295,33 +393,42 @@ actor DoomZChaingun : Chaingun 15005
   +NOBLOOD
 	//+CANPASS //---> crazy CPU usage
   +WINDTHRUST
-  Health 10
+  Health 30
   Weapon.SlotNumber 4
-  //Weapon.AmmoType "Clip"
-  //Weapon.AmmoUse 1
-  Weapon.AmmoGive 25
+  Weapon.AmmoType "ChaingunBullet"
+  Weapon.AmmoUse 1
+  Weapon.AmmoGive 80
   AttackSound ""
-  //Weapon.UpSound "Weapons/C_EQLT"
+  Weapon.UpSound "gun/move"
+  AttackSound ""
   //Decal "BulletChip"
   
-  Weapon.AmmoType2 "DoomZClipBoxItem"
+  Weapon.AmmoType2 "ChaingunClip"
   Weapon.AmmoUse2 0
   +WEAPON.ALT_AMMO_OPTIONAL
+  
+  
   Tag "Chaingun"
 
 
   States
   {
 	Ready:
-		CHGG A 1 A_WeaponReady(WRF_NOSWITCH)
+        TNT1 A 0
+        CHGG A 1 A_WeaponReady(WRF_NOSWITCH)
+        CHGG A 0 A_JumpIfInventory("AxeMeleeAction", 1, "AxeMelee")
+        CHGG A 0 A_JumpIfInventory("FistMeleeAction", 1, "FistMelee")
 		CHGG A 0 A_JumpIfNoAmmo("NoAmmo")
 		CHGG A 0 A_WeaponReady
 		Loop
 	NoAmmo:
+    AltFire:
 		TNT1 A 0
-		TNT1 A 0 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadClipBox")
+		TNT1 A 0 A_JumpIfInventory("ChaingunClip", 1, "LoadClip")
+		CHGG A 1 A_WeaponReady(WRF_NOFIRE)
 		goto Ready
-	LoadClipBox:
+    Reload:
+	LoadClip:
 		TNT1 A 0 
 		CHGG A 1 Offset(0,35)
 		CHGG A 1 Offset(0,38)
@@ -330,21 +437,21 @@ actor DoomZChaingun : Chaingun 15005
 		CHGG A 1 Offset(0,62)
 		CHGG A 1 Offset(0,72)
 		CHGG A 1 Offset(0,82)
-	 LoadAnotherClipBox:
-		CHGG A 1 A_TakeInventory("DoomZClipBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-		CHGG A 0 A_GiveInventory("Clip", 50)
+	 LoadAnotherClip:
+		CHGG A 1 A_TakeInventory("ChaingunClip", 1)//ACS_ExecuteAlways(949, 0, 0)
+		CHGG A 0 A_GiveInventory("ChaingunBullet", 50)
 		CHGG A 2 Offset(-1,82) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
 		CHGG A 3 Offset(0,82) 
 		CHGG A 2 Offset(-2,84) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
 		CHGG A 3 Offset(0,82)
 		CHGG A 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
 		CHGG A 3 Offset(0,82) 
-		CHGG A 0 A_JumpIfInventory("Clip", 0, "DoneLoading")
-		CHGG A 1 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadAnotherClipBox")
+		CHGG A 0 A_JumpIfInventory("ChaingunBullet", 0, "DoneLoading")
+		CHGG A 1 A_JumpIfInventory("ChaingunClip", 1, "LoadAnotherClip")
 	 DoneLoading:
 		CHGG A 1 Offset(0,82)
 		CHGG A 1 Offset(0,72)
-		CHGG A 1 Offset(0,62)
+		CHGG A 1 Offset(0,62) A_PlaySound("pistol/ready", CHAN_WEAPON)
 		CHGG A 1 Offset(0,52)
 		CHGG A 1 Offset(0,44)
 		CHGG A 1 Offset(0,38)
@@ -388,6 +495,78 @@ actor DoomZChaingun : Chaingun 15005
      CHGF A 3 Bright A_Light2
      CHGF B 3 Bright A_Light1
      Goto LightDone
+
+   AxeMelee:
+        TNT1 A 0
+		CHGG A 1 Offset(0,35)
+		CHGG A 1 Offset(-12,38)
+		CHGG A 1 Offset(-24,47)
+		CHGG A 1 Offset(-32,62)
+		CHGG A 1 Offset(-48,72)
+		CHGG A 1 Offset(-50,90)
+
+		AXEG A 0 Offset(1,1) ThrustThing((angle)*256/360, 4, 0, 0)
+		AXEG E 3
+        AXEG I 3 //A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		//AXEG I 0 A_SetAngle(angle+30)
+		AXEG J 3 A_CustomPunch(20+random(4, 16), 1, 0, "AxeHitPuff")
+        TNT1 A 0 A_PlaySound("weapons/axeswing", CHAN_WEAPON) //Kills pistol sound
+		//Small screen shake :D
+		AXEG K 2 A_SetPitch(pitch+2)
+		AXEG K 1 A_SetPitch(pitch-2)
+		TNT1 A 4
+		//AXEG EDCBA 1
+		//AXEG A 6
+        
+		CHGG A 1 Offset(0,82)
+		CHGG A 1 Offset(0,72)
+		CHGG A 1 Offset(0,62)
+		CHGG A 1 Offset(0,52)
+		CHGG A 1 Offset(0,44)
+		CHGG A 1 Offset(0,38)
+		CHGG A 1 Offset(0,35)
+		CHGG A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("AxeMeleeAction", 1)
+        goto Ready
+        
+  FistMelee:
+        TNT1 A 0
+		CHGG A 1 Offset(0,35)
+		CHGG A 1 Offset(-12,38)
+		CHGG A 1 Offset(-24,47)
+		CHGG A 1 Offset(-32,62)
+		CHGG A 1 Offset(-48,72)
+		CHGG A 1 Offset(-50,90)
+        
+        PUNR A 1 Offset(190, 170)
+        PUNR B 1 Offset(183, 165)
+        PUNR B 1 Offset(173, 160)
+        PUNR C 1 Offset(161, 155)
+        PUNR C 1 Offset(150, 152)
+        TNT1 A 0 A_CustomPunch(10, true, CPF_PULLIN, "FistPuff")
+        TNT1 A 0 A_PlaySound("melee/swing", CHAN_WEAPON)
+        PUNR D 1 Offset(137, 145) 
+        PUNR D 1 Offset(135, 142) 
+        PUNR D 1 Offset(133, 138) 
+        PUNR D 1 Offset(130, 130) 
+        
+        PUNR D 2 Offset(120, 155) 
+        PUNR D 2 Offset(100, 160) 
+        PUNR D 1 Offset(80, 170)
+        
+		CHGG A 1 Offset(1,82)
+		CHGG A 1 Offset(0,72)
+		CHGG A 1 Offset(0,62)
+		CHGG A 1 Offset(0,52)
+		CHGG A 1 Offset(0,44) 
+		CHGG A 1 Offset(0,38)
+		CHGG A 1 Offset(0,35)
+		CHGG A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("FistMeleeAction", 1)
+        goto Ready
+        
   }
 }
 
@@ -480,23 +659,29 @@ actor DoomZPistol2 : Pistol
   Health 10
   +NOAUTOFIRE //Semi-automatic!
 
-  Weapon.AmmoType2 "DoomZClipBoxItem"
+  Weapon.AmmoType2 "PistolClip"
   Weapon.AmmoUse2 0
   +WEAPON.ALT_AMMO_OPTIONAL
   Tag "9mm Pistol"
 
   States
   {
-	Ready:
-		APST A 1 A_WeaponReady(WRF_NOSWITCH)
+		Ready:
+		APST A 0 
+        APST A 1 A_WeaponReady(WRF_NOSWITCH)
+        APST A 0 A_JumpIfInventory("AxeMeleeAction", 1, "AxeMelee")
+        APST A 0 A_JumpIfInventory("FistMeleeAction", 1, "FistMelee")
 		APST A 0 A_JumpIfNoAmmo("NoAmmo")
 		APST A 0 A_WeaponReady
 		Loop
 	NoAmmo:
 		TNT1 A 0
-		TNT1 A 0 A_JumpIfInventory("DoomZClipBoxItem", 1, "LoadClipBox")
+		TNT1 A 0 A_JumpIfInventory("PistolClip", 1, "LoadClip")
+		APST A 1 A_WeaponReady
 		goto Ready
-	LoadClipBox:
+    AltFire:
+    Reload:
+	LoadClip:
 		TNT1 A 0 
 		APST A 1 Offset(0,35)
 		APST A 1 Offset(0,38)
@@ -509,11 +694,12 @@ actor DoomZPistol2 : Pistol
 		APST A 3 Offset(0,82) 
 		APST A 2 Offset(-2,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
 		APST A 3 Offset(0,82)
-		APST A 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
-		APST AC 3 Offset(0,82) 
-		TNT1 A 0 A_TakeInventory("DoomZClipBoxItem", 1)//ACS_ExecuteAlways(949, 0, 0)
-		TNT1 A 0 A_GiveInventory("Clip", 50)
-		APST A 1 Offset(0,82)
+		APST A 4 Offset(-1,84) A_PlaySound("pistol/ready", CHAN_WEAPON)
+		APST A 4 Offset(-2,84) 
+		APST A 4 Offset(0,82)
+		APST A 4 Offset(-1,84) A_TakeInventory("PistolClip", 1)
+		APST AC 4 Offset(0,82) 
+		APST A 1 Offset(0,82) A_GiveInventory("9mmPistolBullet", 12)
 		APST A 1 Offset(0,72)
 		APST A 1 Offset(0,62)
 		APST A 1 Offset(0,52)
@@ -522,39 +708,107 @@ actor DoomZPistol2 : Pistol
 		APST A 1 Offset(0,35)
 		APST A 1 Offset(0,32)
 		goto Ready  
+  AxeMelee:
+        TNT1 A 0
+		APST A 1 Offset(0,35)
+		APST A 1 Offset(-12,38)
+		APST A 1 Offset(-24,47)
+		APST A 1 Offset(-32,62)
+		APST A 1 Offset(-48,72)
+		APST A 1 Offset(-50,90)
+
+		AXEG A 0 Offset(1,1) ThrustThing((angle)*256/360, 4, 0, 0)
+		AXEG E 3
+        AXEG I 3 A_PlaySound("weapons/axeswing", CHAN_WEAPON)
+		//AXEG I 0 A_SetAngle(angle+30)
+		AXEG J 3 A_CustomPunch(20+random(4, 16), 1, 0, "AxeHitPuff")
+		//Small screen shake :D
+		AXEG K 2 A_SetPitch(pitch+2)
+		AXEG K 1 A_SetPitch(pitch-2)
+		TNT1 A 4
+		//AXEG EDCBA 1
+		//AXEG A 6
+        
+		APST A 1 Offset(0,82)
+		APST A 1 Offset(0,72)
+		APST A 1 Offset(0,62)
+		APST A 1 Offset(0,52)
+		APST A 1 Offset(0,44)
+		APST A 1 Offset(0,38)
+		APST A 1 Offset(0,35)
+		APST A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("AxeMeleeAction", 1)
+        goto Ready
+        
+  FistMelee:
+        TNT1 A 0
+		APST A 1 Offset(0,35)
+		APST A 1 Offset(-12,38)
+		APST A 1 Offset(-24,47)
+		APST A 1 Offset(-32,62)
+		APST A 1 Offset(-48,72)
+		APST A 1 Offset(-50,90)
+        
+        PUNR A 1 Offset(190, 170)
+        PUNR B 1 Offset(183, 165)
+        PUNR B 1 Offset(173, 160)
+        PUNR C 1 Offset(161, 155)
+        PUNR C 1 Offset(150, 152)
+        TNT1 A 0 A_CustomPunch(10, true, CPF_PULLIN, "FistPuff")
+        TNT1 A 0 A_PlaySound("melee/swing", CHAN_WEAPON)
+        PUNR D 1 Offset(137, 145) 
+        PUNR D 1 Offset(135, 142) 
+        PUNR D 1 Offset(133, 138) 
+        PUNR D 1 Offset(130, 130) 
+        
+        PUNR D 2 Offset(120, 155) 
+        PUNR D 2 Offset(100, 160) 
+        PUNR D 1 Offset(80, 170)
+        
+		APST A 1 Offset(1,82)
+		APST A 1 Offset(0,72)
+		APST A 1 Offset(0,62)
+		APST A 1 Offset(0,52)
+		APST A 1 Offset(0,44) 
+		APST A 1 Offset(0,38)
+		APST A 1 Offset(0,35)
+		APST A 1 Offset(0,32)
+        
+        TNT1 A 0 A_TakeInventory("FistMeleeAction", 1)
+        goto Ready
+        
+        
   Deselect:
     APST A 1 A_Lower
     Loop
   Select:
+    TNT1 A 0
     APST A 1 A_Raise
     Loop
   Fire:
-	APST A 0
-	//B
-	APST A 0 Radius_Quake(1, 6, 0, 1, 0)
-    //PISG B 1 A_FirePistol
-	APST A 0 A_GunFlash
-	//PISG B 0 A_PlaySound("weapons/pistol", CHAN_WEAPON)
-	APST A 2 A_FireBullets(6.0, 4.0, -1, 3.5, "BulletPuff")
-    APST A 0 //A_PlayWeaponSound ("pistol")
-    APST A 1 
-	//C
-	APST A 0 A_SetPitch(pitch-0.5)
-	APST A 1 A_SpawnItemEx("DeadBulletCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
-    APST A 0
-	//B
-    APST A 1
-	//A
-    APST A 1
-    //PISG B 5 A_ReFire
+	TNT1 A 0
+	APST B 0 Radius_Quake(1, 6, 0, 1, 0)
+    //APST B 1 A_FirePistol
+	APST B 0 A_GunFlash
+	//APST B 0 A_PlaySound("weapons/pistol", CHAN_WEAPON)
+	APST B 2 A_FireBullets(6.0, 4.0, -1, 2.5, "BulletPuff")
+    APST B 0 //A_PlayWeaponSound ("pistol")
+    APST B 1 
+	APST C 0 A_SetPitch(pitch-0.5)
+	APST C 1 A_SpawnItemEx("DeadBulletCasing", 16.0, 0.0, 48.0, 0.0, 4.0, 0.0)
+    APST C 0
+    //APST B 1
+    //APST A 1
+    //APST B 5 A_ReFire
     Goto Ready
   Flash:
-    APST A 2 Bright A_Light1
+    PISF A 2 Bright A_Light1
     Goto LightDone
-    APST A 2 Bright A_Light1
+    PISF A 2 Bright A_Light1
     Goto LightDone
   Spawn:
-    APST A 126000 //Disappear after an hour
+    PIST A 126000 //Disappear after an hour
     Stop
   }
 

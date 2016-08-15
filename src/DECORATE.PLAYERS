@@ -1,4 +1,6 @@
-const int PERSISTENT_INVENTORY_LEN = 63;
+const int PERSISTENT_INVENTORY_LEN = 76; //Comes from PLAYER.acs. Keep the two in sync!
+                                         //XXX: To work around a GZDoomBuilder bug, also
+                                         //update the length in DoomZBackpack below!
 
 actor Survivalist : DoomPlayer
 {
@@ -128,6 +130,7 @@ actor PlayerHasLoadedInventory : CustomInventory
 // Player drops stuff when he dies
 // http://forum.zdoom.org/viewtopic.php?f=3&t=16048
 // Thanks to bagheadspidey from the zdoom forums!
+// DEPRECATED as of r16! ********************
 ACTOR  PlayerDropStuff : CustomInventory
 {
    inventory.maxamount 0
@@ -159,8 +162,8 @@ ACTOR  PlayerDropStuff : CustomInventory
       TNT1 A 0 A_DropInventory ("BFG9000")
 	  TNT1 A 0 A_DropInventory ("GraplingAmmo") //Rope
 	  TNT1 A 0 A_DropInventory ("GasolineAmmo") //Ammo for chainsaw
-	  TNT1 A 0 A_DropInventory ("DoomZShellBoxItem") 
-	  TNT1 A 0 A_DropInventory ("DoomZClipBoxItem") 
+	  //TNT1 A 0 A_DropInventory ("DoomZShellBoxItem") 
+	  //TNT1 A 0 A_DropInventory ("DoomZClipBoxItem") 
 	  //TNT1 A 0 A_DropInventory ("DoomZQuiverItem") 
 
    // drop other crap
@@ -291,10 +294,10 @@ ACTOR PseudoSpectatorFlag : Inventory
 actor DoomZBackpack : FakeInventory
 {
     var int user_tid;
-    var int user_inventory[PERSISTENT_INVENTORY_LEN];
+    var int user_inventory[76]; //PERSISTENT_INVENTORY_LENGTH 
     
     Height 26
-    Inventory.PickupMessage "Picked up a backpack of a fallen survivor!" // "Picked up a backpack full of ammo!"
+    Inventory.PickupMessage "Picked up the backpack of a fallen survivor!" // "Picked up a backpack full of ammo!"
     Health 300
     +SHOOTABLE
     
@@ -312,4 +315,12 @@ actor DoomZBackpack : FakeInventory
             Stop
 
     }
+}
+
+actor TravelDestination : Inventory
+{
+    Inventory.MaxAmount 100
+    -INVENTORY.INVBAR
+    +UNDROPPABLE
+    //+UNTOSSABLE
 }

@@ -75,22 +75,25 @@ ACTOR ToxinShot
 {
    Radius 5
    Height 5
-   Speed 15
+   Speed 10
    Damage 2
    poisondamage 16
    RENDERSTYLE ADD
    ALPHA 0.80
    PROJECTILE
    +THRUGHOST
-   +FLOATBOB
+   //+FLOATBOB
+   -NOGRAVITY
+   gravity 0.125
+   
    Seesound "weapons/skulfi"
    DeathSound "weapons/bloodx"
    States
    {
    Spawn:
-      GHFX A 1 Bright A_CustomMissile("Barbtrail",0,0,0,0)
+      GHFX A 1 Bright A_SpawnItemEx("Barbtrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
       GHFX A 1 Bright A_CStaffMissileSlither
-      GHFX B 1 Bright A_CustomMissile("Barbtrail",0,0,0,0)
+      GHFX B 1 Bright A_SpawnItemEx("Barbtrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
       GHFX B 1 Bright A_CStaffMissileSlither
       loop
    Death:
@@ -152,6 +155,8 @@ ACTOR Barbtrail
    PROJECTILE
    RENDERSTYLE ADD
    ALPHA 0.75
+   +CLIENTSIDEONLY
+   
    States
    {
    Spawn:

@@ -3,12 +3,16 @@ weapons/shotgf1 SHOTGN1
 weapons/shotgf2 SHOTGN2
 weapons/shotgf3 SHOTGN3
 
+pistol/ready guncock1
+pistol/ready2 guncock2
+
 creeper/fuse FUSE
 waterfall WATR
 waterstream WATERSTR
 treebreak TREEBRK
 click CLICK
 rocks ROCKS
+rocks2 ROCKS2
 lava LAVA
 hey HEY
 thanks THX
@@ -92,6 +96,9 @@ $rolloff ambience/swamp1 1024 2048
 obelisk1 obelisk1
 $rolloff obelisk1 2048 4096
 
+obelisk/boss obbossl
+$rolloff obelisk/boss 2048 4096
+
 $rolloff weapons/bfgx 2048 3000
 
 // Jack
@@ -102,3 +109,63 @@ jack/stop dorcls
 parachute/pull velcro1
 parachute/unfurl slide1
 parachute/flop slide2
+
+//Paddle
+$random paddle/paddle { world/lavsiz22 world/watersplash world/watersplash2}
+
+loot/open1 loot1
+loot/open2 loot2
+loot/open3 loot3
+loot/open4 loot4
+$random loot/open { loot/open1 loot/open2 loot/open3 loot/open4 } 
+
+glass/break1 glass1
+
+wood/break1 wood1
+wood/break2 wood2
+wood/break3 wood3
+wood/break4 wood4
+wood/break5 wood5
+wood/break6 wood6
+wood/break7 wood7
+wood/break8 wood8
+wood/break9 wood9
+wood/break10 wood10
+$random wood/break { wood/break1 wood/break2 wood/break3 wood/break4 wood/break5 wood/break6 wood/break7 wood/break8 wood/break9 wood/break10 } 
+$limit wood/break 1 256
+
+$random wood/breakshort { wood/break1 wood/break2 wood/break3 wood/break4 }
+$limit wood/breakshort 1 256
+$random wood/breaklong { wood/break5 wood/break6 wood/break7 wood/break8 wood/break9 wood/break10 } 
+
+
+melee/swing1 whip1
+melee/swing2 whip2
+melee/swing3 whip3
+$random melee/swing { melee/swing1 melee/swing2 melee/swing3 }
+
+
+glock/clip1 glockc1
+glock/clip2 glockc2
+glock/clip3 glockc3
+glock/clip4 glockc4
+
+gun/dry gundry1
+gun/move gunmov1
+
+rifle/cock1 rifleck1
+rifle/cock2 rifleck2
+rifle/load rifleld1
+
+pistol/bolt 9mmbolt1
+pistol/clip1 9mmclip1
+pistol/clip2 9mmclip2
+pistol/lock 9mmlock1
+
+shotgun/load1 shotld1
+shotgun/load2 shotld2
+shotgun/load3 shotld3
+$random shotgun/load { shotgun/load1 shotgun/load2 shotgun/load3 }
+$volume shotgun/load 0.5
+
+boat/capsize BOATSP1

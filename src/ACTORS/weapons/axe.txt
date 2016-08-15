@@ -7,6 +7,7 @@ ACTOR Axe : Weapon
 	Weapon.KickBack 5000
 	Inventory.Icon "AXEPA0"
 	Inventory.PickupMessage "You claimed yourself a powerful axe!"
+    Weapon.UpSound "weapons/axedraw"
 	Tag "Axe"
 	Obituary "%k butchered %o with his axe!"
 	+SHOOTABLE

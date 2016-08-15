@@ -48,12 +48,13 @@ script 531 (int xpLevel)
         case 17: words = "Level 17:\nYou've learned to craft parachutes!", art="PARI"; break;
         case 18: words = "Level 18:\nYou've learned to craft jacks!", art="JACKI"; break;
         case 19: words = "Level 19:\nYou've learned to craft hoists!\nUse them to lift fallen\nbridges or rescue your\nfriends.", art="HOISI"; break;
-		case 20: words = "Level 20:\nYou are just beginning\nto live."; break;
-		case 21: words = "Level 21:\nYou are careful & systematic\nin your business\narrangements."; break;
-		case 22: words = "Level 22:\nYou will travel\nto many places."; break;
-		case 23: words = "Level 23:\nYou should suggest some more\nunlockables ideas to\nHaxMurderer"; break;
-		case 24: words = "Level 24:\nYour wisdom has kept you\nfar away from danger."; break;
-		case 25: words = "Level 25:\n"; break;
+		case 20: words = "Level 20:\nYou've learned to craft\nradiation suits!", art="SUITI"; break;		
+        case 21: words = "Level 21:\nYou're strong enough to\nwield your axe for melee\n
+        with one-handed weapons!", art="PISTI0"; break;
+		case 22: words = "Level 22:\nYou've learned to craft green armor!", art="ARMGI"; break;
+		case 23: words = "Level 23:\nYou will travel\nto many places."; break;
+		case 24: words = "Level 24:\nYou should suggest some more\nunlockables ideas to\nHaxMurderer"; break;
+		case 25: words = "Level 25:\nYour wisdom has kept you\nfar away from danger."; break;
 		case 26: words = "Level 26:\n"; break;
 		case 27: words = "Level 27:\n"; break;
 		case 28: words = "Level 28:\n"; break;

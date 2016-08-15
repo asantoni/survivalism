@@ -81,6 +81,7 @@ Can you protect me from it?";
 			giveOnExit="QuestTalkedToHunter"; //Dummy inventory item so the quest script knows we talked to Hunter
 			break;
 		default:
+            words = "Error: Unknown dialog ID";
 			Log(s:"Error: Unknown dialog ID");
 			break;
 	}

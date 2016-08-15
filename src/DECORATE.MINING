@@ -13,6 +13,7 @@ Actor MinableRock
   PainChance 256 //100% chance of going into Pain state
   //DamageFactor 0.0
   DamageFactor "Axe", 1.0
+  DeathSound "rocks"
   
   +SOLID
   
@@ -35,7 +36,7 @@ Actor MinableRock
 		goto Spawn
 	  Death.Axe:
 		TNT1 A 0
-		TNT1 A 0 A_PlaySound("rocks")
+		TNT1 A 0 A_Scream
 		TNT1 A 0 A_SpawnItemEx("CStoneBoxItem")
 	  Death:
         TNT1 A 0 

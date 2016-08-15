@@ -277,6 +277,17 @@ script 512 (void)
 }
 
 
+//Make the monster more vulnerable when staggered
+//XXX: UNUSED
+script 513 (int stagger)
+{
+    if (stagger) {
+        SetActorProperty(0, APROP_DamageFactor, 5.0);
+    } else {
+        SetActorProperty(0, APROP_DamageFactor, 1.0);
+    }
+}
+
 /* Script 520-530 Reserved for CONVERSATION.acs 
 
 */

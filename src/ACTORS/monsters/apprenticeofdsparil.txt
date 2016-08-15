@@ -1,6 +1,6 @@
 Actor ApprenticeofDsparil 30000
 {
-  Health 500
+  Health 400
   Radius 20
   Height 56
   Speed 8
@@ -15,14 +15,52 @@ Actor ApprenticeofDsparil 30000
   DeathSound "Wizard2/Death"
   ActiveSound "Wizard2/Active"
   Obituary "%o was spooked by one of D'sparil's Apprentices."
+  
+  DropItem "ApprenticeOfDsparilLoot"
+  
   States
   {
-  Spawn:
-    APDP AB 10 A_Look
+    TNT1 A 0 A_UnsetShootable
+	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	APDP M 6 A_SetTranslucent(0.2, 2)
+	APDP M 6 A_SetTranslucent(0.4, 2)
+	APDP M 6 A_SetTranslucent(0.6, 2)
+	APDP M 6 A_SetTranslucent(0.8, 2)
+	APDP M 6 A_SetTranslucent(1.0, 0) //opaque
+	APDP MLKJI 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+    APDP A 0 A_SetShootable
+  SpawnLook:
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP AABB 4 A_Wander
+    APDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+	APDP A 0 A_CheckSight("Remove")
     Loop
   See:
     APDP A 0 A_SetTranslucent(1, 0)
-    APDP AABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+    APDP AABBAABB 3 A_Chase
+	APDP A 0 A_CheckSight("Remove")
     Loop
   Missile:
     APDP C 0 A_FaceTarget
@@ -102,6 +140,9 @@ Actor ApprenticeofDsparil 30000
     APDP E 4 A_Pain
     Goto See
   Death:
+	TNT1 A 0 A_GiveToTarget("ApprenticeOfDsparilKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
     APDP E 0 A_SetTranslucent(1,0)
     APDP E 6
     APDP F 6
@@ -109,12 +150,17 @@ Actor ApprenticeofDsparil 30000
     APDP H 6 A_SpawnItemEx("AoDGhost", 0, 0, 8, 0, 0, 0, 0, 128)
     APDP I 6 A_Fall
     APDP JKL 6
-    APDP M -1
+    APDP M 1050
     Stop
   Raise:
     APDP ML 8
     APDP KJI 6
-    Goto See
+    Goto See  
+  Remove:
+	TNT1 A 0 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
   }
 }
 
@@ -140,9 +186,9 @@ Actor AoDGhost
 
 Actor FireBlast
 {
-  Speed 25
+  Speed 18
   Scale 0.75
-  Damage 5
+  Damage 4
   Projectile
   +StrifeDamage
   +NoGravity
@@ -163,9 +209,9 @@ Actor FireBlast
 
 Actor SuperFireBlast : FireBlast
 {
-  Speed 16
+  Speed 13
   Scale 1.5
-  Damage (20*Random(2, 4))
+  Damage (10*Random(2, 4))
   Deathsound "SuperFireBlast/Explode"
   Decal BigScorch
   states

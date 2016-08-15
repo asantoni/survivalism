@@ -1,0 +1,229 @@
+
+
+actor WoodShrapnelSpawner
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    //+ALLOWBOUNCEONACTORS
+    //+BOUNCEONACTORS
+    +BOUNCEONFLOORS
+    +BOUNCEONFLOORS
+    
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            TNT1 A 0 A_SetArg(0, 5)
+        Explodey:
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnel1", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnel1", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnel2", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnel2", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnel3", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SetArg(0, args[0]-1)
+            TNT1 A 0 A_JumpIf(args[0] > 0, "Explodey")
+            Stop 
+    }
+}
+
+actor WoodShrapnel
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    +ALLOWBOUNCEONACTORS
+    +BOUNCEONACTORS
+    +BOUNCEONFLOORS
+        
+    BounceSound "wood/breakshort"
+
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            WDSP ABCDABCCDD 3
+            Stop
+        Death:
+            TNT1 A 0
+            TNT1 A 0 A_Die
+            TNT1 A 0 A_Fall
+            stop
+    }
+}
+
+actor WoodShrapnel1 : WoodShrapnel
+{
+    States
+    {
+        Spawn:
+            WDSP ABCDABCDDDDD 3
+            stop
+    }
+}
+
+actor WoodShrapnel2 : WoodShrapnel
+{
+    States
+    {
+        Spawn:
+            WDSP EFGEFGGGGG 3
+            stop
+    }
+}
+
+actor WoodShrapnel3 : WoodShrapnel
+{
+    States
+    {
+        Spawn:
+            WDSP HIJHIJHIJJJJJJJJ 3
+            stop
+    }
+}
+
+
+
+actor GlassShrapnelSpawner
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    //+ALLOWBOUNCEONACTORS
+    //+BOUNCEONACTORS
+    +BOUNCEONFLOORS
+    +BOUNCEONFLOORS
+    
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            TNT1 A 0 A_SetArg(0, 5)
+        Explodey:
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnel1", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnel1", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnel2", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnel2", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnel3", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SetArg(0, args[0]-1)
+            TNT1 A 0 A_JumpIf(args[0] > 0, "Explodey")
+            Stop 
+    }
+}
+
+actor GlassShrapnel
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    +ALLOWBOUNCEONACTORS
+    +BOUNCEONACTORS
+    +BOUNCEONFLOORS
+        
+    BounceSound "Glass/breakshort"
+
+    RenderStyle "Translucent"
+	Alpha 0.2
+    
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            GLSP ABCDABCCDD 3
+            Stop
+        Death:
+            TNT1 A 0
+            TNT1 A 0 A_Die
+            TNT1 A 0 A_Fall
+            stop
+    }
+}
+
+actor GlassShrapnel1 : GlassShrapnel
+{
+    States
+    {
+        Spawn:
+            GLSP ABCDABCDDDDD 3
+            stop
+    }
+}
+
+actor GlassShrapnel2 : GlassShrapnel
+{
+    States
+    {
+        Spawn:
+            GLSP EFGEFGGGGG 3
+            stop
+    }
+}
+
+actor GlassShrapnel3 : GlassShrapnel
+{
+    States
+    {
+        Spawn:
+            GLSP HIJHIJHIJJJJJJJJ 3
+            stop
+    }
+}
+
+
+actor StoneShrapnelSpawner
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    //+ALLOWBOUNCEONACTORS
+    //+BOUNCEONACTORS
+    +BOUNCEONFLOORS
+    +BOUNCEONFLOORS
+    
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            TNT1 A 0 A_SetArg(0, 5)
+        Explodey:
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnel", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnel", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnel", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnel", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnel", 32.0, 0, 0, random(2.0, 6.0), 0.0, random(3.0, 6.0), random(0, 360), SXF_CLIENTSIDE, 128)
+            TNT1 A 0 A_SetArg(0, args[0]-1)
+            TNT1 A 0 A_JumpIf(args[0] > 0, "Explodey")
+            Stop 
+    }
+}
+
+actor StoneShrapnel
+{
+    -SOLID
+    -SHOOTABLE
+    +NOBLOCKMAP
+    +CLIENTSIDEONLY
+    
+    +ALLOWBOUNCEONACTORS
+    +BOUNCEONACTORS
+    +BOUNCEONFLOORS
+        
+    //BounceSound "Glass/breakshort"
+    
+    States { 
+        Spawn: 
+            TNT1 A 0 
+            STSP ABCABCC 3
+            Stop
+        Death:
+            TNT1 A 0
+            TNT1 A 0 A_Die
+            TNT1 A 0 A_Fall
+            stop
+    }
+}

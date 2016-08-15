@@ -1,7 +1,7 @@
 
 /*
-Here I'm making all ammo actors disappear after a certain amount of time.
-
+I made all ammo actors disappear after a certain amount of time.
+I also gave each weapon individual bullet ammo, plus clips.
 */
 
 actor DoomZShellBox : ShellBox replaces ShellBox
@@ -14,104 +14,122 @@ actor DoomZShellBox : ShellBox replaces ShellBox
   }
 }
 
-
-actor DoomZShellBoxItem : Ammo// CustomInventory
+actor PistolClip : Ammo
 {
-	Health 20
-	+SHOOTABLE
-	+NOBLOOD
-    +WINDTHRUST
-	Tag "Box of Shells"
-	Inventory.PickupMessage "Picked up a box of shells!"
-	Inventory.UseSound "misc/ammo_pkup"
-	+INVENTORY.INVBAR
-	Inventory.Icon "SHLBOXA0"
-	Inventory.MaxAmount 4
-	+INVENTORY.PICKUPFLASH
-	//+INVENTORY.AUTOACTIVATE //Needed for the Use jump to work right
-	States
-	{
-		Spawn:
-			SBOX A 21000 //10 minutes
-			Wait
-			/*
-		Use:
-			TNT1 A 0
-			TNT1 A 0 A_GiveInventory("Shell", 20) //20 shells
-			//TNT1 A 0 A_RailWait //Hack to make the pickup succeed - see http://zdoom.org/wiki/Classes:CustomInventory
-			Stop
-		UseFail:
-			TNT1 A 0
-			Stop
-		*/
-	}
-}
-
-actor DoomZShell : Shell replaces Shell
-{
+    Inventory.PickupMessage "Picked up a pistol clip."
+    Inventory.Amount 1
+    Inventory.MaxAmount 10
+    Ammo.BackpackAmount 5
+    Ammo.BackpackMaxAmount 20
+    Inventory.Icon "PCLPI"
+    
   States
   {
   Spawn:
-    SHEL A 21000 //10 minutes
+    PCLP A 21000 //10 minutes
     Stop
   }
 }
 
-actor DoomZClipBox : ClipBox replaces ClipBox
+actor PistolClipBox : PistolClip //ClipBox replaces ClipBox
 {
+    Inventory.PickupMessage "Picked up a box of pistol clips."
+    Inventory.Amount 5
+    
   States
   {
   Spawn:
-    AMMO A 21000 //10 minutes
+    AMMP A 21000 //10 minutes
     Stop
   }
 }
 
-actor DoomZClip : Clip replaces Clip
+//Don't use directly! Summon "PistolClip" instead.
+//Remember that "Clip" is the Doom bullet ammo class, which is confusing.
+actor 9mmPistolBullet : Clip replaces Clip
 {
+    Inventory.PickupMessage "Picked up a 9mm clip."
+    Inventory.MaxAmount 12
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 12
+    Inventory.Icon "CLIPB0"
+}
+
+actor GlockBullet : 9mmPistolBullet
+{
+}
+
+
+actor ChaingunClip : Ammo
+{
+    Inventory.PickupMessage "Picked up a box of chaingun clips."
+    Inventory.Amount 4
+    Inventory.MaxAmount 8
+    Ammo.BackpackAmount 5
+    Ammo.BackpackMaxAmount 12
+    
   States
   {
-    Spawn:
-       CLIP A 21000 //10 minutes
-       Stop
+  Spawn:
+    AMMC A 21000 //10 minutes
+    Stop
   }
 }
 
-
-actor DoomZClipBoxItem : Ammo
+actor ChaingunBullet : Ammo
 {
-	Health 20
-	+SHOOTABLE
-	+NOBLOOD
-    +WINDTHRUST
-	Tag "Box of Clips"
-	Inventory.PickupMessage "Picked up box of clips!"
-	Inventory.UseSound "misc/ammo_pkup"
-	+INVENTORY.INVBAR
-	Inventory.Icon "CLPBXA0"
-	Inventory.MaxAmount 4
-	+INVENTORY.PICKUPFLASH
-	//+INVENTORY.AUTOACTIVATE //Needed for the Use jump to work right
-	States
-	{
-		Spawn:
-			AMMO A 21000 //10 minutes
-			Wait
-			/*
-		Pickup:
-			TNT1 A 0
-			TNT1 A 0 A_JumpIfInventory("Clip", 160, "UseFail")
-			goto Use
-		Use:
-			TNT1 A 0
-			TNT1 A 1
-			TNT1 A 1 A_GiveInventory("Clip", 50)
-			Stop
-		UseFail:
-			TNT1 A 0
-			TNT1 A 0 A_RailWait //Hack to make the pickup succeed - see http://zdoom.org/wiki/Classes:CustomInventory
-			Stop
-		*/
-	}
+    Inventory.Amount 1
+    Inventory.MaxAmount 100
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 150
+    Inventory.Icon "CLIPC0"
 }
+
+actor HuntingRifleClip : Ammo
+{
+    Inventory.PickupMessage "Picked up a box of hunting rifle clips."
+    Inventory.Amount 4
+    Inventory.MaxAmount 6
+    Ammo.BackpackAmount 2
+    Ammo.BackpackMaxAmount 8
+    
+    Translation "123:127=5:8", "152:159=105:111", "144:151=208:215", "143:143=215:215"
+    
+  States
+  {
+  Spawn:
+    AMMH A 21000 //10 minutes
+    Stop
+  }
+}
+
+actor HuntingRifleBullet : Ammo
+{
+    Inventory.Amount 1
+    Inventory.MaxAmount 5
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 5
+    Inventory.Icon "CLIPD0"
+}
+
+//Shells loaded into the single-barrelled shotgun (DoomZShotgun)
+actor LoadedShotgunShell : Ammo 
+{
+    Inventory.Amount 1
+    Inventory.MaxAmount 8
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 8
+    Inventory.Icon "SHELA0"
+}
+
+actor LoadedYellowboyShell : Ammo 
+{
+    Inventory.Amount 1
+    Inventory.MaxAmount 8
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 8
+    Inventory.Icon "SHELA0"
+}
+
+
 

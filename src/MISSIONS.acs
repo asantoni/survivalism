@@ -167,7 +167,7 @@ script 826 (void)
 }
 
 //Imp Storm!
-script 827 (void) NET
+script 827 (void) 
 {
 	int numImpsToSpawnPerPlayer = 12;
 	
@@ -214,6 +214,30 @@ script 828 (void)
 			} else {
 				ACS_ExecuteAlways(823, 0, "DemolitionZombie2", playerTid, 0);
 			}
+		}
+	}
+	
+	//Play scary music
+	musicPlayBoss();
+}
+
+
+//Lost Souls Incoming!
+script 829 (void) 
+{
+	int numLostSoulsToSpawnPerPlayer = 8;
+	
+	//Announce it.
+	ACS_ExecuteAlways(821, 0, "Lost Souls Incoming!");
+	
+	for (int playerTid = PLAYER_MIN_TID;
+	 playerTid < PLAYER_MIN_TID+PlayerCount();
+	 playerTid++)
+	{
+		for (int i = 0; i < numLostSoulsToSpawnPerPlayer; i++)
+		{
+			//Spawn lost souls around each player.
+			ACS_ExecuteAlways(823, 0, "LostSoul", playerTid, 128.0 + random(0,128.0));
 		}
 	}
 	

@@ -6,3 +6,5 @@ doomz.db
 # GZDoomBuilder files
 src/maps/*.dbs
 src/maps/*.backup*
+src/maps/*.bak*
+ignore/*

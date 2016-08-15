@@ -4,6 +4,13 @@ SERVER FLAGS TO USE:
 	sv_defaultdmflags false
 	sv_weaponstay false
 
+r16:
+- Auto load/save system
+- Backpack drops
+- TODO: Perma powerups and artifacts?
+- TODO: Connected Maps
+- TODO: Radiation Zone
+    
 r14test15:
 - Berry system
 - Fixed a bunch of hunger related bugs.
@@ -304,8 +311,8 @@ DONE:
 #libdefine MISSION_MONSTER_TID 5000
 #define RANDOM_LOOT_TID_MIN 8000
 #define RANDOM_LOOT_TID_MAX 8099
-#define BADDIES_TID_MIN 8200
-#define BADDIES_TID_MAX 8399
+#libdefine BADDIES_TID_MIN 8200
+#libdefine BADDIES_TID_MAX 8399
 #libdefine DEATH_TID_MIN 8450
 #libdefine DEATH_TID_MAX 8499
 #libdefine ANKH_TID_MIN 8500
@@ -343,7 +350,7 @@ DONE:
 #define BASE_CROW_COUNT 25
 #define BIRD_SPAWNER_INTERVAL_SECONDS 5*60
 
-#libdefine DEBUG_MODE 0
+#libdefine DEBUG_MODE 1
 
 //#libdefine kMainLoopPeriodSeconds 20
 int kMainLoopPeriodSeconds = 20;
@@ -357,7 +364,7 @@ int g_blockXP = false; //global lock for XP, to prevent players from getting fre
 int g_vegetationEnabled = true;
 
 
-#libdefine NUM_MONSTER_SPAWNER_MODES 7
+#libdefine NUM_MONSTER_SPAWNER_MODES 8
 int g_maxBaddiesForSpawnerMode[NUM_MONSTER_SPAWNER_MODES] =
 	{ 16, //Default monsters (zombie mix)
 	  8, //Imps
@@ -365,7 +372,8 @@ int g_maxBaddiesForSpawnerMode[NUM_MONSTER_SPAWNER_MODES] =
 	  0,  //Safe zone (no monsters)
 	  8,  //Shadows
 	  10, //Forest zone
-      8  //Hell Knight zone (Iron Mine)
+      8,  //Hell Knight zone (Iron Mine)
+      5,  //Radiation Zone
 	};
 
 //Called when the level loads
@@ -690,6 +698,19 @@ script 203 (void)
                 }
 			}
 			break;
+		case 7: //Radiation Zone
+			if (g_dayState == DAYSTATE_NIGHT) {
+                Spawn("ApprenticeOfDsparil", x, y, z+zOffset, tempTID, randomFacingAngle);
+			} else {
+            	randomSpawnType = random(1, 100);
+                if (randomSpawnType % 8 == 0) {
+                    Spawn("ApprenticeOfDsparil", x, y, z+zOffset, tempTID, randomFacingAngle);
+                } else {
+                    Spawn("CrimsonDisciple", x, y, z+zOffset, tempTID, randomFacingAngle);
+                }
+			}
+			break;
+
 		default: //0 too
 			randomSpawnType = random(1, 100);
 			if (randomSpawnType % 30 == 0) {
@@ -1001,7 +1022,7 @@ script 210 (void)
 			g_blockXP = false; 
 			
 			//Spoil all the food a few minutes after sunrise:
-			ACS_ExecuteAlways(954, 0, 0);
+			//ACS_ExecuteAlways(954, 0, 0);
 		}
 		//It's now day time!
 		g_dayState = DAYSTATE_DAY;
@@ -1482,8 +1503,17 @@ script 944 (int playerTID)
 //see how I made the hell raft in the doomz2 map.
 script 945 (void) 
 {
-	int playerTID = ActivatorTID();
+    int boatTID = ActivatorTID();
+    SetActivatorToTarget(boatTID);
 
+    int playerTID = ActivatorTID();
+    
+    Log(s:"Boat TID:", d:boatTID);
+    Log(s:"Player TID:", d:playerTID);
+
+    //XXX: ALBERT UNCOMMENT THIS
+	//int playerTID = ActivatorTID();
+    
 	int playerOffset = playerTID - PLAYER_MIN_TID;	
 	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
 	{
@@ -1521,16 +1551,25 @@ script 945 (void)
 	int playerTID = ActivatorTID();
 	*/
 	
-	SetActivatorToTarget(0);
+    //XXX: ALBERT UNCOMMENT THIS
+	//SetActivatorToTarget(0);
+    SetActivator(boatTID); //temporary
+    
 	//log(d:targetTid);
 	if (PlayerNumber() >= 0) {
 		Print(s:"Try pointing at the side of the boat to activate it!");
 		//ACS_Execute(751, 0, 0);
 		terminate;
 	}
-	int boatTID = ActivatorTID();
-	Log(s:"Boat TID:", d:boatTID);
-	
+    
+    //XXX: ALBERT UNCOMMENT THIS
+	//int boatTID = ActivatorTID();
+    
+    //int boatTID = GetActorProperty(playerTID, APROP_TargetTID);
+    //if (boatTID == 0) {
+    //    terminate;
+    //}
+	    
 	//Set the activator back to being the player
 	SetActivator(playerTID);
 	
@@ -1542,6 +1581,13 @@ script 945 (void)
 		terminate;
 	}
 
+    //If the boat is flipped, right itself before the player gets on.
+    if (GetUserVariable(boatTid, "user_flipped") == true) {
+        SetActorState(boatTid, "RightItself");
+        Delay(80);
+    }
+    
+    
 	int kBoatRadius = 120.0;
 	int kBoatHeight = 16.5;
 
@@ -1550,6 +1596,13 @@ script 945 (void)
 	int oldPlayerSpeed = GetActorProperty(playerTID, APROP_Speed);
 	SetActorProperty(playerTID, APROP_Speed, 0);
 	
+    int prevPlayerAngle = GetActorAngle(playerTID);
+    int prevBoatAngle = GetActorAngle(boatTid);
+    int playerRotations = 0;
+    int boatRotations = 0;
+   
+    int lastDotProd = 0;   
+    
 	while (true)
 	{
 		/*
@@ -1563,20 +1616,161 @@ script 945 (void)
 				//SetActorVelocity(i, 0.0, GetActorVelY(boatTid), 0, true, false);
 			}
 		}*/
-		
 
-		SetActorAngle(boatTid, GetActorAngle(playerTid));
-		//SetActorVelocity(boatTid, 
+        //Original behaviour: Always point the boat in the direction of the player.
+		//SetActorAngle(boatTid, GetActorAngle(playerTid));
 		
-		//Alternative mode: Freezing the player to the boat.
-		SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
+        
+        //New behaviour: Only rotate boat when paddling.
+        if (GetActorVelX(boatTid) != 0 || GetActorVelY(boatTid) != 0)
+        {
+            int playerAngle = GetActorAngle(playerTid);
+            int boatAngle = GetActorAngle(boatTid);
+            
+            if (prevPlayerAngle > 0.9 && playerAngle < 0.1) {
+                playerRotations++;
+            } else if (prevPlayerAngle < 0.1 && playerAngle > 0.9) {
+                playerRotations--;
+            }
+		
+            if (prevBoatAngle > 0.9 && boatAngle < 0.1) {
+                boatRotations++;
+            } else if (prevBoatAngle < 0.1 && boatAngle > 0.9) {
+                boatRotations--;
+            }
+        
+            //Save this so we can count playerRotations
+            prevPlayerAngle = playerAngle;
+            prevBoatAngle = boatAngle;
+            
+            int boatAngleUncorrected = boatAngle;
+
+            playerAngle += (FixedMul(playerRotations<<16, 1.0));
+            boatAngle += (FixedMul(boatRotations<<16, 1.0));
+            //Log(s:"PAngle: ", f:playerAngle, s:", Rotations: ", d:playerRotations);
+
+            int deltaAngle = playerAngle - boatAngle;
+            int deltaAngleToRotate = 0;
+            int MAX_ROTATION_SPEED = 0.001;
+            
+            //Log(s:"Delta Angle: ", f:deltaAngle);
+            
+            if (GetUserVariable(boatTID, "user_justpaddled") == 1)
+            {
+                Log(s:"Just paddled");
+                SetUserVariable(boatTID, "user_justpaddled", 0);
+                if (deltaAngle > 0.25 || deltaAngle < -0.25) {
+                    Log(s:"Reversing direction...");
+                    SetUserVariable(boatTID, "user_direction", 128);
+                } else {
+                    Log(s:"Normalizing direction...");
+                    SetUserVariable(boatTID, "user_direction", 0);
+                }
+            }
+            
+            //Offset the angle to rotate to if the user is facing backwards.
+            deltaAngle -= FixedDiv(GetUserVariable(boatTID, "user_direction"),256);
+
+            int boatVelX = GetActorVelX(boatTid); //Not quite fixed point
+            int boatVelY = GetActorVelY(boatTid);
+            //int boatSpeed = VectorLength(boatVelX, boatVelY);
+            
+            int boatSpeed = 0;
+            int ang = vectorangle(boatVelX,boatVelY);
+            if(((ang+0.125)%0.5) > 0.25) boatSpeed = fixeddiv(boatVelY, sin(ang));
+            else boatSpeed = fixeddiv(boatVelX, cos(ang));
+
+            //FixedSqrt(FixedMul(boatVelX, boatVelX) + FixedMul(boatVelY, boatVelY));
+            //Log(s:"Boat speed:", f:boatVelX, s:" ", f:boatVelY, s:" ", f:boatSpeed);
+                    
+            //Allow the player to steer faster when using the paddle altfire.
+            if (CheckActorInventory(playerTID, "PaddleSteer") >= 1) {
+                MAX_ROTATION_SPEED = 0.005;
+                if (boatSpeed < 4.0) {
+                    MAX_ROTATION_SPEED = FixedDiv(MAX_ROTATION_SPEED, 8.0-boatSpeed*2);
+                    //Log(f:MAX_ROTATION_SPEED);
+                }
+            }
+            
+            if (deltaAngle > 0) {
+                deltaAngleToRotate = math_min(FixedMul(deltaAngle, 0.05), MAX_ROTATION_SPEED);
+            } else {
+                deltaAngleToRotate = math_max(FixedMul(deltaAngle, 0.05), -MAX_ROTATION_SPEED);            
+            }
+            SetActorAngle(boatTid, boatAngle + deltaAngleToRotate);
+            
+            //Flip your boat over if the direction of its velocity vector
+            //differs too much from its heading. (dot product nears 0)
+            int boatHeadingX = cos(boatAngleUncorrected);
+            int boatHeadingY = sin(boatAngleUncorrected);
+            int boatHeadingMag = 1; // boatHeadingMag is 1 by defintion
+ 
+            //Normalize them:
+            int boatVelNormX = FixedDiv(boatVelX, boatSpeed);
+            int boatVelNormY = FixedDiv(boatVelY, boatSpeed);
+            
+            //Distance from http://zdoom.org/wiki/Distance
+            //VectorLength isn't working for some reason.
+
+            
+            int dotProd = FixedMul(boatVelNormX, boatHeadingX) + FixedMul(boatVelNormY, boatHeadingY);
+
+            int velocityAngle = VectorAngle(boatVelNormX, boatVelNormY);
+            int angleBetweenVelAndDir = (boatAngleUncorrected - velocityAngle);
+            
+            //Useful for debugging the capsizing logic:
+            //Log(s:"Angle: ", f:angleBetweenVelAndDir);
+            
+            //Log(s:" ", f:dotProd, s:" ", f:boatSpeed,
+            //    s:" ", f:boatVelNormX, s:" ", f:boatVelNormY);
+
+            //Log(s:"Dot prod: ", f:dotProd);
+            
+            
+            //We have to check lastDotProd too because your velocity can
+            //be instantaneously very high when you paddle and you're directly
+            //stuck against a wall. The test case is paddling directly into a wall from standstill.
+            
+            if (((dotProd > 0 && dotProd < 0.05) || dotProd < 0 && dotProd > -0.05 ) &&
+                ((lastDotProd > 0 && lastDotProd < 0.05) || lastDotProd < 0 && lastDotProd > -0.05 ) &&
+                (abs(boatVelX) > 6.0 || abs(boatVelY) > 6.0)) {
+                SetActorState(boatTID, "Flip");
+                PlaySound(playerTID, "player/male/land1");
+                
+                //Launch the player out of the boat
+                SetActorProperty(playerTID, APROP_Speed, oldPlayerSpeed);
+                SetActorVelocity(playerTID, -16.0, 0, 6.0, true, true);
+                
+                //Point the boat in the direction of its velocity.
+                int angleIncrement = angleBetweenVelAndDir / 10;
+                for (int i = 0; i < 10; i++) {
+                    SetActorAngle(boatTid, boatAngleUncorrected + i*angleIncrement);
+                    Delay(3);
+                }
+                
+                terminate;		   
+            }
+            
+            lastDotProd = dotProd;
+
+        }
+
+                
+        //SetActorVelocity(boatTid, 
+        int boatStillExists = (ClassifyActor(boatTid) != 0);
+        
+        if (boatStillExists)
+		{
+            //Alternative mode: Freezing the player to the boat.
+            SetActorPosition(playerTID, GetActorX(boatTid), GetActorY(boatTid), GetActorZ(boatTid)+kBoatHeight, false);
+        }
 			
         Delay(1);
             
 		int buttons = GetPlayerInput(-1, INPUT_BUTTONS);
 
 		//Exit if you hit the jump button
-		if (buttons & BT_JUMP)
+		if (buttons & BT_JUMP || !boatStillExists)
 		{
 			//buttonDepressed = true;
 			//print(d: selectedItemIdx);
@@ -2427,7 +2621,65 @@ script 975 ENTER CLIENTSIDE
     ConsoleCommand("gl_use_models 1");
 }
 
+
+//Check if a boat is on or under water.
+//The boat is assumed to be the activator.
+script 978 (void)
+{
+    //This works in Zandronum 3.0 but APROP_Waterlevel is 
+    //not implemented in Zandronum 2.0. :-(
+    //In Zandro 2, we cheat by including stone pebbles in the floor
+    //check here, because the other texture checks don't work
+    //underwater in Zandro 2. (didn't test that explicitly in 3.0 though.)
+    
+    //SetResultValue(true);
+    //terminate;
+    if (CheckActorFloorTexture(0, "FWATER1") 
+        || CheckActorFloorTexture(0, "WFALL1") 
+        || CheckActorFloorTexture(0, "MFLR8_3") //Marble pebbles 
+        || CheckActorCeilingTexture(0, "FWATER1") 
+        || CheckActorCeilingTexture(0, "WFALL1") 
+        || GetActorProperty(0, APROP_Waterlevel) > 0) {
+        SetResultValue(true);
+    }
+    else {
+        SetResultValue(false);
+    }
+}
+
+
+
+script 1000 (int exitingWorldNum, int enteringWorldNum) 
+{
+    //TODO: Give the player an inventory item that tells the next map
+    //      where they should spawn.
+    int playerIdx = PlayerNumber();
+    if (playerIdx >= 0) {
+    
+    	if (!PlayerIsLoggedIn(playerIdx))
+        {
+            Print(s:"You must be logged into travel to this way.");
+            ActivatorSound("menu/invalid", 127);
+            terminate;
+        }
+        
+        //Save their inventory and connect them to the next server.
+        if (ACS_ExecuteAlways(810, 0, playerIdx)) {
+            //Make the player connect to the other server.
+            Delay(15);
+            Print(s:"Travelling...");
+            TakeInventory("TravelDestination", 0x7FFFFFFF);
+            GiveInventory("TravelDestination", 2);
+            Delay(35);
+            ACS_ExecuteAlways(1001, 0, 0); //Called on the client side!
+        }
+    }
+}
+
 script 1001 (void) CLIENTSIDE
 {
-    ConsoleCommand("connect 192.168.0.1");
+    FadeTo(0, 0, 0, 1.0, 0.5); //Fade to black
+    ConsoleCommand("cl_startasspectator false");
+    ConsoleCommand("connect localhost:10667");
+    ConsoleCommand("cl_startasspectator true");
 }

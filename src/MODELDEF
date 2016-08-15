@@ -102,6 +102,14 @@ Model CFloorGhost {
    FrameIndex CFLO A 0 0
 }
 
+Model BossCFloor {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-glass.png"
+   Scale 7.5 7.5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   FrameIndex CFLO A 0 0
+}
+
 // ------------- //
 // --- TOOLS --- //
 // ------------- //
@@ -226,16 +234,37 @@ Model Raft {
    Path "MODELS"
    Model 0 "cube.md2"
    Skin 0 "cube-wood.png"
-   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   Scale 5 5 0.26            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.26)
    FrameIndex CFLO A 0 0
 }
 
+/*
 Model Boat {
    Path "MODELS"
    Model 0 "cube.md2"
    Skin 0 "cube-wood.png"
-   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   Scale 5 5 0.26            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.26)
    FrameIndex CFLO A 0 0
+}
+*/
+
+Model Boat {
+   Path "MODELS"
+   Model 0 "canoe.md2"
+   Skin 0 "canoe_skin.png"
+   Scale 50 50 50            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.26)
+   FrameIndex CANO A 0 0
+   FrameIndex CANO B 0 1
+   FrameIndex CANO C 0 2
+   FrameIndex CANO D 0 3
+   FrameIndex CANO E 0 4
+   FrameIndex CANO F 0 5
+   FrameIndex CANO G 0 6
+   FrameIndex CANO H 0 7
+   FrameIndex CANO I 0 8
+   FrameIndex CANO J 0 9
+   FrameIndex CANO K 0 10
+
 }
 
 // ------------- //
@@ -321,4 +350,12 @@ Model InventoryGuard {
    ZOffset -24
 
    FrameIndex INVG A 0 0
+}
+
+Model TornadoJet {
+   Path "MODELS"
+   Model 0 "tornado.md2"
+   Skin 0 "tornado.png"
+   Scale 1.0 1.0 1.0
+   FrameIndex JETT A 0 0
 }

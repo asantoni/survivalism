@@ -50,6 +50,37 @@ object Ankh
 	frame AKOLA { light ANKHLIGHT }
 }
 
+
+pointlight HBLIGHT
+{
+    color 0.9 0.2 0.2
+    size 32
+    offset 0 16 0
+}
+object HealthBooster1
+{
+    frame SOULA { light HBLIGHT }
+    frame SOULB { light HBLIGHT }
+    frame SOULC { light HBLIGHT }
+    frame SOULD { light HBLIGHT }
+}
+
+object HealthBooster2
+{
+    frame SOULA { light HBLIGHT }
+    frame SOULB { light HBLIGHT }
+    frame SOULC { light HBLIGHT }
+    frame SOULD { light HBLIGHT }
+}
+
+object HealthBooster3
+{
+    frame SOULA { light HBLIGHT }
+    frame SOULB { light HBLIGHT }
+    frame SOULC { light HBLIGHT }
+    frame SOULD { light HBLIGHT }
+}
+
 pointlight CRAFTINGLIGHT
 {
     color 0.3 0.3 0.3

@@ -13,6 +13,7 @@ actor Knife : Weapon 15000
   //+CANPASS
   +WINDTHRUST
   +NOAUTOFIRE //Semi-automatic!
+  Weapon.UpSound "knife/draw"
 
   Health 10
   Obituary "$OB_MPFIST" // "%o was cut up by %k's knife."
@@ -28,7 +29,7 @@ actor Knife : Weapon 15000
   Deselect:
     KNFG A 1 A_Lower
     loop
-  Select: 
+  Select:
     KNFG A 1 A_Raise
 	TNT1 A 0 A_TakeInventory("KnifeMode", 10)
     loop

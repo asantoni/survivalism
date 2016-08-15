@@ -275,8 +275,8 @@ function int generateNextQuestScript(int questIdx, int questSpotIdx, int difficu
 		minQuestScript = MIN_EASYQUEST_SCRIPT;
 		maxQuestScript = MAX_EASYQUEST_SCRIPT;
 	} else if (difficulty == QUEST_MEDIUM) {
-		minQuestScript = MIN_EASYQUEST_SCRIPT;
-		maxQuestScript = MAX_EASYQUEST_SCRIPT;
+		minQuestScript = MIN_MEDIUMQUEST_SCRIPT;
+		maxQuestScript = MAX_MEDIUMQUEST_SCRIPT;
 	} else if (difficulty == QUEST_HARD) {
 		minQuestScript = MIN_HARDQUEST_SCRIPT;
 		maxQuestScript = MAX_HARDQUEST_SCRIPT;

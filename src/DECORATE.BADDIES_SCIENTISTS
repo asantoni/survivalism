@@ -2,7 +2,7 @@ ACTOR DoomZFemaleScientist
 {
   Game Doom
   obituary "%o was stabbed by a zombie scientist."
-  health 15
+  health 20
   mass 90
   speed 10
   Radius 20
@@ -82,10 +82,39 @@ ACTOR DoomZFemaleScientist
     FSZK F 4 A_CustomMeleeAttack (random (1, 5) *5, "KnifeHit", "skeleton/swing")
     FSZK E 4
     goto See
+    /* XXX(STAGGER):
+  Pain.Fist:
+    TNT1 A 0
+    TNT1 A 0 A_JumpIfInventory("Staggered", 1, "StaggerDeath")
+    */
   Pain:
     FSZK G 3
     FSZK G 3 A_Pain
     goto See
+    /* XXX(STAGGER):
+  Pain.Bullet:
+    FSZK G 0
+    TNT1 A 0 A_JumpIfInventory("Staggered", 1, "Stagger")
+    TNT1 A 0 A_Jump(200, "Pain")
+  Stagger:
+    TNT1 A 0 A_GiveInventory("Staggered", 1)
+    TNT1 A 5
+    FSZK G 35 A_Pain
+    TNT1 A 5
+    FSZK G 35 A_Pain
+    TNT1 A 5
+    FSZK G 35 A_Pain
+    TNT1 A 0 A_TakeInventory("Staggered", 1)
+    goto See
+    
+  StaggerDeath:
+    TNT1 A 0
+    TNT1 A 0 A_SpawnItemEx("DoomZHealthBonus", 0, 0, 0, random(2.0, 4.0), random(2.0, 4.0), random(2.0, 4.0))
+    TNT1 A 0 A_SpawnItemEx("DoomZHealthBonus", 0, 0, 0, random(2.0, 4.0), random(2.0, 4.0), random(2.0, 4.0))
+    TNT1 A 0 A_SpawnItemEx("DoomZHealthBonus", 0, 0, 0, random(2.0, 4.0), random(2.0, 4.0), random(2.0, 4.0))
+    TNT1 A 0 A_SpawnItemEx("DoomZHealthBonus", 0, 0, 0, random(2.0, 4.0), random(2.0, 4.0), random(2.0, 4.0))
+    TNT1 A 0 A_Die
+    */
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
@@ -1437,4 +1466,245 @@ States
 	SCZC A 0 A_CheckSight("Remove")
     loop
 }
+}
+
+
+
+ACTOR BossZombie
+{
+  Game Doom
+  obituary "%o was slain by the almighty scientist."
+  health 2000
+  mass 900
+  speed 12
+  Radius 24
+  Height 62
+  painchance 200
+  
+  Scale 2.0
+  
+  seesound "grunt/sight"
+  painsound "grunt/pain"
+  deathsound "grunt/death"
+  activesound "grunt/active"
+  attacksound "hazmat/tazer"
+  
+  MeleeRange 88
+  MaxTargetRange 2048
+  
+  +MISSILEEVENMORE
+  
+  +INVULNERABLE //Invulnerable until it reaches the floor
+  
+  DropItem "LootBox"
+  DropItem "LootBox"
+  DropItem "LootBox"
+  DropItem "LootBox"
+  DropItem "LootBox"
+  DropItem "LootBox"
+  DropItem "Medikit"
+  DropItem "Medikit"
+  DropItem "Medikit"
+  
+  Monster
+  +FLOORCLIP
+  
+  -WINDTHRUST
+  -SHOOTABLE
+  +CANUSEWALLS
+  
+    +CANPASS
+  
+  //Your sentries are useless against this monster!
+  DamageFactor "SentryTurret", 0.0  
+  
+  
+  Translation "80:95=128:143", "96:111=76:79"
+  States
+  {
+   Spawn:
+ 	TNT1 A 35 //Let the monster drop to the ground since we spawn
+			  //them way above ground level so they don't get stuck
+			  //in the floor.
+	TNT1 A 0 A_SetTranslucent(0.0, 2)
+	HMZP L 6 A_SetTranslucent(0.2, 2)
+	HMZP L 6 A_SetTranslucent(0.4, 2)
+	HMZP L 6 A_SetTranslucent(0.6, 2)
+	HMZP L 6 A_SetTranslucent(0.8, 2)
+	HMZP L 6 A_SetTranslucent(1.0, 0) //opaque
+    HMZP L 0 A_SetShootable
+	HMZP LKJIH 7 //Play death animation in reverse so it looks
+	              //like it's coming out of the ground
+	//Continue to next state
+   Idle:
+   SpawnLook:
+	HMZP AABBCCDD 4 A_Wander
+    HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
+    loop
+  See:
+ 	//Randomly decide to attack your base or not
+	//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//Only check to remove ourselves and change attack modes every 6 seconds
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    HMZP AABBCCDD 4 A_Chase
+    loop
+  Melee:
+    HMZP E 3 A_FaceTarget
+    HMZP F 3 Bright A_CustomMeleeAttack (random (2, 12) *3)
+    HMZP E 3
+    goto See
+  Missile:
+    TNT1 A 0 
+    HMZP A 0 A_JumpIf(z-floorz > 0, "Grenade")
+    HMZP A 0 A_UnsetInvulnerable //Make it vulnerable once it reaches the floor
+    HMZP A 0 A_Jump(100, "Missile2")
+    HMZP E 3 A_FaceTarget
+    HMZP F 0 A_PlaySound("hazmat/tazer", CHAN_WEAPON)
+    HMZP F 3 Bright A_CustomMissile ("BossZombieBolt")
+    HMZP E 3
+    goto See
+    
+  Missile2:
+    HMZP E 3 A_FaceTarget
+    HMZP F 0 bright A_SpawnItemEx("FireArrowTrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
+    HMZP F 8 Bright A_PlaySound("ARROWELE", CHAN_WEAPON)
+    HMZP F 0 bright A_SpawnItemEx("FireArrowTrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
+    HMZP F 8 Bright A_PlaySound("ARROWELE", CHAN_WEAPON)
+    HMZP F 0 bright A_SpawnItemEx("FireArrowTrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
+    HMZP F 8 Bright A_PlaySound("ARROWELE", CHAN_WEAPON)
+    HMZP F 0 A_PlaySound("hazmat/tazer", CHAN_WEAPON)
+    HMZP F 4 Bright A_CustomMissile ("BossZombieBolt")
+    HMZP E 1
+    HMZP F 0 A_PlaySound("hazmat/tazer", CHAN_WEAPON)
+    HMZP F 4 Bright A_CustomMissile ("BossZombieBolt")
+    HMZP E 1
+    HMZP F 0 A_PlaySound("hazmat/tazer", CHAN_WEAPON)
+    HMZP F 4 Bright A_CustomMissile ("BossZombieBolt")
+    HMZP E 1
+    goto See
+
+  Grenade:
+    HMZP E 3 A_FaceTarget
+    HMZP F 3 bright A_CustomMissile("BossZombieGrenade", 64.0, 0, CMF_AIMOFFSET, 128.0) 
+    HMZP A 70 A_PlaySound("hazmat/tazer", CHAN_WEAPON)
+    goto See
+    
+  Pain:
+    HMZP G 0 A_ClearTarget
+    HMZP G 0 A_Jump(10, "PainReal") //10/256 chance of real pain
+    goto See
+  PainReal:
+    HMZP G 3
+    HMZP G 3 A_Pain
+    HMZP G 3 A_ClearTarget
+    goto See
+  Death:
+	TNT1 A 0 A_GiveToTarget("BossZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    HMZP H 5
+    HMZP I 5 A_Scream
+    HMZP J 5 A_NoBlocking
+    HMZP K 5
+	TNT1 A 0
+    //HMZP L -1
+	HMZP L 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	HMZP L 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	HMZP L 6 A_SetTranslucent(0.8, 2)
+	HMZP L 6 A_SetTranslucent(0.6, 2)
+	HMZP L 6 A_SetTranslucent(0.4, 2)
+	HMZP L 6 A_SetTranslucent(0.2, 2)
+	HMZP L 6 A_SetTranslucent(0.0, 0) 
+	HMZP L 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  XDeath:
+	TNT1 A 0 A_GiveToTarget("BossZombieKillXP", 1)
+  Death.NoXP:
+  Death.SentryTurret:
+    HMZP M 5
+    HMZP N 5 A_XScream
+    HMZP O 5 A_NoBlocking
+    HMZP PQRST 5
+	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
+    //HMZP U -1
+	HMZP U 0 A_QueueCorpse //Queue the corpse for removal
+	//Remove ourselves after 60 seconds
+	HMZP U 2100
+	TNT1 A 0 A_SetTranslucent(1.0, 2)
+	HMZP U 6 A_SetTranslucent(0.8, 2)
+	HMZP U 6 A_SetTranslucent(0.6, 2)
+	HMZP U 6 A_SetTranslucent(0.4, 2)
+	HMZP U 6 A_SetTranslucent(0.2, 2)
+	HMZP U 6 A_SetTranslucent(0.0, 0) 
+	HMZP U 0 ACS_ExecuteAlways(501, 0)   
+    stop
+  Raise:
+    HMZP LKJIH 5
+    goto See
+  Remove:
+	TNT1 A 1 
+	//Remove ourselves if we're too far from the player frustrum.
+	TNT1 A 5 ACS_ExecuteAlways(501, 0)
+	Stop
+  }
+}
+
+actor BossZombieBolt
+{   
+    Projectile
+    //+WINDTHRUST
+    
+    Damage 13 
+    Speed 13
+    DeathSound "EROWIMPC"
+    ActiveSound "ARROWELE"
+    
+    States
+    {
+        Spawn:
+            ZP01 A 0
+            ZP01 ABCB 3 A_SpawnItemEx("ElectroTrail",0,0,0,1,0,random(-1,1),random(1,360), SXF_CLIENTSIDE)
+            //ZP01 A 0 A_ScaleVelocity(2.0)
+            Loop
+        Death:
+            ZP01 A 0
+            ZP01 DEF 5
+            stop
+    }
+}
+
+actor BossZombieGrenade
+{
+    Projectile
+    -NOBLOCKMAP
+    -DROPOFF
+    -NOGRAVITY
+    +CANPASS
+    +ALLOWBOUNCEONACTORS
+
+    Speed 13
+    Damage 5
+    BounceType "Doom"
+    
+    
+    States
+    {
+        Spawn:
+            ZP01 A 0
+            ZP01 A 0 ThrustThingZ(0, 24.0, 0, 1)
+        SpawnLoop:
+            ZP01 ABCB 3 A_SpawnItemEx("ElectroTrail",0,0,0,1,0,random(-1,1),random(1,360), SXF_CLIENTSIDE)
+            Loop
+        Death:
+            ZP01 A 0
+            ZP01 DEF 5
+            stop
+    }
+
+
 }

@@ -34,6 +34,7 @@
 #include "actors/monsters/azazel.txt"			            // Azazel
 #include "actors/monsters/crimsondisciple.txt"				// Crimson Disciple
 #include "actors/monsters/cultist.txt"				        // Cultist (Death)
+#include "actors/monsters/daemoniumoverlord.txt"			// Daemonium Overlord
 #include "actors/monsters/deathincarnate.txt"			    // Death Incarnate (Night Zombie Revenant)
 #include "actors/monsters/cybersnake.txt"			        // Cyber Snake (Chainsaw Lava Guardian)
 #include "actors/monsters/devastatorzombie.txt"			    // Devastator Zombie
@@ -116,6 +117,7 @@
 #include "actors/construction/firewood.txt"
 #include "actors/construction/sentry.txt"
 #include "actors/construction/inventoryguard.txt"
+#include "actors/construction/shrapnel.txt"
 
 
 //================================================
@@ -123,5 +125,12 @@
 //================================================
 
 #include "actors/gameplay/obelisk.txt"
+#include "actors/gameplay/bossobelisklaser.txt"
 
 //================================================
+
+//================================================
+// DECORATIONS AND MISC STUFF
+//================================================
+
+#include "actors/decoration/tornadojet.txt"

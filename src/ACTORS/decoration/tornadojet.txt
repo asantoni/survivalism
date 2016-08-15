@@ -1,0 +1,12 @@
+
+actor TornadoJet 10308
+{
+    +SOLID 
+    
+    states
+    {
+        Spawn:
+            JETT A 0
+            JETT A -1
+    }
+}

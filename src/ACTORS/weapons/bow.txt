@@ -169,7 +169,7 @@ Actor ArrowProj
 {
 Radius 2
 Height 2
-Damage 5
+Damage 2
 Speed 36
 PROJECTILE
 +THRUGHOST
@@ -203,7 +203,7 @@ Obituary "%o was frozen by one of %k's ice arrows"
 States
 {
 Spawn:
-	ARR2 A 2 bright A_SpawnItem("IceArrowTrail",0,0,0)
+	ARR2 A 2 bright A_SpawnItemEx("IceArrowTrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
 	Loop
 Death:
 	NULL A 0 A_AlertMonsters
@@ -229,7 +229,7 @@ Actor FireArrow : IceArrow
 +FIREDAMAGE
 +ROCKETTRAIL
 DamageType Fire
-Damage 28
+Damage 70
 Obituary "%o was burned by one of %k's fire arrows"
 DeathSound "FROWIMPC"
 Speed 30
@@ -237,7 +237,7 @@ States
 {
 Spawn:
 	NULL A 0 A_AlertMonsters
-	ARR3 A 2 bright// A_SpawnItem("FireArrowTrail",0,0,0)
+	ARR3 A 2 bright A_SpawnItemEx("FireArrowTrail",0,0,0,0,0,0,0,SXF_CLIENTSIDE)
 	Loop
 Death:
 	NULL A 0 A_SetTranslucent(0.6,1)
@@ -268,11 +268,11 @@ Speed 50
 States
 {
 Spawn:
-	ARR4 A 1 bright A_SpawnItemEx("ElectroTrail",0,0,0,1,0,random(-1,1),random(1,360))
+	ARR4 A 1 bright A_SpawnItemEx("ElectroTrail",0,0,0,1,0,random(-1,1),random(1,360), SXF_CLIENTSIDE)
 	Loop
 Death:
 	NULL A 1 A_AlertMonsters
-	NULL AAAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("ElectroTrail2",0,0,0,random(-4,4),random(-4,4),random(-4,4),random(1,360))
+	NULL AAAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("ElectroTrail2",0,0,0,random(-4,4),random(-4,4),random(-4,4),random(1,360), SXF_CLIENTSIDE)
 	Stop
 }
 }

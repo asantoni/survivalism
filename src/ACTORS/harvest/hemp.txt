@@ -91,6 +91,9 @@ OK, so here's the problem with A_GiveToTarget and monsters/actors:
 		TNT1 A 0 
 		//A_GiveToTarget doesn't work here. See the note above.
 		TNT1 A 0 A_SpawnItemEx("GraplingAmmo", 0, 0, 0, 0, 0, 12.0)
+		TNT1 A 0 A_SpawnItemEx("Cotton", 0, 0, 0, 0, 2.0, 12.0, random(0.0,360.0), 0)
+		TNT1 A 0 A_SpawnItemEx("Cotton", 0, 0, 0, 0.0, 2.0, 12.0, random(0.0,360.0), 0, 128)
+		TNT1 A 0 A_SpawnItemEx("Cotton", 0, 0, 0, 2.0, 0.0, 12.0, random(0.0,360.0), 0, 128)
 		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
 		TNT1 A 0 A_SpawnItemEx("HempSeeds", 0, 0, 0, random(-3.0, 3.0), random(-3.0, 3.0), 12.0, 0, 0, 64)
 		TNT1 A 0 A_KillChildren

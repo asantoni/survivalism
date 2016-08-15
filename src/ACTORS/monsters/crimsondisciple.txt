@@ -126,6 +126,8 @@ ACTOR BloodShot
 	Speed 10
 	Damage 3
 	+SEEKERMISSILE
+    -NOGRAVITY // Hax Murderer
+    gravity 0.05 //Hax Murderer
 	SeeSound "BloodShoot"
 	DeathSound "BloodBoom"
 	Decal DoomImpScorch

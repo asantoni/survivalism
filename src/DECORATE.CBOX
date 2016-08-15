@@ -17,6 +17,8 @@ actor CBox : Actor
 	
 	DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
+    
+    DeathSound "wood/breaklong"
 	
 	States
 	{
@@ -50,11 +52,15 @@ actor CBox : Actor
 		Death:
 			TNT1 A 0 //Dummy frame is needed
 			TNT1 A 0 A_NoBlocking
-			MISL B 4
-			MISL C 6
-			MISL D 4
+			//MISL B 4
+			//MISL C 6
+			//MISL D 4
 			TNT1 A 0 A_Jump(256, "DeathDrop") //A_Jump so inherited DeathDrops work
 		DeathDrop:
+            TNT1 A 0
+            TNT1 A 0 A_Scream
+            TNT1 A 0 A_SpawnItemEx("WoodShrapnelSpawner", 0.0, 0, 32.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+
 			//Turn back into a CBoxItem when we get destroyed
 			TNT1 A 0 A_SpawnItemEx("CBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
 			Stop
@@ -157,10 +163,14 @@ actor CStoneBox : CBox
 	Mass 0x7FFFFFFF
 	
 	DamageFactor "Axe", 100.0
+    DeathSound "rocks2"
 	
 	States
 	{
 		DeathDrop:
+            TNT1 A 0
+            TNT1 A 0 A_Scream
+            TNT1 A 0 A_SpawnItemEx("StoneShrapnelSpawner", 0.0, 0, 32.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
 			//Turn back into a CBoxItem when we get destroyed
 			TNT1 A 0 A_SpawnItemEx("CStoneBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
 			Stop	
@@ -280,13 +290,17 @@ actor CGlassBox : CBox
 	Mass 0x7FFFFFFF
 	
 	DamageFactor "Axe", 400.0
+    DeathSound "glass/break1"
 	
 	States
 	{
 		DeathDrop:
+            TNT1 A 0
+            TNT1 A 0 A_Scream
+            TNT1 A 0 A_SpawnItemEx("GlassShrapnelSpawner", 0.0, 0, 32.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
 			//Turn back into a CBoxItem when we get destroyed
 			TNT1 A 0 A_SpawnItemEx("CGlassBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
-			Stop	
+			Stop
 	}
 }
 

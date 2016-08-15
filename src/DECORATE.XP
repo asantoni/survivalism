@@ -31,6 +31,7 @@ actor XPPickup : CustomInventory
 actor XPProgress : Inventory
 {
 	Inventory.MaxAmount 100
+    +INVENTORY.UNDROPPABLE
 }
 
 actor LevelConfetti1
@@ -134,6 +135,9 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 125)stop}}
 actor NightImpKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 150)stop}}
 
+actor LostSoulKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 100)stop}}
+
 actor DemonDogKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 75)stop}}
 
@@ -145,6 +149,12 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
 
 actor ImpWarlordKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor UndeadPriestKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
+
+actor ApprenticeOfDsparilKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 400)stop}}
 
 actor BossImpKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 1000)stop}}
@@ -181,4 +191,7 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 5)stop}}
 
 actor AzazelKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 1500)stop}}
+
+actor BossZombieKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 6000)stop}}
 

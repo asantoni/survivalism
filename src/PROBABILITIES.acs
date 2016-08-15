@@ -9,7 +9,7 @@
    challenging. - Albert
 */
 
-#define MISSION_TABLE_LENGTH 4
+#define MISSION_TABLE_LENGTH 5
 int missionChanceTable[MISSION_TABLE_LENGTH][3] =
 {
 	//YOU MUST UPDATE MISSION_TABLE_LENGTH WHEN YOU ADD
@@ -20,6 +20,7 @@ int missionChanceTable[MISSION_TABLE_LENGTH][3] =
 	{ 826, 	5, 	0 }, //Baron of Hell mission
 	{ 827, 	2, 	0 }, //Imp storm
 	{ 828, 	2, 	0 }, //Demolition Squad
+	{ 829, 	2, 	0 }, //Lost Souls Incoming!
 };
 
 /* 
@@ -50,7 +51,7 @@ str lootBoxDropChanceTable[LOOTBOX_TABLE_LENGTH][3] =
 	{ "ShellBox", 			50, 	0 },
 	{ "DoomZPistol", 		200, 	0 },
 	{ "DoomZShotgun", 		50, 	0 },
-	{ "WensternShotgun", 	2, 		0 },
+	{ "WesternShotgun", 	2, 		0 },
 	{ "HuntingRifle", 		2, 		0 },
 	{ "Bow", 				50, 	0 },
 	{ "ShellBox", 			50, 	0 },

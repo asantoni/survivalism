@@ -1,0 +1,27 @@
+//Flips the fist so it's right handed.
+//Used for melee on some weapons that are left-handed (eg. pistol)
+//Use PUNRXX sprites
+
+Sprite PUNRA0, 80, 41
+{
+//Offset -173, -127
+Patch PUNGB0, 0, 0 {FlipX}
+}
+
+Sprite PUNRB0, 80, 41
+{
+//Offset -173, -127
+Patch PUNGB0, 0, 0 {FlipX}
+}
+
+Sprite PUNRC0, 107, 52
+{
+//Offset -161, -116
+Patch PUNGC0, 0, 0 {FlipX}
+}
+
+Sprite PUNRD0, 147, 76
+{
+//Offset -137, -92
+Patch PUNGD0, 0, 0 {FlipX}
+}

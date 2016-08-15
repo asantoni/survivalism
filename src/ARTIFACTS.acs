@@ -1,0 +1,28 @@
+//script 900-920 reserved for ARTIFACTS.acs
+
+#include "zcommon.acs"
+//#libray must go last!!!!!!!!!!
+#library "artifacts"
+
+//boostPlayerMaxHealth
+script 900 (int playerTid)
+{
+    /*
+    //ACS_NamedExecuteAlways not supported in DECORATE in Zandronum 2.0. Try again in Zandronum 3.0?
+    //This is just a wrapper function that lets us call this from DECORATE:
+    int foo = ActivatorTID();
+    ACS_NamedExecuteAlways("boostPlayerMaxHealth", 0, foo);
+    */
+    
+    int currentMaxHealth = GetActorProperty(playerTid, APROP_SpawnHealth);
+    if (currentMaxHealth == 0) { //Zero implies 100 according to the docs: http://zdoom.org/wiki/GetActorProperty
+        currentMaxHealth = 100; 
+    }
+    SetActorProperty(playerTid, APROP_SpawnHealth, currentMaxHealth + 20);
+    if (playerTid == 0) {
+        GiveInventory("Health", 20); //Give to the activator.
+    } else {
+        GiveActorInventory(playerTid, "Health", 20);
+    }
+
+}
