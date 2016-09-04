@@ -70,6 +70,7 @@
 #include "actors/weapons/huntingrifle.txt"
 #include "actors/weapons/wensternshotgun.txt"
 #include "actors/weapons/yellowboy.txt"
+#include "actors/weapons/heavyrifle.txt"
 
 
 

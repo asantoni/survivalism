@@ -388,7 +388,7 @@ actor BoatMelee //: FastProjectile
 	+FRIENDLY
 	+RIPPER
 	DamageType "Boat"
-	//RenderStyle "None"
+	RenderStyle "None"
 	
 	States
 	{

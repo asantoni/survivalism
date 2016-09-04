@@ -1,0 +1,93 @@
+//Weapon: Heavy Rifle
+//By: ZChronos
+
+ACTOR HeavyRifle : Weapon
+{ 
+   Inventory.PickupMessage "You got the Heavy Rifle!" 
+   Inventory.PickupSound "misc/w_pkup" 
+   Weapon.AmmoType "HeavyRifleBullet" 
+   Weapon.AmmoGive 50 
+   Weapon.AmmoUse 1 
+   Weapon.Kickback 600 
+   AttackSound "weapons/riflefre"
+   Weapon.UpSound "weapons/rifleup"
+  
+  
+  Weapon.AmmoType2 "HeavyRifleClip"
+  Weapon.AmmoUse2 0
+  +WEAPON.ALT_AMMO_OPTIONAL
+  
+  +SHOOTABLE
+  +NOBLOOD
+	//+CANPASS //---> crazy CPU usage
+  +WINDTHRUST
+
+   Health 90
+   Weapon.SlotNumber 4
+
+   States 
+   {
+   Spawn: 
+      HVYR A -1 
+      Loop 
+   Ready: 
+      HVRG A 1 A_WeaponReady(WRF_NOSWITCH)
+      TNT1 A 0 A_JumpIfNoAmmo("NoAmmo")
+      TNT1 A 0 A_WeaponReady
+      Loop
+   Deselect: 
+      HVRG A 1 A_Lower 
+      Loop 
+   Select: 
+      HVRG A 0 //A_PlaySound("weapons/rifleup") 
+      HVRG A 1 A_Raise 
+      Goto Select+1 
+	NoAmmo:
+    AltFire:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIfInventory("HeavyRifleClip", 1, "LoadClip")
+		HVRG A 1 A_WeaponReady(WRF_NOFIRE)
+		goto Ready
+    Reload:
+	LoadClip:
+		TNT1 A 0 
+		HVRG A 1 Offset(0,35)
+		HVRG A 1 Offset(0,38)
+		HVRG A 1 Offset(0,44)
+		HVRG A 1 Offset(0,52)
+		HVRG A 1 Offset(0,62)
+		HVRG A 1 Offset(0,72)
+		HVRG A 1 Offset(0,82)
+	 LoadAnotherClip:
+		HVRG A 1 A_TakeInventory("HeavyRifleClip", 1)//ACS_ExecuteAlways(949, 0, 0)
+		HVRG A 0 A_GiveInventory("HeavyRifleBullet", 50)
+		HVRG A 2 Offset(-1,82) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		HVRG A 3 Offset(0,82) 
+		HVRG A 2 Offset(-2,84) //A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		HVRG A 3 Offset(0,82)
+		HVRG A 2 Offset(-1,84) A_PlaySound ("weapons/shotgf3", CHAN_WEAPON)
+		HVRG A 3 Offset(0,82) 
+		HVRG A 0 A_JumpIfInventory("HeavyRifleBullet", 0, "DoneLoading")
+		HVRG A 1 A_JumpIfInventory("HeavyRifleClip", 1, "LoadAnotherClip")
+	 DoneLoading:
+		HVRG A 1 Offset(0,82)
+		HVRG A 1 Offset(0,72)
+		HVRG A 1 Offset(0,62) A_PlaySound("pistol/ready", CHAN_WEAPON)
+		HVRG A 1 Offset(0,52)
+		HVRG A 1 Offset(0,44)
+		HVRG A 1 Offset(0,38)
+		HVRG A 1 Offset(0,35)
+		HVRG A 1 Offset(0,32)
+		TNT1 A 0 A_ReFire
+		goto Ready  
+   Fire:
+      HVRF A 2
+   Hold:
+      HVRF A 2 Bright A_FireBullets(4.0, 4.0, -1, 26, "BulletPuff", FBF_NORANDOM)
+      HVRF B 1 Bright A_Recoil(0.2 * cos(pitch)) 
+      HVRG A 1 A_TakeInventory("HeavyRifleBullet", 1)
+      HVRG A 0 A_JumpIfNoAmmo("NoAmmo")
+      HVRG A 0 A_Refire
+      Goto Ready
+   }
+}

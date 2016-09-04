@@ -85,6 +85,33 @@ actor ChaingunBullet : Ammo
     Inventory.Icon "CLIPC0"
 }
 
+
+actor HeavyRifleClip : Ammo
+{
+    Inventory.PickupMessage "Picked up a box of heavy rifle clips."
+    Inventory.Amount 4
+    Inventory.MaxAmount 6
+    Ammo.BackpackMaxAmount 10
+    Ammo.BackpackAmount 4
+    
+  States
+  {
+  Spawn:
+    AMMC A 21000 //10 minutes
+    Stop
+  }
+}
+
+actor HeavyRifleBullet : Ammo
+{
+    Inventory.Amount 1
+    Inventory.MaxAmount 60
+    Ammo.BackpackAmount 0
+    Ammo.BackpackMaxAmount 60
+    Inventory.Icon "CLIPC0"
+}
+
+
 actor HuntingRifleClip : Ammo
 {
     Inventory.PickupMessage "Picked up a box of hunting rifle clips."

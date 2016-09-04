@@ -39,7 +39,7 @@
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
 #define DROPPABLE_INVENTORY_START 5 //DeathCurse
-#define PERSISTENT_INVENTORY_LEN 76 
+#define PERSISTENT_INVENTORY_LEN 79 
 //XXX: You must update DECORATE.PLAYER too! It also has PERSISTENT_INVENTORY_LEN.
 
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
@@ -68,6 +68,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"HuntingRifle",
 	"WensternShotgun",
     "WesternShotgun",
+    "HeavyRifle",
 	"Bucket",
 	"Bow",
 	"GraplingAmmo",//Rope
@@ -76,10 +77,12 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"PistolClip",
 	"ChaingunClip",
 	"HuntingRifleClip",
+    "HeavyRifleClip",
     "9mmPistolBullet",
     "GlockBullet",
     "ChaingunBullet",
     "HuntingRifleBullet",
+    "HeavyRifleAmmo",
     "LoadedShotgunShell",
     "LoadedYellowboyShell",
 	"LootBox",

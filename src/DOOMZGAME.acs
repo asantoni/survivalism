@@ -350,7 +350,7 @@ DONE:
 #define BASE_CROW_COUNT 25
 #define BIRD_SPAWNER_INTERVAL_SECONDS 5*60
 
-#libdefine DEBUG_MODE 1
+#libdefine DEBUG_MODE 0
 
 //#libdefine kMainLoopPeriodSeconds 20
 int kMainLoopPeriodSeconds = 20;
