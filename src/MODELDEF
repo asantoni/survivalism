@@ -13,7 +13,7 @@ Model CBox {
 Model CStoneBox {
    Path "MODELS"
    Model 0 "cube.md2"
-   Skin 0 "cube-stone.png"
+   Skin 0 "cube-stone.png" // Concrete blocks: "W28_5.png" 
    Scale 1 1 1.2
    FrameIndex CBOX A 0 0
 }
@@ -30,6 +30,22 @@ Model CGlassBox {
    Path "MODELS"
    Model 0 "cube.md2"
    Skin 0 "cube-glass.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model CSkullBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-skull.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model CBodiesBox {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-bodies.png"
    Scale 1 1 1.2
    FrameIndex CBOX A 0 0
 }
@@ -89,7 +105,7 @@ Model CPillarGhost {
 Model CFloor {
    Path "MODELS"
    Model 0 "cube.md2"
-   Skin 0 "cube-wood.png"
+   Skin 0 "cube-woodfloor.png"
    Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
    FrameIndex CFLO A 0 0
 }
@@ -97,7 +113,7 @@ Model CFloor {
 Model CFloorGhost {
    Path "MODELS"
    Model 0 "cube.md2"
-   Skin 0 "cube-wood.png"
+   Skin 0 "cube-woodfloor.png"
    Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
    FrameIndex CFLO A 0 0
 }
@@ -108,6 +124,46 @@ Model BossCFloor {
    Skin 0 "cube-glass.png"
    Scale 7.5 7.5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
    FrameIndex CFLO A 0 0
+}
+
+Model VagrantImpColony {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-colony.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model VagrantImpChildColony {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-colony.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model VagrantGruntColony {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-colony.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model VagrantGruntChildColony {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-colony.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
+}
+
+Model VagrantCyberdemonColony {
+   Path "MODELS"
+   Model 0 "cube.md2"
+   Skin 0 "cube-colony.png"
+   Scale 1 1 1.2
+   FrameIndex CBOX A 0 0
 }
 
 // ------------- //
@@ -274,8 +330,8 @@ Model Boat {
 Model CDoor {
    Path "models/door"
    Model 0 "ZedekDoor.md3"
-   Scale 1.0 1.0 1.0
-   ZOffset 42
+   Scale 0.955 0.955 0.955
+   ZOffset 38//42
 
     FrameIndex CDOR A 0 0
    FrameIndex CDOR B 0 1

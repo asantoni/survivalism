@@ -197,7 +197,7 @@ script 761 (void) //ENTER
 //Default basic crafting function. It combines up to three items in some quantity
 //and gives the player an item. Edit the arrays at the top of this file
 //to add new basic recipes!
-script 762 (int optionIdx)
+script 762 (int optionIdx) 
 {
 	// I generalized this into a giant 2d array, a to make it easy to add more 
 	//basic crafting formulas and less room for mistakes. I had to split it up into
@@ -251,16 +251,16 @@ function bool basicCheckRequirements(int optionIdx)
 	bool allReqsSatisfied = true;
 	if ((req1inv != "") && (CheckInventory(req1inv) < req1amount)) {
 		allReqsSatisfied = false;
-		print(s:"req1 failed ", s:req1inv, s:" ", d:req1amount);
+		//print(s:"req1 failed ", s:req1inv, s:" ", d:req1amount);
 	}
 	
 	if ((req2inv != "") && (CheckInventory(req2inv) < req2amount)) {
 		allReqsSatisfied = false;
-		print(s:"req2 failed");
+		//print(s:"req2 failed");
 	}
 	if ((req3inv != "") && (CheckInventory(req3inv) < req3amount)) {
 		allReqsSatisfied = false;
-		print(s:"req3 failed");
+		//print(s:"req3 failed");
 	}
 	
 	if (CheckInventory("XPLevel")+1 < basicXPLevels[optionIdx])
@@ -280,4 +280,13 @@ function bool basicCheckRequirements(int optionIdx)
 script 763 (void)
 {
     Print(s:"Woohoo!");
+}
+
+script 764 (void)
+{
+    if (basicCheckRequirements(1) == RETVAL_BAD_XPLVL) {
+        Print(s:"You must be level 2 or greater to make a crafting box!\nGo kill some monsters to gain XP.");
+    }
+    
+    ACS_ExecuteAlways(762, 0, 1);
 }

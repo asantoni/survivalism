@@ -1,20 +1,91 @@
 
+actor LootSpawner 1113
+{
+    //Monster
+    //-SOLID
+    //-SHOOTABLE
+    //+NOBLOCKMAP
+    -COUNTKILL
+
+    States
+    {
+        
+        Spawn:
+            BOX1 A 0
+            //Set our TID to LOOTSPAWNER_TID
+            TNT1 A 0 ACS_ExecuteAlways(1002, 0, 0)
+            TNT1 A -1
+            Wait
+        SpawnLootMaybe:
+            TNT1 A 0
+            TNT1 A 1 A_Jump(255, "SpawnLoot")
+            goto Spawn
+        SpawnLoot:
+            TNT1 A 0
+            //To make A_CustomMissile work, the monster either needs a target
+            //or CMF_AIMDIRECTION set. See: https://zandronum.com/tracker/view.php?id=678
+            TNT1 A 1 A_CustomMissile("DoomZLootSpawnerProjectile", 0.0, 0, random(0,255), CMF_AIMDIRECTION)
+         
+         goto Spawn
+            
+    }
+}
+
 actor DoomZLootSpawnerProjectile
 {
 	Projectile
+
+	//Only bounce off walls / planes
 	BounceType "Hexen"
-	+RIPPER
-	+CEILINGHUGGER
-	Speed 60
 	
-	Height 128
+	//Bouncing projectiles blow up on actors by default, so we need to turn that off.
+	-ALLOWBOUNCEONACTORS //Needs to be set for BOUNCEONACTORS to work
+	-BOUNCEONACTORS
+	
+	//Rip through all actors.
+	+THRUACTORS
+	//+RIPPER results in actors bleeding, +THRUACTORS doesn't! :-)
+	//+CEILINGHUGGER
+	+FLOORHUGGER
+	Speed 10
+	
+	WallBounceFactor 1.0 //Don't lose momentum when we bounce off walls
+	+NEVERRESPAWN 
+	+INVULNERABLE
+
+    -COUNTKILL
+	-SOLID
+	+NOBLOCKMAP
+	+STEPMISSILE
+
+	-SHOOTABLE //- r14 test 12 - shouldn't be needed anymore, and stops turrets from attacking them?
+	+NOGRAVITY
+	+LOOKALLAROUND
+	
+	+PAINLESS //Actors hit by us will never enter their pain states
+	+NODAMAGETHRUST //We will never thrust actors we damage, if we do damage anyone.
+	-BLOODSPLATTER //Do not spawn blood splatter sprites when ripping through an actor
+	
+	+SERVERSIDEONLY 
+
+	Height 8
 	Mass 0
+	//Damage 1
 	Damage 0
+	Health 1000
 	
+
+            
 	States
 	{
+    
+        //We use a cool trick to determine A_SpawnItemEx success from:
+        // http://forum.zdoom.org/viewtopic.php?f=18&t=46397
+        //FUDGE - it needs Zandronum 3.0 :-(
+
 		Spawn:
 			TNT1 A 0
+            TNT1 A 0 Thing_ChangeTID(0, 557) //557 is LOOTSPAWNERPROJ_TID
 			TNT1 A 100
 		//Randomize how far away the projectile goes before it turns into a monster
 		Procrastinate:
@@ -22,8 +93,13 @@ actor DoomZLootSpawnerProjectile
 			loop
 		Death:
 			TNT1 A 1
-			//TNT1 A 5 A_SpawnItemEx("MediumHighLoot", 0, 0, 0) //ACS_ExecuteAlways(203) //200 tic duration so our TID sticks around
-			TNT1 A 5 A_SpawnItemEx("LootBox", 0, 0, 0) //ACS_ExecuteAlways(203) //200 tic duration so our TID sticks around
-			Stop
+            TNT1 A 5 A_SpawnItemEx("LootBox", 0,0,0, 0,0,0, 0, 0)
+            
+            //Argh, SXF_CLEARCALLERTID needs Zandronum 3.0:
+			//TNT1 A 5 A_SpawnItemEx("LootBox", 0,0,0, 0,0,0, 0, SXF_CLEARCALLERTID)
+            //If the spawn failed, bounce around some more until it succeeds:
+            //TNT1 A 0 A_JumpIf(tid != 0, "Procrastinate")
+			
+            Stop
 	}
 }

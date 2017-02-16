@@ -9,11 +9,22 @@ actor CDoor : Actor
 	//+NOGRAVITY
 	//Activation THINGSPEC_Default
 	+CANPASS //---> crazy CPU usage
+    
     +USESPECIAL
+    Activation THINGSPEC_Activate
+    
     //+AMBUSH
     +QUICKTORETALIATE
 	+DONTRIP
-    
+ 
+
+   //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
+    +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
+               // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
+    //Need these guys too with +ISMONSTER
+    Activation THINGSPEC_MonsterTrigger | THINGSPEC_ThingTargets
+    -COUNTKILL
+ 
     
 	Health 1100
 	Radius 24
@@ -27,6 +38,7 @@ actor CDoor : Actor
 	{
 		Spawn:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
+            TNT1 A 0 A_CopyFriendliness //For vagrant colonies - makes the box friendly to bad guys
 			//Set the TID to CONSTRUCTION_TID so that monsters can
 			//attack it (baddies.acs)
 			TNT1 A 0 ACS_ExecuteAlways(503, 0)			

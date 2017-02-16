@@ -127,6 +127,7 @@
 
 #include "actors/gameplay/obelisk.txt"
 #include "actors/gameplay/bossobelisklaser.txt"
+#include "actors/gameplay/vagrantcolonies.txt"
 
 //================================================
 

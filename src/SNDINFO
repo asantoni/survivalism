@@ -169,3 +169,13 @@ $random shotgun/load { shotgun/load1 shotgun/load2 shotgun/load3 }
 $volume shotgun/load 0.5
 
 boat/capsize BOATSP1
+
+
+bosszombie/sight laugh3
+bosszombie/active1 laugh1
+bosszombie/active2 laugh2
+bosszombie/active3 laugh3
+$random bosszombie/active { bosszombie/active1 bosszombie/active2 bosszombie/active3 }
+
+$rolloff bosszombie/active 2048 4096
+$rolloff bosszombie/sight 2048 4096

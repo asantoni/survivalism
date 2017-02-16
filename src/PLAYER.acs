@@ -39,7 +39,7 @@
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
 #define DROPPABLE_INVENTORY_START 5 //DeathCurse
-#define PERSISTENT_INVENTORY_LEN 79 
+#define PERSISTENT_INVENTORY_LEN 80 
 //XXX: You must update DECORATE.PLAYER too! It also has PERSISTENT_INVENTORY_LEN.
 
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
@@ -128,6 +128,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"ArrowAmmo",
 	"Cotton",
     "BoatItem",
+    "AmmoBelt",
 };
 
 #define NUM_XP_LEVELS 59 

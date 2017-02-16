@@ -15,6 +15,9 @@ ACTOR CrimsonDisciple
 	PainSound "DisciplePain"
 	ActiveSound "DiscipleActive"
 	Obituary "%o was slain by a crimson disciple."
+    
+    DropItem "CrimsonDiscipleLoot"
+    
 	States
 	{
 	Spawn:

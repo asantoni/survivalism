@@ -7,10 +7,11 @@ SERVER FLAGS TO USE:
 r16:
 - Auto load/save system
 - Backpack drops
-- TODO: Perma powerups and artifacts?
+- Perma health boosts
+- Radiation Zone TM
+- Vagrant colonies
 - TODO: Connected Maps
-- TODO: Radiation Zone
-    
+
 r14test15:
 - Berry system
 - Fixed a bunch of hunger related bugs.
@@ -323,6 +324,10 @@ DONE:
 #libdefine MINE_ROCK_TID 554
 #define MONSTERSPAWNERPROJ_TID 8400
 #libdefine MONSTER_REPELLER_TID 8401
+#libdefine LOOTSPAWNER_TID          556
+#libdefine LOOTSPAWNERPROJ_TID      557
+#libdefine VAGRANTCOLONYSPOT_TID    558
+
 //555 is used by respawn points
 #libdefine SEED_TID 		8402
 #libdefine FOOD_TID 		8403
@@ -341,8 +346,9 @@ DONE:
 
 #DEFINE MONSTER_SPAWNER_MODE_OFF 3
 
-#define LOOT_SPAWNER_INTERVAL_SECONDS 20*60 //20 minutes
+#define LOOT_SPAWNER_INTERVAL_SECONDS 10*60 //10 minutes
 #define BERRY_SPAWNER_INTERVAL_SECONDS 6*60 //12 minutes (1 day) in r15 originally
+#define COLONY_SPAWNER_INTERVAL_SECONDS 10*60 //10 minutes - use 32 seconds for testing
 #define BASE_BERRY_PLANTS 12
 
 #libdefine HUNGER_PERIOD_SECONDS 5040 //Time it takes to starve - 1.5 days originally (1080 s), changed to 7 days to nerf the hunger system
@@ -483,7 +489,8 @@ script 201 (void)
 	}
 }*/
 
-/* Spawn random loot around each player every once and a while */
+/* Pre-r16 Lootbox Spawner code:
+//Spawn random loot around each player every once and a while 
 script 201 (void)
 {
 	int kNumLootPerPlayer = 2;
@@ -519,6 +526,25 @@ script 201 (void)
 				SpawnProjectile(playerTid, "DoomZLootSpawnerProjectile",  random(0, 65536),  speed, 0, 0, 0);	
 			}
 		}
+	}
+}
+*/
+
+//r16 Lootbox spawner code
+//Spawn loot boxes around LootboxSpawner actors every few minutes
+script 201 (void)
+{
+	int kNumLootPerSpawner = 4;
+
+    //The amount of loot is random - LootSpawner (DECORATE.LOOTSPAWNER) has a
+    //random chance to actually spit out loot, so it's not guaranteed to have any
+    //amount of loot per spawner.
+    
+	while (true)
+	{
+		Delay(35*LOOT_SPAWNER_INTERVAL_SECONDS);
+
+        SetActorState(LOOTSPAWNER_TID, "SpawnLoot");
 	}
 }
 
@@ -1909,7 +1935,7 @@ script 950 ENTER CLIENTSIDE
 			
 			//TODO: Calculate vegation variant based off seed!
 			
-			int variant = ((FixedMul(w1, 4.0) + 0.5) >> 16); //rounded - 0 to 4
+                        int variant = ((FixedMul(w1, 4.0) + 0.5) >> 16); //rounded - 0 to 4
 		
 			//2D waves! Could be useful as ocean wave generator!!!
 			//vegX += FixedMul(256.0, sin(FixedDiv(vegX % gridSize, gridSize)));
@@ -1959,11 +1985,12 @@ script 950 ENTER CLIENTSIDE
 					vegClass = "ProceduralGrass8";
 				} else if (variant == 7) {
 					vegClass = "ProceduralGrass9";
-				}
-				/*
 				} else if (variant == 8) {
-					vegClass = "ProceduralGrass2";
-				} else if (variant == 9) {
+                                        vegClass = "ProceduralGrass1";
+                                } else if (variant == 9) {
+                                        vegClass = "ProceduralGrass10";
+                                }
+                                /*else if (variant == 9) {
 					vegClass = "ProceduralGrass2";
 				} else {
 					vegClass = "ProceduralGrass2";
@@ -2682,4 +2709,22 @@ script 1001 (void) CLIENTSIDE
     ConsoleCommand("cl_startasspectator false");
     ConsoleCommand("connect localhost:10667");
     ConsoleCommand("cl_startasspectator true");
+}
+
+
+//Set a LootSpawner to have its TID be LOOTSPAWNER_TID
+script 1002 (void)
+{
+    Thing_ChangeTID(0, LOOTSPAWNER_TID);
+}
+
+script 1003 OPEN
+{   
+	while (true)
+	{
+
+        SetActorState(VAGRANTCOLONYSPOT_TID, "SpawnColonyMaybe");
+		Delay(35*COLONY_SPAWNER_INTERVAL_SECONDS);
+    }
+
 }

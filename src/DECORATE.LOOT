@@ -19,11 +19,14 @@ actor LootBox : CustomInventory 1112
 	{
 		Spawn:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
-			BOX1 A 3500 //A_Look 
+			BOX1 A 21000 //Remove ourselves after 10 minutes
+            stop
+            // Old code:
+            //BOX1 A 3500 //A_Look 
 			//Every 100 seconds, check if the player is out of
 			//sight and destroy ourselves if so.
-			BOX1 A 5 A_CheckSight("Remove")
-			Loop
+			//BOX1 A 5 A_CheckSight("Remove")
+			//Loop
 		Use:
 			//TNT1 A 0 ACS_ExecuteAlways(920) //Old loot probability script
 			// A_SpawnItemEx("Yellowboy", 8, 0, 8, 0, 0, 0, 0, 0, 0) //128 = 50% chance	
@@ -31,11 +34,13 @@ actor LootBox : CustomInventory 1112
             TNT1 A 0 A_PlaySound("loot/open")
 			TNT1 A 0 A_SpawnItem("LootBoxLoot", 0, 0, 0, 0)
 			Stop
+            /*
 		Remove:
 			TNT1 A 1 
 			//Remove ourselves if we're too far from the player frustrum.
 			TNT1 A 5 ACS_ExecuteAlways(501, 0)
 			Stop
+            */
 	}
 }
 
@@ -61,6 +66,7 @@ actor LightAmmoLoot : RandomSpawner
 	DropItem "ChaingunClip", 	    255, 2
 	DropItem "DoomZShotgun",	    255, 1
 	DropItem "DoomZPistol",		    255, 2
+    DropItem "AmmoBelt",            255, 2
 }
 
 actor MediumLoot : RandomSpawner
@@ -134,6 +140,12 @@ actor IncarnateLoot : RandomSpawner
 	DropItem "MediumLoot",	128, 30
 }
 
+actor ZombieManLoot : RandomSpawner
+{
+        DropItem "LightAmmoLoot",	128, 50
+        DropItem "MediumLoot",		200, 10
+}
+
 actor ImpLoot : RandomSpawner
 {
 	DropItem "LightAmmoLoot",	128, 50
@@ -203,4 +215,18 @@ actor ApprenticeOfDsparilLoot : RandomSpawner
 {
     DropItem "MediumLoot",      255, 50
     DropItem "LightAmmoLoot",   255, 50
+}
+
+actor CrimsonDiscipleLoot : RandomSpawner
+{
+    DropItem "MediumLoot",      255, 50
+    DropItem "LightAmmoLoot",   255, 50
+
+}
+
+actor UndeadPriestLoot : RandomSpawner
+{
+    DropItem "MediumLoot",      255, 50
+    DropItem "LightAmmoLoot",   255, 50
+
 }

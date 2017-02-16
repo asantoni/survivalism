@@ -8,6 +8,11 @@ actor CPillar : SwitchableDecoration
 	//+NOGRAVITY
 	+CANPASS
     +USESPECIAL
+    
+   //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
+    +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
+               // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
+    -COUNTKILL
 
 	
 	Health 500

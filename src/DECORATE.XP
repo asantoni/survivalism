@@ -123,6 +123,9 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 10000)stop}}
 actor ZombieKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 100)stop}}
 
+actor ZombieManKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 50)stop}}
+
 actor ZombieIncarnateKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 300)stop}}
 
@@ -176,6 +179,9 @@ TNT1 A 0 ACS_ExecuteAlways(817, 0, 800)stop}}
 
 actor BossCyberDemonKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}
+
+actor CyberDemonKillXP : XPPickup {States{Pickup:TNT1 A 0
+TNT1 A 0 ACS_ExecuteAlways(817, 0, 1000)stop}}
 
 actor BossKillXP : XPPickup {States{Pickup:TNT1 A 0
 TNT1 A 0 ACS_ExecuteAlways(817, 0, 4000)stop}}

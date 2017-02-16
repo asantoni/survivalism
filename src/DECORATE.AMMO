@@ -159,4 +159,37 @@ actor LoadedYellowboyShell : Ammo
 }
 
 
+Actor AmmoBelt : CustomInventory
+{
+  Tag "Ammo Belt"
+  +CountItem
+  +Inventory.AlwaysPickup
+  Inventory.PickupMessage "You got an ammo belt"
+  Inventory.PickupSound "misc/i_pkup"
+  Inventory.UseSound "misc/i_pkup"
+  
+  +Inventory.INVBAR
+  Inventory.Icon ABLTI
+  Inventory.MaxAmount 5
+  
+  Scale 1.4
+  States
+  {
+  Spawn:
+    ABLT A 21000 //10 minutes
+    stop
+  Use:
+    TNT1 A 0 A_GiveInventory("Shell", 20)
+    TNT1 A 0 A_GiveInventory("ArrowAmmo", 20)
+    TNT1 A 0 A_GiveInventory("PistolClip", 5)
+    TNT1 A 0 A_GiveInventory("ChaingunClip", 4)
+    TNT1 A 0 A_GiveInventory("HuntingRifleClip", 4)
+    TNT1 A 0 A_GiveInventory("HeavyRifleClip", 4)
+    //Please edit this with the fitting custom ammo types of your mod.
+    //Make it give a large pickup worth of ammo
+    Stop
+  }
+}
+ 
+
 

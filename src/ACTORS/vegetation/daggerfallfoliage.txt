@@ -104,13 +104,13 @@ from DaggerFallShrub! That's important!
   Spawn:
     TNT1 A 0
 	TNT1 A 0 ACS_ExecuteAlways(958, 0, score)
-  	DFFD BBBBBB 2 A_FadeIn(0.2)
+        DFFD BBBBBB 2 A_FadeIn(0.2)
   Still:
-	DFFD B 8
+        DFFD B 8
 	TNT1 A 0 ACS_ExecuteAlways(951, 0, score)
 	loop
   Death:
-	DFFD B 3 A_FadeOut(0.1)
+        DFFD B 3 A_FadeOut(0.1)
 	Loop
   }
 }
@@ -260,6 +260,26 @@ ACTOR ProceduralGrass9 : ProceduralFoliage
 	Loop
   }
 }
+
+ACTOR ProceduralGrass10 : ProceduralFoliage
+{
+  Scale 0.5
+  States
+  {
+  Spawn:
+    TNT1 A 0
+        TNT1 A 0 ACS_ExecuteAlways(958, 0, score)
+        SAAX AAAAAA 2 A_FadeIn(0.2)
+  Still:
+        SAAX A 8
+        TNT1 A 0 ACS_ExecuteAlways(951, 0, score)
+        loop
+  Death:
+        SAAX A 3 A_FadeOut(0.1)
+        Loop
+  }
+}
+
 
 ACTOR DaggerFallThing2 : MinableRock 16131
 {

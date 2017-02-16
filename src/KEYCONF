@@ -17,9 +17,16 @@ addmenukey "Show Basic Crafting Menu" dz_basiccrafting
 alias dz_basiccrafting "puke 760;"
 defaultbind e dz_basiccrafting
 
+addmenukey "Make Crafting Box" dz_craftingbox
+alias dz_craftingbox "puke 764;"
+defaultbind b dz_craftingbox
+
+
 addmenukey "Melee" dz_melee
 alias dz_melee "puke 105;"
 defaultbind f dz_melee
+
+
 
 addmenukey "Toggle vegetation" dz_toggleveggies
 alias dz_toggleveggies "puke 974;"

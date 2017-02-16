@@ -1483,10 +1483,10 @@ ACTOR BossZombie
   
   Scale 2.0
   
-  seesound "grunt/sight"
+  seesound "bosszombie/sight"
   painsound "grunt/pain"
   deathsound "grunt/death"
-  activesound "grunt/active"
+  activesound "bosszombie/active"
   attacksound "hazmat/tazer"
   
   MeleeRange 88
@@ -1505,6 +1505,7 @@ ACTOR BossZombie
   DropItem "Medikit"
   DropItem "Medikit"
   DropItem "Medikit"
+  DropItem "HeavyRifle"
   
   Monster
   +FLOORCLIP

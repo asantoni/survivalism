@@ -12,6 +12,11 @@ actor CFloor : SwitchableDecoration
 	//+ACTLIKEBRIDGE //--> maybe crazy CPU
 	+DONTRIP
 	
+       //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
+    +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
+               // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
+    -COUNTKILL
+    
 	Health 500
 	Radius 120
 	Height 4
@@ -19,6 +24,7 @@ actor CFloor : SwitchableDecoration
 	
 	DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
+    DamageFactor "EnemySentryTurret", 0.0
 	
 	States
 	{
@@ -27,6 +33,7 @@ actor CFloor : SwitchableDecoration
 			//Set the TID to CONSTRUCTION_TID so that monsters can
 			//attack it (baddies.acs)
 			TNT1 A 0 A_PlaySound("click")
+            TNT1 A 0 A_CopyFriendliness //For vagrant colonies - makes the floor friendly to bad guys
 			TNT1 A 0 ACS_ExecuteAlways(503, 0)			
 			//PLAY A 200 A_Jump(256, "DropYellowboy")
 			//TNT1 A 0 A_SetSpecial(80, 

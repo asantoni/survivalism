@@ -253,6 +253,7 @@ actor DoomZFogSpawner /* : FogSpawner */ 10301
 actor BigFog
 {
     +CLIENTSIDEONLY
+    +FORCEXYBILLBOARD
     +NOBLOCKMAP
     -SHOOTABLE
     +NOINTERACTION
@@ -263,9 +264,9 @@ actor BigFog
     BounceType "Doom"
     +BOUNCEONWALLS
     
-    Scale 8.0
+    Scale 6.0
     RenderStyle "Translucent"
-    Alpha 0.4
+    Alpha 0.5
     
     States
     {

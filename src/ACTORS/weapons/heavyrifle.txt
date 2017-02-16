@@ -3,6 +3,7 @@
 
 ACTOR HeavyRifle : Weapon
 { 
+   Tag "Heavy Rifle"
    Inventory.PickupMessage "You got the Heavy Rifle!" 
    Inventory.PickupSound "misc/w_pkup" 
    Weapon.AmmoType "HeavyRifleBullet" 
