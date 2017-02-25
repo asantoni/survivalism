@@ -81,6 +81,7 @@ actor DoomZChicken : Chicken 10808
 		goto SpawnLook
 	  Stunned:
 		TNT1 A 0 A_Scream
+		TNT1 A 0 Thing_SetSpecial(0, 0, 0, 0, 0) //Prevent spamming spacebar from making more chickens, lol
 		TNT1 A 0 A_SpawnItem("ChickenItem")
 		TNT1 A 6 A_Feathers
 		Stop
