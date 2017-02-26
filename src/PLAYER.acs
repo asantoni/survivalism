@@ -546,7 +546,7 @@ function void setupPlayer(int playerTid)
         GiveActorInventory(playerTid, "Health", 20);
 	}
     
-    Log(s:"Dude got dis many: ", d:CheckActorInventory(playerTid, "HealthBooster1"));
+    //Log(s:"Dude got dis many: ", d:CheckActorInventory(playerTid, "HealthBooster1"));
     if (CheckActorInventory(playerTid, "HealthBooster1") > 0) {
         ACS_ExecuteAlways(900, 0, playerTid); //See ARTIFACTS.acs
 	}

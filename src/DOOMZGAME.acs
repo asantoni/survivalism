@@ -1043,10 +1043,11 @@ script 210 (void)
 			for (int tid = BADDIES_TID_MIN; tid < BADDIES_TID_MAX; tid++)
 			{
 				Thing_Damage2(tid, 1000, "NoXP"); //Kill everything and don't give any XP for it (second approach. Shouldn't need the global XP lock anymore.)
-				musicPlayDaytime();
 			}
-			g_blockXP = false; 
-			
+			g_blockXP = false;
+
+			musicPlayDaytime();
+
 			//Spoil all the food a few minutes after sunrise:
 			//ACS_ExecuteAlways(954, 0, 0);
 		}
