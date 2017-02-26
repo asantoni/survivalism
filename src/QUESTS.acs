@@ -84,19 +84,11 @@ int g_activeQuestStats[NUM_AVAILABLE_QUESTS][6] = {
 	Easy, Medium, and Hard QuestSpots
 
 */
-script 600 ENTER
+script 600 OPEN
 {
 	//Log(s:"Hello Quests
 	Delay(35);
 	ACS_ExecuteAlwayS(610, 0);
-	while (true)
-	{
-		if (CheckActorInventory("ActiveQuest", 1))
-		{
-			//int CheckInventory("
-		}
-		Delay(18);
-	}
 }
 
 //Assign a unique TID to an EasyQuestSpot
