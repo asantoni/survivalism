@@ -88,7 +88,7 @@ script 600 OPEN
 {
 	//Log(s:"Hello Quests
 	Delay(35);
-	ACS_ExecuteAlwayS(610, 0);
+	ACS_ExecuteAlways(610, 0);
 }
 
 //Assign a unique TID to an EasyQuestSpot
