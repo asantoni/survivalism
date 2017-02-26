@@ -376,8 +376,8 @@ actor VagrantImp : DoomZImp
     goto Idle
   See:
  	//Randomly decide to attack your base or not
-	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
-	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
 	//Only check to remove ourselves and change attack modes every 6 seconds
     TROO AABBCCDD 4 A_Chase
     TROO AABBCCDD 4 A_Chase
@@ -454,8 +454,8 @@ actor VagrantGrunt : ZombieMan
     goto Idle
   See:
  	//Randomly decide to attack your base or not
-	TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
-	TNT1 A 0 ACS_ExecuteAlways(502, 0)
+	//TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+	//TNT1 A 0 ACS_ExecuteAlways(502, 0)
 	//Only check to remove ourselves and change attack modes every 6 seconds
     POSS AABBCCDD 4 A_Chase
     POSS AABBCCDD 4 A_Chase
@@ -553,10 +553,10 @@ actor VagrantCyberdemon : Cyberdemon
     CYBR A 0 A_RearrangePointers(AAPTR_NULL, AAPTR_DEFAULT, AAPTR_DEFAULT)
     goto Idle
   See:
-        //Randomly decide to attack your base or not
-        TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
-        TNT1 A 0 ACS_ExecuteAlways(502, 0)
-        //Only check to remove ourselves and change attack modes every 6 seconds
+    //Randomly decide to attack your base or not
+    //TNT1 A 0 A_Jump(200, 2) //200/256 chance of not changing state
+    //TNT1 A 0 ACS_ExecuteAlways(502, 0)
+    //Only check to remove ourselves and change attack modes every 6 seconds
     CYBR A 4 A_Hoof
     CYBR ABB 4 A_Chase
     CYBR D 4 A_Metal
