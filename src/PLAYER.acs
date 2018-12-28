@@ -27,6 +27,9 @@
 #libdefine HUDMSG_ID_DEBUGMODE 14
 #libdefine HUDMSG_ID_MSCHARGE 15
 
+#libdefine INFO_MESSAGE_ID 		48
+#libdefine FLASH_MESSAGE_ID 	49
+
 
 #define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
 
@@ -408,6 +411,12 @@ script 807 DEATH
 	
 	//Wipe the player's inventory from the database
 	ACS_ExecuteAlways(811, 0, 0);
+
+
+    SetFont("SMALLFONT2");
+    SetHudSize(640,480,1);
+    HudMessage(s:"\n\nYour inventory has been dropped in a backpack.\nRecover it!";
+                HUDMSG_PLAIN, INFO_MESSAGE_ID, CR_GOLD, 320.4, 250.1, 6.0);
 }
 
 
@@ -1204,7 +1213,7 @@ script 853 (void)
     for (int i = DROPPABLE_INVENTORY_START; i < PERSISTENT_INVENTORY_LEN; i++)
     {
         SetUserArray(backpackTid, "user_inventory", i, CheckActorInventory(playerTid, persistentInventory[i]));
-        Log(s:"Saving ", d:CheckActorInventory(playerTid, persistentInventory[i]), s:" ", s:persistentInventory[i], s:" to backpack.");
+        //Log(s:"Saving ", d:CheckActorInventory(playerTid, persistentInventory[i]), s:" ", s:persistentInventory[i], s:" to backpack.");
     }
     
     ClearActorInventory(ActivatorTID());
