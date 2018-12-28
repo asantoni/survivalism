@@ -740,8 +740,9 @@ script 203 (void)
 		default: //0 too
 			randomSpawnType = random(1, 100);
 			if (randomSpawnType % 30 == 0) {
-				//SpawnProjectile(0, "Creeper", randomFacingAngle, 0, 0, 1.0, tid);
-				Spawn("Creeper", x, y, z+zOffset, tempTID, randomFacingAngle);			
+                            //Removed the Creeper spawns in r17 because it causes massive desync in Zandronum 3.0 and
+                            //thrusts blocks (also due to desync?) even though it's not supposed to.
+                            //Spawn("Creeper", x, y, z+zOffset, tempTID, randomFacingAngle);
 			}
 			else 
 			{
