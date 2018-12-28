@@ -108,7 +108,7 @@ ACTOR GraplingChainSpawner2
 ACTOR GraplingLink1
 {
 	Radius 0
-	Height 48
+    Height 92 //48 - Zandronum 3.0 / 3.1 - Raise height to workaround unlagged glitches in 3.0. Test it again with original 48 value in Zandro 3.1.
 	Speed 0
     VSpeed 0
     FloatSpeed 0
