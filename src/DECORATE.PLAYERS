@@ -298,7 +298,7 @@ actor DoomZBackpack : FakeInventory
     
     Height 26
     Inventory.PickupMessage "Picked up the backpack of a fallen survivor!" // "Picked up a backpack full of ammo!"
-    Health 300
+    Health 800
     +SHOOTABLE
     
     /** TODO: Zandronum 3.0
