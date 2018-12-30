@@ -2,15 +2,11 @@
 #import "player.acs"
 #import "math.acs"
 #include "zcommon.acs"
+#include "messages.acs"
 //#libray must go last!!!!!!!!!!
 #library "crafting"
 
-#libdefine BASE_MESSAGE_ID 	50
-#libdefine FLASH_MESSAGE_ID 	49
-#libdefine INFO_MESSAGE_ID 		48
-#libdefine TITLE_MESSAGE_ID 	47
-#libdefine SUBTITLE_MESSAGE_ID 	46
-#libdefine BASE_GRID_MSG_ID 	100
+
 
 #libdefine RETVAL_OK 			0
 #libdefine RETVAL_BAD_INGR 	1

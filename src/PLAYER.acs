@@ -3,6 +3,7 @@
 #import "music.acs"
 #import "doomzgame.acs"
 #import "quests.acs"
+#import "messages.acs"
 #library "player" //Must be last!
 
 
@@ -11,25 +12,6 @@
 
 #libdefine MAX_PLAYERS 64
 #define SPAWN_MAPSPOT_TID 555
-
-#libdefine HUDMSG_ALIVE_TIMER 	1
-#libdefine HUDMSG_XP_LEVEL    	3
-#libdefine HUDMSG_XP_GAIN 		20
-#libdefine HUDMSG_LEVEL_UP 		19
-#libdefine HUDMSG_ID_XPMETERTICK	4
-#libdefine HUDMSG_ID_XPMETER 	5
-#libdefine HUDMSG_ID_COMPASS 	6
-#libdefine HUDMSG_ID_HUNGER	    10
-#libdefine HUDMSG_ID_QUEST_NAME 9
-#libdefine HUDMSG_WORDS_ID      11
-#libdefine HUDMSG_ART_ID        12
-#libdefine HUDMSG_BGART_ID      13
-#libdefine HUDMSG_ID_DEBUGMODE 14
-#libdefine HUDMSG_ID_MSCHARGE 15
-
-#libdefine INFO_MESSAGE_ID 		48
-#libdefine FLASH_MESSAGE_ID 	49
-
 
 #define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
 
@@ -632,7 +614,8 @@ function bool restorePersistentInventory (int playerIdx)
     recalculateCentigradeWorkaround(playerIdx);
     //ACS_ExecuteAlways(817, 0, 1);
 	
-	print(s:"Inventory restored!");
+    //print(s:"Inventory restored!");
+    HudMessage(s:"Inventory restored!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
 	return true;
 }
 
@@ -707,7 +690,7 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx)
     Log(s:"savePersistentInventoryAndXP: Saving inventory with namespace: ", s:accountName, s:" from ", a:g_accountNameForPlayer[playerIdx]);
 	str namespace = strparam(s:accountName, s:"_inventory");
 	
-	Print(s:"Saving your inventory...");
+    //Print(s:"Saving your inventory...");
 	Log(s:"Saving inventory for player ", d:playerIdx, s:": ", s:accountName);
 	BeginDBTransaction();
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
@@ -722,7 +705,9 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx)
 	//SetDBEntry(namespace, "XPLevel", CheckActorInventory(playerTid, "XPLevel"));
 
 	EndDBTransaction();
-	print(s:"Inventory saved!");
+    //print(s:"Inventory saved!");
+    HudMessage(s:"Inventory saved!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+
 	ActivatorSound("switches/normbutn", 127);
 	//playerHasLoadedInventory[playerIdx] = 1; //Don't allow you to save and then load!
     
@@ -1237,6 +1222,43 @@ script 854 (int backpackTid, int blarg)
     //Log(s:"Giving player with TID ", d:playerTid, s:" amount ", d:GetUserArray(backpackTid, "user_inventory", 0), s:" from backpack with TID: ", d:backpackTid);
 
     SetResultValue(true);
+}
+
+script 855 (void) CLIENTSIDE
+{
+    /* Long story here: Zandronum has no automatic login feature that's accessible via the built-in Multiplayer->Login menu,
+     * but we can hack one together because Zandronum has auto-login via the console.
+     * The console-based auto-login uses these two built-in console commands:
+     * - login_add [username] [password]
+     * - login_default_user [username]
+     *
+     * Our custom login menu saves username and password to the config file (which the built-in login menu doesn't).
+     * This script concatenates that username and password and passes them to login_add, and then sets that as the default,
+     * and then invokes a login! These three steps accomplish auto-login, and makes it persist properly across game restarts.
+     *
+     */
+    //Add the username/password as a saved login
+    int login_add_cmd = strparam(s:"login_add ", s:GetUserCVarString(PlayerNumber(), "surv_username"), s:" ", s:GetUserCVarString(PlayerNumber(), "surv_password"));
+    ConsoleCommand(login_add_cmd);
+
+    //Choose those credentials as the ones to login as by default when the "login" command is invoked with no parameters.
+    int login_default_user_cmd = strparam(s:"login_default_user ", s:GetUserCVarString(PlayerNumber(), "surv_username"));
+    ConsoleCommand(login_default_user_cmd);
+
+    //Invoke a login.
+    ACS_ExecuteAlways(856, 0);
+}
+
+//Automatically try to login when a player connects.
+script 856 OPEN CLIENTSIDE
+{
+    //We're syncing our custom cvar's values over to the "menu_*" ones, just for consistency and just in case it's needed...
+    int set_authuser_cmd = strparam(s:"menu_authusername ", s:GetUserCVarString(PlayerNumber(), "surv_username"));
+    ConsoleCommand(set_authuser_cmd);
+    int set_authpass_cmd = strparam(s:"menu_authpassword ", s:GetUserCVarString(PlayerNumber(), "surv_password"));
+    ConsoleCommand(set_authpass_cmd);
+
+    ConsoleCommand("login");
 }
 
 //script 900-920 reserved for ARTIFACTS.acs

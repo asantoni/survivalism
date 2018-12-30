@@ -45,44 +45,44 @@ Actor DoomZBoxPlacer : DoomWeapon 15006 {
          FFIR A 0 A_Print("You need wood in your inventory first.")
          FFIR A 0 A_Jump(256,"Ready")
          FFIR A 0 A_Refire   //Jump to "Hold" State if button isn't released
-         FFIR A 10 A_FireCustomMissile("BoxPlacerWoodMissile",0,0,0,16)
+         FFIR A 10 A_FireCustomMissile("BoxPlacerWoodMissile",0,0,0,0, 0, 0)
          Goto Ready
       Fire.Stone:
          FFIR A 0 A_JumpIfInventory("CStoneBoxItem",1,3)
          FFIR A 0 A_Print("You need stone in your inventory first.")
          FFIR A 0 A_Jump(256,"Ready")
          FFIR A 0 A_Refire
-         FFIR A 10 A_FireCustomMissile("BoxPlacerStoneMissile",0,0,0,16)
+         FFIR A 10 A_FireCustomMissile("BoxPlacerStoneMissile",0,0,0,0)
          Goto Ready
       Fire.Steel:
          FFIR A 0 A_JumpIfInventory("CSteelBoxItem",1,3)
          FFIR A 0 A_Print("You need steel in your inventory first.")
          FFIR A 0 A_Jump(256,"Ready")
          FFIR A 0 A_Refire
-         FFIR A 10 A_FireCustomMissile("BoxPlacerSteelMissile",0,0,0,16)
+         FFIR A 10 A_FireCustomMissile("BoxPlacerSteelMissile",0,0,0,0)
          Goto Ready
       Fire.Glass:
          FFIR A 0 A_JumpIfInventory("CGlassBoxItem",1,3)
          FFIR A 0 A_Print("You need glass in your inventory first.")
          FFIR A 0 A_Jump(256,"Ready")
          FFIR A 0 A_Refire
-         FFIR A 10 A_FireCustomMissile("BoxPlacerGlassMissile",0,0,0,16)
+         FFIR A 10 A_FireCustomMissile("BoxPlacerGlassMissile",0,0,0,0)
          Goto Ready
       Hold:
          FLAR B 0 A_JumpIfInventory("BoxPlacerMode",1,4)
-         FLAR B 4 A_FireCustomMissile("BoxPlacerWoodGhost",0,0,0,16)
+         FLAR B 4 A_FireCustomMissile("BoxPlacerWoodGhost",0,0,0,0, 0, 0)
          FLAR B 0 A_Refire
          FLAR B 0 A_Jump(256,"Fire")
          FLAR B 0 A_JumpIfInventory("BoxPlacerMode",2,4)
-         FLAR B 4 A_FireCustomMissile("BoxPlacerStoneGhost",0,0,0,16)
+         FLAR B 4 A_FireCustomMissile("BoxPlacerStoneGhost",0,0,0,0)
          FLAR B 0 A_Refire
          FLAR B 0 A_Jump(256,"Fire")
          FLAR B 0 A_JumpIfInventory("BoxPlacerMode",3,4)
-         FLAR B 4 A_FireCustomMissile("BoxPlacerSteelGhost",0,0,0,16)
+         FLAR B 4 A_FireCustomMissile("BoxPlacerSteelGhost",0,0,0,0)
          FLAR B 0 A_Refire
          FLAR B 0 A_Jump(256,"Fire")
          //FLAR B 0 A_JumpIfInventory("BoxPlacerMode",4,4)
-         FLAR B 4 A_FireCustomMissile("BoxPlacerGlassGhost",0,0,0,16)
+         FLAR B 4 A_FireCustomMissile("BoxPlacerGlassGhost",0,0,0,0)
          FLAR B 0 A_Refire
          FLAR B 0 A_Jump(256,"Fire")
          Goto Ready
@@ -107,23 +107,46 @@ Actor DoomZBoxPlacer : DoomWeapon 15006 {
 
 // --- Ghost Missiles
 
-Actor BoxPlacerWoodGhost : FastProjectile {
-   Speed 80
-   -SOLID
+Actor BoxPlacerWoodGhost {
+   Speed 50
+   Projectile
+   +CANPASS     //Allows the
+   +SHOOTABLE
+   +NOBLOCKMAP //"Nothing else can run into a NOBLOCKMAP object but the object itself can run into others"
+   +TOUCHY
+   //-NOGRAVITY
+   BounceType Heretic
+   BounceFactor 0.01
+   WallBounceFactor 0.01
+   BounceCount 0  //Die if we land on top of an existing CBox
+
+   +USEBOUNCESTATE
+   +ALLOWBOUNCEONACTORS
+   +BOUNCEONACTORS
+   //-DONTBOUNCEONSHOOTABLES - Zandronum 4.0?
+   Gravity 4.0
+   Mass 10
+   Height 26 //CBox height - 12
+   Radius 12 //CBox radius - 12
+
+    Scale 0.1
 
    States {
       Spawn:
-         TNT1 A 3   //Max distance determined by: (Speed)*(this duration)
+         TNT1 A 4   //Max distance determined by: (Speed)*(this duration)
          Stop
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CBoxGhost", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
+         //-z%38+((z%38)>19)*76-((z%38)<-19)*38
          Stop
    }
 }
 
 Actor BoxPlacerStoneGhost : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CStoneBoxGhost", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
@@ -133,6 +156,7 @@ Actor BoxPlacerStoneGhost : BoxPlacerWoodGhost {
 
 Actor BoxPlacerSteelGhost : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CSteelBoxGhost", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
@@ -142,6 +166,7 @@ Actor BoxPlacerSteelGhost : BoxPlacerWoodGhost {
 
 Actor BoxPlacerGlassGhost : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CGlassBoxGhost", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
@@ -153,9 +178,11 @@ Actor BoxPlacerGlassGhost : BoxPlacerWoodGhost {
 
 Actor BoxPlacerWoodMissile : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
-         TNT1 A 0 A_SpawnItemEx("CBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
+         TNT1 A 0 A_SpawnItemEx("CBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-38)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
+         //-z%38+((z%38)>19)*76-((z%38)<-19)*38
          TNT1 A 0 A_TakeFromTarget("CBoxItem",1)
          Stop
    }
@@ -163,6 +190,7 @@ Actor BoxPlacerWoodMissile : BoxPlacerWoodGhost {
 
 Actor BoxPlacerStoneMissile : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CStoneBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
@@ -173,6 +201,7 @@ Actor BoxPlacerStoneMissile : BoxPlacerWoodGhost {
 
 Actor BoxPlacerSteelMissile : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CSteelBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
@@ -183,6 +212,7 @@ Actor BoxPlacerSteelMissile : BoxPlacerWoodGhost {
 
 Actor BoxPlacerGlassMissile : BoxPlacerWoodGhost {
    States {
+      Bounce:
       Death:
       Crash:
          TNT1 A 0 A_SpawnItemEx("CGlassBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)

@@ -2,6 +2,7 @@
 #import "player.acs"
 #import "math.acs"
 #include "zcommon.acs"
+#include "messages.acs"
 #import "crafting.acs"
 //#libray must go last!!!!!!!!!!
 #library "basiccrafting"

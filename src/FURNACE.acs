@@ -1,17 +1,10 @@
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
+#import "messages.acs"
 #include "zcommon.acs"
 //#libray must go last!!!!!!!!!!
 #library "furnace"
-
-#libdefine BASE_MESSAGE_ID 	50
-#libdefine FLASH_MESSAGE_ID 	49
-#libdefine INFO_MESSAGE_ID 		48
-#libdefine TITLE_MESSAGE_ID 	47
-#libdefine SUBTITLE_MESSAGE_ID 	46
-#libdefine BASE_GRID_MSG_ID 	100
-
 
 #define FURNACE_MIN_TID 5900
 #define FURNACE_MAX_TID 5999
