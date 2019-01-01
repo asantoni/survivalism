@@ -379,6 +379,7 @@ ACTOR DaggerFallThing8 16137
 
 ACTOR DaggerFallThing9 : SlowChoppableTree 16138
 {
+  //$Sprite DFFAI0
   Tag "Daggerfall Tree - Even Deadener"
   Radius 16
   Height 48
@@ -476,6 +477,7 @@ ACTOR DaggerFallThing15 : DaggerFallShrub 16144
 
 ACTOR DaggerFallThing16 : SlowChoppableTree 16145
 {
+  //$Sprite DFFAP0
   Tag "Daggerfall Tree - Windy dead"
   Radius 16
   Height 32
@@ -664,6 +666,7 @@ ACTOR DaggerFallThing29 : DaggerFallShrub 16158
 
 ACTOR DaggerFallThing30 : SlowChoppableTree 16159
 {
+  //$Sprite DFFBD0
   Tag "Daggerfall Tree - Deadswamp"
   Radius 16
   Height 32
@@ -693,6 +696,7 @@ ACTOR DaggerFallThing31 : DaggerFallShrub 16160
 
 ACTOR DaggerFallThing32 : ChoppableTree 16161
 {
+  //$Sprite DFFBF0
   Tag "Daggerfall Tree - Safari"
   Radius 16
   Height 64
@@ -709,6 +713,7 @@ ACTOR DaggerFallThing32 : ChoppableTree 16161
 
 ACTOR DaggerFallThing33 : ChoppableTree  16162
 {
+  //$Sprite DFFBG0
   Tag "Daggerfall Tree - Japanese Garden"
   Radius 16
   Height 64
@@ -764,6 +769,7 @@ ACTOR DaggerFallThing36 : MinableRock 16165
 
 ACTOR DaggerFallThing37 : SlowChoppableTree 16166
 {
+  //$Sprite DFFBK0
   Tag "Daggerfall Tree - Deadtall"
   Radius 16
   Height 64
@@ -938,6 +944,7 @@ ACTOR DaggerFallThing49 : DaggerFallShrub 16178
 
 ACTOR DaggerFallThing50 : SlowChoppableTree 16179
 {
+  //$Sprite DFFBX0
   Tag "Daggerfall Tree - Dead Fuller"
   Radius 16
   Height 100
@@ -954,6 +961,7 @@ ACTOR DaggerFallThing50 : SlowChoppableTree 16179
 
 ACTOR DaggerFallThing51 : ChoppableTree 16180
 {
+  //$Sprite DFFBY0
   Tag "Daggerfall Tree - Full"
   Radius 20
   Height 150
@@ -970,6 +978,7 @@ ACTOR DaggerFallThing51 : ChoppableTree 16180
 
 ACTOR DaggerFallThing52 : SlowChoppableTree 16181
 {
+  //$Sprite DFFBZ0
   Tag "Daggerfall Tree - Dead"
   Radius 16
   Height 96
@@ -986,6 +995,7 @@ ACTOR DaggerFallThing52 : SlowChoppableTree 16181
 
 ACTOR DaggerFallThing53 : ChoppableTree 16182
 {
+  //$Sprite DFFCA0
   Tag "Daggerfall Tree - Evergreen"
   Radius 16
   Height 128
@@ -1041,6 +1051,7 @@ ACTOR DaggerFallThing56 : MinableRock 16185
 
 ACTOR DaggerFallThing57 : SlowChoppableTree 16186
 {
+  //$Sprite DFFCE0
   Tag "Daggerfall Tree - Dead windy"
   Radius 16
   Height 48
@@ -1200,6 +1211,7 @@ ACTOR DaggerFallThing68 16197
 
 ACTOR DaggerFallThing69 : SlowChoppableTree 16198
 {
+  //$Sprite DFFCQ0
   Tag "Daggerfall Tree - Dead Desert 2"
   Radius 16
   Height 64
@@ -1424,6 +1436,7 @@ ACTOR DaggerFallThing85 16214
 
 ACTOR DaggerFallThing86 : ChoppableTree 16215
 {
+  //$Sprite DFFDH0
   Tag "Daggerfall Tree - Evergreen 4"
   Radius 16
   Height 128
@@ -1479,6 +1492,7 @@ ACTOR DaggerFallThing89 16218
 
 ACTOR DaggerFallThing90 : SlowChoppableTree 16219
 {
+  //$Sprite DFFDL0
   Tag "Daggerfall Tree - Deadwood"
   Radius 16
   Height 70
@@ -1508,6 +1522,7 @@ ACTOR DaggerFallThing91 16220
 
 ACTOR DaggerFallThing92 : SlowChoppableTree 16221
 {
+  //$Sprite DFFDN0
   Tag "Daggerfall Tree - Dead Grey"
   Radius 16
   Height 64
@@ -1774,6 +1789,7 @@ ACTOR DaggerFallThing111 : DaggerFallShrub 16240
 
 ACTOR DaggerFallThing112 : ChoppableTree 16241
 {
+  //$Sprite DFFEH0
   Tag "Daggerfall Tree - Small Shaped"
   Radius 16
   Height 16
@@ -1817,6 +1833,7 @@ ACTOR DaggerFallThing114 16243
 
 ACTOR DaggerFallThing115 : SlowChoppableTree 16244
 {
+  //$Sprite DFFEK0
   Tag "Daggerfall Tree - Dead Half-Tree"
   Radius 16
   Height 64
@@ -1833,6 +1850,7 @@ ACTOR DaggerFallThing115 : SlowChoppableTree 16244
 
 ACTOR DaggerFallThing116 : SlowChoppableTree 16245
 {
+  //$Sprite DFFEL0
   Tag "Daggerfall Tree - Dead Half-Tree 2"
   Radius 16
   Height 16
@@ -2008,6 +2026,7 @@ ACTOR DaggerFallThing128 : DaggerFallShrub 16257
 
 ACTOR DaggerFallThing129 : SlowChoppableTree 16258
 {
+  //$Sprite DFFEY0
   Tag "Daggerfall Tree - Dead Stump 3"
   Radius 16
   Height 48
@@ -2087,6 +2106,7 @@ ACTOR DaggerFallThing134 16263
 
 ACTOR DaggerFallThing135 : ChoppableTree 16264
 {
+  //$Sprite DFFFE0
   Tag "Daggerfall Tree 3"
   Radius 26
   Height 96
@@ -2116,6 +2136,7 @@ ACTOR DaggerFallThing136 16265
 
 ACTOR DaggerFallThing137 : ChoppableTree 16266
 {
+  //$Sprite DFFFG0
   Tag "Daggerfall Tree 4"
   Radius 16
   Height 48
@@ -2158,6 +2179,7 @@ ACTOR DaggerFallThing139 : MinableRock 16268
 
 ACTOR DaggerFallThing140 : ChoppableTree 16269
 {
+  //$Sprite DFFFJ0
   Tag "Daggerfall Tree - Dead 4"
   Radius 16
   Height 76
@@ -2188,6 +2210,7 @@ ACTOR DaggerFallThing141 16270
 
 ACTOR DaggerFallThing142 : ChoppableTree 16271
 {
+  //$Sprite DFFFL0
   Tag "Daggerfall Tree - Plush"
   Radius 24
   Height 48
@@ -2269,6 +2292,7 @@ ACTOR DaggerFallThing147 : MinableRock 16276
 
 ACTOR DaggerFallThing148 : ChoppableTree 16277
 {
+  //$Sprite DFFFR0
   Tag "Daggerfall Tree - Plush 2"
   Radius 32
   Height 64
@@ -2285,6 +2309,7 @@ ACTOR DaggerFallThing148 : ChoppableTree 16277
 
 ACTOR DaggerFallThing149 : ChoppableTree 16278
 {
+  //$Sprite DFFFS0
   Tag "Daggerfall Tree - Japanese"
   Radius 32
   Height 48
@@ -2301,6 +2326,7 @@ ACTOR DaggerFallThing149 : ChoppableTree 16278
 
 ACTOR DaggerFallThing150 : ChoppableTree 16279
 {
+  //$Sprite DFFFT0
   Tag "Daggerfall Tree - Desert"
   Radius 16
   Height 64
@@ -2330,6 +2356,7 @@ ACTOR DaggerFallThing151 16280
 
 ACTOR DaggerFallThing152 : SlowChoppableTree 16281
 {
+  //$Sprite DFFFV0
   Tag "Daggerfall Tree - Dead 5"
   Radius 32
   Height 48
@@ -2346,6 +2373,7 @@ ACTOR DaggerFallThing152 : SlowChoppableTree 16281
 
 ACTOR DaggerFallThing153 : SlowChoppableTree 16282
 {
+  //$Sprite DFFFW0
   Tag "Daggerfall Tree - Dead 6"
   Radius 16
   Height 64
@@ -2375,6 +2403,7 @@ ACTOR DaggerFallThing154 16283
 
 ACTOR DaggerFallThing155 : ChoppableTree 16284
 {
+  //$Sprite DFFFY0
   Tag "Daggerfall Tree - Plush 3"
   Radius 32
   Height 100
@@ -2391,6 +2420,7 @@ ACTOR DaggerFallThing155 : ChoppableTree 16284
 
 ACTOR DaggerFallThing156 : SlowChoppableTree 16285
 {
+  //$Sprite DFFFZ0
   Tag "Daggerfall Tree - Stump 4"
   Radius 16
   Height 48
@@ -2407,6 +2437,7 @@ ACTOR DaggerFallThing156 : SlowChoppableTree 16285
 
 ACTOR DaggerFallThing157 : ChoppableTree 16286
 {
+  //$Sprite DFFGA0
   Tag "Daggerfall Tree - Palm tree"
   Radius 16
   Height 64
@@ -2476,6 +2507,7 @@ ACTOR DaggerFallThing161 16290
 
 ACTOR DaggerFallThing162 : ChoppableTree 16291
 {
+  //$Sprite DFFGF0
   Tag "Daggerfall Tree - Plush 4"
   Radius 16
   Height 120
@@ -2492,6 +2524,7 @@ ACTOR DaggerFallThing162 : ChoppableTree 16291
 
 ACTOR DaggerFallThing163 : SlowChoppableTree 16292
 {
+  //$Sprite DFFGG0
   Tag "Daggerfall Tree - Dead Swamp"
   Radius 24
   Height 48
@@ -2508,6 +2541,7 @@ ACTOR DaggerFallThing163 : SlowChoppableTree 16292
 
 ACTOR DaggerFallThing164 : ChoppableTree 16293
 {
+  //$Sprite DFFGH0
   Tag "Daggerfall Tree - Palm Short"
   Radius 24
   Height 48
@@ -2567,6 +2601,7 @@ actor DaggerFallThing168 : DaggerFallThing162 16297 {}
 
 ACTOR DaggerFallThing169 : ChoppableTree 16298
 {
+  //$Sprite DFFGM0
   Tag "Daggerfall Tree - Evergreen"
   Radius 32
   Height 128
@@ -2596,6 +2631,7 @@ ACTOR DaggerFallThing170 : DaggerFallShrub 16299
 
 ACTOR DaggerFallThing171 : ChoppableTree 16300
 {
+  //$Sprite DFFGO0
   Tag "Daggerfall Tree - Jungle Skinny"
   Radius 16
   Height 100
@@ -2612,6 +2648,7 @@ ACTOR DaggerFallThing171 : ChoppableTree 16300
 
 ACTOR DaggerFallThing172 : ChoppableTree 16301
 {
+  //$Sprite DFFGP0
   Tag "Daggerfall Tree - Ferntree"
   Radius 48
   Height 48
@@ -2628,6 +2665,7 @@ ACTOR DaggerFallThing172 : ChoppableTree 16301
 
 ACTOR DaggerFallThing173 : ChoppableTree 16302
 {
+  //$Sprite DFFGQ0
   Tag "Daggerfall Tree - Evergreen 2"
   Radius 32
   Height 128
@@ -2644,6 +2682,7 @@ ACTOR DaggerFallThing173 : ChoppableTree 16302
 
 ACTOR DaggerFallThing174 : ChoppableTree 16303
 {
+  //$Sprite DFFGR0
   Tag "Daggerfall Tree - Plush 6"
   Radius 32
   Height 64
@@ -2673,6 +2712,7 @@ ACTOR DaggerFallThing175 16304
 
 ACTOR DaggerFallThing176 : SlowChoppableTree 16305
 {
+  //$Sprite DFFGT0
   Tag "Daggerfall Tree - Deserty"
   Radius 48
   Height 64
@@ -2702,6 +2742,7 @@ ACTOR DaggerFallThing177 16306
 
 ACTOR DaggerFallThing178 : ChoppableTree 16307
 {
+  //$Sprite DFFGV0
   Tag "Daggerfall Tree - Jungle 1"
   Radius 16
   Height 64
@@ -2718,6 +2759,7 @@ ACTOR DaggerFallThing178 : ChoppableTree 16307
 
 ACTOR DaggerFallThing179 : SlowChoppableTree 16308
 {
+  //$Sprite DFFGW0
   Tag "Daggerfall Tree - Dead Desert"
   Radius 16
   Height 96
@@ -2734,6 +2776,7 @@ ACTOR DaggerFallThing179 : SlowChoppableTree 16308
 
 ACTOR DaggerFallThing180 : ChoppableTree 16309
 {
+  //$Sprite DFFGZ0
   Tag "Daggerfall Tree - Evergreen Skinny"
   Radius 16
   Height 128
@@ -2777,6 +2820,7 @@ ACTOR DaggerFallThing182 16311
 
 ACTOR DaggerFallThing183 : ChoppableTree 16312
 {
+  //$Sprite DFFHA0
   Tag "Daggerfall Tree - Skinny Bunchy"
   Radius 16
   Height 100
@@ -2793,6 +2837,7 @@ ACTOR DaggerFallThing183 : ChoppableTree 16312
 
 ACTOR DaggerFallThing184 : SlowChoppableTree 16313
 {
+  //$Sprite DFFHB0
   Tag "Daggerfall Tree - Dead Safari"
   Radius 16
   Height 64
@@ -2809,6 +2854,7 @@ ACTOR DaggerFallThing184 : SlowChoppableTree 16313
 
 ACTOR DaggerFallThing185 : ChoppableTree 16314
 {
+  //$Sprite DFFHC0
   Tag "Daggerfall Tree - Japanese Garden"
   Radius 24
   Height 64
@@ -3033,6 +3079,7 @@ ACTOR DaggerFallThing201 16330
 
 ACTOR DaggerFallThing202 : SlowChoppableTree 16331
 {
+  //$Sprite DFFHT0
   Tag "Daggerfall Tree - Deader"
   Radius 24
   Height 96
