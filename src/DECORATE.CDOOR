@@ -22,7 +22,7 @@ actor CDoor : Actor
     +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
                // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
     //Need these guys too with +ISMONSTER
-    Activation THINGSPEC_MonsterTrigger | THINGSPEC_ThingTargets
+    Activation THINGSPEC_ThingTargets
     -COUNTKILL
  
     
