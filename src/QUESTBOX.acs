@@ -1,11 +1,11 @@
+#library "questbox"
+#import "messages.acs"
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
 #include "zcommon.acs"
 #import "crafting.acs"
 #import "quests.acs"
-//#libray must go last!!!!!!!!!!
-#library "questbox"
 
 #define QUEST_GRID_WIDTH 5
 

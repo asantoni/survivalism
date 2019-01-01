@@ -1,10 +1,10 @@
+#library "player"
 #include "zcommon.acs"
 #import "math.acs"
 #import "music.acs"
 #import "doomzgame.acs"
 #import "quests.acs"
 #import "messages.acs"
-#library "player" //Must be last!
 
 
 #libdefine PLAYER_MIN_TID 1010

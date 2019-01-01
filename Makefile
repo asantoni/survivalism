@@ -15,7 +15,7 @@ src/acs/%.o: src/%.acs Makefile
 	$(ACC) -i $(ACC_INC_DIR) $< $@ 
 
 pk3:
-	$(ZIP) a -tzip -r -xr!.bat -xr!.git -xr!doomz.pk3 -- $(OUTPUT_PK3) ./src/*
+	$(ZIP) a -tzip -r -xr!*.bat -xr!.git -xr!*.backup* -xr!*.bak -xr!doomz.pk3  -xr!*.pro -- $(OUTPUT_PK3) ./src/*
 #   -mx 9 saves like 5% archive size but is slower
 	echo "Created $(OUTPUT_PK3)"
     

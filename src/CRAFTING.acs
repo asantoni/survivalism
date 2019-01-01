@@ -1,10 +1,9 @@
+#library "crafting"
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
 #include "zcommon.acs"
-#include "messages.acs"
-//#libray must go last!!!!!!!!!!
-#library "crafting"
+#import "messages.acs"
 
 
 

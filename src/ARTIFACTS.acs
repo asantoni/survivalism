@@ -1,8 +1,7 @@
+#library "artifacts"
 //script 900-920 reserved for ARTIFACTS.acs
 
 #include "zcommon.acs"
-//#libray must go last!!!!!!!!!!
-#library "artifacts"
 
 //boostPlayerMaxHealth
 script 900 (int playerTid)

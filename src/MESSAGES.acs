@@ -1,6 +1,4 @@
-//#library must go last, after any includes/imports
-#library "messages"
-
+#library "messages.acs"
 #libdefine BASE_MESSAGE_ID      50
 #libdefine FLASH_MESSAGE_ID 	49
 #libdefine INFO_MESSAGE_ID 		48

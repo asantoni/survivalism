@@ -1,11 +1,10 @@
+#library "basiccrafting"
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
 #include "zcommon.acs"
-#include "messages.acs"
+#import "messages.acs"
 #import "crafting.acs"
-//#libray must go last!!!!!!!!!!
-#library "basiccrafting"
 
 
 /* Can't mix strings and integers in a 2D array with ACS/ACC so I have to break this

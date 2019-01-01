@@ -1,9 +1,9 @@
+#library "scroll"
+#import "messages.acs"
 #import "math.acs"
 #import "player.acs"
 #import "doomzgame.acs"
 #include "zcommon.acs"
-//#libray must go last!!!!!!!!!!
-#library "scroll"
 	
 //Script 531-535 reserved for SCROLL.acs
 

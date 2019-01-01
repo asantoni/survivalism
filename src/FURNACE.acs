@@ -1,10 +1,9 @@
+#library "furnace"
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
 #import "messages.acs"
 #include "zcommon.acs"
-//#libray must go last!!!!!!!!!!
-#library "furnace"
 
 #define FURNACE_MIN_TID 5900
 #define FURNACE_MAX_TID 5999
