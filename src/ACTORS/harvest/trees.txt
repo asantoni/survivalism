@@ -10,6 +10,7 @@
 */
 Actor ChoppableTree
 {
+  //$Sprite NTREA0
   +SHOOTABLE
   +NOBLOOD
   +NOTARGET
@@ -223,7 +224,6 @@ Actor ChoppableTree
 
 Actor SlowChoppableTree : ChoppableTree
 {
-
   States
   {
 	  GrowCheck:
@@ -248,6 +248,8 @@ Actor SlowChoppableTree : ChoppableTree
 
 ACTOR SmallTreeHarvestable : ChoppableTree 10710
 {
+  //$Sprite TRENA0
+
   Radius 16
   Height 96
     
@@ -267,6 +269,8 @@ ACTOR SmallTreeHarvestable : ChoppableTree 10710
 
 ACTOR Tree6 : SmallTreeHarvestable 10711
 {
+    //$Sprite TREAA0
+
 	States
 	{
 	  Spawn:
@@ -284,6 +288,8 @@ ACTOR Tree6 : SmallTreeHarvestable 10711
 
 ACTOR PlantedTree //Sapling
 {
+  //$Sprite TRNPC0
+
   Radius 16
   Height 16
   
@@ -332,6 +338,8 @@ ACTOR PlantedTree //Sapling
 
 actor RandomTreeSpawner : RandomSpawner
 {
+    //$Sprite DFFBY0
+
 	+FRIENDLY //Turrets would shoot these trees otherwise
 	DropItem "DaggerFallThing51" //"Daggerfall Tree - Full"
 	DropItem "DaggerFallThing53" //"Daggerfall Tree - Evergreen"
@@ -348,6 +356,8 @@ actor RandomTreeSpawner : RandomSpawner
 
 actor RandomSafariTreeSpawner : RandomSpawner
 {
+    //$Sprite DFFBF0
+
 	+FRIENDLY //Turrets would shoot trees otherwise
 	DropItem "DaggerFallThing32" //"Daggerfall Tree - Safari"
 	DropItem "DaggerFallThing33" //"Daggerfall Tree - Japanese Garden"
@@ -379,6 +389,7 @@ DaggerFallThing52 - "Daggerfall Tree - Dead"
 
 Actor NTreeDead1 : ChoppableTree 
 {
+    //$Sprite NTREA0
 Radius 13
 Height 160
 +SOLID
@@ -397,6 +408,7 @@ Height 160
 
 Actor NTreeDead2 : ChoppableTree 
 {
+  //$Sprite NTRFA0
 Radius 13
 Height 160
 +SOLID
@@ -416,6 +428,7 @@ Height 160
 
 Actor NTreeSwamp1 : ChoppableTree 24002
 {
+  //$Sprite NTRGA0
 Radius 13
 Height 140
 +SOLID
@@ -434,6 +447,7 @@ Height 140
 
 Actor NTreeSwamp2 : ChoppableTree 24003
 {
+  //$Sprite NTRHA0
 Radius 10
 Height 120
 +SOLID
@@ -452,6 +466,7 @@ Height 120
 
 Actor ZedTreeDead1 : ChoppableTree replaces NTreeDead1 24000
 {
+  //$Sprite NTREA0
 Radius 13
 Height 160
 +SOLID
@@ -515,6 +530,7 @@ Height 160
 
 Actor ZedTreeDead2 : ChoppableTree replaces NTreeDead2 24001
 {
+  //$Sprite NTR2A0
 Radius 13
 Height 160
 +SOLID
