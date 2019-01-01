@@ -120,8 +120,8 @@ ACTOR BlueberryPlant : BerryPlant {
          BPLN A -1
          Wait
       Harvested:
-         BPLN B -1
-         Wait
+        TNT1 A 0
+        goto Death
       Active:
          BPLN A 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN A 0 A_SetArg(0,1)
@@ -147,9 +147,9 @@ ACTOR StrawberryPlant : BerryPlant {
          BPLN C 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN C -1
          Wait
-      Harvested:
-         BPLN D -1
-         Wait
+     Harvested:
+       TNT1 A 0
+       goto Death
       Active:
          BPLN C 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN C 0 A_SetArg(0,1)
@@ -175,9 +175,9 @@ ACTOR CranberryPlant : BerryPlant {
          BPLN E 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN E -1
          Wait
-      Harvested:
-         BPLN F -1
-         Wait
+     Harvested:
+       TNT1 A 0
+       goto Death
       Active:
          BPLN E 0 A_JumpIf(args[0]==1,"Harvested")
          BPLN E 0 A_SetArg(0,1)
