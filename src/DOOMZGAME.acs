@@ -327,6 +327,8 @@ DONE:
 #libdefine LOOTSPAWNER_TID          556
 #libdefine LOOTSPAWNERPROJ_TID      557
 #libdefine VAGRANTCOLONYSPOT_TID    558
+#libdefine TRAVELPATHWAY_MIN_TID 8605
+#libdefine TRAVELPATHWAY_MAX_TID 8614
 
 //555 is used by respawn points
 #libdefine SEED_TID 		8402
@@ -1431,7 +1433,7 @@ script 943 (void)
 	{
 		terminate;
 	}
-	//Needed for when the special gets called when a crafting box dies.
+    //Needed for when the special gets called when a raft dies.
 	if ( CheckInventory("Health")<=0 )
 	{
 		terminate;
@@ -1538,9 +1540,6 @@ script 945 (void)
     
     Log(s:"Boat TID:", d:boatTID);
     Log(s:"Player TID:", d:playerTID);
-
-    //XXX: ALBERT UNCOMMENT THIS
-	//int playerTID = ActivatorTID();
     
 	int playerOffset = playerTID - PLAYER_MIN_TID;	
 	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
@@ -2631,6 +2630,10 @@ script 974 (void) NET CLIENTSIDE
 //Nobody reads, so force people to turn on OpenGL, and force models to be on.
 script 975 ENTER CLIENTSIDE
 {
+    FadeTo(0, 0, 0, 1.0, 0.0); //Fade in from black
+    Delay(35);
+    FadeTo(0, 0, 0, 0.0, 1.0); //Fade in from black
+
 	if (!GetCVar("vid_renderer")) {
         SetFont("HELP");
         SetHudSize(1,1,0);
@@ -2705,12 +2708,14 @@ script 1000 (int exitingWorldNum, int enteringWorldNum)
     }
 }
 
-script 1001 (void) CLIENTSIDE
+script 1001 (int travelDestMapIdx) CLIENTSIDE
 {
-    FadeTo(0, 0, 0, 1.0, 0.5); //Fade to black
+    int serverCvar = StrParam(s:"surv_server", d:travelDestMapIdx);
+    int connectCmd = StrParam(s:"connect ", s:GetCVarString(serverCvar));
+
     ConsoleCommand("cl_startasspectator false");
-    ConsoleCommand("connect localhost:10667");
-    ConsoleCommand("cl_startasspectator true");
+    ConsoleCommand(connectCmd);
+    //ConsoleCommand("cl_startasspectator true");
 }
 
 
@@ -2729,4 +2734,10 @@ script 1003 OPEN
 		Delay(35*COLONY_SPAWNER_INTERVAL_SECONDS);
     }
 
+}
+
+//Assign a TID to a TravelPathway. This is used to assign it themselves automatically in DECORATE.
+script 1004 (int travelPathwayIdx)
+{
+    Thing_ChangeTID(0, TRAVELPATHWAY_MIN_TID + travelPathwayIdx);
 }

@@ -88,8 +88,14 @@ actor WaterfallSprayer 10300
 			TNT1 A 0
 			TNT1 A 0 A_PlaySound("waterfall", CHAN_BODY, 1.0, true, 0.5)
 		Spray:
-			TNT1 A 16 A_SpawnItemEx("WaterfallSpray", 0, 0, 16.0, random(-2.0, 2.0), random(-2.0, 2.0), 16.0, 0, SXF_NOCHECKPOSITION, 32)
-			Loop
+            TNT1 A 8 A_SpawnItemEx("WaterfallSpray", 0, 0, 16.0, random(0.0, 5.0), random(-2.0, 2.0), 16.0, 0, SXF_NOCHECKPOSITION, 32)
+            TNT1 A 0 A_Jump(128, "Spray", "SpraySmooth")
+            loop
+        SpraySmooth:
+            //Intentionally lower velz for smooth spray, to make it look nicer
+            TNT1 A 8 A_SpawnItemEx("WaterfallSpraySmooth", 0, 0, 16.0, random(0.0, 5.0), random(-2.0, 2.0), 8.0, 0, SXF_NOCHECKPOSITION, 32)
+            TNT1 A 0 A_Jump(128, "Spray", "SpraySmooth")
+            loop
 	}
 }
 
@@ -103,13 +109,38 @@ actor WaterfallSpray
 
 	States
 	{
-		Spawn:
-			TNT1 A 0
-			WTFL A 4 A_FadeOut(0.1) //Actor will be removed automatically when it fades to 0
+        Spawn:
+            TNT1 A 0
+            TNT1 A 0 A_SetScale(random(scaley/2, scaley))
+        SpawnLoop:
+            TNT1 A 0
+            //Actor will be removed automatically when it fades to 0
+            WTFL A 4 A_FadeOut(0.1)
+            WTFL A 4 A_FadeOut(0.1)
+            WTFL B 4 A_FadeOut(0.1)
+            WTFL B 4 A_FadeOut(0.1)
+            WTFL CCDDDEEEFFFFF 4 A_FadeOut(0.1)
 			loop	
 	}
 }
 
+
+actor WaterfallSpraySmooth : WaterfallSpray
+{
+    //Smooth spray actor
+
+    States
+    {
+        Spawn:
+            TNT1 A 0
+            TNT1 A 0 A_SetScale(random(scaley/2, scaley))
+        SpawnLoop:
+            //Actor will be removed automatically when it fades to 0
+            WTF2 A 4 A_FadeOut(0.1)
+            WTF2 A 4 A_FadeOut(0.1)
+            loop
+    }
+}
 
 actor RapidsSprayer 10302
 {
@@ -122,18 +153,27 @@ actor RapidsSprayer 10302
 			//TNT1 A 0 A_PlaySound("waterfall", CHAN_BODY, 1.0, true, 0.5)
 		Procrastinate:
 			TNT1 A 0
-			TNT1 A 4 A_Jump(128, "Spray")
+            TNT1 A 4 A_Jump(128, "Spray", "SpraySmooth")
 			loop
 		Spray:
-			TNT1 A 16 A_SpawnItemEx("RapidsSpray", 0, 0, 16.0, random(-2.0, 2.0), random(-2.0, 2.0), 4.0, 0, SXF_NOCHECKPOSITION | SXF_CLIENTSIDE, 32)
+            TNT1 A 8 A_SpawnItemEx("RapidsSpray", 0, 0, 16.0, random(0.0, 4.0), random(-2.0, 2.0), 6.0, 0, SXF_NOCHECKPOSITION | SXF_CLIENTSIDE, 32)
 			goto Procrastinate
-	}
+        SpraySmooth:
+            TNT1 A 8 A_SpawnItemEx("RapidsSpraySmooth", 0, 0, 16.0, random(0.0, 4.0), random(-2.0, 2.0), 4.0, 0, SXF_NOCHECKPOSITION | SXF_CLIENTSIDE, 32)
+            goto Procrastinate
+}
 }
 
 actor RapidsSpray : WaterfallSpray
 {
 	+DONTSPLASH
 	Scale 1.0
+}
+
+actor RapidsSpraySmooth : WaterfallSpraySmooth
+{
+    +DONTSPLASH
+    Scale 1.0
 }
 
 actor WaterfallSprayer2 10303

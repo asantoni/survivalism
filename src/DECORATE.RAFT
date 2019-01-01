@@ -48,17 +48,17 @@ actor Raft : Actor/*SwitchableDecoration*/ 17700
 			CBOX A 0 A_PlaySound("click") //A_PlaySound("DSDOROPN")
 			CFLO A 0 ACS_Execute(943, 0, 0)
 		Move:
-			//CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
-			CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
-			CFLO A -1
-			Wait
+            //CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
+            CFLO A 8 A_ChangeVelocity(1.5, 0, 0, CVF_REPLACE|CVF_RELATIVE)
+            //CFLO A -1
+            loop
 
 		Pain.Axe:
 			TNT1 A 0
 			CFLO A 1 A_SetAngle(angle+180)
-			CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
+            //CFLO A 8 ThrustThing(angle*256/360, 1, 1, 0)
 			//CFLO A 8 ThrustThing(angle*256/360 + 128, 1, 0)
-			goto Move
+            goto StartMoving
 		Active:
 		Open:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
@@ -201,12 +201,26 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
 		Idle:
 			TNT1 A 0
             TNT1 A 0 
-			//CANO A 8 ThrustThingZ(0, 4, 0, 1) //Buoyancy
-            CANO A 8 
-            CANO A 4 //A_LogInt(waterlevel)
-            TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(978, 0, 0, 0), "BreakUp")
             TNT1 A 0 A_JumpIf(waterlevel >= 2, "FloatToSurface")
+            //CANO A 0 A_ChangeFlag("NOGRAVITY", 0) //Enable gravity
+			//CANO A 8 ThrustThingZ(0, 4, 0, 1) //Buoyancy
+            CANO A 1
+            //TNT1 A 0 A_JumpIf(waterlevel >= 0, "DisableGravity")
+            TNT1 A 0 A_JumpIf(z >= 0, "EnableGravity")
+            //CANO A 4 //A_LogInt(waterlevel)
+            TNT1 A 0 A_JumpIf(!ACS_ExecuteWithResult(978, 0, 0, 0), "BreakUp")
+            TNT1 A 0 A_Jump(255, "DisableGravity")
 			Loop
+        DisableGravity:
+            TNT1 A 0
+            CANO A 0 A_ChangeFlag("NOGRAVITY", 1)
+            goto Idle
+        EnableGravity:
+            TNT1 A 0
+            CANO A 0 A_ChangeFlag("NOGRAVITY", 0)
+            CANO A 1 A_ChangeVelocity(0, 0, -4)
+            goto Idle
+
         Flip:
             TNT1 A 0
             TNT1 A 0 A_PlaySoundEx("world/watersplash1", CHAN_BODY, false, 1.0)
@@ -231,8 +245,9 @@ actor Boat : Actor/*SwitchableDecoration*/ 17701
         FloatToSurface:
             TNT1 A 0
             CANO A 0 A_ChangeFlag("FLOATBOB", 0)
-            CANO A 4 ThrustThingZ(0, 4, 0, 1)
-            CANO A 8 
+            CANO A 0 A_ChangeFlag("NOGRAVITY", 1)
+            CANO A 0 A_PlaySound("click")
+            CANO A 3 ThrustThingZ(0, 4, 0, 1)
             CANO A 0 //A_ChangeFlag("FLOATBOB", 1)
             goto Idle
         FloatToSurfaceUpsideDown:

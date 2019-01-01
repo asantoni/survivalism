@@ -81,3 +81,15 @@ map BOATTEST2 "Boat Test"
    ActivateOwnDeathSpecials //Needed for crafting boxes
    UsePlayerStartZ //Allow player to spawn off the ground
 }
+
+map DOOMZ5 "Woodland Hollow"
+{
+   next = "DOOMZ2"
+   sky1 = "SKY1"
+   music = ""
+   outsidefog = "00 00 01"
+   OutsideFogDensity = "300"
+   AllowRespawn //Allow the player to respawn in singleplayer
+   ActivateOwnDeathSpecials //Needed for crafting boxes
+   UsePlayerStartZ //Allow player to spawn off the ground
+}

@@ -2,3 +2,8 @@
 
 user string surv_username;
 user string surv_password;
+
+
+//Multi-server world configuration. When launching a server, set these to the "hostname:port" for each server to allow inter-server travel.
+server string surv_server2; //DOOMZ2 server
+server string surv_server5; //DOOMZ5 server

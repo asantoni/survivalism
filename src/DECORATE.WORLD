@@ -1,0 +1,102 @@
+//11600-11699 is for world/traveling markers and stuff
+
+actor TravelPathway : Actor
+{
+    -SOLID
+    -SHOOTABLE
+
+    States
+    {
+        Active:
+            TNT1 A 0
+            TNT1 A -1
+            stop
+    }
+}
+
+
+/* Don't use zero - we need them to be indexed starting at 1 so we can use
+   inventory counts to track which one the user is travelling to...
+actor TravelPathway0 : TravelPathway 11600
+{
+    States
+    {
+        Spawn:
+            TNT1 A 0 //dummy frame
+            TNT1 A 0 ACS_ExecuteAlways(1004, 0, 0) //Assign it a TID
+        Inactive:
+            TNT1 A -1
+            stop
+    }
+}*/
+
+
+actor TravelPathway1 : TravelPathway 11601
+{
+    States
+    {
+        Spawn:
+            TNT1 A 0 //dummy frame
+            TNT1 A 0 ACS_ExecuteAlways(1004, 0, 1) //Assign it a TID
+        Inactive:
+            TNT1 A -1
+            stop
+    }
+}
+
+actor TravelPathway2 : TravelPathway 11602
+{
+    States
+    {
+        Spawn:
+            TNT1 A 0 //dummy frame
+            TNT1 A 0 ACS_ExecuteAlways(1004, 0, 2) //Assign it a TID
+        Inactive:
+            TNT1 A -1
+            stop
+    }
+}
+
+actor TravelPathway3 : TravelPathway 11603
+{
+    States
+    {
+        Spawn:
+            TNT1 A 0 //dummy frame
+            TNT1 A 0 ACS_ExecuteAlways(1004, 0, 3) //Assign it a TID
+        Inactive:
+            TNT1 A -1
+            stop
+    }
+}
+
+
+actor TravelPathway4 : TravelPathway 11604
+{
+    States
+    {
+        Spawn:
+            TNT1 A 0 //dummy frame
+            TNT1 A 0 ACS_ExecuteAlways(1004, 0, 4) //Assign it a TID
+        Inactive:
+            TNT1 A -1
+            stop
+    }
+}
+
+
+actor TravelDestMap : Inventory
+{
+    Inventory.MaxAmount 100
+    -INVENTORY.INVBAR
+    +UNDROPPABLE
+    //+UNTOSSABLE
+}
+
+actor TravelDestPathway : Inventory
+{
+    Inventory.MaxAmount 100
+    -INVENTORY.INVBAR
+    +UNDROPPABLE
+    //+UNTOSSABLE
+}

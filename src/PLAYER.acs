@@ -23,8 +23,8 @@
 
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
-#define DROPPABLE_INVENTORY_START 5 //DeathCurse
-#define PERSISTENT_INVENTORY_LEN 80 
+#define DROPPABLE_INVENTORY_START 9 //DeathCurse
+#define PERSISTENT_INVENTORY_LEN 82
 //XXX: You must update DECORATE.PLAYER too! It also has PERSISTENT_INVENTORY_LEN.
 
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
@@ -39,6 +39,8 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
     "HealthBooster1",
     "HealthBooster2",
     "HealthBooster3",
+    "TravelDestMap",
+    "TravelDestPathway",
 //DROPPABLE_INVENTORY_START offset starts here!
 //Put only items that are dropped into the backpack on death below this line:
 	"DeathCurse", //Being cursed by death is saved too.
@@ -198,13 +200,13 @@ script 99 OPEN
 //Called when the player enters
 script 100 ENTER
 {
-	//I'm going to hell for this but there should be a way to force this to be on.
-	ConsoleCommand("gl_use_models 1");
+	//isPlayerPseudoSpectator[PlayerNumber()] = false; //Reset this flag    
 
-	//isPlayerPseudoSpectator[PlayerNumber()] = false; //Reset this flag
-	
 	Thing_ChangeTID(0, PLAYER_MIN_TID+PlayerNumber());
 	int playerTid = PLAYER_MIN_TID+PlayerNumber();
+
+    Delay(5); //Give the server 5 tics to load the player's inventory before we enter setupPlayer().
+              //We need this (for example) to avoid giving them the parachute when travelling between worlds.
 
 	setupPlayer(playerTid);
     
@@ -220,6 +222,10 @@ script 100 ENTER
     
     //Parachute auto-deploy
     ACS_ExecuteAlways(971, 0, 0);
+
+    //Fade-in from black if the player is travelling
+//    Delay(15);
+//    FadeTo(0, 0, 0, 0.0, 1.0);
 }
 
 //Clientside variables
@@ -405,7 +411,7 @@ script 807 DEATH
 //Called when the player respawns
 script 808 RESPAWN
 {
-	Delay(1);
+    Delay(1);
 	//Log(s:"RESPAWN called");
 	// Make sure our old dead body doesn't still have our tid
 	Thing_ChangeTID(PLAYER_MIN_TID+PlayerNumber(),0);
@@ -496,7 +502,6 @@ script 808 RESPAWN
 	
 	//Start the alive time timer
 	//ACS_ExecuteAlways(102, 0, 0);
-
 }
 
 function void giveInitialInventory (int playerTid)
@@ -518,14 +523,17 @@ function void setupPlayer(int playerTid)
 	SetActorProperty(playerTid, APROP_Invulnerable, 0);
 	SetActorProperty(playerTid, APROP_RenderStyle, STYLE_Normal);
 	SetActorProperty(playerTid, APROP_Alpha, 1.0);
-	giveInitialInventory(playerTid);
-	
-    //Move the actor to the ceiling because UsePlayerStartZ in MAPINFO isn't working in Zandronum 2.0 (Try without this in Zandronum 3.0?)
-    SetActorPosition(playerTid, GetActorX(playerTid), GetActorY(playerTid), GetActorCeilingZ(playerTid) - 128.0, false);
-    
-    //Make the player parachute in, if they're not spawning on ground.
-    UseActorInventory(playerTid, "SpawnParachuteItem");
 
+    if (CheckActorInventory(playerTid, "TravelDestPathway") <= 0) //Only if the player isn't travelling between worlds/maps.
+    {
+        giveInitialInventory(playerTid);
+
+        //Move the actor to the ceiling because UsePlayerStartZ in MAPINFO isn't working in Zandronum 2.0 (Try without this in Zandronum 3.0?)
+        SetActorPosition(playerTid, GetActorX(playerTid), GetActorY(playerTid), GetActorCeilingZ(playerTid) - 128.0, false);
+
+        //Make the player parachute in, if they're not spawning on ground.
+        UseActorInventory(playerTid, "SpawnParachuteItem");
+    }
     
 	//Summon Death to stalk the player if they're cursed by it.
 	if (CheckActorInventory(playerTid, "DeathCurse") > 0) {
@@ -589,7 +597,7 @@ function bool restorePersistentInventory (int playerIdx)
 	str accountName = GetPlayerAccountName(playerIdx);
 	str namespace = strparam(s:accountName, s:"_inventory");
 
-	Print(s:"Restoring your inventory...");
+    //Print(s:"Restoring your inventory...");
     int playerTid = PLAYER_MIN_TID + playerIdx;
     
     //Clears all UNDROPPABLE inventory first - Prevents changemap Heretic behaviour from adding 1 to all your items,
@@ -614,8 +622,19 @@ function bool restorePersistentInventory (int playerIdx)
     recalculateCentigradeWorkaround(playerIdx);
     //ACS_ExecuteAlways(817, 0, 1);
 	
-    //print(s:"Inventory restored!");
-    HudMessage(s:"Inventory restored!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+
+    bool bShowHUDMessage = true;
+
+    //Don't show the message when restoring inventory after travelling, to make the experience a little more seamless.
+    if (CheckActorInventory(playerTid, "TravelDestPathway") > 0)
+    {
+        bShowHUDMessage = false;
+    }
+
+    if (bShowHUDMessage)
+    {
+        HudMessage(s:"Inventory restored!\nWelcome back, ", n:0, s:"."; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+    }
 	return true;
 }
 
@@ -651,7 +670,7 @@ function bool validateSaveAction(int playerIdx)
     return true;
 }
 
-script 810 /*savePersistentInventoryAndXP*/ (int playerIdx)
+script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
 {
 	int playerTid = PLAYER_MIN_TID + playerIdx;
 
@@ -682,7 +701,7 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx)
     {
         Log(s:"Save for player aborted.");
     	//print(s:"You should load your inventory before you save over it.");
-		ActivatorSound("menu/invalid", 127);
+        ActivatorSound("menu/invalid", 127);
 		SetResultValue(false);
 		terminate;
     }
@@ -706,9 +725,12 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx)
 
 	EndDBTransaction();
     //print(s:"Inventory saved!");
-    HudMessage(s:"Inventory saved!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+    if (noHUDMessage == 0)
+    {
+        HudMessage(s:"Inventory saved!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+    }
 
-	ActivatorSound("switches/normbutn", 127);
+    //ActivatorSound("misc/spawn", 127);
 	//playerHasLoadedInventory[playerIdx] = 1; //Don't allow you to save and then load!
     
     g_accountNameForPlayer[playerIdx][0] = '\0';
@@ -855,7 +877,7 @@ script 814 (void)
 	}
 
 	//Load inventory
-	if (restorePersistentInventory(PlayerNumber()))
+    if (restorePersistentInventory(PlayerNumber()))
 	{
 		//Wipe inventory - You will lose all your inventory if you time out or disconnect without saving again.
 		//ACS_ExecuteAlways(811, 0);
@@ -1158,6 +1180,8 @@ script 852 OPEN
                 if (playerHasLoadedInventory[playerIdx] == 0) {
                     //ACS_ExecuteAlways(814, 0, playerIdx);
                     restorePersistentInventory(playerIdx);
+                    Delay(1);
+                    warpToTravelPathway(playerIdx);
                     str playerName = getPlayerAccountName(playerIdx);
                     StrCpy(a:g_accountNameForPlayer[playerIdx], playerName);
                     Log(s:"Cached player account as ", a:g_accountNameForPlayer[playerIdx], s:" for player ", s:playerName, s:", index was: ", d:playerIdx);
@@ -1224,7 +1248,7 @@ script 854 (int backpackTid, int blarg)
     SetResultValue(true);
 }
 
-script 855 (void) CLIENTSIDE
+script 855 (void) NET CLIENTSIDE
 {
     /* Long story here: Zandronum has no automatic login feature that's accessible via the built-in Multiplayer->Login menu,
      * but we can hack one together because Zandronum has auto-login via the console.
@@ -1260,5 +1284,63 @@ script 856 OPEN CLIENTSIDE
 
     ConsoleCommand("login");
 }
+
+//Travel a player from one map/server to another!
+script 857 (int travelSrcMapIdx, int travelDestMapIdx, int pathwayIdx)
+{
+    //TODO: Give the player an inventory item that tells the next map
+    //      where they should spawn.
+    int playerIdx = PlayerNumber();
+    int playerTID = PLAYER_MIN_TID + playerIdx;
+    if (playerIdx >= 0) {
+
+        if (!PlayerIsLoggedIn(playerIdx))
+        {
+            Print(s:"You must be logged into travel to this way.");
+            ActivatorSound("menu/invalid", 127);
+            terminate;
+        }
+
+        //Save their inventory and connect them to the next server.
+        //TakeActorInventory(playerTID, "TravelDestMap", 0x7FFFFFFF);
+        GiveActorInventory(playerTID, "TravelDestMap", travelDestMapIdx);
+        //TakeActorInventory(playerTID, "TravelDestPathway", 0x7FFFFFFF);
+        Log(s:"Giving player TravelDestPathway: ", d:pathwayIdx);
+        GiveActorInventory(playerTID, "TravelDestPathway", pathwayIdx);
+        Delay(3);
+
+        SetFont("BIGFONT");
+        HudMessage(s:"Travelling..."; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_GREEN, 0.5, 0.7, 3.0);
+        FadeTo(0, 0, 0, 1.0, 0.5); //Fade to black
+
+        if (ACS_ExecuteAlways(810, 0, playerIdx, true)) {
+            //Make the player connect to the other server.
+            Delay(18);
+            ACS_ExecuteAlways(1001, 0, travelDestMapIdx); //Called on the client side!
+        }
+    }
+}
+
+function void warpToTravelPathway(int playerIdx)
+{
+    int playerTid = PLAYER_MIN_TID + playerIdx;
+
+    int pathwayIdx = CheckActorInventory(playerTid, "TravelDestPathway");
+    if (pathwayIdx <= 0) {
+        Log(s:"Player has no TravelDestPathway, not warping.");
+        return;
+    }
+    TakeActorInventory(playerTID, "TravelDestMap", 0x7FFFFFFF);
+    TakeActorInventory(playerTID, "TravelDestPathway", 0x7FFFFFFF);
+
+    int pathwayTid = TRAVELPATHWAY_MIN_TID + pathwayIdx;
+    Log(s:"Travel pathway TID: ", d:pathwayTid);
+
+    SetActorPosition(playerTid, GetActorX(pathwayTid), GetActorY(pathwayTid), GetActorZ(pathwayTid), false);
+    SetActorAngle(playerTid, GetActorAngle(pathwayTid));
+
+}
+
+
 
 //script 900-920 reserved for ARTIFACTS.acs
