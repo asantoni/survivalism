@@ -55,7 +55,21 @@ Mines:
   and refresh them every 5 minutes.
 - You don't have to make your mine narrow, it can be an open space.
 
-
+Obelisks:
+- Obelisks are switches used to unlock mines or other areas of your map, but force the player to fight a boss first.
+- There are couple different types, just with different names: Stone Obelisk, IronO belisk, Silicon Obelisk.
+- The steps for placing an obelisk are:
+     - Place one of the Obelisk things in your map. 
+	 - Create a sector that should get unlocked by the Obelisk. Give the sector a Tag number (eg. 777). The sector should be created in the "lowered" position. It will be automatically raised to the ceiling when the map starts, and lowered once the Obelisk boss is defeated.
+     - Go back to your Obelisk thing, and assign it the "0" Action Special, but set the Argument 1 field to the sector tag you set before (eg. 777).
+	 - Create a "Map Spot" thing above your Obelisk, and set the thing tag number to the same sector tag (eg. 777). This map spot is where the
+	   boss will spawn.
+	   
+Vagrant Colonies:
+- Vagrant colonies are little clusters of monsters that spawn in the map and build bases. The monsters will stick close to their bases and patrol them.
+  If a base is left unchallenged for long enough, more bases will spawn up around them, giving the monsters more territory control.
+- Place a couple "VagrantColonySpot" things around your map in nice big open areas. (Only one per area is needed.) 
+	 
 Loot Spawners:
 - To encourage players to explore the map, loot boxes will spawn periodically around "LootSpawner" actors. I recommend placing one of these actors in each big area of your map.
 
@@ -87,6 +101,8 @@ Here's a quick checklist of what you need in a Survivalism map:
 - Co-op spawn points (Player 1, Player 2, etc.)
 - A MineManager inside a mine.
 - A LootSpawner in each main area of your map.
+- A VagrantColonySpot in each main area of your map.
 - Several EasyQuestSpot/MediumQuestSpot/HardQuestSpots. (See the instructions above for space requirements.)
 - Customized MAPINFO chunk - Need ActivateOwnDeathSpecials. See above for more instructions.
 - No linedef or thing beyond -9400 to +9400 on the map grid, in both X and Y.
+- Obelisks guarding your mines.
