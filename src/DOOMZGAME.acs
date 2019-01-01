@@ -364,6 +364,7 @@ DONE:
 int kMainLoopPeriodSeconds = 20;
 int kDayLengthSeconds = 12*60;
 int g_timeOfDaySeconds = 0;
+int g_mapStartTimestamp = 0; //SystemTime() timestamp of when the map started (in seconds)
 int g_dayNumber = 1;
 int g_dayState = DAYSTATE_DAY;
 int g_blockXP = false; //global lock for XP, to prevent players from getting free XP from monsters dying at daybreak
@@ -395,12 +396,14 @@ script 200 OPEN
 		kMainLoopPeriodSeconds = 2;
 		kDayLengthSeconds = 48;
 	}
+
+    g_mapStartTimestamp = SystemTime();
 	
 	//Main game loop
 	while (true)
 	{
-		g_timeOfDaySeconds += kMainLoopPeriodSeconds;
-		if (g_timeOfDaySeconds > kDayLengthSeconds) {
+        g_timeOfDaySeconds = SystemTime() - g_mapStartTimestamp;
+        if (g_timeOfDaySeconds > kDayLengthSeconds) {
 			g_dayNumber++;
 			g_timeOfDaySeconds = g_timeOfDaySeconds % kDayLengthSeconds;
 		}

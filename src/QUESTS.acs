@@ -1,10 +1,10 @@
+#library "quests"
+#import "messages.acs"
 #import "doomzgame.acs"
 #import "player.acs"
 #import "math.acs"
 #import "conversation.acs"
 #include "zcommon.acs"
-//#libray must go last!!!!!!!!!!
-#library "quests"
 
 #libdefine MIN_EASYQUESTSPOT_TID 	6000
 #libdefine MAX_EASYQUESTSPOT_TID 	6029

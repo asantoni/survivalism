@@ -1,9 +1,9 @@
+#library "conversation"
+#import "messages.acs"
 #import "math.acs"
 #import "player.acs"
 #import "doomzgame.acs"
 #include "zcommon.acs"
-//#libray must go last!!!!!!!!!!
-#library "conversation"
 
 
 /* Script 520-530 Reserved for CONVERSATION.acs 
