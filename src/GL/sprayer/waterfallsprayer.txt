@@ -1,0 +1,30 @@
+//hardwareshader [texture/sprite/graphic] SomeTextureNameHere
+HardwareShader Sprite WTFLA0
+{
+shader GL/sprayer/arot.txt
+}
+HardwareShader Sprite WTFLB0
+{
+shader GL/sprayer/arot.txt
+}
+HardwareShader Sprite WTFLC0
+{
+shader GL/sprayer/arot.txt
+}
+HardwareShader Sprite WTFLD0
+{
+shader GL/sprayer/arot.txt
+}
+HardwareShader Sprite WTFLE0
+{
+shader GL/sprayer/arot.txt
+}
+HardwareShader Sprite WTFLF0
+{
+shader GL/sprayer/arot.txt
+}
+
+HardwareShader Sprite WTF2A0
+{
+shader GL/sprayer/arot.txt
+}

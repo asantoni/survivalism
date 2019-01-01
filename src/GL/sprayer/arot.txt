@@ -1,0 +1,21 @@
+//Rotation shader using alpha channel
+//From kodi @ https://zandronum.com/forum/viewtopic.php?t=7904
+
+uniform float timer;
+ 
+vec4 Process(vec4 color)
+{
+vec2 tex_coord = gl_TexCoord[0].st;
+	
+
+	float angle = color.a*6.283; // turns to radians :^)
+	float x = tex_coord.x;
+	float y = tex_coord.y;
+
+
+    float output_x = cos(angle) * (x-0.5) - sin(angle) * (y-0.5) +0.5 ; 
+    float output_y = sin(angle) * (x-0.5) + cos(angle) * (y-0.5) +0.5;
+    
+	color.a = 1.0;
+	return getTexel(vec2(output_x, output_y)) * color;
+}
