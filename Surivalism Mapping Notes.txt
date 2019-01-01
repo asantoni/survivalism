@@ -1,11 +1,11 @@
 Survivalism Mapping Guide
 by Hax Murderer
 Last Updated:
-January 1st, 2015
+January 1st, 2019
 
 BEFORE WE BEGIN:
-- Don't place monsters.
-- Don't place loot.
+- Don't place monsters. They'll spawn automatically.
+- Don't place loot. We'll cover how this spawns later.
 - Monsters only despawn if they lose sight of you behind a wall. You need to break up your map into different areas or at least
   have some walls that block line of sight to keep it fun and have monsters near you always. (Hopefully with Zandro 2.0 this will change.)
 - The maximum size of a map is a "big cube that goes from -9400 to +9400 on each axis". You will get glitchy collision detection
@@ -15,11 +15,10 @@ BEFORE WE BEGIN:
 
 
 Thing Tags
-- 555 - Respawn points (must be "Teleport Destinations")
+- Generally, thing tags under 100 are safe to use in your map, with some exceptions list below.
 
 Reserved Thing Tags (DO NOT USE)
 - 554 - Rocks inside mines (automatically destroyed every few mins)
-- 555 - Respawn points
 - 99 - Construction boxes
 - 8000-8999 - Random loot ID
 - 8200 - 8399 - Baddies
@@ -28,24 +27,25 @@ Reserved Thing Tags (DO NOT USE)
 - 5900 - 5999 - Furnaces
 - 6000 - 6100 - Quest Spots
 
-Respawn Points
-- Place "Teleport Destination" actors where you want the player to be able to respawn, with tag 555.
+Spawn Points
+- Place "Player 1 Start" and other co-op spawn points as usual.
 
 Sector Tags
 - Sectors with tag 0 will be considered "outside" and have their brightness change with the day/night cycle.
+- Use tag 1 for indoor areas and other sectors where you don't want the brightness level to change automatically.
 
 
 Monster Spawner
-- Change modes by calling Script 226, with argument 1 set to:
+- Change modes by calling Script 220, with argument 1 set to:
    - 0 - Default monsters (zombie mix)
    - 1 - Imps
    - 2 - Swamp mudmen
    - 3 - Safe zone (no monsters)
    - 4 - Shadows
-   - 5 - Forest zone
+   - 5 - Forest zone (dogs)
 - To put different monster in different parts of your map, use a pair of linedefs to trigger Script 220. 
   Use action special 226 (Execute Always) to call script 220 when the player crosses each line, with Argument 1 set to whatever 
-  mode you want. (Look at the doomz2 map if this isn't clear, and feel free to copy/paste the linedefs from there.)
+  mode you want. (Look at the DOOMZ2 map if this isn't clear, and feel free to copy/paste the linedefs from there.)
 - Tip: If you don't want monsters to spawn on the other side of a canyon, drop the sky ceiling a bit
   in the middle. This will cause the monster spawner projectiles to bounce off it and not cross the canyon.
 
@@ -55,6 +55,38 @@ Mines:
   and refresh them every 5 minutes.
 - You don't have to make your mine narrow, it can be an open space.
 
-Quests:
-- TID 6000
-- TID 6001
+
+Loot Spawners:
+- To encourage players to explore the map, loot boxes will spawn periodically around "LootSpawner" actors. I recommend placing one of these actors in each big area of your map.
+
+Quest Spots:
+- Quests will randomly use waypoints called "Quest Spots" as intermediate or terminal objectives in the randomly generated quests. You must place Quest Spots in your map in sensible places, with a certain amount of clear area near them.
+Here's the actors you must place and some guidelines:
+  - EasyQuestSpot - Place at least 4 of these, in relatively easy to reach places. Ensure there's enough area for an fight with monsters here.
+  - MediumQuestSpot - Place at least 3 of these, in slightly more difficult places to reach.
+  - HardQuestSpot - Place at least 1 of these, in a difficult to reach area. HardQuestSpots should be centered in a large open area with enough room for a dragon battle. (Something roughly the size of the top of the mountain in DOOMZ2 is perfect.)
+
+
+Multi-Server Traveling:
+- Multiple servers can be run with different maps and tied together to allow a player to travel between them seamlessly, to effectively create a large, persistent online world in Doom. How to set up servers for this will be covered in a separate Server Guide document.
+- A pair of maps can be connected together by up to 5 separate "pathways". For example, a series of caves could have 5 separate 
+  tunnels that connect between the same two maps. 
+- Each map can have up to 100 pathways to different maps.
+- To send a player between maps/servers, call Script 857 when a player crosses a linedef, using action special 226 (Script Execute Always). The arguments to this script are:
+     - Arg1: Index of the map the player is travelling from. (eg. DOOMZ5 = 5)
+     - Arg2: Index of the map the player is travelliung to. (eg. DOOMZ2 = 2)
+     - Arg3: Index of the pathway the player is using. (eg. Use 1 if there's only one path between those two maps.)
+
+
+
+Mapping Checklist
+=================
+
+Here's a quick checklist of what you need in a Survivalism map:
+
+- Co-op spawn points (Player 1, Player 2, etc.)
+- A MineManager inside a mine.
+- A LootSpawner in each main area of your map.
+- Several EasyQuestSpot/MediumQuestSpot/HardQuestSpots. (See the instructions above for space requirements.)
+- Customized MAPINFO chunk - Need ActivateOwnDeathSpecials. See above for more instructions.
+- No linedef or thing beyond -9400 to +9400 on the map grid, in both X and Y.

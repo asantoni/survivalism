@@ -11,7 +11,6 @@
 #define PLAYER_SPEED 0.3
 
 #libdefine MAX_PLAYERS 64
-#define SPAWN_MAPSPOT_TID 555
 
 #define HUNGER_START_LEVEL 14 	  //XP level where the hunger system kicks in.
 
@@ -419,75 +418,6 @@ script 808 RESPAWN
 
 	int playerTid = PLAYER_MIN_TID+PlayerNumber();
 	
-	
-	//if (GameType() != GAME_NET_DEATHMATCH)
-	//XXX: Disabling the pseudo-specator mode because this is buggier in Zandro 2.0 (CustomInventory packet loss)
-	//		Sometimes when you respawn, you'd get your axe but still be fast and invisible.
-	if (false) 
-	{
-		if (CheckActorInventory(playerTid, "PseudoSpectatorFlag") > 0)
-		{
-		//	UnmorphActor(playerTid, true);
-		//	//Delay(200);
-			terminate;
-		}
-		
-		// SCREW THIS: MorphActor doesn't work if you're invulnerable, such
-		//			   as in the first 3 seconds after you respawn. If we clear
-		//			   the player's inventory first to remove the invulnerability, 
-		//			   then it works. SPENT HOURS ON THIS! argh
-		SetActorProperty(playerTid, APROP_Invulnerable, 0);
-		//ClearActorInventory(playerTid);
-		TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
-		Delay(1);
-		//MorphActor(playerTid, "PseudoSpectator", "", 1048576, 0, "", "");
-
-		if (PlayerCount() > 1) {
-			setupPseudoSpectator(playerTid);
-			//Delay(525 + 1);
-			for (int secondsToWait = 15; secondsToWait > 0; secondsToWait--) { 
-				if (PlayerHealth() <= 0) {
-					TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
-					terminate;
-				}
-				SetFont("BIGFONT");
-				HudMessage(s:"You will respawn in ", d:secondsToWait, s:" seconds.";
-					HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.7, 5.0);
-				Delay(35);
-			}
-			HudMessage(s:""; HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.7, 5.0); //Clear it
-
-			Teleport(SPAWN_MAPSPOT_TID, 0, 1); //Teleport you out of danger first before unmorphing
-			Delay(35);
-			//ClearActorInventory(playerTid);
-			TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
-			SetActorProperty(playerTid, APROP_Invulnerable, 0);
-			Delay(1);
-			UnMorphActor(playerTid, true);
-			//ClearActorInventory(playerTid);
-			SetActorProperty(playerTid, APROP_Invulnerable, 0);
-			TakeActorInventory(playerTid, "PseudoSpectatorFlag", 0x7FFFFFFF);
-			Delay(1);
-			//Thing_Damage2(playerTid, 999, "InstantDeath");
-		} else {
-			Teleport(SPAWN_MAPSPOT_TID, 0, 0);
-		}
-		
-		//Delay(200);
-		//UnmorphActor(playerTid, true);
-
-		//ACS_ExecuteAlways(103, 0, playerTid);
-		
-		//Delay(100);
-		//UnmorphActor(playerTid, true);
-		//TakeActorInventory(playerTid, "PseudoSpectatorMorph", 99);
-		//TODO: Teleport to a spawn spot? Or just kill the pseudospectated player?
-
-	}
-	
-	
-	Delay(1);
-	//ClearActorInventory(playerTid);
 	SetActorProperty(playerTid, APROP_Invulnerable, 0);
 	Delay(1);
 	TakeActorInventory(playerTid, "MonsterSpawnerMode", 99999); // Just in case. Bugfix for craziness in multiplayer?
