@@ -37,7 +37,7 @@ LISTMENU "MainMenu"
         }
     }
 
-    TextItem "Account", "a", "SURV_LoginMenu"
+    TextItem "LOG IN", "a", "SURV_LoginMenu"
 
     IfGame(Doom, Strife, Chex)
     {

@@ -23,7 +23,7 @@
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
 
 #define DROPPABLE_INVENTORY_START 9 //DeathCurse
-#define PERSISTENT_INVENTORY_LEN 82
+#define PERSISTENT_INVENTORY_LEN 83
 //XXX: You must update DECORATE.PLAYER too! It also has PERSISTENT_INVENTORY_LEN.
 
 int persistentInventory[PERSISTENT_INVENTORY_LEN] =
@@ -78,6 +78,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
 	"CFloorItem",
 	"CPillarItem",
 	"CStoneBoxItem",
+    "CSkullBoxItem",
 	"CraftingBoxItem",
 	"QuestBoxItem",
 	"FurnaceItem",
@@ -234,6 +235,12 @@ int clientCompassTID = 0; //TID to point towards
 //function void showLifeTimerOnHUD(void)
 script 102 (void) CLIENTSIDE  
 {
+    //Only run for the local player!
+    //If we don't do this, it'll run once per player, and never terminates, so any player rejoining from spectating causes it to run again!
+    if (PlayerNumber() != ConsolePlayerNumber()) {
+        terminate;
+    }
+
 	int t;
 	int playerSpawnTime = Timer();
 	//while(PlayerHealth() > 0)
@@ -563,7 +570,7 @@ function bool restorePersistentInventory (int playerIdx)
 
     if (bShowHUDMessage)
     {
-        HudMessage(s:"Inventory restored!\nWelcome back, ", n:0, s:"."; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+        HudMessage(s:"Inventory restored!\nWelcome back!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
     }
 	return true;
 }

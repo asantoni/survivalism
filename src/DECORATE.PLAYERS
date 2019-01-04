@@ -1,4 +1,4 @@
-const int PERSISTENT_INVENTORY_LEN = 82; //Comes from PLAYER.acs. Keep the two in sync!
+const int PERSISTENT_INVENTORY_LEN = 83; //Comes from PLAYER.acs. Keep the two in sync!
                                          //XXX: To work around a GZDoomBuilder bug, also
                                          //update the length in DoomZBackpack below!
 
@@ -294,7 +294,7 @@ ACTOR PseudoSpectatorFlag : Inventory
 actor DoomZBackpack : FakeInventory
 {
     var int user_tid;
-    var int user_inventory[82]; //PERSISTENT_INVENTORY_LENGTH
+    var int user_inventory[83]; //PERSISTENT_INVENTORY_LENGTH
     
     Height 26
     Inventory.PickupMessage "Picked up the backpack of a fallen survivor!" // "Picked up a backpack full of ammo!"

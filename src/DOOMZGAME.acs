@@ -2406,6 +2406,12 @@ script 965 (int message)
 //This is based on the berry spawner script. See script 962 for comments!
 script 966 OPEN CLIENTSIDE
 {
+    //Only run for the local player!
+    if (PlayerNumber() != ConsolePlayerNumber()) {
+        terminate;
+    }
+
+
 	int questSpotTID = -1;
 	
 	//Spawn some crows to initialize the world:
@@ -2633,6 +2639,12 @@ script 974 (void) NET CLIENTSIDE
 //Nobody reads, so force people to turn on OpenGL, and force models to be on.
 script 975 ENTER CLIENTSIDE
 {
+    //Only run for the local player!
+    //If we don't do this, it'll run once per player, and never terminates, so any player rejoining from spectating causes it to run again!
+    if (PlayerNumber() != ConsolePlayerNumber()) {
+        terminate;
+    }
+
     FadeTo(0, 0, 0, 1.0, 0.0); //Fade in from black
     Delay(35);
     FadeTo(0, 0, 0, 0.0, 1.0); //Fade in from black
@@ -2713,6 +2725,12 @@ script 1000 (int exitingWorldNum, int enteringWorldNum)
 
 script 1001 (int travelDestMapIdx) CLIENTSIDE
 {
+    //Only run for the local player!
+    //If we don't do this, it'll run once per player, and never terminates, so any player rejoining from spectating causes it to run again!
+    if (PlayerNumber() != ConsolePlayerNumber()) {
+        terminate;
+    }
+
     int serverCvar = StrParam(s:"surv_server", d:travelDestMapIdx);
     int connectCmd = StrParam(s:"connect ", s:GetCVarString(serverCvar));
 
