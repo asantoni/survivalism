@@ -4,7 +4,7 @@ actor SentryGun
   health 100
   radius 20
   height 56
-  mass 10//100000
+  mass 100   //100000
   speed 0
   MaxTargetRange 300
   MinMissileChance 0
