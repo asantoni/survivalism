@@ -49,7 +49,7 @@ actor HuntingRifle : Weapon
     loop
   NoAmmo:
     TNT1 A 0
-    TNT1 A 1 A_Log("HuntingRifle NoAmmo")
+    TNT1 A 1 //A_Log("HuntingRifle NoAmmo")
     LDHR A 1 A_JumpIfInventory("HuntingRifleClip", 1, "LoadClip")
     LDHR A 1 A_WeaponReady
     goto Ready
