@@ -27,6 +27,7 @@ actor Yellowboy : Weapon 15001
     WINC A 0 A_JumpIfNoAmmo("NoAmmo")
     WINC A 0 A_WeaponReady
     Loop
+   AltFire:
    NoAmmo:
 	TNT1 A 0
 	TNT1 A 0 A_JumpIfInventory("Shell", 1, "LoadShells")
