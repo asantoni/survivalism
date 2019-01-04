@@ -14,6 +14,9 @@ OptionMenu SURV_LoginMenu
     Title "Account Log In"
     Position 100
 
+    StaticText	"Log in to auto-save your inventory and XP:"
+    StaticText  ""
+
     TextField	"Username",				"surv_username"
     TextField	"Password",				"surv_password"
     StaticText	" "
