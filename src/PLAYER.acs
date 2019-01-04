@@ -1248,6 +1248,7 @@ script 857 (int travelSrcMapIdx, int travelDestMapIdx, int pathwayIdx)
 
         SetFont("BIGFONT");
         HudMessage(s:"Travelling..."; HUDMSG_PLAIN, FLASH_MESSAGE_ID, CR_GREEN, 0.5, 0.7, 3.0);
+        Log(n:0, s:" is traveling to a new shard...");
         FadeTo(0, 0, 0, 1.0, 0.5); //Fade to black
 
         if (ACS_ExecuteAlways(810, 0, playerIdx, true)) {

@@ -20,7 +20,8 @@ OptionMenu SURV_LoginMenu
     Command		"Log in",				"puke 855"
     StaticText	" "
     StaticText	" "
-    StaticText	"To register an account, visit:\nauth.zandronum.com/register"
+    StaticText	"To register an account, visit:"
+    StaticText	"http://auth.zandronum.com/register"
 
 }
 

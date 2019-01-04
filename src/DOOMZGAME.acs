@@ -2700,7 +2700,7 @@ script 978 (void)
 }
 
 
-
+//XXX: Remove this unused function - See Script 857 in PLAYER.acs instead
 script 1000 (int exitingWorldNum, int enteringWorldNum) 
 {
     //TODO: Give the player an inventory item that tells the next map
