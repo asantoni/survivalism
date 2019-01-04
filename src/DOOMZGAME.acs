@@ -1213,21 +1213,26 @@ script 934 (void)
 // CBoxDoor opening/closing script 
 script 935 (int doorTID)
 {
-	//PrintBold(i:x, s:" ", i:y);
 	//Exit_Normal(0);
 	int playerTID = ActivatorTID();
-	SetActivatorToTarget(0);
-	//SetActorProperty(0, APROP_Gravity, false);
-	
-	//SetActorPosition(0, GetActorX(0), GetActorY(0),
-	//				 GetActorZ(0)+(76<<16), false);
-	if (SetActorState(0, "Open"))
+    //PrintBold(s:"door: ", i:playerTID);
+
+    //Would PlayerNumber() work if the activator has been changed to a player?
+    //PrintBold(i:PlayerNumber());
+
+    if (!SetActivatorToTarget(0)) {
+        terminate;
+    }
+
+    if (SetActorState(0, "Open"))
 	{
 		//Make the player be the door's target so it can
 		//watch until the player walks away before it closes (A_JumpIfCloser)...
 		//Zandronum 2.0 maybe?
-		//SetPointer(AAPTR_TARGET, playerTID);
+        SetPointer(AAPTR_TARGET, playerTID);
 	}
+
+
 	//Fight desync
 	Delay(1);
 	Delay(1);

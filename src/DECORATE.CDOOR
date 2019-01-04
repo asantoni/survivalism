@@ -11,18 +11,21 @@ actor CDoor : Actor
 	+CANPASS //---> crazy CPU usage
     
     +USESPECIAL
-    Activation THINGSPEC_Activate
+    //+BUMPSPECIAL
+    //Activation THINGSPEC_Activate | THINGSPEC_ThingTargets
+
+    DamageType "Crush"
     
     //+AMBUSH
     +QUICKTORETALIATE
 	+DONTRIP
+    +NOINFIGHTING
  
 
    //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
     +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
                // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
     //Need these guys too with +ISMONSTER
-    Activation THINGSPEC_ThingTargets
     -COUNTKILL
  
     
@@ -41,9 +44,9 @@ actor CDoor : Actor
             TNT1 A 0 A_CopyFriendliness //For vagrant colonies - makes the box friendly to bad guys
 			//Set the TID to CONSTRUCTION_TID so that monsters can
 			//attack it (baddies.acs)
-			TNT1 A 0 ACS_ExecuteAlways(503, 0)			
-			CDOR A 1 Thing_SetSpecial(tid, 226, 935, tid, 0)
-            CDOR A 0 
+            TNT1 A 0 ACS_ExecuteAlways(503, 0)
+            CDOR A 1 Thing_SetSpecial(tid, 226, 935, tid, 0)
+            CDOR A 1
 			goto Closed
 		Active:
 		Open:
@@ -52,26 +55,20 @@ actor CDoor : Actor
 			//we can detect when they walk away.
 			CDOR AAAAAAA 3 A_LookEx(0, 0, 64.0, 64.0, 360, "ReallyOpen")
 			TNT1 A 0 A_PlaySound("click") //FIXME: Debugging
-			Loop
+            TNT1 A 0 A_Jump(255, "Chillout")
+            goto Chillout
+            //Loop
 		ReallyOpen:
 			TNT1 A 0
 			CDOR A 1 A_PlaySound("doors/dr1_open") //A_PlaySound("DSDOROPN")
 			//TNT1 A 0 A_HideThing
 			TNT1 A 0 A_UnSetShootable
 			TNT1 A 0 A_UnsetSolid
+            //CDOR A 0 A_SetSpecial(0, 0, 0, 0, 0)
             TNT1 A 0 A_SpawnItemEx("CDoorCeiling", 0, 0, 76.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION)
 			CDOR BCDEFGHI 1
 			goto See
-			/*
-		CheckIfPlayerIsClose:
-			TNT1 A 0 //Dummy frame
-			CDOR A 8 A_LookEx(0, 0, 64.0, 64.0, 360, "See")
-			Loop
-			*/
-		See: //If the player is right beside the door
-		//TODO: (BUGFIX / AENIMA)
-		//Set the activator here to be the target!
-			//TNT1 A 0 A_Set
+        See:
 		WaitForPlayerToGoAway:
 			CDOR J 0 //Dummy frame
 			CDOR J 34 A_SpawnItemEx("CDoorCeiling", 0, 0, 76.0, 0, 0, 0, 0, SXF_NOCHECKPOSITION)
@@ -80,15 +77,26 @@ actor CDoor : Actor
 		Inactive:
 		Closed:
 			//CDOR A 35 A_PlaySound("creeper/fuse")
-			TNT1 A 0 //Dummy frame
+            TNT1 A 0 //Dummy frame
 			TNT1 A 0 A_PlaySound("doors/dr1_clos")
 			TNT1 A 0 A_UnHideThing
 			TNT1 A 0 A_SetShootable
 			TNT1 A 0 A_SetSolid
 			TNT1 A 0 A_ClearTarget
 			CDOR IHGFEDCB 1
-			CDOR A -1 
+            goto Chillout
+            //Crush any enemy monsters
+ //           TNT1 A 0 A_ChangeFlag("FRIENDLY", true)
+ //           TNT1 A 0 A_LookEx(0, 0, 64.0, 64.0, 360, "Crush")
+            //CDOR A 1 A_SetSpecial(226, 935, tid, 0)
+        Chillout:
+            CDOR A -1
 			Wait
+//        Crush:
+//            TNT1 A 0
+//            TNT1 A 0 A_Explode(128, 38, 0, false, 38, 0, 0, "NoPuff")
+//            TNT1 A 0 A_ChangeFlag("FRIENDLY", false)
+//            goto Chillout
 		Death:
 			TNT1 A 0 //Dummy frame is needed
 			TNT1 A 0 A_SpawnItemEx("CDoorItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
