@@ -770,7 +770,8 @@ actor JackBase
     Args 10
     
     DamageFactor "SentryTurret", 0.0
-    
+    DropItem "JackItem"
+
     States
     {
         Spawn:
