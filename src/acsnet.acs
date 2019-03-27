@@ -1,0 +1,1205 @@
+/*
+--==        ACS.NET       ==--
+- Created by: Visual Vincent -
+----        v1.2.2        ----
+
+Copyright (c) 2015, Visual Vincent
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+*/
+
+#Library "ACSNET"
+#Include "zcommon.acs"
+
+//* Exception configuration *//
+#Define EXCEPTION_FUNCCOUNT 10
+#Define EXCEPTION_ERRORCOUNT 6
+#Define EXCEPTION_HOLDTIME 8.0
+
+#Define EXTYPE_STARTINDEXOUTOFRANGE 0
+#Define EXTYPE_RANGEISOUTOFBOUNDS 1
+#Define EXTYPE_DELIMITERISNOTCHAR 2
+#Define EXTYPE_COUNTISLESSTHANZERO 3
+#Define EXTYPE_UNKNOWNEXPRESSION 4
+#Define EXTYPE_STRNOTNUMBER 5
+
+#Define EXCEPTION_SUBSTRING 0
+#Define EXCEPTION_STRINGFIND 1
+#Define EXCEPTION_STRINGSPLIT 2
+#Define EXCEPTION_STRINGREMOVE 3
+#Define EXCEPTION_STRINGINSERT 4
+#Define EXCEPTION_IIF 5
+#Define EXCEPTION_ISTRUE 6
+#Define EXCEPTION_ISFALSE 7
+#Define EXCEPTION_ISNOT 8
+#Define EXCEPTION_PARSEINT 9
+
+Str EXCEPTION_FUNCCOLOR = "\cJ";
+Str EXCEPTION_MSGCOLOR = "\cF";
+
+Str ErrorMessages[EXCEPTION_ERRORCOUNT] = {
+    "StartIndex cannot be larger than the length of the string.", 
+    "StartIndex and Length must refer to a location within the string.", 
+    "The delimiter must be a single char.",
+    "Character count must be greater than, or equal to zero.",
+    "Unknown expression.",
+    "Input string must only contain numbers."
+    };
+
+Str ExceptionExecutors[EXCEPTION_FUNCCOUNT] = {
+    "StringSubstring", 
+    "StringFind", 
+    "StringSplit", 
+    "StringRemove",
+    "StringInsert",
+    "IIf",
+    "IsTrue",
+    "IsFalse",
+    "IsNot",
+    "ParseInt"
+    };
+//---------------------------//
+
+#Define SPLIT_ARRAYMAX 64
+#Define CHAR_ARRAYMAX  32768
+
+#LibDefine IntegerMinValue -2147483648
+#LibDefine IntegerMaxValue 2147483647
+
+#LibDefine Math_PI 3.14159265358979323846
+#LibDefine Math_e  2.7182818284590452354
+
+Str CharArray[CHAR_ARRAYMAX];
+Int CharArrayLength = 0;
+Str StringArray[SPLIT_ARRAYMAX];
+Int StringOccurences = 0;
+
+Str StringColors[22] = {
+    "\cA", "\cB", "\cC", "\cD", 
+    "\cE", "\cF", "\cG", "\cH", 
+    "\cI", "\cJ", "\cK", "\cL", 
+    "\cM", "\cN", "\cO", "\cP",
+    "\cQ", "\cR", "\cS", "\cT",
+    "\cU", "\cV"
+    };
+
+/*
+-- StringReplace --
+Replace a specified substring in a string with another substring x amount of times.
+Note that this is case sensitive.
+
+InputString:   The string containing the substring to replace.
+FindString:    The substring to search for.
+ReplaceString: The substring that will replace the found substring.
+Start:         The position in the InputString to begin the search for the substring. (Zero-based)
+Count:         The amount of replacements that will be done (0 = Replace all found substrings).
+
+Example usage:       StringReplace("Shopping List", "o", "i", 0, 0);
+Example will return: "Shipping List"
+*/
+Function Str StringReplace(Str InputString, Str FindString, Str ReplaceString, Int Start, Int Count)
+{
+    Int StringLength = StrLen(InputString);
+    Int FindLength = StrLen(FindString);
+    Bool LimitReached = False;
+    Str ReturnString = "";
+    
+    If(Start < 0) { Start = 0; }
+    
+    Int i = Start;
+    While(i<StringLength && LimitReached == False)
+    {
+        If((i + (FindLength)) <= StringLength)
+        {
+            Bool MatchFound = True;
+            Int y = 0;
+            For(Int x=i; x<(i + FindLength) && y<FindLength && MatchFound == True; x++)
+            {
+                If(GetChar(InputString, x) != GetChar(FindString, y))
+                { MatchFound = False; }
+                
+                y++;
+            }
+            
+            
+            If(MatchFound == True)
+            {
+                If(Count > 0) { Count --; If(Count <= 0) { LimitReached = True; } }
+                
+                Str Part1 = StringSubstring(InputString, 0, i);
+                Str Part2 = StringSubString(InputString, (i + FindLength), -1);
+                InputString = ConcatenateStrings(3, Part1, ReplaceString, Part2, "");
+                StringLength = StrLen(InputString);
+            }
+        }
+        
+        i++;
+    }
+    ReturnString = InputString;
+    Return ReturnString;
+}
+
+/*
+-- StringSplit --
+Split string into array. The substrings will be put in the StringArray[] array.
+Use the StringOccurences variable to get how many strings were put in the array.
+
+InputString: The string to split up into an array.
+Delimiter:   A single char used to identify substring limits.
+Limit:       Maximal number of substrings the string should be splitted into. (-1 = Split until it reaches the max limit)
+
+Example usage:             StringSplit("Hello+There+Friend!", "+", -1);
+Example will put in array: "Hello","There","Friend!"
+*/
+Function void StringSplit(Str InputString, Str Delimiter, Int Limit)
+{
+    Int Index = 0;
+    Int PrevIndex = 0;
+    Bool FoundAll = False;
+    Bool LimitReached = False;
+    Bool ExceptionThrown = False;
+    Int i = 0;
+    
+    If(StrLen(Delimiter) != 1) { ThrowException(EXCEPTION_STRINGSPLIT, EXTYPE_DELIMITERISNOTCHAR); ExceptionThrown = True; }
+    If(Limit < -1) { Limit = -1; }
+    If(Limit > SPLIT_ARRAYMAX) { Limit = SPLIT_ARRAYMAX; }
+    
+    If(ExceptionThrown == False)
+    {
+        For(Int x=0; x<64; x++)
+        {
+            StringArray[x] = "";
+        }
+        StringOccurences = 0;
+        
+        While(FoundAll == False && LimitReached == False)
+        {
+            If(Limit != 0) { Index = StringFind(InputString, Delimiter, Index); }
+            
+            If(Index != -1 && i < SPLIT_ARRAYMAX)
+            {
+                If(Limit > 0 || Limit == -1)
+                {
+                    StringArray[i] = StringSubstring(InputString, PrevIndex, (Index - PrevIndex));
+                    i++;
+                    Index ++;
+                    PrevIndex = Index;
+                }
+                Else If(Limit == 0)
+                {
+                    StringArray[i] = StringSubstring(InputString, Index, -1);
+                    i++;
+                    StringOccurences = i;
+                    LimitReached = True;
+                }
+                
+                If(Limit != -1)
+                { Limit --; }
+            }
+            Else
+            {
+                StringArray[i] = StringSubstring(InputString, PrevIndex, -1);
+                i++;
+                StringOccurences = i;
+                FoundAll = True;
+            }
+        }
+        
+    }
+}
+
+/*
+-- SplitArrayToString --
+Writes the StringArray[] array of substrings down to a string. (One substring per line)
+*/
+Function Str SplitArrayToString(void)
+{
+    Str ReturnValue = "";
+    
+    For(Int x=0; x<StringOccurences; x++)
+    {
+        If(x == (StringOccurences - 1))
+        {
+            ReturnValue = StrParam(s:ReturnValue, s:StringArray[x]);
+        }
+        Else If(x < (StringOccurences - 1))
+        {
+            ReturnValue = StrParam(s:ReturnValue, s:StringArray[x], s:"\n");
+        }
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- ClearSplitArray --
+Clears the StringArray[] array that holds all the strings gathered from the StringSplit() function.
+*/
+Function void ClearSplitArray(void)
+{
+    For(Int x=0; x<64; x++)
+    {
+        StringArray[x] = "";
+    }
+    StringOccurences = 0;
+}
+
+/*
+-- StringFind --
+Retrieve the index of a substring in the specified string.
+
+InputString: The string to search for the substring in.
+LookFor:     The substring to look for.
+Start:       The position in the string to begin the search for the substring. (Zero-based)
+
+Example usage:       StringFind("Hello mate!", "o", 0);
+Example will return: 4
+*/
+Function Int StringFind(Str InputString, Str LookFor, Str Start)
+{
+    Int ReturnValue = -1;
+    Int StringLength = StrLen(InputString);
+    Bool FoundMatch = False;
+    
+    If(StrLen(LookFor) == 0 || StrLen(InputString) == 0) { Return -1; }
+    If(Start < 0) { Start = 0; }
+    If(Start > StringLength) { Start = StringLength; }
+    
+    For(Int x=Start; x<StringLength && FoundMatch == False; x++)
+    {
+        If((x + StrLen(LookFor)) <= StringLength)
+        {
+            Int z = 0;
+            Bool MatchFound = True;
+            For(Int y=x; y<(x + StrLen(LookFor)) && z<StrLen(LookFor) && MatchFound == True; y++)
+            {
+                If(GetChar(InputString, y) != GetChar(LookFor, z))
+                { MatchFound = False; }
+                
+                z++;
+            }
+            
+            If(MatchFound == True)
+            {
+                FoundMatch = True;
+                ReturnValue = x;
+            }
+        }
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringFindLast --
+Retrieve the last index of a substring in the specified string.
+
+InputString: The string to search for the substring in.
+LookFor:     The substring to look for.
+
+Example usage:       StringFindLast("Donald Duck", "D");
+Example will return: 7
+*/
+Function Int StringFindLast(Str InputString, Str LookFor)
+{
+    Int ReturnValue = -1;
+    Int TempValue = 0;
+    Bool LastFound = False;
+    
+    While(LastFound == False)
+    {
+        TempValue = StringFind(InputString, LookFor, TempValue);
+        
+        If(TempValue != -1)
+        {
+            If(TempValue > ReturnValue)
+            {
+                ReturnValue = TempValue;
+                TempValue ++;
+            }
+        }
+        Else If(TempValue == -1)
+        {
+            LastFound = True;
+        }
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringCompare --
+Compare two strings with each other.
+
+Str1: The first string to compare with the second one.
+Str2: The second string to compare with the first one.
+*/
+Function Bool StringCompare(Str Str1, Str Str2)
+{
+    Bool Match = True;
+    If(StrLen(Str1) != StrLen(Str2)) { Return False; }
+    
+    For(Int x=0; x<StrLen(Str1) && Match == True; x++)
+    {
+        If(GetChar(Str1, x) != GetChar(Str2, x))
+        { Match = False; }
+    }
+
+    Return Match;
+}
+
+/*
+-- StringSubstring --
+Retrieve a part of the specified string.
+
+InputString: The string to substring.
+Start:       The startposition of the substring. (Zero-based)
+Length:      The amount of characters to get from the InputString. (-1 = Get the rest of the string)
+
+Example usage:       StringSubstring("Well, Hello There Friend!", 6, 11);
+Example will return: "Hello There"
+*/
+Function Str StringSubstring(Str InputString, Int Start, Int Length)
+{
+    Str ReturnValue = "";
+    
+    If(Start > StrLen(InputString)) { ThrowException(EXCEPTION_SUBSTRING, EXTYPE_STARTINDEXOUTOFRANGE); Return "<ERROR>"; }
+    If(Start < 0) { Start = 0; }
+    If((Start + Length) > StrLen(InputString)) { ThrowException(EXCEPTION_SUBSTRING, EXTYPE_RANGEISOUTOFBOUNDS); Return "<ERROR>"; }
+    If(Length == -1) { Length = StrLen(InputString) - Start; }
+    
+    If(Length == 0) { Return ""; }
+    
+    For(Int x=Start; x<(Start + Length); x++)
+    {
+        ReturnValue = StrParam(s:ReturnValue, c:GetChar(InputString, x));
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- ConcatenateStrings --
+Join two or more strings together.
+
+Count:    The amount of strings to join. (Allowed range: 2-4)
+String 1: The first string to join with the second string.
+String 2: The second string to join with the first string. (And also with the third string if Count is set to more than 2)
+String 3: The third string to join with the first and second string. (And also with the fourth string if Count is set to more than 3)
+String 4: The fourth string to join with the first, second and third string.
+
+Example usage:       ConcatenateStrings(3, "Hello ", "There!", " Who are you?", "");
+Example will return: "Hello There! Who are you?"
+*/
+Function Str ConcatenateStrings(Int Count, Str String1, Str String2, Str String3, Str String4)
+{
+    Str ReturnValue = "";
+    
+    If(Count < 2) { Count = 2; }
+    If(Count > 4) { Count = 4; }
+    
+    Switch(Count)
+    {
+        Case 2:
+            ReturnValue = StrParam(s:String1, s:String2);
+        Break;
+        
+        Case 3:
+            ReturnValue = StrParam(s:String1, s:String2, s:String3);
+        Break;
+        
+        Case 4:
+            ReturnValue = StrParam(s:String1, s:String2, s:String3, s:String4);
+        Break;
+    }
+    //Log(s:"ConcatenateStrings() passed, Concatenated ", d:Count, s:" strings.");
+    Return ReturnValue;
+}
+
+/*
+-- StringJoin --
+Concatenates String1 and String2 with the specified Separator in-between.
+
+Separator: The separator string to put between String1 and String2.
+String1:   The first string to concatenate with the second one.
+String2:   The second string to concatenate with the first one.
+
+Example usage:   StringJoin(" += ", "150", "5");
+Example returns: "150 += 5"
+*/
+Function Str StringJoin(Str Separator, Str String1, Str String2)
+{
+    Return ConcatenateStrings(3, String1, Separator, String2, "");
+}
+
+/*
+-- StringRemove --
+Deletes a specified amount of characters from the specified start position of the string.
+
+InputString: The string to manipulate.
+Start:       The position where to begin deleting characters. (Zero-based)
+Count:       The number of characters to delete.
+
+Example usage:   StringRemove("Hello There!", 2, 2);
+Example returns: "Heo There!"
+*/
+Function Str StringRemove(Str InputString, Int Start, Int Count)
+{
+    Str ReturnValue = "";
+    
+    If(Start < 0) { ThrowException(EXCEPTION_STRINGREMOVE, EXTYPE_STARTINDEXOUTOFRANGE); Return "<ERROR>"; }
+    If(Start >= StrLen(InputString)) { ThrowException(EXCEPTION_STRINGREMOVE, EXTYPE_STARTINDEXOUTOFRANGE); Return "<ERROR>"; }
+    If((Start + Count) >= StrLen(InputString)) { ThrowException(EXCEPTION_STRINGREMOVE, EXTYPE_RANGEISOUTOFBOUNDS); Return "<ERROR>"; }
+    If(Count < 0) { ThrowException(EXCEPTION_STRINGREMOVE, EXTYPE_COUNTISLESSTHANZERO); Return "<ERROR>"; }
+    
+    Str Part1 = StringSubstring(InputString, 0, Start);
+    Str Part2 = StringSubstring(InputString, (Start + Count), -1);
+    
+    ReturnValue = ConcatenateStrings(2, Part1, Part2, "", "");
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringContains --
+Returns a boolean value indicating wether the specified string
+is present in InputString.
+
+InputString: The string to check.
+LookFor:     The string to look for in InputString.
+
+Example usage:   StringContains("ABCDEFG", "D");
+Example returns: True
+*/
+Function Bool StringContains(Str InputString, Str LookFor)
+{
+    Return (StringFind(InputString, LookFor, 0) != -1);
+}
+
+/*
+-- StringStartsWith --
+Returns a boolean value indicating wether InputString starts with
+the specified string.
+
+InputString: The string to check.
+LookFor:     The string to look for in the start of InputString.
+
+Example usage:   StringStartsWith("ABCDEFG", "ABC");
+Example returns: True
+..
+2nd Example usage:   StringStartsWith("ABCDEFG", "FG");
+2nd Example returns: False
+*/
+Function Bool StringStartsWith(Str InputString, Str LookFor)
+{
+    Return StringCompare(StringSubstring(InputString, 0, StrLen(LookFor)), LookFor);
+}
+
+/*
+-- StringEndsWith --
+Returns a boolean value indicating wether InputString ends with
+the specified string.
+
+InputString: The string to check.
+LookFor:     The string to look for in the end of InputString.
+
+Example usage:   StringEndsWith("ABCDEFG", "FG");
+Example returns: True
+..
+2nd Example usage:   StringEndsWith("ABCDEFG", "ABC");
+2nd Example returns: False
+*/
+Function Bool StringEndsWith(Str InputString, Str LookFor)
+{
+    Return StringCompare(StringSubstring(InputString, (StrLen(InputString) - StrLen(LookFor)), -1), LookFor);
+}
+
+/*
+-- StringInsert --
+Inserts a specified substring in the specified string.
+
+InputString: The string to manipulate.
+Start:       Where the substring will be inserted. (Zero-based)
+InsertStr:   The substring to insert.
+
+Example usage:   StringInsert("Hello my friend!", 5, " There");
+Example returns: "Hello There my friend!"
+*/
+Function Str StringInsert(Str InputString, Int Start, Str InsertStr)
+{
+    Str ReturnValue = "";
+    If(Start < 0 || Start > StrLen(InputString)) { ThrowException(EXCEPTION_STRINGINSERT, EXTYPE_STARTINDEXOUTOFRANGE); Return "<ERROR>"; }
+    
+    Str Part1 = StringSubstring(InputString, 0, Start);
+    Str Part2 = StringSubstring(InputString, Start, -1);
+    ReturnValue = ConcatenateStrings(3, Part1, InsertStr, Part2, "");
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringSpace --
+Returns a string consisting of the specified amount of spaces.
+
+Count: The amount of spaces you want in the string.
+
+Example usage: Str HelloWorld = StrParam(s:"Hello", StringSpace(5), s:"World!");
+Example returns: "Hello     World!"
+*/
+Function Str StringSpace(Int Count)
+{
+    Str ReturnValue = "";
+    If(Count < 0) { Count = 0; }
+    
+    While(Count > 0)
+    {
+        ReturnValue = StrParam(s:ReturnValue, s:" ");
+        Count --;
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringReverse --
+Reverses the character order in a string.
+
+String: The string to reverse.
+
+Example usage:   StringReverse("Hello There!");
+Example returns: "!erehT olleH"
+*/
+Function Str StringReverse(Str String)
+{
+    Str ReturnValue = "";
+    If(StrLen(String) == 0) { Return ""; }
+    
+    For(Int x=(StrLen(String) - 1); x>=0; x--)
+    {
+        ReturnValue = StrParam(s:ReturnValue, c:GetChar(String, x));
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- StringSelect --
+Mark parts of the specified string with a specified color.
+
+InputString: The string to manipulate.
+Select:      What to select.
+Color:       The color to use when selecting: CR_... (I.e CR_YELLOW).
+Start:       Where to in InputString to start looking. (Zero-based)
+SelectAll:   True: Select all occurences.
+
+Example usage:   StringSelect("I like cookies!", "like", CR_RED, 0, False);
+Example returns: "I like cookies" - Where "like" is drawn in red color.
+*/
+Function Str StringSelect(Str InputString, Str Select, Int Color, Int Start, Bool SelectAll)
+{
+    Str ReturnValue = InputString;
+    Int pos = 0;
+    pos = StringFind(ReturnValue, Select, Start);
+    If(pos != -1)
+    {
+        ReturnValue = StringInsert(ReturnValue, pos, StringColors[Color]);
+        pos = StringFind(ReturnValue, Select, Start);
+        pos += StrLen(Select);
+        ReturnValue = StringInsert(ReturnValue, pos, "\c-");
+        
+        While(SelectAll == True && pos != -1)
+        {
+            pos = StringFind(ReturnValue, Select, pos);
+            If(pos != -1)
+            {
+                ReturnValue = StringInsert(ReturnValue, pos, StringColors[Color]);
+                pos = StringFind(ReturnValue, Select, pos);
+                pos += StrLen(Select);
+                ReturnValue = StringInsert(ReturnValue, pos, "\c-");
+            }
+        }
+    }
+    
+    Return ReturnValue;
+}
+
+/*
+-- IIf_Int --
+Returns one of two integers, depending on the evaluation of an expression.
+
+Expression: The expression you want to evaluate.
+TruePart:   The integer returned if Expression equals to True.
+FalsePart:  The integer returned if Expression equals to False.
+
+Example usage:   IIf_Int(5 > 3, 65536, 32768);
+Example returns: 65536
+..
+Why?:
+5 is greater than 3. That's why the function returns the TruePart, which is 65536.
+*/
+Function Int IIf_Int(Bool Expression, Int TruePart, Int FalsePart)
+{
+    If(Expression == True) { Return TruePart; }
+    Else If(Expression == False) { Return FalsePart; }
+    
+    ThrowException(EXCEPTION_IIF, EXTYPE_UNKNOWNEXPRESSION);
+    Return IntegerMinValue;
+}
+
+/*
+-- IIf_Str --
+Returns one of two strings, depending on the evaluation of an expression.
+
+Expression: The expression you want to evaluate.
+TruePart:   The string returned if Expression equals to True.
+FalsePart:  The string returned if Expression equals to False.
+
+Example usage:   IIf_Str(5 > 3, "This is correct", "This is incorrect");
+Example returns: "This is correct"
+
+2nd Example usage:   IIf_Str("Hello" == "There", "This is correct", "This is incorrect");
+2nd Example returns: "This is incorrect"
+..
+Why?:
+1st: 5 is greater than 3. That's why the function returns the TruePart, which is "This is correct".
+2nd: The string "Hello" is not equal to "There".
+     That's why the function returns the FalsePart, which is "This is incorrect".
+*/
+Function Str IIf_Str(Bool Expression, Str TruePart, Str FalsePart)
+{
+    If(Expression == True) { Return StrParam(s:TruePart); }
+    Else If(Expression == False) { Return StrParam(s:FalsePart); }
+    
+    ThrowException(EXCEPTION_IIF, EXTYPE_UNKNOWNEXPRESSION);
+    Return "<ERROR>";
+}
+
+/*
+-- IIf_Bool --
+Returns one of two booleans, depending on the evaluation of an expression.
+
+Expression: The expression you want to evaluate.
+TruePart:   The boolean returned if Expression equals to True.
+FalsePart:  The boolean returned if Expression equals to False.
+
+Example usage:   IIf_Bool(5 > 3, True, False);
+Example returns: True
+
+2nd Example usage:   IIf_Bool(5 > 3, False, True);
+2nd Example returns: False
+*/
+Function Bool IIf_Bool(Bool Expression, Bool TruePart, Bool FalsePart)
+{
+    If(Expression == True) { Return TruePart; }
+    Else If(Expression == False) { Return FalsePart; }
+    
+    ThrowException(EXCEPTION_IIF, EXTYPE_UNKNOWNEXPRESSION);
+    Return False;
+}
+
+/*
+-- IsTrue --
+Checks wether an expression equals to False.
+
+Expression: The expression to check.
+
+Example usage: IsTrue(5 < 3);
+Example returns: False
+..
+Why?:
+The function returns False because 5 is not less than 3.
+*/
+Function Bool IsTrue(Bool Expression)
+{
+    If(Expression == True) { Return True; }
+    If(Expression == False) { Return False; }
+    ThrowException(EXCEPTION_ISTRUE, EXTYPE_UNKNOWNEXPRESSION);
+    Return False;
+}
+
+/*
+-- IsFalse --
+Checks wether an expression equals to False.
+
+Expression: The expression to check.
+
+Example usage: IsFalse(5 < 3);
+Example returns: True
+..
+Why?:
+The function returns True because it's correct that 5 is not less than 3.
+*/
+Function Bool IsFalse(Bool Expression)
+{
+    If(Expression == True) { Return False; }
+    If(Expression == False) { Return True; }
+    ThrowException(EXCEPTION_ISFALSE, EXTYPE_UNKNOWNEXPRESSION);
+    Return False;
+}
+
+/*
+-- IsNot_Int --
+Checks if two integers ARE NOT the same.
+Returns True if they aren't.
+
+Int1: The first integer to check with the other.
+Int2: The second integer to check with the first.
+
+Example usage: IsNot_Int(5, 3);
+Example returns: True
+..
+Why?:
+The function returns True because 5 does not equal to 3.
+*/
+Function Bool IsNot_Int(Int Int1, Int Int2)
+{
+    Return Int1 != Int2;
+    
+    ThrowException(EXCEPTION_ISNOT, EXTYPE_UNKNOWNEXPRESSION);
+    Return False;
+}
+
+/*
+-- IsNot_Str --
+Checks if two strings ARE NOT the same.
+Returns True if they aren't.
+
+Str1: The first string to check with the other.
+Str2: The second string to check with the first.
+
+Example usage: IsNot_Str("Hello", "Hello");
+Example returns: False
+..
+Why?:
+The function returns False because Str1 IS ACTUALLY equal to Str2.
+*/
+Function Bool IsNot_Str(Str Str1, Str Str2)
+{
+    Return StringCompare(Str1, Str2) == False;
+    
+    ThrowException(EXCEPTION_ISNOT, EXTYPE_UNKNOWNEXPRESSION);
+    Return False;
+}
+
+/*
+-- Math_Factorial --
+Calculate the factorial of a number.
+
+number: The number to use for the calculation.
+
+Example usage:   Math_Factorial(6);
+Example returns: 720
+..
+Why?:
+Math_Factorial(6) = 720 because 6! = 6*5*4*3*2*1 = 720.
+*/
+Function Int Math_Factorial(Int number)
+{
+    Int ReturnValue = number;
+    If(number < 1) { Return 1; }
+    While(number-- > 1) { ReturnValue *= number; }
+    Return ReturnValue;
+}
+
+/*
+-- Math_Hypotenuse --
+Calculate the hypotenuse of a triangle.
+
+side1: The first side of the triangle.
+side2: The second side of the triangle.
+
+Example usage:   Math_Hypotenuse(5, 8);
+Example returns: 9
+..
+Why?:
+The square root of 5^2 + 8^2 equals the
+sqaure root of 25 + 64 which equals to 9,433981132056604.
+And because Doom rounds the number down, it's rounded to 9.
+*/
+Function Int Math_Hypotenuse(Int side1, Int side2)
+{
+    Return Math_sqrt(Math_pow(side1, 2) + Math_pow(side2, 2));
+}
+
+/*
+-- Math_TriangleSide --
+Calculate one side of a triangle using it's hypotenuse
+and the other side.
+
+Hypotenuse: The triangle's hypotenuse.
+side1:      One side of the triangle.
+
+Example usage:   Math_TriangleSide(9, 8);
+Example returns: 5
+*/
+Function Int Math_TriangleSide(Int Hypotenuse, Int side1)
+{
+    /*
+    Int Start = 1;
+    
+    Int x = Start;
+    While(Math_sqrt(Math_pow(x, 2) + Math_pow(side1, 2)) != Hypotenuse)
+    { x++; If(x > (Start + 999)) { x=-1; Break; }}
+    
+    Return x;
+    
+    --I did it the hard way before, for some reason.
+    */
+    Return Math_sqrt(Math_pow(Hypotenuse, 2) - Math_pow(side1, 2));
+}
+
+/*
+-- Math_sqrt --
+The square root of a number.
+
+number: The number to use for the calculation.
+
+Example usage:   Math_sqrt(81);
+Example returns: 9
+*/
+Function Int Math_sqrt(Int number)
+{
+    If(number <= 3) { Return number > 0; }
+
+    Int oldAns = number >> 1,                     //Initial guess
+    newAns = (oldAns + number / oldAns) >> 1; //First iteration
+
+    //Main iterative method
+    While(newAns < oldAns)
+    {
+        oldAns = newAns;
+        newAns = (oldAns + number / oldAns) >> 1;
+    }
+
+    Return oldAns;
+}
+
+/*
+-- Math_pow --
+Raise a number to the nth power.
+
+x: The number to raise.
+n: The power to raise the number to.
+
+Example usage:   Math_pow(5, 3);
+Example returns: 125
+*/
+Function Int Math_pow(Int x, Int n)
+{
+    Int y = 1;
+    While (n-- > 0) y *= x;
+    Return y;
+}
+
+/*
+-- Math_AreaOfCircle --
+Calculate the area of a circle.
+Originally, this function gets overloaded when
+using a radius greater than 102.
+In order to prevent this, the function will
+automatically use PI as 3 instead for numbers
+greater than 102.
+
+Radius: The radius of the circle.
+
+Example usage:   Math_AreaOfCircle(5);
+Example returns: 78
+..
+Why?:
+The area of a circle is calculated (r^2) * PI.
+And because Doom rounds it's numbers down, 
+3,14159265358979323846 * 25 = 78,5398163397448309615 (rounded to: 78)
+*/
+Function Int Math_AreaOfCircle(Int Radius)
+{
+    Return IIf_Int(Radius <= 102, (Math_pow(Radius, 2) * Math_PI) / 65536, (Math_pow(Radius, 2) * 3));
+}
+
+/*
+-- Math_VolumeOfSphere --
+Calculate the volume of a sphere.
+Originally, this function easily got overloaded.
+To prevent this from happening, it automatically calculates
+the volume using PI as 3, instead of
+the fixed point 3.14159265358979323846, for numbers over 13.
+
+Radius: The radius of the sphere.
+
+Example usage:   Math_VolumeOfSphere(5);
+Example returns: 523
+..
+Why?:
+The volume of a sphere is calculated ((r^3) * (4*PI)) / 3.
+And because Doom rounds it's numbers down, 
+(12,56637061435917295384 * 125) / 3 = 523,59877559829887307666666666667 (rounded to: 523)
+*/
+Function Int Math_VolumeOfSphere(Int Radius)
+{
+    Return IIf_Int(Radius <= 13, ((Math_pow(Radius, 3) * (Math_PI * 4)) / 3) / 65536, ((Math_pow(Radius, 3) * 12) / 3));
+}
+
+/*
+-- ParseInt --
+Parse (convert) an integer out of a string.
+
+WARNING:
+The input MUST be of type String (Str).
+If the input is of type Integer (Int) and the
+integer is too big, it will cause the game to crash!
+
+
+InputString: The string to parse to integer.
+
+Example usage:   ParseInt("32767");
+Example returns: 32767 (as Int)
+*/
+Function Int ParseInt(Str InputString)
+{
+    Int ReturnValue = 0;
+    Int TempValue = 0;
+    Int TempInt = 0;
+    Int char = -65536;
+    
+    If(InputString == "") { ThrowException(EXCEPTION_PARSEINT, EXTYPE_STRNOTNUMBER); Return 0; }
+    
+    For(Int i=0; i<StrLen(InputString); i++)
+    {
+        char = GetChar(InputString, i);
+        If(char != '1' && char != '2' &&
+            char != '3' && char != '4' &&
+            char != '5' && char != '6' &&
+            char != '7' && char != '8' &&
+            char != '9' && char != '0')
+        { ThrowException(EXCEPTION_PARSEINT, EXTYPE_STRNOTNUMBER); Return 0; }
+        Else
+        {
+            Switch(char)
+            {
+                Case '0':
+                    TempInt = 0;
+                Break;
+                
+                Case '1':
+                    TempInt = 1;
+                Break;
+                
+                Case '2':
+                    TempInt = 2;
+                Break;
+                
+                Case '3':
+                    TempInt = 3;
+                Break;
+                
+                Case '4':
+                    TempInt = 4;
+                Break;
+                
+                Case '5':
+                    TempInt = 5;
+                Break;
+                
+                Case '6':
+                    TempInt = 6;
+                Break;
+                
+                Case '7':
+                    TempInt = 7;
+                Break;
+                
+                Case '8':
+                    TempInt = 8;
+                Break;
+                
+                Case '9':
+                    TempInt = 9;
+                Break;
+            }
+            
+            For(Int x=((StrLen(InputString) - 1) - i); x>0; x--) { TempInt *= 10; }
+            TempValue += TempInt;
+        }
+    }
+    ReturnValue = TempValue;
+    Return ReturnValue;
+}
+
+/*
+-- PlayerName --
+Returns the name of the specified player.
+
+number: The number of the player which's name to get.
+*/
+Function Str PlayerName(Int number)
+{
+    If(number < 0) { number = 0; }
+    If(number > 64) { number = 64; }
+    
+    Return StrParam(n:number);
+}
+
+/*
+-- StringToCharArray --
+Convert a string into an array of chars.
+The chars will be put in the CharArray[] array.
+Use the CharArrayLength variable to check how many chars there is in the array.
+
+InputString: The string to convert to a char array.
+
+Example usage:             StringToCharArray("Hello");
+Example will put in array: "H","e","l","l","o"
+*/
+Function void StringToCharArray(Str InputString)
+{
+    For(Int i=0; i<CHAR_ARRAYMAX; i++)
+    {
+        CharArray[i] = "";
+    }
+    
+    For(Int x=0; x<StrLen(InputString); x++)
+    {
+        CharArray[x] = StrParam(c:GetChar(InputString, x));
+    }
+    CharArrayLength = StrLen(InputString);
+}
+
+/*
+-- ClearCharArray --
+Clears the CharArray[] array from all chars.
+*/
+Function void ClearCharArray(void)
+{
+    For(Int i=0; i<CHAR_ARRAYMAX; i++)
+    {
+        CharArray[i] = "";
+    }
+    CharArrayLength = 0;
+}
+
+/*
+-- CharArrayToString --
+Converts the CharArray[] array to a string.
+
+Example usage:                    CharArrayToString();
+If CharArray[] is like following: "H","e","l","l","o"
+Example will return:              "Hello"
+*/
+Function Str CharArrayToString(void)
+{
+    Str ReturnValue = "";
+    For(Int i=0; i<CharArrayLength; i++)
+    {
+        ReturnValue = StrParam(s:ReturnValue, s:CharArray[i]);
+    }
+    Return ReturnValue;
+}
+
+/*
+-- CharArrayIndexToString --
+Converts a part of the CharArray[] array to a string.
+
+Start: The position from where to get the first character from the char array to put in the string. (Zero-based)
+End:   The position from where to get the last character from char array to put in the string. (Zero-based)
+
+Example usage:                    CharArrayIndexToString(1, 3);
+If CharArray[] is like following: "H","e","l","l","o" 
+Example will return:              "ell"
+*/
+Function Str CharArrayIndexToString(Int Start, Int End)
+{
+    Str ReturnValue = "";
+    
+    If(Start < 0) { Start = 0; }
+    If(Start > End) { Start = End; }
+    If(End < 0) { End = 0; }
+    If(End < Start) { End = Start; }
+    If(End >= CharArrayLength) { End = (CharArrayLength - 1); }
+    
+    For(Int i=Start; i<=End; i++)
+    {
+        ReturnValue = StrParam(s:ReturnValue, s:CharArray[i]);
+    }
+    Return ReturnValue;
+}
+
+/*
+-- ThrowException --
+Throws an error.
+
+Exception:     The function that threw the exception.
+ExceptionType: The type of exception to be thrown.
+
+Example usage:     ThrowException(EXCEPTION_SUBSTRING, EXTYPE_RANGEISOUTOFBOUNDS);
+Example will show: "StringSubstring: StartIndex and Length must refer to a location within the string."
+*/
+Function void ThrowException(Int Exception, Int ExceptionType)
+{
+    HudMessage(s:GetExceptionMessage(Exception, ExceptionType); HUDMSG_PLAIN | HUDMSG_LOG, 4554, CR_UNTRANSLATED, 0.5, 0.45, EXCEPTION_HOLDTIME);
+}
+
+/*
+-- GetExceptionMessage --
+Gets the error message for the specified exception.
+
+Exception:     The function that threw the exception.
+ExceptionType: The type of exception that was thrown.
+
+Example usage:       GetExceptionMessage(EXCEPTION_SUBSTRING, EXTYPE_RANGEISOUTOFBOUNDS);
+Example will return: "StringSubstring: StartIndex and Length must refer to a location within the string."
+*/
+Function Str GetExceptionMessage(Int Exception, Int ExceptionType)
+{
+    Str ReturnMsg = "";
+    If(ExceptionType >= EXCEPTION_ERRORCOUNT)
+    {
+        ReturnMsg = StrParam(s:GetExceptionExecutor(Exception), s:"Unknown exception index: ", d:ExceptionType);
+    }
+    Else
+    {
+        ReturnMsg = StrParam(s:GetExceptionExecutor(Exception), s:ErrorMessages[ExceptionType]);
+    }
+    Return ReturnMsg;
+}
+
+/*
+-- GetExceptionExecutor --
+Gets the function's name as string that executed an exception.
+
+Exception: The function that threw the exception.
+
+Example usage:       GetExceptionExecutor(EXCEPTION_SUBSTRING);
+Example will return: "StringSubstring:"
+*/
+Function Str GetExceptionExecutor(Int Exception)
+{
+    If(Exception >= 0 && Exception < EXCEPTION_FUNCCOUNT)
+    {
+        Str ReturnFunc = StrParam(s:EXCEPTION_FUNCCOLOR, s:ExceptionExecutors[Exception], s:EXCEPTION_FUNCCOLOR, s:": ", s:EXCEPTION_MSGCOLOR);
+        Return ReturnFunc;
+    }
+    
+    Return "UnknownFunction";
+}    

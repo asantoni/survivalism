@@ -1,7 +1,7 @@
 ACC_INC_DIR := ../survivalism-tools
-ACC := ../survivalism-tools/acc.exe
-ZIP := ../survivalism-tools/7za.exe
-OBJ_DIR := src/ACS/*
+ACC := acc
+ZIP := 7za
+OBJ_DIR := src/acs/*
 RM := rm
 OUTPUT_PK3 := doomz.pk3
 ZANDRO := "C:\Program Files (x86)\Zandronum\zandronum.exe"
