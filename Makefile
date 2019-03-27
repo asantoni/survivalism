@@ -4,7 +4,7 @@ ZIP := 7za
 OBJ_DIR := src/acs/*
 RM := rm
 OUTPUT_PK3 := doomz.pk3
-ZANDRO := "C:\Program Files (x86)\Zandronum\zandronum.exe"
+ZANDRO := "../../Torr_Samaho/zandronum/zandronum"
 all: $(patsubst src/%.acs, src/acs/%.o, $(wildcard src/*.acs)) pk3
 
 
