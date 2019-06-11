@@ -6,7 +6,7 @@ ifeq ($(OS), Windows_NT)
 else
 ACC := acc
 ZIP := 7za
-ZANDRO := "../../Torr_Samaho/zandronum/zandronum-stable"
+ZANDRO := "../../Torr_Samaho/zandronum-stable/zandronum"
 endif
 
 OBJ_DIR := src/acs/*
