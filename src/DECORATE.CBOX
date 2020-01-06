@@ -10,8 +10,7 @@ actor CBox : Actor
     +USESPECIAL
 	+DONTRIP
                //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
-    +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
-               // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
+    //+ISMONSTER // No longer needed for vagrant colony destruction since we use A_Detonate now to destroy the surrounding boxes.
     -COUNTKILL
     //+DONTTHRUST - Not implemented in Zandronum 3.0 yet - https://zandronum.com/tracker/view.php?id=3145
 	
@@ -22,7 +21,8 @@ actor CBox : Actor
 	
 	DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
-    
+    DamageFactor "BoxKiller", 5000.0
+
     DeathSound "wood/breaklong"
 	
 	States

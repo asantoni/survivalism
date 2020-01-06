@@ -350,7 +350,7 @@ DONE:
 
 #define LOOT_SPAWNER_INTERVAL_SECONDS 10*60 //10 minutes
 #define BERRY_SPAWNER_INTERVAL_SECONDS 6*60 //12 minutes (1 day) in r15 originally
-#define COLONY_SPAWNER_INTERVAL_SECONDS 10*60 //10 minutes - use 32 seconds for testing
+#define COLONY_SPAWNER_INTERVAL_SECONDS 30*60 //30 minutes - use 32 seconds for testing
 #define BASE_BERRY_PLANTS 12
 
 #libdefine HUNGER_PERIOD_SECONDS 5040 //Time it takes to starve - 1.5 days originally (1080 s), changed to 7 days to nerf the hunger system
@@ -2755,9 +2755,8 @@ script 1003 OPEN
 {   
 	while (true)
 	{
-
-        SetActorState(VAGRANTCOLONYSPOT_TID, "SpawnColonyMaybe");
 		Delay(35*COLONY_SPAWNER_INTERVAL_SECONDS);
+        SetActorState(VAGRANTCOLONYSPOT_TID, "SpawnColonyMaybe");
     }
 
 }
