@@ -307,7 +307,7 @@ DONE:
 #import "music.acs"
 #import "probabilities.acs"
 #import "quests.acs"
-#import "ACSNET.acs"
+#import "acsnet.acs"
 
 #libdefine MISSION_MONSTER_TID 5000
 #define RANDOM_LOOT_TID_MIN 8000
