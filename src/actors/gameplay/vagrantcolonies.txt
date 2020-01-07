@@ -18,7 +18,18 @@ actor VagrantColonySpot 16018
             TNT1 A 1 A_Jump(256, "Spawn")
         SpawnColony:
             TNT1 A 0
-            TNT1 A 0 A_Jump(256, "SpawnVagrantImpColony", "SpawnVagrantGruntColony", "SpawnVagrantCyberdemonColony")
+            TNT1 A 0 A_Jump(200, "SpawnEasyColony") // 78% chance of easy colony
+            TNT1 A 0 A_Jump(256, "SpawnHardColony")
+            TNT1 A 0 A_Jump(256, "Spawn")
+            goto Spawn
+        SpawnEasyColony:
+            TNT1 A 0
+            TNT1 A 0 A_Jump(256, "SpawnVagrantImpColony", "SpawnVagrantGruntColony")
+            TNT1 A 0 A_Jump(256, "Spawn")
+            goto Spawn
+        SpawnHardColony:
+            TNT1 A 0
+            TNT1 A 0 A_Jump(256, "SpawnVagrantCyberdemonColony")
             TNT1 A 0 A_Jump(256, "Spawn")
             goto Spawn
         SpawnVagrantGruntColony:
@@ -481,7 +492,7 @@ actor VagrantGrunt : ZombieMan
         POSS N 5 A_XScream
         POSS O 5 A_NoBlocking
         POSS PQRST 5
-        POSS U -1
+        POSS U 300
         Stop
     Death.NoXP:
     Death.SentryTurret:
