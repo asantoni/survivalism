@@ -35,10 +35,11 @@ actor HuntingRifle : Weapon
   {
   Ready:
     TNT1 A 0
-    //LDHR A 0 A_JumpIfNoAmmo("NoAmmo") - Only works in Fire state
     LDHR A 1 A_WeaponReady(WRF_NOSWITCH)
     LDHR A 0 A_TakeInventory("HuntingRifleZoom",10)
-	LDHR A 0 A_WeaponReady
+    LDHR A 0 A_JumpIfNoAmmo("NoAmmo") //- Only works in Fire state
+    LDHR A 1 A_WeaponReady
+    //LDHR A 0 A_JumpIfInventory("HuntingRifleBullet", 1, "LoadClip")
     loop
   Deselect: 
     LDHR A 1 A_Lower
@@ -49,13 +50,13 @@ actor HuntingRifle : Weapon
     loop
   NoAmmo:
     TNT1 A 0
-    TNT1 A 1 //A_Log("HuntingRifle NoAmmo")
+    TNT1 A 0 //A_Log("HuntingRifle NoAmmo")
     LDHR A 1 A_JumpIfInventory("HuntingRifleClip", 1, "LoadClip")
     LDHR A 1 A_WeaponReady
     goto Ready
   NoAmmoAfterFiring:
     TNT1 A 0
-    TNT1 A 0 A_Log("HuntingRifle NoAmmoAfterFiring")
+    TNT1 A 0 //A_Log("HuntingRifle NoAmmoAfterFiring")
     TNT1 A 0 A_JumpIfInventory("HuntingRifleClip", 1, "LoadClipAfterFiring")
     LDHR A 1 A_WeaponReady
     goto Ready
@@ -99,6 +100,7 @@ actor HuntingRifle : Weapon
     */    
     
   Fire:
+    TNT1 A 0
     LDHR A 0 A_AlertMonsters
     LDHR A 0 A_FireBullets(10, 10, -1, 300, "NoHuntingRifleGibPuff", FBF_USEAMMO|FBF_NORANDOM)
 	LDHR A 0 ThrustThing(angle*256/360, -2, 0)
@@ -141,6 +143,7 @@ actor HuntingRifle : Weapon
     LDHR P -1
     stop
   AltFire:
+    TNT1 A 0
     LDHR A 0 A_GiveInventory("HuntingRifleZoom", 1)
     LDHR A 0
     LDHR A 0 A_GiveInventory("HuntingRifleScope")
@@ -169,7 +172,7 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
   +DONTBOB
   +NOALERT
   +UNDROPPABLE
-  //+UNTOSSABLE -- Zandronum 3.0
+  +UNTOSSABLE //-- Zandronum 3.0
   +NOAUTOFIRE //Semi-automatic!
 
   States
@@ -187,7 +190,7 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
 	LDHR T 0 A_Jump(256, "ResetAndRemove")
   ResetAndRemove:
 	TNT1 A 0
-  	LDHR T 0 A_ZoomFactor(1.0)
+    LDHR T 1 A_ZoomFactor(1.0)
 	LDHR T 0 A_TakeInventory("HuntingRifleZoom", 10)
 	LDHR T 0 A_TakeInventory("HuntingRifleScope", 1)
     stop //Remove the scope from inventory if the rifle is dropped
@@ -206,6 +209,7 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
     Loop 
     
   Fire:
+    TNT1 A 0
     LDHR T 0 A_AlertMonsters
     LDHR T 0
 	LDHR A 0 ThrustThing(angle*256/360, -2, 0)
@@ -214,7 +218,7 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
     LDHR T 0 //A_Quake (2, 2, 0, 1)
     LDHR T 0 A_SetPitch (pitch-0.5)
     //LDHR T 15 
-  ReloadAfterFire:
+  //ReloadAfterFire: - This label makes Fire wonky since Fire is a zero length state (Zandronum 3.0 issue?)
 	LDHR T 0 A_ZoomFactor(1.0, ZOOM_INSTANT)
 	LDHR B 0 Radius_Quake(5, 6, 0, 16, 0)
 	LDHR B 1
@@ -318,6 +322,9 @@ Actor HuntingRifleScope: Weapon //NOT TO BE SPAWNED
 ACTOR HuntingRifleZoom : Inventory
 {
 	Inventory.MaxAmount 4
+
+    +UNDROPPABLE
+    +UNTOSSABLE //-- Zandronum 3.0
 }
 
 ACTOR NoHuntingRifleGibPuff : BulletPuff
