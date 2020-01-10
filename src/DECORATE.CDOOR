@@ -15,7 +15,7 @@ actor CDoor : Actor
     //Activation THINGSPEC_Activate | THINGSPEC_ThingTargets
 
     DamageType "Crush"
-    
+
     //+AMBUSH
     +QUICKTORETALIATE
 	+DONTRIP
@@ -23,7 +23,7 @@ actor CDoor : Actor
  
 
    //r16 performance warning - Watch out for if +ISMONSTER has a performance impact
-    +ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
+    //+ISMONSTER // For master/child - Only need for vagrant colonies - Remove with Zandronum 3.0 and verify
                // the vagrant colony buildings still get destroyed when the colony cube thingy dies.
     //Need these guys too with +ISMONSTER
     -COUNTKILL
@@ -36,7 +36,8 @@ actor CDoor : Actor
 	
 	DamageFactor "Axe", 10.0 //Takes a few hits with the axe to destroy
 	DamageFactor "SentryTurret", 0.0
-	
+    DamageFactor "BoxKiller", 5000.0
+
 	States
 	{
 		Spawn:
