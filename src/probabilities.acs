@@ -70,7 +70,7 @@ str lootBoxDropChanceTable[LOOTBOX_TABLE_LENGTH][3] =
 	{ "TurnipSeeds", 		10,		0 },
 };
 
-#define ZOMBIE_TABLE_LENGTH 11
+#define ZOMBIE_TABLE_LENGTH 12
 #libdefine NUM_DAYZOMBIETYPES ZOMBIE_TABLE_LENGTH
 str g_zombieTable[ZOMBIE_TABLE_LENGTH] =
 {
@@ -86,9 +86,10 @@ str g_zombieTable[ZOMBIE_TABLE_LENGTH] =
 	"DogCluster",
 	//"ZombieMancubus",
 	"ZombieCluster",
+	"DoomZMediumMeleeImp",
 };
 
-// Probabilities of the zombies above spawning
+// Probabilities of the zombies above spawning - for players with XP level < 20
 int zombieChanceTable[ZOMBIE_TABLE_LENGTH] =
 {
 	10,
@@ -103,6 +104,25 @@ int zombieChanceTable[ZOMBIE_TABLE_LENGTH] =
 	3, //DogCluster
 	//1, //ZombieMancubus
 	10, //ZombieCluster
+	0, //DoomZMediumMeleeImp
+};
+
+// Probabilities of the zombies above spawning - for players with XP level of 20 and up.
+int zombieChanceTableModerate[ZOMBIE_TABLE_LENGTH] =
+{
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	10,
+	3, //DogCluster
+	//1, //ZombieMancubus
+	10, //ZombieCluster
+	30, //DoomZMediumMeleeImp
 };
 
 function str getStringFromLootTable(int randomNum)
@@ -172,6 +192,22 @@ function str getStringFromZombieTable(int randomNum)
 	return "";	
 }
 
+function str getStringFromZombieTableMed(int randomNum)
+{
+	int tableLength = ZOMBIE_TABLE_LENGTH;
+	int cumulativeWeight = 0; //sum of all the weighted probabilities
+	for (int i = 0; i < tableLength; i++)
+	{
+		cumulativeWeight += zombieChanceTableModerate[i];
+		if (randomNum <= cumulativeWeight)
+		{
+			return g_zombieTable[i];
+		}
+	}
+	return "";	
+}
+
+
 function str getRandomZombie(void)
 {
 	int sumOfWeights = 0;
@@ -179,6 +215,19 @@ function str getRandomZombie(void)
 	{
 		sumOfWeights += zombieChanceTable[i];
 	}
+	
 	int randomNum = random(0, sumOfWeights);
 	return getStringFromZombieTable(randomNum);
+}
+
+function str getRandomZombieModerate(void)
+{
+	int sumOfWeights = 0;
+	for (int i = 0; i < ZOMBIE_TABLE_LENGTH; i++)
+	{
+		sumOfWeights += zombieChanceTableModerate[i];
+	}
+
+	int randomNum = random(0, sumOfWeights);
+	return getStringFromZombieTableMed(randomNum);
 }

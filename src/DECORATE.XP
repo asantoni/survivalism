@@ -2,7 +2,7 @@
 actor XP : Inventory
 {
 	Inventory.MaxAmount 2100000
-	//+INVENTORY.UNTOSSABLE // Zandronum 3.0 ?
+	+INVENTORY.UNTOSSABLE // Zandronum 3.0
     +INVENTORY.UNDROPPABLE
 	-INVENTORY.INVBAR
 	-COUNTITEM
@@ -67,7 +67,7 @@ Stop }}
 
 actor XPLevel : Inventory
 {
-	//+INVENTORY.UNTOSSABLE // Zandronum 3.0 ?
+	+INVENTORY.UNTOSSABLE // Zandronum 3.0 
     +INVENTORY.UNDROPPABLE
 	-INVENTORY.INVBAR
 	-COUNTITEM

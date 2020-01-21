@@ -4,6 +4,11 @@ SERVER FLAGS TO USE:
 	sv_defaultdmflags false
 	sv_weaponstay false
 
+
+r17:
+- Connected maps / shards
+
+
 r16:
 - Auto load/save system
 - Backpack drops
@@ -321,6 +326,7 @@ DONE:
 #define PARACHUTE_TID_MIN 8550
 #define PARACHUTE_TID_MAX 8604
 #libdefine CONSTRUCTION_TID 99
+#libdefine WATER_SPRAYER_TID 553
 #libdefine MINE_ROCK_TID 554
 #define MONSTERSPAWNERPROJ_TID 8400
 #libdefine MONSTER_REPELLER_TID 8401
@@ -399,6 +405,7 @@ script 200 OPEN
 
     g_mapStartTimestamp = SystemTime();
 	
+		
 	//Main game loop
 	while (true)
 	{
@@ -576,10 +583,13 @@ script 202 (void)
             }
         }
         //Ramp it up linearly over the first day...
+		/*
         int kNumBadGuysPerPlayer = math_min(kNumBaseBadGuysPerPlayer, FixedMul(kNumBaseBadGuysPerPlayer<<16, FixedDiv(g_secondsSincePlayerJoined[playerOffset] << 16, kDayLengthSeconds << 16))>>16);
         if (DEBUG_MODE==1) {
             kNumBadGuysPerPlayer = kNumBaseBadGuysPerPlayer;
-        }
+        }*/
+		//r18 - nerfed the linear ramp to force immediate danger and action on the player.
+		int kNumBadGuysPerPlayer = kNumBaseBadGuysPerPlayer;
 
 		//Ignore spectators, pseudospectators (players who haven't respawned yet),
 		//and dead players!
@@ -592,7 +602,7 @@ script 202 (void)
 		int playerX = GetActorX(playerTid);
 		int playerY = GetActorY(playerTid);
 		int playerZ = GetActorZ(playerTid);
-		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		int monsterSpawnerModeForPlayer = g_monsterSpawnerModeForPlayer[playerOffset]; //CheckActorInventory(playerTid, "MonsterSpawnerMode");
 		int numBadGuysAliveForPlayer = ThingCount(T_NONE, tid);
 		
 		//Clamp based on the monster spawner mode. Eg. We want less ghouls because they're so hard.
@@ -659,7 +669,7 @@ script 203 (void)
 	int playerTid = PLAYER_MIN_TID + playerOffset;
 	//int tid = BADDIES_TID_MIN + playerOffset;
 	//print(s:"activator TID is: ", d:tid);
-	int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+	int monsterSpawnerModeForPlayer = g_monsterSpawnerModeForPlayer[playerOffset];
 	//Not using the charge here (yet?):
 	//int monsterSpawnerChargeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerCharge");
 
@@ -754,7 +764,7 @@ script 203 (void)
 				if (g_dayState == DAYSTATE_NIGHT) {
 					if (g_dayNumber % 4 == 0)
 					{
-						if (random(0, 100) <= 5) {
+						if (random(0, 100) <= 20) {
 							Spawn("ZombieMancubus", x, y, z+zOffset, tempTID, randomFacingAngle);			
 						} else {
 							Spawn("ZombieIncarnate", x, y, z+zOffset, tempTID, randomFacingAngle);			
@@ -777,7 +787,12 @@ script 203 (void)
                         */
 					}
 				} else {
-					str zombie = getRandomZombie();
+					str zombie;
+					if (CheckActorInventory(playerTid, "XPLevel") <= 20) {
+						zombie = getRandomZombie();
+					} else {
+						zombie = getRandomZombieModerate();
+					}
 					Spawn(zombie, x, y, z+zOffset, tempTID, randomFacingAngle);			
 				}
 			}
@@ -791,7 +806,7 @@ script 203 (void)
     Thing_ChangeTID(tempTID, tid);
 }
 
-//Spawn a dog from a cluster.
+//Spawn a cluster of monsters
 //Get this gets called by the DogSpawnerProjectile when it dies.
 script 204 (int type, int preserveTID)
 {
@@ -815,7 +830,7 @@ script 204 (int type, int preserveTID)
 		int playerTid = PLAYER_MIN_TID + playerOffset;
 		//int tid = BADDIES_TID_MIN + playerOffset;
 		//print(s:"activator TID is: ", d:tid);
-		int monsterSpawnerModeForPlayer = CheckActorInventory(playerTid, "MonsterSpawnerMode");
+		int monsterSpawnerModeForPlayer = g_monsterSpawnerModeForPlayer[playerOffset];
 		//TODO: UNFINISHED - not sure what I was going for here...
 	}
 
@@ -832,7 +847,8 @@ script 204 (int type, int preserveTID)
 			break;
 		case 2:
 			do { 
-				monster = getRandomZombie();
+				monster = getRandomZombie(); 
+				//TODO: Maybe also spawn getRandomModerateZombie() in the future...
 			} while (StringContains(monster, "Cluster"));
 			break;
 		case 3:
@@ -1099,13 +1115,14 @@ script 210 (void)
 //Set the monster spawner mode for the activator.
 script 220 (int monsterSpawnerMode)
 {
-	/* A little bit of defensive coding here. There's a weird bug
-	   where (rarely) players are ending up with the wrong monster spawner mode.
-	   It could be a subtle bug anywhere, including perhaps linedefs not getting
-	   activated in rare cases in multiplayer.
-	*/
+
+	int playerOffset = PlayerNumber();
 	int playerTID = ActivatorTID();
-	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	
+	if (playerOffset <= -1) {
+		terminate;
+	}
+
 	//Ignore spectators and pseudospectators (players who haven't respawned yet)
 	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset)) 
 	{
@@ -1113,29 +1130,19 @@ script 220 (int monsterSpawnerMode)
 	}
 	
 	if ((monsterSpawnerMode == MONSTER_SPAWNER_MODE_OFF) &&
-	    (CheckActorInventory(playerTID, "MonsterSpawnerMode") != MONSTER_SPAWNER_MODE_OFF))
+	    (g_monsterSpawnerModeForPlayer[playerOffset] != MONSTER_SPAWNER_MODE_OFF))
 	{
 		HUDMessage(s:"You feel safer here..."; HUDMSG_FADEOUT, 0, 5, 0.5, 0.4, 0, 3.5);
 		//Print(s:"You feel safer here...");
 	}
 	else if ((monsterSpawnerMode != MONSTER_SPAWNER_MODE_OFF) &&
-	    (CheckActorInventory(playerTID, "MonsterSpawnerMode") == MONSTER_SPAWNER_MODE_OFF))
+	     (g_monsterSpawnerModeForPlayer[playerOffset] == MONSTER_SPAWNER_MODE_OFF))
 	{
 		HUDMessage(s:"You no longer feel safe."; HUDMSG_FADEOUT, 0, 5, 0.5, 0.4, 0, 3.5);	
 		//Print(s:"You no longer feel safe.");
 	}
-	Delay(1);
-	
-	//We use a dummy item in the player's inventory to indicate what
-	//type of monsters the monster spawners should be generating. 
-	//(it changes by biome...). The number of dummy items in the inventory
-	//corresponds to the mode.
-	TakeInventory("MonsterSpawnerMode", 0x7FFFFFFF);
-	Delay(1); //**** Can't take inventory and give it in the same tick (possibly), from the guys in #zamapping.
-	GiveInventory("MonsterSpawnerMode", monsterSpawnerMode);
-	
-	//HudMessage(s:"Herp derp! ", d:monsterSpawnerMode; HUDMSG_PLAIN, 0, CR_ORANGE, 0.5, 0.5, 2.0, 255);
 
+	g_monsterSpawnerModeForPlayer[playerOffset] = monsterSpawnerMode;
 }
 
 //Spawn a random item at the activator. This is called when
@@ -2409,14 +2416,8 @@ script 965 (int message)
 
 //Crow/bird spawner script
 //This is based on the berry spawner script. See script 962 for comments!
-script 966 OPEN CLIENTSIDE
+script 966 ENTER CLIENTSIDE
 {
-    //Only run for the local player!
-    if (PlayerNumber() != ConsolePlayerNumber()) {
-        terminate;
-    }
-
-
 	int questSpotTID = -1;
 	
 	//Spawn some crows to initialize the world:
@@ -2765,4 +2766,21 @@ script 1003 OPEN
 script 1004 (int travelPathwayIdx)
 {
     Thing_ChangeTID(0, TRAVELPATHWAY_MIN_TID + travelPathwayIdx);
+}
+
+
+script "StartDrought" (void) NET
+{
+	ReplaceTextures("FWATER1","RROCK17"); //TODO: Make specially named versions of these textures
+	ReplaceTextures("WFALL1","RROCK17"); //TODO: Make specially named versions of these textures
+	ReplaceTextures("SLIME01","RROCK17"); //TODO: Make specially named versions of these textures
+	SetActorState(WATER_SPRAYER_TID, "Drought", false);
+}
+
+script "StopDrought" (void) NET
+{
+	ReplaceTextures("RROCK17","FWATER1"); //TODO: Make specially named versions of these textures
+	ReplaceTextures("RROCK17","WFALL1"); //TODO: Make specially named versions of these textures
+	ReplaceTextures("SLIME01","RROCK17"); //TODO: Make specially named versions of these textures
+	SetActorState(WATER_SPRAYER_TID, "Ready", false);
 }

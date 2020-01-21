@@ -11,6 +11,7 @@ actor Survivalist : DoomPlayer
   Player.StartItem "Axe" 
   //Player.StartItem "Clip", 50
   	DamageFactor "SentryTurret", 0.0
+  	DamageFactor "BoxKiller", 0.0
 
         
 	States
@@ -318,3 +319,11 @@ actor DoomZBackpack : FakeInventory
 }
 
 
+actor Stamina : Inventory
+{
+	Inventory.MaxAmount 100
+	+INVENTORY.UNTOSSABLE // Zandronum 3.0
+    +INVENTORY.UNDROPPABLE
+	-INVENTORY.INVBAR
+	-COUNTITEM
+}

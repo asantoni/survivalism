@@ -180,6 +180,7 @@ terrain SlimeBrown
 	splash			SlimeBrown
 	footclip		10
 	liquid
+	friction 0.8
 }
 
 //greeny brown and gloopy
@@ -196,6 +197,19 @@ terrain Water
 	splash			Water
 	footclip		10
 	liquid
+	friction 0.9
+}
+
+//fake deep water
+terrain WaterDeeper
+{
+	splash			Water
+	footclip		30
+	liquid
+	friction 0.7
+	
+	damagetype BoxKiller
+	damageamount 1
 }
 
 
@@ -207,9 +221,9 @@ floor BLOOD2 Blood
 floor BLOOD3 Blood
 
 floor FWATER1 Water
-floor FWATER2 Water
-floor FWATER3 Water
-floor FWATER4 Water
+floor FWATER2 WaterDeeper
+floor FWATER3 WaterDeeper
+floor FWATER4 WaterDeeper
 
 floor LAVA1 Lava
 floor LAVA2 Lava

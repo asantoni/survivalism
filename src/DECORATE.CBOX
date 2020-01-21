@@ -14,6 +14,8 @@ actor CBox : Actor
     -COUNTKILL
     //+DONTTHRUST - Not implemented in Zandronum 3.0 yet - https://zandronum.com/tracker/view.php?id=3145
 	
+	//+FLOORCLIP //Clip into shallow water - bleh, the height becomes wrong so they don't stack correctly.
+	
 	Health 500
 	Radius 24
 	Height 38
@@ -261,7 +263,7 @@ actor CSteelBox : CBox
     +USESPECIAL
 
 	
-	Health 20000
+	Health 12000
 	Radius 24
 	Height 38
 	Mass 0x7FFFFFFF
@@ -291,7 +293,7 @@ actor CGlassBox : CBox
 	Alpha 0.2
 
     
-	Health 3000
+	Health 2000
 	Radius 24
 	Height 38
 	Mass 0x7FFFFFFF
@@ -369,24 +371,24 @@ actor CSkullBoxItem : CustomInventory
 
 actor CBodiesBox : CBox
 {
-        Tag "Bodies Box"
-        Health 1000
-        DamageFactor "Axe", 30.0
-        DamageFactor "Rocket", 0.3
+	Tag "Bodies Box"
+	Health 1000
+	DamageFactor "Axe", 30.0
+	DamageFactor "Rocket", 0.3
 
-        DeathSound "rocks2"
-        -NOBLOOD
+	DeathSound "rocks2"
+	-NOBLOOD
 
-        States
-        {
-            DeathDrop:
-                TNT1 A 0
-                TNT1 A 0 A_Scream
-                //TNT1 A 0 A_SpawnItemEx("StoneShrapnelSpawner", 0.0, 0, 32.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
-                //Turn back into a CBoxItem when we get destroyed
-                //TNT1 A 0 A_SpawnItemEx("CSkullBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
-                Stop
-        }
+	States
+	{
+		DeathDrop:
+			TNT1 A 0
+			TNT1 A 0 A_Scream
+			//TNT1 A 0 A_SpawnItemEx("StoneShrapnelSpawner", 0.0, 0, 32.0, 0, 0, 0, 0, SXF_CLIENTSIDE)
+			//Turn back into a CBoxItem when we get destroyed
+			//TNT1 A 0 A_SpawnItemEx("CSkullBoxItem", 8, 0, 8, 0, 0, 0, 0, 0, 0)
+			Stop
+	}
 }
 
 

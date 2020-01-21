@@ -30,7 +30,8 @@ map DOOMZ2 "DoomZ 2"
    AllowRespawn //Allow the player to respawn in singleplayer
    ActivateOwnDeathSpecials //Needed for crafting boxes
    UsePlayerStartZ //Allow player to spawn off the ground
-    SmoothLighting
+   SmoothLighting
+   compat_mbfmonstermove //Make all monsters affected by sector friction (water)
 }
 
 map MAP01 "Test"

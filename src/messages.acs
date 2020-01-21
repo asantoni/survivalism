@@ -19,5 +19,8 @@
 #libdefine HUDMSG_WORDS_ID      11
 #libdefine HUDMSG_ART_ID        12
 #libdefine HUDMSG_BGART_ID      13
-#libdefine HUDMSG_ID_DEBUGMODE 14
-#libdefine HUDMSG_ID_MSCHARGE 15
+#libdefine HUDMSG_ID_DEBUGMODE  14
+#libdefine HUDMSG_ID_MSCHARGE   15
+#libdefine HUDMSG_ID_STAMINATICK 16
+#libdefine HUDMSG_ID_STAMINA    17
+#libdefine HUDMSG_ID_STAMINALABEL    18

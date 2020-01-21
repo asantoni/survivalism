@@ -22,7 +22,8 @@ actor CPillar : SwitchableDecoration
 	
 	DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
-	
+	DamageFactor "BoxKiller", 5000.0
+
 	States
 	{
 		Spawn:

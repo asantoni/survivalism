@@ -179,6 +179,19 @@ int playerHasLoadedInventory[MAX_PLAYERS] = {
 0,0,0,0,0,0,0,0,
 };
 
+//Monster Spawner Mode for each player
+int g_monsterSpawnerModeForPlayer[MAX_PLAYERS] = {
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+};
+
+
 //Inventory saving/loading in-memory cache (for speed - saving to DB is slow):
 str g_accountNameForPlayer[MAX_PLAYERS][127];                         //Need to keep track of the account names for all players
 int g_inventoryCountForPlayer[MAX_PLAYERS][PERSISTENT_INVENTORY_LEN]; //Need to keep track of all inventory items for all logged in players.
@@ -222,6 +235,9 @@ script 100 ENTER
     
     //Parachute auto-deploy
     ACS_ExecuteAlways(971, 0, 0);
+	
+	//Water stamina loop
+	ACS_NamedExecuteAlways("WaterStaminaLoop", 0, 0);
 
     //Fade-in from black if the player is travelling
 //    Delay(15);
@@ -248,8 +264,8 @@ script 102 (void) CLIENTSIDE
 	{
 		t = (Timer() - playerSpawnTime) / 35;
 		SetFont("SMALLFONT");
-		HudMessage(s:"You've been alive for: ", d:t/60, s:":", d:(t%60)/10, d:t%10;
-			HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, CR_RED, 0.90, 0.90, 2.0);
+// 		HudMessage(s:"You've been alive for: ", d:t/60, s:":", d:(t%60)/10, d:t%10;
+// 			HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, CR_RED, 0.90, 0.90, 2.0);
 
 		//From quests.acs:
 
@@ -308,6 +324,31 @@ script 102 (void) CLIENTSIDE
         HudMessage(s:">"; HUDMSG_PLAIN, HUDMSG_ID_XPMETERTICK, CR_GREEN, 320.2-(pixelsPerCharacter*10.0)+((progressDecigrade*pixelsPerCharacter)<<16), 2.1, 0);
 	
         HudMessage(s:"Level: ", d:CheckInventory("XPLevel")+1; HUDMSG_PLAIN, HUDMSG_XP_LEVEL, CR_GREEN, 320.2, 10.1, 0);
+
+
+		//Draw stamina if in deep water:
+		if ((CheckActorFloorTexture(0, "FWATER2") || CheckActorFloorTexture(0, "FWATER3")) &&
+			(GetActorZ(0)-GetActorFloorZ(0) <= 0)) {
+		
+			SetActorProperty(0, APROP_JumpZ, 0.0); //SUPERDICEY CLIENTSIDE HAX - should not be clientside
+		
+			int staminaCentigrade = CheckInventory("Stamina");
+			int staminaDecigrade = staminaCentigrade / 10;
+
+			HudMessage(s:"[==========]"; HUDMSG_PLAIN, HUDMSG_ID_STAMINA, CR_GREY, 160.0, 25.1, 0);
+			HudMessage(s:"<"; HUDMSG_PLAIN, HUDMSG_ID_STAMINATICK, CR_RED, 160.0-(pixelsPerCharacter*5.0)+((staminaDecigrade*pixelsPerCharacter)<<16), 25.1, 0);
+			int staminaLabelColour = CR_GREEN;
+			if (staminaDecigrade <= 3) { 
+				staminaLabelColour = CR_RED;
+			}
+			HudMessage(s:"Stamina"; HUDMSG_PLAIN, HUDMSG_ID_STAMINALABEL, staminaLabelColour, 160.0, 17.1, 0);
+		} else {
+			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_STAMINA, 0, 0, 0, 0);
+			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_STAMINATICK, 0, 0, 0, 0);
+			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_STAMINALABEL, 0, 0, 0, 0);
+			SetActorProperty(0, APROP_JumpZ, 7.0); //Default jump height in Doom
+		}
+		
 
 		int hungerLevel = CheckInventory("HungerLevel");
 		int hungerText = "Well Nourished";
@@ -1279,6 +1320,24 @@ function void warpToTravelPathway(int playerIdx)
 
 }
 
-
+script "WaterStaminaLoop" (void)
+{
+	while (true) {
+		if (CheckActorFloorTexture(0, "FWATER2") ||
+		    CheckActorFloorTexture(0, "FWATER3") ||
+			CheckActorFloorTexture(0, "FWATER4")) {
+			TakeInventory("Stamina", 3);
+			
+			if (CheckInventory("Stamina") <= 0) {
+				Thing_Damage(0, 8, MOD_WATER);
+			}
+		} else {
+			if (CheckInventory("Stamina") < 100) {
+				GiveInventory("Stamina", 10);
+			}
+		}
+		Delay(35);
+	}
+}
 
 //script 900-920 reserved for ARTIFACTS.acs

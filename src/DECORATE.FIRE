@@ -40,10 +40,12 @@ Actor DoomZFlame
     CFCF J 1 Bright
     CFCF K 2 Bright
     CFCF LM 3 Bright 
-	TNT1 A 0 A_JumpIfInventory("BurnCounter", 8, "SpreadFire")
+	TNT1 A 0 A_JumpIfInventory("BurnCounter", 4, "SpreadFire")
 	goto KeepBurning
   SpreadFire:
-    TNT1 A 0 A_Explode(6, 96, 0) //Slightly bigger radius, which will actually spread the fire
+	TNT1 A 0 
+	TNT1 A 0 A_Log("SpreadFire!")
+    TNT1 A 0 A_Explode(6, 130, 0) //Slightly bigger radius, which will actually spread the fire
     //TNT1 A 0 A_SpawnItemEx("DoomZFlameSmoke", 0, 0, 96)
 	TNT1 A 0 
 	goto ResetBurning
@@ -118,6 +120,7 @@ actor DoomZFlamePawn : DoomZFlame
 			//we prevent the flame's A_Explode damage from hurting itself,
 			//thereby breaking the recursion! (but still allows us to take axe damage!)
 			TNT1 A 0 A_ChangeFlag("NORADIUSDMG", true)
+			TNT1 A 0 A_Jump(256, "Super::Spawn")
 			goto Super::Spawn
 		Pain.FireExtinguisher:
 			TNT1 A 0

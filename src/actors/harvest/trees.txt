@@ -42,7 +42,8 @@ Actor ChoppableTree
 	  Spawn:
 	 	TNT1 A 1
 		TNT1 A 0 A_KillChildren
-		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 2, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		TNT1 A 0 A_Look
 	  SpawnStill:
 		NTRE A -1
@@ -70,6 +71,7 @@ Actor ChoppableTree
 		goto Spawn //Weird hack to make the trees not go invisible in multiplayer, Zandro bug?
 	   Pain.Fire:
 		TNT1 A 0
+		TNT1 A 0 A_DamageChildren(2, "Fire")
 		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
 		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
 		TNT1 A 0 A_Jump(256, "Spawn") //A_Jump is evaluated at run-time so this makes inheritance work
@@ -274,6 +276,7 @@ ACTOR Tree6 : SmallTreeHarvestable 10711
 	States
 	{
 	  Spawn:
+		TNT1 A 0
 		TREA A 0 A_SetSolid
 		TREA A 0 A_SetShootable
 		TNT1 A 0 A_KillChildren
@@ -397,6 +400,7 @@ Height 160
   States
   {
 	  Spawn:
+		TNT1 A 0
 		TNT1 A 0 A_KillChildren
 		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		NTRE A 0 A_SetSolid
@@ -416,6 +420,7 @@ Height 160
   States
   {
 	  Spawn:
+		TNT1 A 0
 		TNT1 A 0 A_KillChildren
 		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		NTRF A 0 A_SetSolid
@@ -435,6 +440,7 @@ Height 140
   States
   {
 	  Spawn:
+		TNT1 A 0
 		TNT1 A 0 A_KillChildren
 		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		NTRG A 0 A_SetSolid
@@ -454,6 +460,7 @@ Height 120
   States
   {
 	  Spawn:
+		TNT1 A 0
 		TNT1 A 0 A_KillChildren
 		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		NTRH A 0 A_SetSolid
@@ -474,6 +481,7 @@ Height 160
   States
   {
 	Spawn:
+		TNT1 A 0
 		TNT1 A 0 A_KillChildren
 		TNT1 A 0 A_SpawnItemEx("DoomZFlamePawn", 0, 0, 0, 0,0,0, 0, SXF_SETMASTER, 0)
 		NTRE A 0 A_SetSolid

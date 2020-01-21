@@ -126,8 +126,8 @@ Actor BoxPlacerWoodGhost {
    //-DONTBOUNCEONSHOOTABLES - Zandronum 4.0?
    Gravity 4.0
    Mass 10
-   Height 26 //CBox height - 12
-   Radius 12 //CBox radius - 12
+   Height 2 //26 //CBox height - 12
+   Radius 2 //12 //CBox radius - 12
 
     Scale 0.1
 
@@ -181,7 +181,7 @@ Actor BoxPlacerWoodMissile : BoxPlacerWoodGhost {
       Bounce:
       Death:
       Crash:
-         TNT1 A 0 A_SpawnItemEx("CBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-38)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
+         TNT1 A 0 A_SpawnItemEx("CBox", -x%48+((x%48)>24)*48-((x%48)<-24)*48, -y%48+((y%48)>24)*48-((y%48)<-24)*48, 0.0, 0.0, 0.0, 0.0, 0.0, SXF_ABSOLUTEPOSITION | SXF_ABSOLUTEANGLE)
          //-z%38+((z%38)>19)*76-((z%38)<-19)*38
          TNT1 A 0 A_TakeFromTarget("CBoxItem",1)
          Stop
