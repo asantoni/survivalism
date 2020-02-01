@@ -17,7 +17,7 @@
 #define HUNGER_GOOD_LEVEL 55 		//Less than this, you're "Well Nourished"
 #define HUNGER_PECKISH_LEVEL 65 	//"Getting hungry"
 #define HUNGER_STARVING_LEVEL 80 	//The level at which you start to "starve"
-#define MAX_HUNGER_LEVEL 100		//MaxAmount for the HungerLevel inventory item 
+#define MAX_HUNGER_LEVEL 100		//MaxAmount for the HungerLevel inventory item
 
 
 int g_secondsSincePlayerJoined[MAX_PLAYERS];
@@ -118,7 +118,7 @@ int persistentInventory[PERSISTENT_INVENTORY_LEN] =
     "AmmoBelt",
 };
 
-#define NUM_XP_LEVELS 59 
+#define NUM_XP_LEVELS 59
 int xpLevelTable[NUM_XP_LEVELS] = {
 0,500,1700,3600,6200,9500,13500,18200,29700,36500, //Levels 1-11
 44300, 53100, 62900, 73700,85500,98300,112100,126900,142700, //Levels 12-20
@@ -213,7 +213,7 @@ script 99 OPEN
 //Called when the player enters
 script 100 ENTER
 {
-	//isPlayerPseudoSpectator[PlayerNumber()] = false; //Reset this flag    
+	//isPlayerPseudoSpectator[PlayerNumber()] = false; //Reset this flag
 
 	Thing_ChangeTID(0, PLAYER_MIN_TID+PlayerNumber());
 	int playerTid = PLAYER_MIN_TID+PlayerNumber();
@@ -222,20 +222,20 @@ script 100 ENTER
               //We need this (for example) to avoid giving them the parachute when travelling between worlds.
 
 	setupPlayer(playerTid);
-    
+
     g_secondsSincePlayerJoined[PlayerNumber()] = 0;
-	
+
 	//restorePersistentInventory(PlayerNumber());
-	
+
 	//Draw HUD
 	ACS_ExecuteAlways(102, 0, 0);
-	
+
 	//Hunger loop
 	ACS_ExecuteAlways(851, 0, playerTid);
-    
+
     //Parachute auto-deploy
     ACS_ExecuteAlways(971, 0, 0);
-	
+
 	//Water stamina loop
 	ACS_NamedExecuteAlways("WaterStaminaLoop", 0, 0);
 
@@ -249,7 +249,7 @@ int clientQuestTimeLeft = -1;
 int clientCompassTID = 0; //TID to point towards
 
 //function void showLifeTimerOnHUD(void)
-script 102 (void) CLIENTSIDE  
+script 102 (void) CLIENTSIDE
 {
     //Only run for the local player!
     //If we don't do this, it'll run once per player, and never terminates, so any player rejoining from spectating causes it to run again!
@@ -274,7 +274,7 @@ script 102 (void) CLIENTSIDE
 			int qt = clientQuestTimeLeft; //g_activeQuestStats[questIdx][QUEST_STATS_TIMELEFT];
 			HudMessage(s:"Quest Time Left: ", d:qt/60, s:":", d:(qt%60)/10, d:qt%10;
 					HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, CR_GOLD, 0.90, 0.92, 2.0);
-					
+
 			//Draw the quest compass.
 			if (clientCompassTID != 0) {
 				//Print(s:"Compass pointing at:", d:clientCompassTID);
@@ -304,41 +304,41 @@ script 102 (void) CLIENTSIDE
 			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_COMPASS, 0, 0, 0, 0);
 			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ALIVE_TIMER, 0, 0, 0, 0);
 		}
-		
+
 		SetFont("SMALLFONT");
-		
+
 		//Draw the XP meter
 		int progressCentigrade = CheckInventory("XPProgress");
 		int progressDecigrade = progressCentigrade / 10;
-		
+
 		/* These logging statements show the 32-bit serverside / 16-bit clientside signed overflow bug:
 		Log(s:"Progress centigrade:", d:progressCentigrade);
 		Log(s:"Progress:", f:fProgress);
 		Log(s:"Current XP:", d:CheckInventory("XP"));
 		*/
-		
+
 		int hudWidth = 320;
 		SetHudSize(hudWidth, 240, false);
         HudMessage(s:"[==========]"; HUDMSG_PLAIN, HUDMSG_ID_XPMETER, CR_GREY, 320.2, 2.1, 0);
         int pixelsPerCharacter = 5;
         HudMessage(s:">"; HUDMSG_PLAIN, HUDMSG_ID_XPMETERTICK, CR_GREEN, 320.2-(pixelsPerCharacter*10.0)+((progressDecigrade*pixelsPerCharacter)<<16), 2.1, 0);
-	
+
         HudMessage(s:"Level: ", d:CheckInventory("XPLevel")+1; HUDMSG_PLAIN, HUDMSG_XP_LEVEL, CR_GREEN, 320.2, 10.1, 0);
 
 
 		//Draw stamina if in deep water:
 		if ((CheckActorFloorTexture(0, "FWATER2") || CheckActorFloorTexture(0, "FWATER3")) &&
 			(GetActorZ(0)-GetActorFloorZ(0) <= 0)) {
-		
+
 			SetActorProperty(0, APROP_JumpZ, 0.0); //SUPERDICEY CLIENTSIDE HAX - should not be clientside
-		
+
 			int staminaCentigrade = CheckInventory("Stamina");
 			int staminaDecigrade = staminaCentigrade / 10;
 
 			HudMessage(s:"[==========]"; HUDMSG_PLAIN, HUDMSG_ID_STAMINA, CR_GREY, 160.0, 25.1, 0);
 			HudMessage(s:"<"; HUDMSG_PLAIN, HUDMSG_ID_STAMINATICK, CR_RED, 160.0-(pixelsPerCharacter*5.0)+((staminaDecigrade*pixelsPerCharacter)<<16), 25.1, 0);
 			int staminaLabelColour = CR_GREEN;
-			if (staminaDecigrade <= 3) { 
+			if (staminaDecigrade <= 3) {
 				staminaLabelColour = CR_RED;
 			}
 			HudMessage(s:"Stamina"; HUDMSG_PLAIN, HUDMSG_ID_STAMINALABEL, staminaLabelColour, 160.0, 17.1, 0);
@@ -348,12 +348,12 @@ script 102 (void) CLIENTSIDE
 			HudMessage (s:""; HUDMSG_PLAIN, HUDMSG_ID_STAMINALABEL, 0, 0, 0, 0);
 			SetActorProperty(0, APROP_JumpZ, 7.0); //Default jump height in Doom
 		}
-		
+
 
 		int hungerLevel = CheckInventory("HungerLevel");
 		int hungerText = "Well Nourished";
 		int hungerColour = CR_GREEN;
-		
+
 		if (hungerLevel <= HUNGER_GOOD_LEVEL) {
 			hungerText = "Well Nourished";
 		} else if (hungerLevel <= HUNGER_PECKISH_LEVEL) {
@@ -366,19 +366,19 @@ script 102 (void) CLIENTSIDE
 			hungerText = "Hungry";
 			hungerColour = CR_ORANGE;
 		}
-		
+
         if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
             HudMessage(s:hungerText; HUDMSG_PLAIN, HUDMSG_ID_HUNGER, hungerColour, 320.2, 18.1, 0);
         }
 
-        
+
         if (DEBUG_MODE==1) {
             HudMessage(s:"DEBUG MODE";
-                HUDMSG_PLAIN, HUDMSG_ID_DEBUGMODE, CR_ORANGE, 312.2, 26.1, 2.0);    
+                HUDMSG_PLAIN, HUDMSG_ID_DEBUGMODE, CR_ORANGE, 312.2, 26.1, 2.0);
             HudMessage(d:CheckInventory("MonsterSpawnerCharge");
-                HUDMSG_PLAIN, HUDMSG_ID_MSCHARGE, CR_GREEN, 312.2, 34.1, 2.0);   
+                HUDMSG_PLAIN, HUDMSG_ID_MSCHARGE, CR_GREEN, 312.2, 34.1, 2.0);
         }
-		
+
 		SetHudSize(0, 0, false);
 		Delay(3);
 	}
@@ -405,7 +405,7 @@ script 105 (void) NET
     if (CheckInventory("XPLevel") >= 20) { //Level 21
         GiveInventory("AxeMeleeAction", 1);
     } else {
-        GiveInventory("FistMeleeAction", 1);    
+        GiveInventory("FistMeleeAction", 1);
     }
 }
 
@@ -417,10 +417,10 @@ script 106 (void)
     SetActivator(0,AAPTR_TARGET); //Get the puff's target, which is the player due to +PUFFGETSOWNER
     int playerAngle = GetActorAngle(0);
     int playerTID = ActivatorTID();
-    
+
     //Push the actor the player was looking at
     if (SetActivator(0, AAPTR_PLAYER_GETTARGET)) {
-    
+
         int flags = ClassifyActor(0);
         if (((flags & ACTOR_MONSTER) && (flags & ACTOR_ALIVE)) || (flags & ACTOR_PLAYER))
         {
@@ -429,9 +429,9 @@ script 106 (void)
             //      As a workaround, we're just going to check if the TID is a monster TID.
             int targetTID = ActivatorTID();
             if (targetTID >= BADDIES_TID_MIN && targetTID <= BADDIES_TID_MAX) {
-                if (fdistance(0, playerTID) < 128.0) { 
+                if (fdistance(0, playerTID) < 128.0) {
                     ThrustThing((playerAngle >> 8), 16, 0, 0);
-                }      
+                }
             }
         }
     }
@@ -443,7 +443,7 @@ script 807 DEATH
 {
 	//Thing_ChangeTID(0, 0); //Try removing the TID of the player's corpse.
 	//isPlayerPseudoSpectator[PlayerNumber()] = true;
-	
+
 	//Wipe the player's inventory from the database
 	ACS_ExecuteAlways(811, 0, 0);
 
@@ -465,7 +465,7 @@ script 808 RESPAWN
 	Thing_ChangeTID(0,PLAYER_MIN_TID+PlayerNumber());
 
 	int playerTid = PLAYER_MIN_TID+PlayerNumber();
-	
+
 	SetActorProperty(playerTid, APROP_Invulnerable, 0);
 	Delay(1);
 	TakeActorInventory(playerTid, "MonsterSpawnerMode", 99999); // Just in case. Bugfix for craziness in multiplayer?
@@ -474,10 +474,10 @@ script 808 RESPAWN
 
 	//READ: http://zdoom.org/wiki/About_Multiplayer,_Scripts,_and_TIDs
 	//All previously running scripts are inherited by the respawned player automatically!
-	
+
 	//Log(s:"done respawn, setting up player...");
 	setupPlayer(playerTid);
-	
+
 	//Start the alive time timer
 	//ACS_ExecuteAlways(102, 0, 0);
 }
@@ -512,17 +512,17 @@ function void setupPlayer(int playerTid)
         //Make the player parachute in, if they're not spawning on ground.
         UseActorInventory(playerTid, "SpawnParachuteItem");
     }
-    
+
 	//Summon Death to stalk the player if they're cursed by it.
 	if (CheckActorInventory(playerTid, "DeathCurse") > 0) {
 		ACS_ExecuteAlways(955, 0, 0);
 	}
-    
+
     if (CheckActorInventory(playerTid, "XPLevel") >= 15) {
 		SetActorProperty(playerTid, APROP_SpawnHealth, 120);
         GiveActorInventory(playerTid, "Health", 20);
 	}
-    
+
     //Log(s:"Dude got dis many: ", d:CheckActorInventory(playerTid, "HealthBooster1"));
     if (CheckActorInventory(playerTid, "HealthBooster1") > 0) {
         ACS_ExecuteAlways(900, 0, playerTid); //See ARTIFACTS.acs
@@ -543,7 +543,7 @@ function void setupPseudoSpectator (int playerTid)
 
 	/*
     int PLANCAM_TID = 500;
-	Spawn("PseudoSpectator", 
+	Spawn("PseudoSpectator",
 		  GetActorX(0), GetActorY(0), 100*65536,//GetActorCeilingZ(0) - 4,
 		  PLANCAM_TID);
 	int tidToFollow = 1000 + PlayerNumber();
@@ -561,45 +561,47 @@ script 809 (void)
 	Spawn("TeleportFog", GetActorX(0), GetActorY(0), GetActorZ(0));
 }*/
 
-function bool restorePersistentInventory (int playerIdx)
+Script "restorePersistentInventory" (int playerIdx)
 {
 	if (!PlayerIsLoggedIn(playerIdx))
 	{
 		Print(s:"If you were logged in, we would be restoring your inventory!");
-		return false;
+		terminate;
+        //return false;
 	}
 	if (playerHasLoadedInventory[playerIdx] > 0) {
 		HudMessage(s:"You can only load your inventory once each time you save it."; 0, 0, CR_RED, 0.5, 0.5, 3.0);
-		return false;
+        terminate;
+		//return false;
 	}
 	str accountName = GetPlayerAccountName(playerIdx);
 	str namespace = strparam(s:accountName, s:"_inventory");
 
     //Print(s:"Restoring your inventory...");
     int playerTid = PLAYER_MIN_TID + playerIdx;
-    
+
     //Clears all UNDROPPABLE inventory first - Prevents changemap Heretic behaviour from adding 1 to all your items,
     //and also prevents your XP from stacking.
-    ClearActorInventory(playerTid); 
-    
+    ClearActorInventory(playerTid);
+
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
         GiveActorInventory(playerTid, persistentInventory[i], GetDBEntry(namespace, persistentInventory[i]));
     }
-    
+
     giveInitialInventory(playerTid);
-	
+
 	//XP and level are handled as a special case:
     //GiveActorInventory(playerTid, "XP", GetDBEntry(namespace, "XP"));
     //GiveActorInventory(playerTid, "XPLevel", GetDBEntry(namespace, "XPLevel"));
-    
+
 	//GiveActorInventory(playerTid, "PlayerHasLoadedInventory", 1);
 	playerHasLoadedInventory[playerIdx] = 1;
-    
+
     //Trigger recalculation progressCentigrade to workaround netcode problem.
     //If we don't do this, your XP bar won't show the correct value until you get more XP.
     recalculateCentigradeWorkaround(playerIdx);
     //ACS_ExecuteAlways(817, 0, 1);
-	
+
 
     bool bShowHUDMessage = true;
 
@@ -613,7 +615,7 @@ function bool restorePersistentInventory (int playerIdx)
     {
         HudMessage(s:"Inventory restored!\nWelcome back!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
     }
-	return true;
+	//return true;
 }
 
 function bool validateSaveAction(int playerIdx)
@@ -634,7 +636,7 @@ function bool validateSaveAction(int playerIdx)
 
     //Don't allow the player to save if they already have a saved character with a higher XP level.
 	str namespace = strparam(s:accountName, s:"_inventory");
-    int xpLevel = g_inventoryCountForPlayer[playerIdx][0]; 
+    int xpLevel = g_inventoryCountForPlayer[playerIdx][0];
     if (strcmp(persistentInventory[1], "XPLevel") != 0) {
         Log(s:"Assertion Failed:");
         Log(s:"BIG FAT ERROR: XPLevels aren't being saved due to XPLevel not being index 1 in the array. ASSERTION FAILED!");
@@ -662,7 +664,7 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
 		SetResultValue(false);
 		terminate;
 	}*/
-    
+
     //XXX: GetPlayerAccountName doesn't work when called from a DISCONNECT script,
     //     so we cache it as g_accountNameForPlayer when they log in.
 	//str accountName = GetPlayerAccountName(playerIdx);
@@ -674,7 +676,7 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
         setResultValue(false);
         terminate;
     }*/
-    
+
     if (!validateSaveAction(playerIdx))
     {
         Log(s:"Save for player aborted.");
@@ -683,20 +685,20 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
 		SetResultValue(false);
 		terminate;
     }
-    
+
     Log(s:"savePersistentInventoryAndXP: Saving inventory with namespace: ", s:accountName, s:" from ", a:g_accountNameForPlayer[playerIdx]);
 	str namespace = strparam(s:accountName, s:"_inventory");
-	
+
     //Print(s:"Saving your inventory...");
 	Log(s:"Saving inventory for player ", d:playerIdx, s:": ", s:accountName);
 	BeginDBTransaction();
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
         //SetDBEntry(namespace, persistentInventory[i], CheckActorInventory(playerTid, persistentInventory[i]));
         SetDBEntry(namespace, persistentInventory[i], g_inventoryCountForPlayer[playerIdx][i]);
-  
+
 		//print(s:persistentInventory[i], s:" amount:", d:CheckActorInventory(playerTid, persistentInventory[i]));
     }
-    
+
 	//XP and level are handled as a special case:
 	//SetDBEntry(namespace, "XP", CheckActorInventory(playerTid, "XP"));
 	//SetDBEntry(namespace, "XPLevel", CheckActorInventory(playerTid, "XPLevel"));
@@ -705,14 +707,16 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
     //print(s:"Inventory saved!");
     if (noHUDMessage == 0)
     {
-        HudMessage(s:"Inventory saved!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
+        //The player will already have disconnected here (unless they spectated), so this
+        //will unintentionally show up on all players' screens. Commenting it out for now.
+        //HudMessage(s:"Inventory saved!"; 0, 0, CR_GOLD, 0.5, 0.5, 3.0);
     }
 
     //ActivatorSound("misc/spawn", 127);
 	//playerHasLoadedInventory[playerIdx] = 1; //Don't allow you to save and then load!
-    
+
     g_accountNameForPlayer[playerIdx][0] = '\0';
-    
+
 	setResultValue(true);
 	//KickFromGame(playerIdx, "Saved and quit!");
 }
@@ -722,21 +726,21 @@ script 810 /*savePersistentInventoryAndXP*/ (int playerIdx, int noHUDMessage)
 script 811 /* wipePersistentInventory*/ (void)
 {
 	int playerTid = PLAYER_MIN_TID + PlayerNumber();
-	
+
 	if (!PlayerIsLoggedIn(PlayerNumber()))
 	{
 		terminate;
 	}
-    
+
     int playerIdx = PlayerNumber();
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
         g_inventoryCountForPlayer[playerIdx][i] = 0;
     }
-    
+
     /* Don't need to wipe this in the DB - just wipe it in our in-memory cache.
 	str accountName = GetPlayerAccountName(PlayerNumber());
 	str namespace = strparam(s:accountName, s:"_inventory");
-	
+
 	BeginDBTransaction();
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
         SetDBEntry(namespace, persistentInventory[i], 0);
@@ -753,13 +757,13 @@ script 811 /* wipePersistentInventory*/ (void)
 
 /* This function "charges" the monster spawner, which is a potential indicating
    how many monsters (and maybe how nasty) the monster spawner should spawn.
-   We use this to add more of a dynamic spatial element to the gameplay. 
-   When you're camping during the day, we spawn less monsters to force the player to 
+   We use this to add more of a dynamic spatial element to the gameplay.
+   When you're camping during the day, we spawn less monsters to force the player to
    go explore if they want loot.
-   
+
    All this rolling average and vector derivative stuff
    is just to accomplish that. We use it to give each player a "charge" that
-   accumulates as they wander around. The further they go, the higher the charge 
+   accumulates as they wander around. The further they go, the higher the charge
    goes, but it decreases when they stay in one place. We spawn monsters based
    on the charge (as it hits different thresholds), so they player gets action
    when they go exploring, but are otherwise not bothered by too many badguys
@@ -769,10 +773,10 @@ script 812 /* chargeMonsterSpawner*/ ENTER
 {
 	int t;
 	//int charge = 0;
-	
+
 	//Reset your monster spawner charge when you die
 	TakeActorInventory(0, "MonsterSpawnerCharge", 0x7FFFFFFF);
-		
+
 	//Only globals can be arrays...
 	int oldPlayerX = GetActorX(0);
 	int oldPlayerY = GetActorY(0);
@@ -780,7 +784,7 @@ script 812 /* chargeMonsterSpawner*/ ENTER
 	int oldAvgPlayerX = GetActorX(0);
 	int oldAvgPlayerY = GetActorY(0);
 	int oldAvgPlayerZ = GetActorZ(0);
-	
+
 	//int oldPlayerX[3] = {0,0,0};
 	/*
 	int oldPlayerY[3] = {0,0,0};
@@ -789,46 +793,46 @@ script 812 /* chargeMonsterSpawner*/ ENTER
 	int playerSpawnTime = Timer();
 	int timestepTics = 70.0;//140.0;//35*4;
 	int damping = FixedDiv(timestepTics, 800.0 + timestepTics);
-	
+
 	while(PlayerHealth() > 0)
 	{
 		t = (Timer() - playerSpawnTime) / 35;
-				
+
 		int newPlayerX = GetActorX(0);
 		int newPlayerY = GetActorY(0);
-		int newPlayerZ = GetActorZ(0);	
-		
+		int newPlayerZ = GetActorZ(0);
+
 		//Use a low-pass filter as a ghetto rolling average.
 		int avgPlayerX = oldAvgPlayerX + FixedMul(damping, newPlayerX - oldAvgPlayerX);
 		int avgPlayerY = oldAvgPlayerY + FixedMul(damping, newPlayerY - oldAvgPlayerY);
 		int avgPlayerZ = oldAvgPlayerZ + FixedMul(damping, newPlayerZ - oldAvgPlayerZ);
-		
+
 		oldPlayerX = newPlayerX;
 		oldPlayerY = newPlayerY;
 		oldPlayerZ = newPlayerZ;
-		
+
 		//Calculate the derivative of the average player position.
 		int diffAvgPlayerX = FixedDiv(avgPlayerX - oldAvgPlayerX,timestepTics);
 		int diffAvgPlayerY = FixedDiv(avgPlayerY - oldAvgPlayerY,timestepTics);
 		int diffAvgPlayerZ = FixedDiv(avgPlayerZ - oldAvgPlayerZ,timestepTics);
-		
+
 		int diffAvgLen = fveclength(diffAvgPlayerX, diffAvgPlayerY, diffAvgPlayerZ);
-		
+
 		//Print how charged the monster spawner is to the screen for debugging:
 		//HudMessage(f:(diffAvgLen);
 		//	HUDMSG_PLAIN, 2, CR_RED, 0.5, 0.1, 1.0);
 		//Delay(35*1);
-		
+
 		oldAvgPlayerX = avgPlayerX;
 		oldAvgPlayerY = avgPlayerY;
 		oldAvgPlayerZ = avgPlayerZ;
-		
+
 		int charge = math_min(diffAvgLen>>16, 8);
-		
+
 		TakeActorInventory(0, "MonsterSpawnerCharge", 0x7FFFFFFF);
 		Delay(1);
 		GiveActorInventory(0, "MonsterSpawnerCharge", charge);
-		
+
 		Delay(timestepTics>>16);
 	}
 }
@@ -843,7 +847,7 @@ script 813 RESPAWN
 script 814 (void)
 {
 	int playerTID = ActivatorTID();
-	int playerOffset = playerTID - PLAYER_MIN_TID;	
+	int playerOffset = playerTID - PLAYER_MIN_TID;
 	//Don't allow this button to be pressed if you're spectating
 	if (PlayerIsSpectator(playerOffset) > 0 || PlayerIsPseudoSpec(playerOffset))
 	{
@@ -855,11 +859,7 @@ script 814 (void)
 	}
 
 	//Load inventory
-    if (restorePersistentInventory(PlayerNumber()))
-	{
-		//Wipe inventory - You will lose all your inventory if you time out or disconnect without saving again.
-		//ACS_ExecuteAlways(811, 0);
-	}
+    ACS_NamedExecuteAlways("restorePersistentInventory", 0, PlayerNumber());
 }
 
 //saveAndTakePersistentInventory()
@@ -867,12 +867,12 @@ script 815 (void)
 {
 	//Saves all your iventory and takes it from your player
 	//so you can't exploit spectator mode to duplicate your inventory.
-	
+
 	//Save your inventory
 	if (!ACS_ExecuteWithResult(810, 0, PlayerNumber())) {
 		terminate;
 	}
-	
+
 	/*
 	//Take it all away from the player
 	for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
@@ -890,28 +890,28 @@ script 816 (int playerIdx) DISCONNECT
 	{
 		//Log(s:"Player is spectating");
 	}*/
-	
+
 	playerHasLoadedInventory[playerIdx] = 0;
-    
+
 	//Remove death stalker and ankh
 	int deathTID = DEATH_TID_MIN + playerIdx;
 	Thing_Remove(deathTID);
 	int ankhTID = ANKH_TID_MIN + playerIdx;
 	Thing_Remove(ANKH_TID_MIN);
 
-    //XXX: 
-    //XXX: 
+    //XXX:
+    //XXX:
     //XXX: GetPlayerAccountName nor any of the account-related functions
     //     work from a DISCONNECT script!
-    //XXX: 
-    //XXX: 
-    
+    //XXX:
+    //XXX:
+
     Log(s:"Player disconnected: ", a:g_accountNameForPlayer[playerIdx], s:", index was: ", d:playerIdx);
     for (int i = 0; i < PERSISTENT_INVENTORY_LEN; i++) {
         Log(s:persistentInventory[i], s:" ", d:g_inventoryCountForPlayer[playerIdx][i]);
     }
     //Save your inventory
-    ACS_ExecuteAlways(810, 0, playerIdx);    
+    ACS_ExecuteAlways(810, 0, playerIdx);
 }
 
 script "saveAllPlayersInventoriesAtMapUnload" UNLOADING
@@ -920,7 +920,7 @@ script "saveAllPlayersInventoriesAtMapUnload" UNLOADING
     for (int playerIdx = 0; playerIdx < MAX_PLAYERS; playerIdx++) {
         //Save your inventory
         //if (PlayerInGame(playerIdx)) {
-            ACS_ExecuteAlways(810, 0, playerIdx);    
+            ACS_ExecuteAlways(810, 0, playerIdx);
         //}
     }
 }
@@ -928,7 +928,7 @@ script "saveAllPlayersInventoriesAtMapUnload" UNLOADING
 function void recalculateCentigradeWorkaround (int playerIdx)
 {
     int playerTid = PLAYER_MIN_TID + playerIdx;
-    
+
 	int currentPlayerXPLevel = CheckActorInventory(playerTid, "XPLevel");
 	int totalXPUntilNextLevel = xpLevelTable[currentPlayerXPLevel+1] - xpLevelTable[currentPlayerXPLevel];
 	int xpTowardsNextLevel = CheckActorInventory(playerTid, "XP") - xpLevelTable[currentPlayerXPLevel];
@@ -946,7 +946,7 @@ script 817 (int xp, int source)
 	int hudwidth = 0;
 	int hudheight = 0;
 
-	//If the global XP lock is on, don't give any XP. This is used to prevent players from getting free XP 
+	//If the global XP lock is on, don't give any XP. This is used to prevent players from getting free XP
 	//when all the monsters die after night is over (at daybreak).
 	if (g_blockXP) {
 		terminate;
@@ -964,20 +964,20 @@ script 817 (int xp, int source)
             HudMessage(s:"+", d:xp, s:" XP"; HUDMSG_PLAIN, HUDMSG_XP_GAIN, CR_GOLD, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16) + 0.0, 0, 0.8);
             Delay(1);
         }
-        
+
         HudMessage(s:"+", d:xp, s:" XP"; HUDMSG_PLAIN, HUDMSG_XP_GAIN, CR_GOLD, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16), 0.5, 0.8);
         //TODO: Should zoom out, and do it even faster here?
 
         SetHudSize(0, 0, true);
-        
+
         GiveInventory("XP", xp);
     }
-	
-		
+
+
 	//There's a bit of a funny bug in Zandronum's netcode. Internally, the inventory count is stored
 	//as a 32-bit integer, but when it's sent over the wire, it's turned into a 16-bit integer,
 	//so the client gets signed overflow, but the server still has the correct inventory count.
-	//To avoid using the XP count on the client side (which needs the range of a 32-bit integer), 
+	//To avoid using the XP count on the client side (which needs the range of a 32-bit integer),
 	//we store the level-up progress bar value as its own inventory item (0-100).
     int playerIdx = ActivatorTID()-PLAYER_MIN_TID;
     recalculateCentigradeWorkaround(playerIdx);
@@ -993,7 +993,7 @@ script 817 (int xp, int source)
 	GiveInventory("XPProgress", progressCentigrade-oldProgressCentigrade);
     */
 
-	
+
 	//Check if we need to level up the player
 	if (currentPlayerXPLevel >= NUM_XP_LEVELS) { //Don't level up past the max level!
 		terminate;
@@ -1004,26 +1004,26 @@ script 817 (int xp, int source)
 		TakeInventory("XPProgress", 100);
 		//currentPlayerXPLevel++;
 		Delay(18);
-		
+
 		hudwidth = 320;
 		hudheight = 240;
 		SetHudSize(hudwidth, hudheight, 1);
 		HudMessage(s:"Level ", d:currentPlayerXPLevel+2; HUDMSG_TYPEON | HUDMSG_LOG, HUDMSG_LEVEL_UP, CR_GREEN, ((hudwidth/2)<<16) + 0.4, ((hudheight/3)<<16), 5.0, 0.1, 2.0);
 		//ActivatorSound("HEY", 127);
 		musicPlayLevelUp(currentPlayerXPLevel+2);
-		
+
 		//Heal the player
 		GiveInventory("Health", 100);
-		
+
 		//Bling bling
 		ACS_ExecuteAlways(818, 0, 0);
-		
+
 		if ((GameType() != GAME_SINGLE_PLAYER) && (PlayerNumber() != 0)) {
 			PrintBold(n:PlayerNumber()+1, s:" has reached level ", d:currentPlayerXPLevel+2, s:"!");
 		}
-		
-		SetHudSize(0, 0, true);	
-		
+
+		SetHudSize(0, 0, true);
+
 		//Give the player a scroll telling them what they unlocked.
 		str scrollItem = StrParam(s:"ScrollLevel", d:currentPlayerXPLevel+2);
 		GiveInventory(scrollItem, 1);
@@ -1081,7 +1081,7 @@ script 819 (void)
 		SetResultValue(false);
 		terminate;
 	}
-    
+
     if (!validateSaveAction(PlayerNumber()))
     {
     	Log(s:"There was a problem saving your inventory.");
@@ -1089,10 +1089,10 @@ script 819 (void)
 		SetResultValue(false);
 		terminate;
     }
-    
+
 	str accountName = GetPlayerAccountName(PlayerNumber());
 	str namespace = strparam(s:accountName, s:"_inventory");
-	
+
 	print(s:"Saving your XP...");
 	BeginDBTransaction();
 
@@ -1109,7 +1109,7 @@ script 819 (void)
 //Script 820 - 849 are reserved for MISSIONS.ACS
 
 //Script 850 - 870 are reserved for PLAYER.ACS:
- 
+
 //Screen flash when you eat food
 script 850 (void)
 {
@@ -1121,22 +1121,22 @@ script 850 (void)
 //Hunger loop
 script 851 (int playerTid)
 {
-	int hungerIntervalTics = (35 * HUNGER_PERIOD_SECONDS) / MAX_HUNGER_LEVEL; 
-    
+	int hungerIntervalTics = (35 * HUNGER_PERIOD_SECONDS) / MAX_HUNGER_LEVEL;
+
 	while (true)
 	{
 		Delay(hungerIntervalTics);
-    
+
 		int hungerLevel = CheckInventory("HungerLevel");
 
-		//Only apply hunger to XP levels > 14		
+		//Only apply hunger to XP levels > 14
 		if (CheckInventory("XPLevel") > HUNGER_START_LEVEL-1) {
 			GiveActorInventory(playerTid, "HungerLevel", 1);
 			if (hungerLevel >= MAX_HUNGER_LEVEL) {
 				GiveActorInventory(playerTid, "DeathCurse", 1);
 				Thing_Damage2(playerTid, 1000, "Hunger");
 				TakeActorInventory(playerTid, "HungerLevel", MAX_HUNGER_LEVEL);
-			} 
+			}
 			else if (hungerLevel >= HUNGER_STARVING_LEVEL)
 			{
 				Print(s:"You are starving and will die in ", d:((hungerIntervalTics/35)*(MAX_HUNGER_LEVEL-hungerLevel)), s:" seconds\nif you don't eat.");
@@ -1160,7 +1160,7 @@ script 852 OPEN
                 //Player is logged in, so check if they've loaded inventory yet...
                 if (playerHasLoadedInventory[playerIdx] == 0) {
                     //ACS_ExecuteAlways(814, 0, playerIdx);
-                    restorePersistentInventory(playerIdx);
+                    ACS_NamedExecuteAlways("restorePersistentInventory", 0, playerIdx);
                     Delay(1);
                     warpToTravelPathway(playerIdx);
                     str playerName = getPlayerAccountName(playerIdx);
@@ -1168,7 +1168,7 @@ script 852 OPEN
                     Log(s:"Cached player account as ", a:g_accountNameForPlayer[playerIdx], s:" for player ", s:playerName, s:", index was: ", d:playerIdx);
                 }
             }
-            
+
             int playerTid = PLAYER_MIN_TID+playerIdx;
 
             //Update persistent inventory list for player
@@ -1186,18 +1186,18 @@ script 852 OPEN
 script 853 (void)
 {
     //Put all the player's inventory in a backpack.
-    
+
     int playerTid = ActivatorTID();
-    
+
     //Spawn a special backpack and give it a TID
     int backpackTid = UniqueTID(SAFE_UNIQUE_TID_MIN, SAFE_UNIQUE_TID_MAX-SAFE_UNIQUE_TID_MIN);
     SpawnForced("DoomZBackpack", GetActorX(playerTid) + 24.0, GetActorY(playerTid), GetActorZ(playerTid), backpackTid, 0);
-    
+
     //SetActorVelocity(backpackTid, GetActorVelX(playerTid), GetActorVelY(playerTid), GetActorVelZ(playerTid), true, false);
-    
+
     //Save the backpack's TID inside a user variable inside the backpack, for convenience.
     SetUserVariable(backpackTid, "user_tid", backpackTid);
-        
+
     //Iterate over all the persistent inventory and give it to the backpack.
     //Save the quantity of each inventory item as a user variable.
     for (int i = DROPPABLE_INVENTORY_START; i < PERSISTENT_INVENTORY_LEN; i++)
@@ -1205,7 +1205,7 @@ script 853 (void)
         SetUserArray(backpackTid, "user_inventory", i, CheckActorInventory(playerTid, persistentInventory[i]));
         //Log(s:"Saving ", d:CheckActorInventory(playerTid, persistentInventory[i]), s:" ", s:persistentInventory[i], s:" to backpack.");
     }
-    
+
     ClearActorInventory(ActivatorTID());
 }
 
@@ -1214,16 +1214,16 @@ script 853 (void)
 script 854 (int backpackTid, int blarg)
 {
     int playerTid = ActivatorTID();
- 
+
     //Log(s:"backpackTid: ", d:backpackTid, s:", ", s:"blarg: ", d:blarg);
     //Log(s:"Number of actors with backpack tid: ", d:ThingCount(T_NONE, backpackTid));
-        
+
     for (int i = DROPPABLE_INVENTORY_START; i < PERSISTENT_INVENTORY_LEN; i++)
     {
         //Log(s:"Giving player ", s:persistentInventory[i], s:" from backpack.");
         GiveActorInventory(playerTid, persistentInventory[i], GetUserArray(backpackTid, "user_inventory", i));
     }
-    
+
     //Log(s:"Giving player with TID ", d:playerTid, s:" amount ", d:GetUserArray(backpackTid, "user_inventory", 0), s:" from backpack with TID: ", d:backpackTid);
 
     SetResultValue(true);
@@ -1330,7 +1330,7 @@ script "WaterStaminaLoop" (void)
 		    CheckActorFloorTexture(0, "FWATER3") ||
 			CheckActorFloorTexture(0, "FWATER4")) {
 			TakeInventory("Stamina", 3);
-			
+
 			if (CheckInventory("Stamina") <= 0) {
 				Thing_Damage(0, 8, MOD_WATER);
 			}
