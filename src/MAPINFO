@@ -93,4 +93,5 @@ map DOOMZ5 "Woodland Hollow"
    AllowRespawn //Allow the player to respawn in singleplayer
    ActivateOwnDeathSpecials //Needed for crafting boxes
    UsePlayerStartZ //Allow player to spawn off the ground
+   compat_mbfmonstermove //Make all monsters affected by sector friction (water)
 }
