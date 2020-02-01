@@ -706,26 +706,11 @@ ACTOR Ankh : CustomInventory
     TNT1 A 0
 	TNT1 A 0 ACS_ExecuteAlways(956, 0, 0) //Kill the Death actor chasing the player
 	stop
-  //This pickup logic has to use A_JumpIf because it the simpler logic here doesn't work in multiplayer:
-  // Simple logic: - Works perfectly in singleplayer (Zandronum 2.0), but broken in multiplayer
    Pickup:
 	AKOL A 0
 	AKOL A 0 ACS_ExecuteWithResult(957, 0, 0) //Only allow pickup if the player has DeathCurse
-    AKOL A 0 A_RailWait //According to the docs, we have to execute a function
+    AKOL A 0 A_RailWait //According to the docs, we have to execute a dummy function to make conditional Pickups work
 	stop
-
-  /*
-  //More complicated logic, but works correctly in multiplayer:
-  Pickup:
-	AKOL A 0
-	AKOL A 0 A_JumpIf(ACS_ExecuteWithResult(957, 0, 0), "PickupAndStore") //Only allow pickup if the player has DeathCurse
-	stop
-  PickupAndStore:
-	AKOL A 0
-	AKOL A 0 A_RailWait //According to the docs, we have to execute a function
-	stop
-    */
-  //End of more complicated but functional logic for multiplayer
   }
 }
 
