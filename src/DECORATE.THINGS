@@ -15,7 +15,7 @@ actor TorchItem : CustomInventory
 	Inventory.MaxAmount 50
 	//+COUNTITEM
 	+INVENTORY.PICKUPFLASH
-	
+
 	States
 	{
 		Spawn:
@@ -24,9 +24,9 @@ actor TorchItem : CustomInventory
 			Stop
 		Use:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
-			TNT1 A 0 A_SpawnItemEx("Torch", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-								64.0, 0.0, 32.0, 
-								0.0, 0.0, 0.0, //velocity 
+			TNT1 A 0 A_SpawnItemEx("Torch", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y),
+								64.0, 0.0, 32.0,
+								0.0, 0.0, 0.0, //velocity
 								0.0, //angle
 								0) //flags
 		Stop
@@ -61,7 +61,7 @@ actor Torch : ShortRedTorch
 		//	TNT1 A 0
 		//	TNT1 A 0 A_Jump(256, "Spawn")
 		Spawn:
-			TNT1 A 0 
+			TNT1 A 0
 			TNT1 A 0 ACS_ExecuteAlways(503, 0) //Use construction TID so monsters attack it
 			TNT1 A 0 A_SpawnItemEx("MonsterSpawnerRepeller", 0, 0, 0, 0, 0, 0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION, 0)
 		Illuminate:
@@ -72,9 +72,9 @@ actor Torch : ShortRedTorch
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
 			TNT1 A 1 A_KillChildren
 			TNT1 A 1 A_RemoveChildren(true)
-			TNT1 A 0 A_SpawnItemEx("TorchItem", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-							   0.0, 0.0, 32.0, 
-							   0.0, 0.0, 6.0, //velocity 
+			TNT1 A 0 A_SpawnItemEx("TorchItem", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y),
+							   0.0, 0.0, 32.0,
+							   0.0, 0.0, 6.0, //velocity
 							   0.0, //angle
 							   0) //flags
 			Stop
@@ -112,7 +112,7 @@ actor WaterfallSpray
 	RenderStyle "Add"
 	Scale 4.0
 	+CLIENTSIDEONLY
-	+FORCEXYBILLBOARD 
+	+FORCEXYBILLBOARD
 	+DONTSPLASH
 
 	States
@@ -128,7 +128,7 @@ actor WaterfallSpray
             WTFL B 4 A_FadeOut(0.1)
             WTFL B 4 A_FadeOut(0.1)
             WTFL CCDDDEEEFFFFF 4 A_FadeOut(0.1)
-			loop	
+			loop
 	}
 }
 
@@ -232,10 +232,10 @@ actor WaterfallSpray2
 	Scale 1.0
 	+NOBLOCKMAP
 	+CLIENTSIDEONLY
-	//+FORCEXYBILLBOARD 
-	//+FORCEYBILLBOARD 
+	//+FORCEXYBILLBOARD
+	//+FORCEYBILLBOARD
 	//+DONTSPLASH
-	
+
 	States
 	{
 		Spawn:
@@ -321,14 +321,14 @@ actor BigFog
     +NOGRAVITY
     -SOLID
     +MISSILE //So bounce works
-    
+
     BounceType "Doom"
     +BOUNCEONWALLS
-    
+
     Scale 6.0
     RenderStyle "Translucent"
     Alpha 0.3
-    
+
     States
     {
         Spawn:
@@ -354,7 +354,7 @@ actor BigFog
             FOGL EEEEEEEE 70
             FOGL EEEEEEEEEE 10 A_FadeOut(0.1)
             stop
-            
+
     }
 }
 
@@ -376,7 +376,7 @@ actor SpikeItem : CustomInventory
 	Inventory.MaxAmount 50
 	//+COUNTITEM
 	+INVENTORY.PICKUPFLASH
-	
+
 	States
 	{
 		Spawn:
@@ -385,9 +385,9 @@ actor SpikeItem : CustomInventory
 			Stop
 		Use:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
-			TNT1 A 0 A_SpawnItemEx("DoomZSpike", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-								64.0, 0.0, 32.0, 
-								0.0, 0.0, 0.0, //velocity 
+			TNT1 A 0 A_SpawnItemEx("DoomZSpike", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y),
+								64.0, 0.0, 32.0,
+								0.0, 0.0, 0.0, //velocity
 								0.0, //angle
 								0) //flags
 		Stop
@@ -413,17 +413,17 @@ actor DoomZSpike : Stalagtite
 	+LOOKALLAROUND
 	//+DORMANT
 	Damage 5
-  
+
 	DamageType "NoXP"
 	DamageFactor "Axe", 10.0
-  
+
 	States
 	{
 		//Pain:
 		//	TNT1 A 0
 		//	TNT1 A 0 A_Jump(256, "Spawn")
 		Spawn:
-			TNT1 A 0 
+			TNT1 A 0
 			TNT1 A 0 ACS_ExecuteAlways(503, 0) //Use construction TID
 		SpawnLook:
 			//SMT2 A 10 A_Look
@@ -436,9 +436,9 @@ actor DoomZSpike : Stalagtite
 			goto See
 		Death.Axe:
 			TNT1 A 0
-			TNT1 A 0 A_SpawnItemEx("SpikeItem", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y), 
-							   0.0, 0.0, 32.0, 
-							   0.0, 0.0, 6.0, //velocity 
+			TNT1 A 0 A_SpawnItemEx("SpikeItem", //ACS_ExecuteWithResult(930, x), ACS_ExecuteWithResult(931, y),
+							   0.0, 0.0, 32.0,
+							   0.0, 0.0, 6.0, //velocity
 							   0.0, //angle
 							   0) //flags
 			Stop
@@ -454,14 +454,14 @@ actor WaterAmmo : Ammo
 	Inventory.PickupMessage "You got some water."
 	Inventory.Amount 10
 	Inventory.MaxAmount 10
-	
+
 	States
 	{
 		Spawn:
 			TNT1 A 0
 			Stop
 	}
-	
+
 }
 
 actor Bucket : Weapon
@@ -477,7 +477,7 @@ actor Bucket : Weapon
 	Weapon.SlotPriority 0.1
 	DamageType "Water"
 	Tag "Water Bucket"
-	
+
 	weapon.ammotype "WaterAmmo"
 	weapon.ammogive 0
 	weapon.ammouse 1
@@ -524,14 +524,14 @@ actor Bucket : Weapon
 			BCKT D 0 A_JumpIfNoAmmo("FinishSprayWaterEmpty")
 			BCKT D 3 Offset(0, 16)
 			BCKT D 2 Offset(0, 24)
-			BCKT D 3 
+			BCKT D 3
 			BCKT D 2 A_ReFire
 			goto Ready
 	    //Last half of the above state, but for when your bucket just got emptied
-		FinishSprayWaterEmpty: 
+		FinishSprayWaterEmpty:
 			BCKT C 3 Offset(0, 16)
 			BCKT C 2 Offset(0, 24)
-			BCKT C 3 
+			BCKT C 3
 			BCKT C 2 A_ReFire
 			goto Ready
 		CheckForWaterAhead:
@@ -547,16 +547,16 @@ actor Bucket : Weapon
 			BCKT C 1 Offset(0, 120)
 			BCKT C 1 Offset(0, 128)
 			BCKT C 8 Offset(0, 128) A_PlaySound("world/watersplash2")
-			BCKT D 1 Offset(0, 122) 
-			BCKT D 1 Offset(0, 115) 
-			BCKT D 1 Offset(0, 102) 
-			BCKT D 1 Offset(0, 96) 
-			BCKT D 1 Offset(0, 82) 
+			BCKT D 1 Offset(0, 122)
+			BCKT D 1 Offset(0, 115)
+			BCKT D 1 Offset(0, 102)
+			BCKT D 1 Offset(0, 96)
+			BCKT D 1 Offset(0, 82)
 			BCKT D 1 Offset(0, 74)
 			BCKT D 1 Offset(0, 64)
 			BCKT D 1 Offset(0, 56)
-			BCKT D 1 Offset(0, 48) 
-			BCKT D 1 Offset(0, 42) 
+			BCKT D 1 Offset(0, 48)
+			BCKT D 1 Offset(0, 42)
 			BCKT D 1 Offset(0, 37)
 			BCKT D 1 Offset(0, 32)
 			goto Ready
@@ -581,14 +581,14 @@ actor BucketSplash
   Projectile
   -NOGRAVITY
   +RANDOMIZE
-  +FORCEXYBILLBOARD 
+  +FORCEXYBILLBOARD
   Scale 2.0
   //SeeSound "weapons/rocklf"
   //DeathSound "weapons/rocklx"
   //Obituary "drowned"
-  
+
   //ProjectileKickBack 100 //Zandronum 3.0
-  
+
   States
   {
   Spawn:
@@ -617,9 +617,9 @@ actor BucketSplashSecondary : BucketSplash
   //SeeSound "weapons/rocklf"
   //DeathSound "weapons/rocklx"
   //Obituary "drowned"
-  
+
   //ProjectileKickBack 0
-  
+
   States
   {
   Spawn:
@@ -638,7 +638,7 @@ actor BucketTracer
 {
 	Projectile
 	-NOGRAVITY
-	-NOBLOCKMAP //Need to be in the blockmap to detect the floor texture 
+	-NOBLOCKMAP //Need to be in the blockmap to detect the floor texture
 	-DONTSPLASH
 	speed 10
 
@@ -680,14 +680,14 @@ actor DoomZHealthBonus : HealthBonus
 
 ACTOR Ankh : CustomInventory
 {
-  Inventory.Amount 1 
+  Inventory.Amount 1
   Inventory.Icon "ARTIALI1"
   Inventory.InterHubAmount 100
   Inventory.MaxAmount 1
   Inventory.PickupMessage "You found the Ankh Of Life - Use it to defeat death!"
   Inventory.PickupSound "misc/p_pkup"
   Tag "Ankh of Life"
-  
+
   -COUNTITEM
   +FLOATBOB
   //+INVENTORY.INVBAR
@@ -700,27 +700,31 @@ ACTOR Ankh : CustomInventory
     AKOL A 0 A_PlaySound("antihunt", CHAN_ITEM, 1.0, true, ATTN_NORM)
   SpawnWait:
     AKOL A 0
-	AKOL A -1 
+	AKOL A -1
 	Wait
   Use:
+    TNT1 A 0
 	TNT1 A 0 ACS_ExecuteAlways(956, 0, 0) //Kill the Death actor chasing the player
 	stop
   //This pickup logic has to use A_JumpIf because it the simpler logic here doesn't work in multiplayer:
-  /* Simple logic: - Works perfectly in singleplayer (Zandronum 2.0), but broken in multiplayer
+  // Simple logic: - Works perfectly in singleplayer (Zandronum 2.0), but broken in multiplayer
    Pickup:
 	AKOL A 0
 	AKOL A 0 ACS_ExecuteWithResult(957, 0, 0) //Only allow pickup if the player has DeathCurse
+    AKOL A 0 A_RailWait //According to the docs, we have to execute a function
 	stop
-  */
+
+  /*
   //More complicated logic, but works correctly in multiplayer:
   Pickup:
 	AKOL A 0
 	AKOL A 0 A_JumpIf(ACS_ExecuteWithResult(957, 0, 0), "PickupAndStore") //Only allow pickup if the player has DeathCurse
 	stop
   PickupAndStore:
-	AKOL A 0 
-	AKOL A 0 A_RailWait
+	AKOL A 0
+	AKOL A 0 A_RailWait //According to the docs, we have to execute a function
 	stop
+    */
   //End of more complicated but functional logic for multiplayer
   }
 }
@@ -741,7 +745,7 @@ actor JackItem : CustomInventory
 	+NOBLOOD
     +WINDTHRUST
     Health 100
-    Inventory.Amount 1 
+    Inventory.Amount 1
     Inventory.Icon "JACKI"
     Inventory.InterHubAmount 100
     Inventory.MaxAmount 10
@@ -773,23 +777,23 @@ actor JackBase
     +SOLID
     +SHOOTABLE
     +NOBLOOD
-    +ISMONSTER //for SXF_SETMASTER to work 
+    +ISMONSTER //for SXF_SETMASTER to work
     +CANPASS
     //+FRIENDLY // -> Breaks projectile spawning in children (JackTop) for some reason
     -COUNTKILL
     +NOTARGET
-    
+
     +USESPECIAL
 
     Radius 24
 	Height 28
-    
+
     Mass 0x7FFFFFFF
     Health 400 //0x7FFFFFFF
     PainChance 255
-    
+
     Args 10
-    
+
     DamageFactor "SentryTurret", 0.0
     DropItem "JackItem"
 
@@ -797,13 +801,13 @@ actor JackBase
     {
         Spawn:
             TNT1 A 0
-            TNT1 A 0 A_ChangeFlag("FRIENDLY", 0) //Because this is spawned by the player, it defaults to +FRIENDLY anyways. 
+            TNT1 A 0 A_ChangeFlag("FRIENDLY", 0) //Because this is spawned by the player, it defaults to +FRIENDLY anyways.
                                                  //We have to turn this off so that the JackChain can be killed by JackChainKiller otherwise
                                                  //the two friendly actors won't be able to attack each other.
                                                  //(What's crazy is the behaviour is different if you use "summon jackbase" (which makes this an enemy)
                                                  // compared to when you "summon jackitem" and then use it (which makes it a friend!)).
             //Make monsters attack it
-            TNT1 A 0 ACS_ExecuteAlways(503, 0)	
+            TNT1 A 0 ACS_ExecuteAlways(503, 0)
             //Execute this script when a player activates it
 			TNT1 A 0 Thing_SetSpecial(0, 226, 969, 0, 0)
         WaitUntilLanded:
@@ -817,7 +821,7 @@ actor JackBase
             loop
         //This state is used to fix the position of the top part in case the bottom falls.
         ResetJackTop:
-            TNT1 A 0 
+            TNT1 A 0
             TNT1 A 0 A_KillChildren
             goto WaitUntilLanded
         Pain:
@@ -853,25 +857,25 @@ actor JackTop
     +SOLID
     +SHOOTABLE
     +NOBLOOD
-    +ISMONSTER //for SXF_SETMASTER to work 
+    +ISMONSTER //for SXF_SETMASTER to work
     -COUNTKILL
     //+CANPASS
     +NOGRAVITY
     //+FRIENDLY
     +NOTARGET
-    
+
     Radius 24
 	Height 10
-    
+
     Mass 0x7FFFFFFF
     Health 0x7FFFFFFF
     PainChance 256
 
     Args 8
-    
+
     DamageFactor "SentryTurret", 0.0
-    
-    
+
+
     States
     {
         Spawn:
@@ -893,7 +897,7 @@ actor JackTop
             JACK B 0 A_SpawnItemEx("JackChain", 0, 0, -16.0, 0.0, 0.0, 0.0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION /*| SXF_CLIENTSIDE*/)
             JACK B 0 A_SetArg(0, args[0]-1)
             loop
- 
+
         Lower:
             JACK B 0
             JACK B 0 A_JumpIf(z <= args[1], "StopMoving")
@@ -901,7 +905,7 @@ actor JackTop
             JACK A 0 A_PlaySound("jack/move", CHAN_BODY, 1.0, true)
             JACK B 0 A_SpawnItemEx("JackChainKiller", 0, 0, -8.0, 0.0, 0.0, 0.0, 0, SXF_NOCHECKPOSITION /*| SXF_CLIENTSIDE*/)
             JACK B 4 ACS_ExecuteAlways(968, 0, 1, 0)
-            JACK B 0 
+            JACK B 0
             JACK B 0 A_SetArg(0, args[0]-1)
             loop
         StopMoving:
@@ -917,7 +921,7 @@ actor JackTop
             TNT1 A 0
             JACK B 1 A_SetArg(0, 8)
             goto Jack
-        Pain.Down: 
+        Pain.Down:
             TNT1 A 0
             JACK B 1 A_SetArg(0, 8)
             goto Lower
@@ -944,17 +948,17 @@ actor JackChain
     //+FRIENDLY
     +NOTARGET
     //Zandronum 3.0: Use +NEVERTARGET so that friendly actors don't attack it!
-    
+
     +SHOOTABLE //Needed to take damage to die?
-    
+
     Mass 0x7FFFFFFF
     Health 0x7FFFFFFF
     PainChance 255
-    
+
     DamageFactor "SentryTurret", 0.0
-    
+
     Translation "64:79=96:111", "236:239=103:111", "176:191=152:159", "43:47=156:159"
-    
+
     States
     {
         Spawn:
@@ -971,13 +975,13 @@ actor JackChain
         Death.Falldown:
         Death:
             TNT1 A 0
-            TNT1 A 0 
+            TNT1 A 0
             TNT1 A 0 A_Stop //Zero the velocity otherwise it can fall to the side somehow
             ROPE A 70 A_Gravity
         FadeOut:
             ROPE A 4 A_FadeOut(0.1)
             loop
-        
+
     }
 }
 
@@ -993,30 +997,30 @@ actor JackChainKiller
     //+NOBLOCKMAP
     //+CANPASS
     */
-    
+
     +MISSILE
     +RIPPER
     -THRUACTORS
     //+CANPASS
-    
+
     Speed 20
     DamageType "JackChainKiller"
-    Damage 1 
+    Damage 1
     Radius 4
     Height 4
-    
+
     States
     {
         Spawn:
             TNT1 A 0
             TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
-            TNT1 A 4 
+            TNT1 A 4
             stop
-        Death:  
+        Death:
             TNT1 A 2
             stop
     }
-    
+
 }
 
 
@@ -1027,7 +1031,7 @@ actor HoistItem : CustomInventory
 	+NOBLOOD
     +WINDTHRUST
     Health 100
-    Inventory.Amount 1 
+    Inventory.Amount 1
     Inventory.Icon "HOISI"
     Inventory.InterHubAmount 100
     Inventory.MaxAmount 10
@@ -1059,33 +1063,33 @@ actor HoistBase
     +SOLID
     +SHOOTABLE
     +NOBLOOD
-    +ISMONSTER //for SXF_SETMASTER to work 
+    +ISMONSTER //for SXF_SETMASTER to work
     +CANPASS
     //+FRIENDLY // -> Breaks projectile spawning in children (JackTop) for some reason
     -COUNTKILL
     +NOTARGET
-    
+
     +USESPECIAL
 
     Radius 24
 	Height 28.5
-    
+
     Mass 0x7FFFFFFF
     Health 400 //0x7FFFFFFF
     PainChance 255
     DropItem "HoistItem"
-    
+
     Args 10
-    
+
     DamageFactor "SentryTurret", 0.0
-    
+
     States
     {
         Spawn:
             TNT1 A 0
             TNT1 A 0 A_ChangeFlag("FRIENDLY", 0)
             //Make monsters attack it
-            TNT1 A 0 ACS_ExecuteAlways(503, 0)	
+            TNT1 A 0 ACS_ExecuteAlways(503, 0)
             //Execute this script when a player activates it
 			TNT1 A 0 Thing_SetSpecial(0, 226, 973, 0, 0)
             TNT1 A 0 A_SpawnItemEx("HoistLift", 62.0, 0, 0.0, 0, 0, 0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION)
@@ -1126,28 +1130,28 @@ actor HoistLift
 
     +SHOOTABLE
     +NOBLOOD
-    +ISMONSTER //for SXF_SETMASTER to work 
+    +ISMONSTER //for SXF_SETMASTER to work
     -COUNTKILL
     //+CANPASS - If this is on, it prevents the hoist from lifting the player or other stuff
     +NOGRAVITY
     //+FRIENDLY
     +NOTARGET
     +FLOORCLIP
-    
+
     -SOLID
-    
+
     Radius 24
 	Height 0.001
-    
+
     Mass 0x7FFFFFFF
     Health 0x7FFFFFFF
     PainChance 256
 
     Args 8
-    
+
     DamageFactor "SentryTurret", 0.0
-    
-    
+
+
     States
     {
         Spawn:
@@ -1175,7 +1179,7 @@ actor HoistLift
             HOIS B 4 ACS_ExecuteAlways(972, 0, 0, 0)
             HOIS B 0
             //For the life of me, I could not make this work properly with the hoist. There's something weird going on that prevents it from
-            //ripping through 
+            //ripping through
             HOIS B 0 A_SpawnItemEx("JackChainKiller", 0.0, 0.0, -16.0, 0.0, 0.0, 0.0, 0, SXF_NOCHECKPOSITION /*| SXF_CLIENTSIDE*/)
             HOIS B 0
             loop
@@ -1184,15 +1188,15 @@ actor HoistLift
             //HOIS B 0 A_ChangeFlag("SOLID", 0) //r16 - Removed this
             HOIS B 0 A_ChangeFlag("NOGRAVITY", 0)
         LowerLoop:
-            HOIS B 0 
+            HOIS B 0
             HOIS B 0 A_JumpIf(z <= floorz, "StopMovingAndLift")
-            HOIS B 0 A_JumpIf(velz == 0, "Unblock") 
+            HOIS B 0 A_JumpIf(velz == 0, "Unblock")
             HOIS B 0 A_ChangeFlag("SOLID", 1)
         LowerInnerLoop:
             HOIS B 0 A_PlaySound("jack/move", CHAN_BODY, 1.0, true)
             HOIS B 0 A_SpawnItemEx("JackChain", 0, 0, 16.0, 0.0, 0.0, 0.0, 0, SXF_SETMASTER | SXF_NOCHECKPOSITION /*| SXF_CLIENTSIDE*/)
             HOIS B 4 ACS_ExecuteAlways(972, 0, 1, 0)
-            HOIS B 0 
+            HOIS B 0
             HOIS B 0 A_SetArg(0, args[0]-1)
             HOIS B 0 A_Jump(256, "LowerLoop")
             goto LowerLoop
@@ -1200,7 +1204,7 @@ actor HoistLift
         //If the platform hits something on the way down (z > 0 but velz == 0),
         //then we make it noclip through it and keep moving down.
         Unblock:
-            HOIS B 0 
+            HOIS B 0
             HOIS B 0 A_ChangeFlag("SOLID", 0)
             HOIS B 0 A_Jump(256, "LowerInnerLoop")
             goto LowerInnerLoop
@@ -1232,7 +1236,7 @@ actor HoistLift
             TNT1 A 0
             HOIS B 1 A_SetArg(0, 8)
             goto Lift
-        Pain.Down: 
+        Pain.Down:
             TNT1 A 0
             HOIS B 1 A_SetArg(0, 8)
             goto Lower
@@ -1246,7 +1250,7 @@ actor HoistLift
     }
 }
 
-actor ParachuteItem : CustomInventory 
+actor ParachuteItem : CustomInventory
 {
 	Tag "Parachute"
 	+SHOOTABLE
@@ -1254,7 +1258,7 @@ actor ParachuteItem : CustomInventory
     +WINDTHRUST
 	+BLOCKEDBYSOLIDACTORS //Zandronum 2.0
 	+CANPASS //Crazy CPU, be careful
-	
+
 	//+SOLID
 	Health 200
 	Inventory.PickupMessage "Picked up a parachute"
@@ -1273,7 +1277,7 @@ actor ParachuteItem : CustomInventory
 			Wait
 		Use:
 			TNT1 A 0 //Dummy frame is needed for A_Jump to work
-			TNT1 A 0 
+			TNT1 A 0
             TNT1 A 0 A_JumpIf(momz <= -4.0, "ReallyUse") //Only allow it to be deployed if you're falling
             TNT1 A 0 //A_Print("You must be falling to deploy your parachute.")
             fail
@@ -1283,7 +1287,7 @@ actor ParachuteItem : CustomInventory
     }
 }
 
-actor SpawnParachuteItem : ParachuteItem 
+actor SpawnParachuteItem : ParachuteItem
 {
     -INVBAR
 
@@ -1304,9 +1308,9 @@ actor Parachute
     //+SHOOTABLE
     +NOGRAVITY
     +FLOORCLIP
-    
+
     ActiveSound "parachute/pull"
-    
+
     States
     {
         Spawn:
@@ -1327,7 +1331,7 @@ actor Parachute
             PARA C 3
             PARA D 400
             stop
-    
+
     }
 
 }
@@ -1383,7 +1387,7 @@ actor DoomZRadSuit : RadSuit replaces RadSuit 10307
 
     Health 100
     Inventory.MaxAmount 10
-    
+
   States
   {
   Spawn:
@@ -1403,14 +1407,14 @@ Actor Cotton : Inventory
     Health 10
 
     Scale 0.5
-    
+
     Inventory.PickupMessage "You picked up cotton!"
     Inventory.Amount 1
     Inventory.MaxAmount 30
     Inventory.Icon "CTTNI"
     +INVENTORY.INVBAR
     +INVENTORY.PICKUPFLASH
-        
+
     States
     {
     Spawn:
@@ -1441,7 +1445,7 @@ actor SparkEmitterSpark
     +CLIENTSIDEONLY
     //+NOGRAVITY
     //+NOBLOCKMAP
-    
+
     Scale 0.25
 
         States
