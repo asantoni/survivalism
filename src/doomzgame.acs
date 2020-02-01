@@ -1049,6 +1049,12 @@ script 210 (void)
 		//it's night now!
 		if (g_dayState == DAYSTATE_DAY) {
 			musicPlayNighttime();
+			
+			for (int tid = BADDIES_TID_MIN; tid < BADDIES_TID_MAX; tid++)
+			{
+				SetActorState(tid, "NightMorph"); //Morph the day zombies into harder night zombies
+			}
+
 		}
 		g_dayState = DAYSTATE_NIGHT;	
 		//ChangeSky("NIGHT","NIGHT");
@@ -1062,9 +1068,9 @@ script 210 (void)
 		//night zombies.
 		if (g_dayState == DAYSTATE_NIGHT) {
 			g_blockXP = true; //globally block XP so players don't get free XP for monsters dying at night
-			for (int tid = BADDIES_TID_MIN; tid < BADDIES_TID_MAX; tid++)
+			for (tid = BADDIES_TID_MIN; tid < BADDIES_TID_MAX; tid++)
 			{
-				Thing_Damage2(tid, 1000, "NoXP"); //Kill everything and don't give any XP for it (second approach. Shouldn't need the global XP lock anymore.)
+				Thing_Damage2(tid, 5000, "NoXP"); //Kill everything and don't give any XP for it (second approach. Shouldn't need the global XP lock anymore.)
 			}
 			g_blockXP = false;
 

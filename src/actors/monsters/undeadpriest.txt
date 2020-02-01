@@ -58,7 +58,7 @@ actor UndeadPriest
 	UNDP AABBCCDD 4 A_Wander
     UNDP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See") 
 	UNDP AABBCCDD 4 A_Wander
-	UNDP A 0 A_CheckSight("Remove")
+	UNDP A 0 A_CheckSightOrRange(ZombieRemovalDistance, "Remove")
     loop
   See:
     UNDP A 0 A_Jump (32, "Run")
@@ -68,7 +68,7 @@ actor UndeadPriest
     UNDP AABBCCDD 3 A_Chase
     UNDP AABBCCDD 3 A_Chase
     UNDP AABBCCDD 3 A_Chase
-	UNDP A 0 A_CheckSight("Remove")
+	UNDP A 0 A_CheckSightOrRange(ZombieRemovalDistance, "Remove")
     loop
   Run:
     UNDP A 0 A_Jump (24, "See")
@@ -76,7 +76,7 @@ actor UndeadPriest
     UNDP AABBCCDD 2 A_Chase
     UNDP AABBCCDD 2 A_Chase
     UNDP AABBCCDD 2 A_Chase
-	UNDP A 0 A_CheckSight("Remove")
+	UNDP A 0 A_CheckSightOrRange(ZombieRemovalDistance, "Remove")
     loop
   Missile:
     UNDP E 10 A_FaceTarget
@@ -100,15 +100,15 @@ actor UndeadPriest
     UNDP I 6 A_Scream
     UNDP JK 6
     UNDP L 6 A_NoBlocking
-    UNDP M 6
+    UNDP M 6 A_QueueCorpse
     UNDP N 1050
     Stop
   XDeath:
     UNDP O 5 A_XScream
     UNDP P 5
     UNDP R 5 A_NoBlocking
-    UNDP STUVW 5
-    UNDP X 1050
+    UNDP STUVW 5 
+    UNDP X 1050 A_QueueCorpse
     Stop
   Raise:
     UNDP NMLKJIH 6

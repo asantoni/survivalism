@@ -49,7 +49,7 @@ ACTOR DoomZFemaleScientist
     FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	FSZK AABBCCDD 4 A_Wander
     FSZK A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	FSZK A 0 A_CheckSight("Remove")
+	FSZK A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -62,7 +62,7 @@ ACTOR DoomZFemaleScientist
     FSZK AABBCCDD 4 A_Chase
     FSZK AABBCCDD 4 A_Chase
     FSZK AABBCCDD 4 A_Chase
-	FSZK A 0 A_CheckSight("Remove")
+	FSZK A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     TNT1 A 0 
@@ -115,10 +115,19 @@ ACTOR DoomZFemaleScientist
     TNT1 A 0 A_SpawnItemEx("DoomZHealthBonus", 0, 0, 0, random(2.0, 4.0), random(2.0, 4.0), random(2.0, 4.0))
     TNT1 A 0 A_Die
     */
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	FSZK HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZK H 5 
     FSZK I 5 A_Scream
     FSZK J 5 A_NoBlocking
@@ -346,7 +355,7 @@ ACTOR DoomZFemaleScientist2
     FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	FSZW AABBCCDD 4 A_Wander
     FSZW A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	FSZW A 0 A_CheckSight("Remove")
+	FSZW A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -359,7 +368,7 @@ ACTOR DoomZFemaleScientist2
     FSZW AABBCCDD 4 A_Chase
     FSZW AABBCCDD 4 A_Chase
     FSZW AABBCCDD 4 A_Chase
-	FSZW A 0 A_CheckSight("Remove")
+	FSZW A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     FSZW E 4 A_FaceTarget
@@ -370,10 +379,19 @@ ACTOR DoomZFemaleScientist2
     FSZW G 3
     FSZW G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	FSZW HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZW H 5
     FSZW I 5 A_Scream
     FSZW J 5 A_NoBlocking
@@ -395,8 +413,10 @@ ACTOR DoomZFemaleScientist2
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZW O 5
     FSZW P 5 A_XScream
     FSZW Q 5 A_NoBlocking
@@ -475,7 +495,7 @@ ACTOR DoomZFemaleScientist3
     FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	FSZC AABBCCDD 4 A_Wander
     FSZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	FSZC A 0 A_CheckSight("Remove")
+	FSZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -488,7 +508,7 @@ ACTOR DoomZFemaleScientist3
     FSZC AABBCCDD 4 A_Chase
     FSZC AABBCCDD 4 A_Chase
     FSZC AABBCCDD 4 A_Chase
-	FSZC A 0 A_CheckSight("Remove")
+	FSZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     FSZC E 4 A_FaceTarget
@@ -499,10 +519,19 @@ ACTOR DoomZFemaleScientist3
     FSZC G 3
     FSZC G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	FSZC HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZC H 5
     FSZC I 5 A_Scream
     FSZC J 5 A_NoBlocking
@@ -523,8 +552,10 @@ ACTOR DoomZFemaleScientist3
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZC O 5
     FSZC P 5 A_XScream
     FSZC Q 5 A_NoBlocking
@@ -604,7 +635,7 @@ ACTOR DoomZFemaleScientist4
     FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	FSZS AABBCCDD 4 A_Wander
     FSZS A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	FSZS A 0 A_CheckSight("Remove")
+	FSZS A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -623,7 +654,7 @@ ACTOR DoomZFemaleScientist4
     TNT1 A 0 A_JumpIfCloser (128, "Squirt")
     FSZS AABBCCDD 4 A_Chase
     TNT1 A 0 A_JumpIfCloser (128, "Squirt")
-	FSZS A 0 A_CheckSight("Remove")
+	FSZS A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     FSZS E 4 A_FaceTarget
@@ -659,10 +690,19 @@ ACTOR DoomZFemaleScientist4
     FSZS G 3
     FSZS G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	FSZS HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZS H 5
     FSZS I 5 A_Scream
     FSZS J 5 A_NoBlocking
@@ -683,8 +723,10 @@ ACTOR DoomZFemaleScientist4
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     FSZS O 5
     FSZS P 5 A_XScream
     FSZS Q 5 A_NoBlocking
@@ -764,7 +806,7 @@ ACTOR DoomZZombieScientist
     SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCZA AABBCCDD 4 A_Wander
     SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCZA A 0 A_CheckSight("Remove")
+	SCZA A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -777,7 +819,7 @@ ACTOR DoomZZombieScientist
     SCZA AABBCCDD 4 A_Chase
     SCZA AABBCCDD 4 A_Chase
     SCZA AABBCCDD 4 A_Chase
-	SCZA A 0 A_CheckSight("Remove")
+	SCZA A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     SCZA E 8 A_FaceTarget
@@ -788,10 +830,19 @@ ACTOR DoomZZombieScientist
     SCZA G 3
     SCZA G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	SCZA HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCZA H 5
     SCZA I 5 A_Scream
     SCZA J 5 A_NoBlocking
@@ -813,8 +864,10 @@ ACTOR DoomZZombieScientist
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCZA O 5
     SCZA P 5 A_XScream
     SCZA Q 5 A_NoBlocking
@@ -895,7 +948,7 @@ ACTOR DoomZZombieScientist2
     SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCZC AABBCCDD 4 A_Wander
     SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCZC A 0 A_CheckSight("Remove")
+	SCZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -908,13 +961,20 @@ ACTOR DoomZZombieScientist2
     SCZC AABBCCDD 4 A_Chase
     SCZC AABBCCDD 4 A_Chase
     SCZC AABBCCDD 4 A_Chase
-	SCZC A 0 A_CheckSight("Remove")
+	SCZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     SCZC E 8 A_FaceTarget
     SCZC F 16 A_CustomMeleeAttack (random (2, 6) *5, "CrowbarHit", "skeleton/swing")
     SCZC E 4
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	SCZC HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Pain:
     SCZC G 3
     SCZC G 3 A_Pain
@@ -923,6 +983,8 @@ ACTOR DoomZZombieScientist2
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCZC H 5
     SCZC I 5 A_Scream
     SCZC J 5 A_NoBlocking
@@ -944,8 +1006,10 @@ ACTOR DoomZZombieScientist2
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCZC O 5
     SCZC P 5 A_XScream
     SCZC Q 5 A_NoBlocking
@@ -1025,7 +1089,7 @@ ACTOR DoomZZombieScientist3
     SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCZH AABBCCDD 4 A_Wander
     SCZH A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCZH A 0 A_CheckSight("Remove")
+	SCZH A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -1038,7 +1102,7 @@ ACTOR DoomZZombieScientist3
     SCZH AABBCCDD 4 A_Chase
     SCZH AABBCCDD 4 A_Chase
     SCZH AABBCCDD 4 A_Chase
-	SCZH A 0 A_CheckSight("Remove")
+	SCZH A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     SCZH E 8 A_FaceTarget
@@ -1049,10 +1113,19 @@ ACTOR DoomZZombieScientist3
     SCZH G 3
     SCZH G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	SCZH HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
  	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
     SCZH H 5
     SCZH I 5 A_Scream
@@ -1074,8 +1147,10 @@ ACTOR DoomZZombieScientist3
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
  	TNT1 A 0 A_SpawnItemEx("ZombieScientistLoot", 0, 32, 0, 0, 0, 0, 0, 0, 0) 
     SCZH O 5
     SCZH P 5 A_XScream
@@ -1156,7 +1231,7 @@ ACTOR DoomZZombieScientist4
     SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCFE AABBCCDD 4 A_Wander
     SCFE A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCFE A 0 A_CheckSight("Remove")
+	SCFE A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -1169,7 +1244,7 @@ ACTOR DoomZZombieScientist4
     SCFE AABBCCDD 4 A_Chase
     SCFE AABBCCDD 4 A_Chase
     SCFE AABBCCDD 4 A_Chase
-	SCFE A 0 A_CheckSight("Remove")
+	SCFE A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     SCFE E 1 A_FaceTarget
@@ -1197,10 +1272,19 @@ ACTOR DoomZZombieScientist4
     SCFE G 3
     SCFE G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	SCFE HIJKLMN 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCFE H 5
     SCFE I 5 A_Scream
     SCFE J 5 A_NoBlocking
@@ -1222,8 +1306,10 @@ ACTOR DoomZZombieScientist4
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     SCFE O 5
     SCFE P 5 A_XScream
     SCFE Q 5 A_NoBlocking
@@ -1304,7 +1390,7 @@ ACTOR DoomZHazmatZombie
     HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	HMZP AABBCCDD 4 A_Wander
     HMZP A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	HMZP A 0 A_CheckSight("Remove")
+	HMZP A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
  	//Randomly decide to attack your base or not
@@ -1317,7 +1403,7 @@ ACTOR DoomZHazmatZombie
     HMZP AABBCCDD 4 A_Chase
     HMZP AABBCCDD 4 A_Chase
     HMZP AABBCCDD 4 A_Chase
-	HMZP A 0 A_CheckSight("Remove")
+	HMZP A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   Melee:
     HMZP E 4 A_FaceTarget
@@ -1328,10 +1414,19 @@ ACTOR DoomZHazmatZombie
     HMZP G 3
     HMZP G 3 A_Pain
     goto See
+  NightMorph:
+    TNT1 A 0
+	TNT1 A 0 A_Scream
+	TNT1 A 0 A_NoBlocking
+	HMZP HIJKL 4 
+	TNT1 A 0 A_SpawnItemEx("ZombieIncarnate")
+	stop
   Death:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
   Death.NoXP:
   Death.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     HMZP H 5
     HMZP I 5 A_Scream
     HMZP J 5 A_NoBlocking
@@ -1351,8 +1446,10 @@ ACTOR DoomZHazmatZombie
     stop
   XDeath:
 	TNT1 A 0 A_GiveToTarget("ZombieKillXP", 1)
-  Death.NoXP:
-  Death.SentryTurret:
+  XDeath.NoXP:
+  XDeath.SentryTurret:
+	TNT1 A 0 
+	TNT1 A 0 Thing_ChangeTID(0, 0) //Remove BADDIES_TID so NightMorph won't resurrect us
     HMZP M 5
     HMZP N 5 A_XScream
     HMZP O 5 A_NoBlocking
@@ -1409,7 +1506,7 @@ states
     SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCZA AABBCCDD 4 A_Wander
     SCZA A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCZA A 0 A_CheckSight("Remove")
+	SCZA A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:
 	//Only check to remove ourselves and change attack modes every 6 seconds
@@ -1420,7 +1517,7 @@ states
     SCZA AABBCCDD 4 A_Chase
     SCZA AABBCCDD 4 A_Chase
     SCZA AABBCCDD 4 A_Chase
-	SCZA A 0 A_CheckSight("Remove")
+	SCZA A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
 }
 }
@@ -1453,7 +1550,7 @@ States
     SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
 	SCZC AABBCCDD 4 A_Wander
     SCZC A 0 A_LookEx(0, 0, 2000.0, 3000.0, 0, "See")
-	SCZC A 0 A_CheckSight("Remove")
+	SCZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
   See:	//Only check to remove ourselves and change attack modes every 6 seconds
  	TNT1 A 0 ACS_ExecuteAlways(504, 0)
@@ -1463,7 +1560,7 @@ States
     SCZC AABBCCDD 4 A_Chase
     SCZC AABBCCDD 4 A_Chase
     SCZC AABBCCDD 4 A_Chase
-	SCZC A 0 A_CheckSight("Remove")
+	SCZC A 0 A_CheckSightOrRange(ScientistRemovalDistance, "Remove")
     loop
 }
 }

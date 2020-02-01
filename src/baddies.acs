@@ -305,6 +305,14 @@ script 513 (int stagger)
     }
 }
 
+script "RemoveTID" (void)
+{
+	//Unassign the TID from the activator. This is used by monsters in their Death
+	//state, so that when we globally trigger NightMorph, it won't resurrect monsters
+	//lingering in their Death state (corpses or dying monsters).
+	Thing_ChangeTID(0, 0);
+}
+
 /* Script 520-530 Reserved for CONVERSATION.acs 
 
 */
