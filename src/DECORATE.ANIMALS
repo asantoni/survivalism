@@ -89,8 +89,8 @@ actor DoomZChicken : Chicken 10808
 		TNT1 A 0 
 		TNT1 A 0 A_ClearTarget
 		TNT1 A 0 A_PlaySound("chicken/active", CHAN_AUTO)
-		//Dunno, have to call this twice to get it to show up in multiplayer:
-		CHKN A 1 A_SpawnItemEx("HungerThoughtBubble", -10.0, 0, 10.0, 0.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
+		//Dunno, have to call this twice to get it to show up in multiplayer - Zandronum 1.x bug only
+		//CHKN A 1 A_SpawnItemEx("HungerThoughtBubble", -10.0, 0, 10.0, 0.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
 		CHKN A 1 A_SpawnItemEx("HungerThoughtBubble", random(-4, 4),  random(-4, 4), 20.0, 0.0,0.0, 0.0, SXF_SETMASTER | SXF_CLIENTSIDE | SXF_NOCHECKPOSITION, 0)
 		CHKN ABABABABABABABABABABA 5
 		CHKN A 0 ACS_ExecuteAlways(510, 0, 1) //Start hating seeds
