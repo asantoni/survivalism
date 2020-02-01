@@ -1013,7 +1013,7 @@ script 817 (int xp, int source)
 		musicPlayLevelUp(currentPlayerXPLevel+2);
 		
 		//Heal the player
-		GiveInventory("Health", 100)
+		GiveInventory("Health", 100);
 		
 		//Bling bling
 		ACS_ExecuteAlways(818, 0, 0);
