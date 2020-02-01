@@ -3,15 +3,14 @@ ifeq ($(OS), Windows_NT)
 	ACC := ../survivalism-tools/acc.exe
 	ZIP := ../survivalism-tools/7za.exe
 	ZANDRO := "C:\Program Files (x86)\Zandronum\zandronum.exe"
-	RM := del /S /Q
 else
 ACC := acc
 ZIP := 7za
-RM := rm -rf
 ZANDRO := "../../Torr_Samaho/zandronum-stable/zandronum"
 endif
 
-OBJ_DIR := src/acs
+OBJ_DIR := src/acs/*
+RM := rm
 OUTPUT_PK3 := doomz.pk3
 all: $(patsubst src/%.acs, src/acs/%.o, $(wildcard src/*.acs)) pk3
 
@@ -31,5 +30,5 @@ play: pk3
 	$(ZANDRO) -iwad doom2.wad -file doomz.pk3 +map doomz2
 
 clean:
-	$(RM) -rf $(OBJ_DIR)/*
+	$(RM) -rf $(OBJ_DIR)
 	$(RM) $(OUTPUT_PK3)
