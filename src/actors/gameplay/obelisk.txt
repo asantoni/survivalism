@@ -23,6 +23,7 @@ actor StoneObelisk : ShortRedColumn 10810
 	
 	//DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
+    DamageFactor "BoxKiller", 0.0
     
     ActiveSound "obelisk1" //TRICK: A_PlaySound (and Ex) ain't working in multiplayer on this actor for some reason, but A_ActiveSound does...
                             // (even in ACS the PlaySound isn't working... Too many actions in one tick or something??)
