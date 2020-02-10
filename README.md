@@ -37,8 +37,9 @@ This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS)
 
 - All
 
-[Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
-[DOOM II](https://github.com/dgeng/iwad)
+-- [Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
+
+-- [DOOM II](https://github.com/dgeng/iwad)
 
 
 ## Download and Play
