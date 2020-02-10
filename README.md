@@ -64,7 +64,7 @@ A multiplayer server is usually running at 104.236.221.85:10667. If you download
 
         play
         
-3. On Unix-like systems, open a terminal to the survivalism and run:
+3. On Unix-like systems, open a terminal to the survivalism directory and run:
 
         make -f Makefile.unix
     
