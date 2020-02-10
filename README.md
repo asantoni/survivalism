@@ -27,13 +27,16 @@ This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS)
 
 ## Dependencies
 
-###Windowns
+- Windowns
+
 [survivalism-tools](https://www.github.com/asantoni/survivalism-tools)
 
-###Unix
+- Unix-like
+
 [ACC](http://www.github.com/rheit/acc)
 
-###All
+- All
+
 [Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
 [DOOM II](https://github.com/dgeng/iwad)
 
@@ -60,7 +63,7 @@ A multiplayer server is usually running at 104.236.221.85:10667. If you download
 
         play
         
-3. On UNIX-like systems, open a command prompt to the survivalism directory and run:
+3. On Unix-like systems, open a command prompt to the survivalism directory and run:
 
         make -f Makefile.unix
     
