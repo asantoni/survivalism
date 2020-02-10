@@ -29,17 +29,17 @@ This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS)
 
 - Windowns
 
-[survivalism-tools](https://www.github.com/asantoni/survivalism-tools)
+  [survivalism-tools](https://www.github.com/asantoni/survivalism-tools)
 
 - Unix-like
 
-[ACC](http://www.github.com/rheit/acc)
+  [ACC](http://www.github.com/rheit/acc)
 
 - All
 
--- [Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
+  [Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
 
--- [DOOM II](https://github.com/dgeng/iwad)
+  [DOOM II](https://github.com/dgeng/iwad)
 
 
 ## Download and Play
