@@ -64,13 +64,13 @@ A multiplayer server is usually running at 104.236.221.85:10667. If you download
 
         play
         
-3. On Unix-like systems, open a command prompt to the survivalism directory and run:
+3. On Unix-like systems, open a terminal to the survivalism and run:
 
         make -f Makefile.unix
     
    To compile and play it all at once, run:
 
-        make -f Makefile.unix play
+        DOOMWADDIR=<path to wad files> ./play
         
 
 ## Mapping
