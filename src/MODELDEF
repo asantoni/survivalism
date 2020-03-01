@@ -106,7 +106,8 @@ Model CFloor {
    Path "MODELS"
    Model 0 "cube.md2"
    Skin 0 "cube-woodfloor.png"
-   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   Scale 1 1 0.13
+   //Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
    FrameIndex CFLO A 0 0
 }
 
@@ -114,7 +115,8 @@ Model CFloorGhost {
    Path "MODELS"
    Model 0 "cube.md2"
    Skin 0 "cube-woodfloor.png"
-   Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
+   Scale 1 1 0.13
+   //Scale 5 5 0.13            //W:48(1.0) H:38(1.2) => W:240(5) H:4(0.13)
    FrameIndex CFLO A 0 0
 }
 

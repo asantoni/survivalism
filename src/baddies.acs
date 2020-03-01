@@ -60,7 +60,7 @@ script 503 (void)
 		while (GetActorZ(0) - GetActorFloorZ(0) > 0) {
 		//GetActorVelZ(0) != 0 && count < 20) {
 			Delay(35);
-			Log(s:"Checking if box needs to die from water...");
+			//Log(s:"Checking if box needs to die from water...");
 // 			count++; //Impose a limit on this loop
 		}
 	

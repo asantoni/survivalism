@@ -16,17 +16,34 @@ actor CBox : Actor
 	
 	//+FLOORCLIP //Clip into shallow water - bleh, the height becomes wrong so they don't stack correctly.
 	
+    //CheckSupport
+    +QUICKTORETALIATE
+    
+    //Experimental bounce states - doesn't reliably let us detach floors if we fall further, so nixing it for now...
+//     BounceType Doom
+//     BounceFactor 0.3
+//     BounceSound "plank/break3"
+//     //+MBFBOUNCER
+//     +BOUNCEONFLOORS
+//     +BOUNCEONACTORS
+//     +ALLOWBOUNCEONACTORS
+//     +USEBOUNCESTATE
+
 	Health 500
 	Radius 24
 	Height 38
 	Mass 0x7FFFFFFF
+    
+    MeleeRange 100
 	
 	DamageFactor "Axe", 500.0
 	DamageFactor "SentryTurret", 0.0
     DamageFactor "BoxKiller", 5000.0
+    PainChance "CheckSupport", 256
 
-    DeathSound "wood/breaklong"
-	
+    //DeathSound "wood/breaklong"
+	DeathSound "plank/break"
+
 	States
 	{
 		Spawn:
@@ -36,6 +53,8 @@ actor CBox : Actor
 			//Set the TID to CONSTRUCTION_TID so that monsters can
 			//attack it (baddies.acs)
 			TNT1 A 0 ACS_ExecuteAlways(503, 0)
+            goto Chill
+        Chill:
 			CBOX A -1 
 			//Loop
 			Wait
@@ -47,16 +66,43 @@ actor CBox : Actor
 		Inactive:
 			CBOX AAAA 6 
 			Wait
-			/*
+            
+        Pain:
+            TNT1 A 0
+            goto Chill
+        Pain.CheckSupport:
+            //An adjacent floor has tested if we can support it. If we took damage, we can!
+            TNT1 A 0 
+            TNT1 A 0 A_Log("Box took CheckSupport damage, hitting back...")
+            TNT1 A 0 A_CustomMissile("SupportConfirmed", 0, 25.0, 0, 0, 0)
+            //TNT1 A 0 A_CustomMeleeAttack(1, "", "", "SupportConfirmed", FALSE)
+            //TNT1 A 0 //A_DamageTracer(1, "SupportConfirmed", 0)
+            TNT1 A 0 //A_DamageTarget(1, "SupportConfirmed", 0) //Fire back confirming that we can support it.
+            TNT1 A 0 A_ClearTarget
+            goto Chill
+            
+		/*
 		Pain:
 			TNT1 A 0 
 			//TODO: Increase the radius by 2 temporarily so
 			// a CBox can snap beside it
 			goto Spawn
 		*/
+        Bounce:
+        Bounce.Floor:
+        Bounce.Actor:
+            TNT1 A 0 
+            TNT1 A 0 A_Scream
+            TNT1 A 0 A_ChangeFlag("INVISIBLE", TRUE)  //Go invisible so CollapseCheck doesn't pick us up
+            TNT1 A 0 A_DamageChildren(1, "CollapseCheck") 
+            goto Chill
+            
 		Death:
 			TNT1 A 0 //Dummy frame is needed
 			TNT1 A 0 A_NoBlocking
+            TNT1 A 0 A_ChangeFlag("INVISIBLE", TRUE)  //Go invisible so CollapseCheck doesn't pick us up
+            TNT1 A 0 A_DamageChildren(1, "CollapseCheck") 
+            //TNT1 A 0 A_KillChildren("BoxKiller")
 			TNT1 A 0 A_Jump(256, "DeathDrop") //A_Jump so inherited DeathDrops work
 		DeathDrop:
             TNT1 A 0
@@ -130,8 +176,8 @@ actor CBoxGhost
 	Height 38
 	Mass 0x7FFFFFFF
 
-        RenderStyle "Translucent"
-        Alpha 0.5
+    RenderStyle "Translucent"
+    Alpha 0.5
 
 
 	States

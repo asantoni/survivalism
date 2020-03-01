@@ -138,6 +138,16 @@ $random wood/breakshort { wood/break1 wood/break2 wood/break3 wood/break4 }
 $limit wood/breakshort 1 256
 $random wood/breaklong { wood/break5 wood/break6 wood/break7 wood/break8 wood/break9 wood/break10 } 
 
+plank/break1 plank1
+plank/break2 plank2
+plank/break3 plank3
+plank/break4 plank4
+plank/break5 plank5
+plank/break6 plank6
+$random plank/break { plank/break1 plank/break2 plank/break3 plank/break4 plank/break5 plank/break6 } 
+$limit plank/break 1 256
+
+
 
 melee/swing1 whip1
 melee/swing2 whip2

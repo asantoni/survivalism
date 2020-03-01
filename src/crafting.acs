@@ -446,3 +446,47 @@ script 753 (int doorTID)
 	SetActorState(0, "Open");
 	//Delay(35*2);
 }
+
+
+/** Check if a floor is attached to a box, or is attached to another floor that
+    has a sibling that's attached to a box. 
+*/
+script "CheckForAnchor" (void)
+{
+/** Algorithm idea:
+    - We need to count the number of anchors in a chain of floors.
+    - The only anchor type for now should be CBox.
+    - The algorithm could iterate over each floor by iterating over masters,
+      and counting the number of masters that are of class CBox.
+    - If we iterate over a chain and we don't count a single CBox, then all
+      the floors must fall.
+    */
+    int anchorCount = 0;
+    
+    int cfloorZ = GetActorZ(0)/65536;
+    
+    //Attempt to reanchor
+    SetActorState(0, "LookForSupportNoValidate", false);
+    
+    while (SetActivator(0, AAPTR_MASTER)) {
+    
+        int masterZ = GetActorZ(0)/65536;
+//         Log(s:"distance: ", f:cfloorZ, s:" ", f:masterZ);
+        bool anchorDistanceValid = (abs(masterZ - cfloorZ) <= 30.0);
+        bool anchorClassValid = CheckActorClass(0, "CBox") || 
+                                CheckActorClass(0, "CStoneBox") || 
+                                CheckActorClass(0, "CSteelBox") || 
+                                CheckActorClass(0, "CSkullBox") || 
+                                CheckActorClass(0, "CDoor");
+        
+        if (anchorDistanceValid && anchorClassValid) {
+            anchorCount++;
+        } /* else {
+            //Attempt to reanchor ourselves to a new master.
+            SetActorState(0, "LookForSupportNoValidate", false);
+        }*/
+    }
+    Log(s:"Anchor count: ", d: anchorCount);
+    SetResultValue(anchorCount > 0);
+
+}
