@@ -25,28 +25,63 @@ YouTube:
 
 This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS) file for a full list of authors.
 
+## Dependencies
+
+- Windows
+
+  [survivalism-tools](https://www.github.com/asantoni/survivalism-tools)
+
+- Unix-like
+
+  [ACC](http://www.github.com/rheit/acc)
+
+  [7-Zip](http://www.7-zip.org)
+
+- All
+
+  [Zandronum](https://bitbucket.org/Torr_Samaho/zandronum-stable)
+
+  [DOOM II](https://github.com/dgeng/iwad)
+
+
 ## Download and Play
 
-The latest release is [available for download here](http://104.236.221.85/). Be sure to install [Zandronum](http://www.zandronum.com) and [grab a copy of doom2.wad](http://store.steampowered.com/app/2300/). 
+Clone dependencies into the following directory layout:
+```
+rheit/acc
+asantoni/survivalism-tools
+dgeng/iwad
+Thorr_Samaho/zandronum-stable
+asantoni/survivalism
+```
+
+- Windows
+
+  Open a command prompt to the survivalism directory and run:
+
+  `make`
+
+  To compile and play it all at once, run:
+
+  `play`
+
+- Unix-like
+
+  Compile ACC:
+
+  `cd rheit/acc && make && cp acc /usr/bin`
+
+  Compile Survivalism:
+
+  `cd asantoni/survivalism && make -f Makefile.unix`
+
+  Compile and Run Survivalism:
+
+  `cd asantoni/survivalism && DOOMWADDIR=../../dgeng/iwad ./play`
 
 Please note that OpenGL is required. You must turn on OpenGL in Zandronum.
 
 A multiplayer server is usually running at 104.236.221.85:10667. If you download Zandronum and try to connect to this server with Doomseeker, the WAD will automatically download.
-
-## Developing
-
-1. Clone the [survivalism-tools](https://www.github.com/asantoni/survivalism-tools) repository beside your clone of this repository. For convenience, it includes all the binaries needed to compile this WAD.
-
-2. Install [Zandronum](http://www.zandronum.com) and [grab a copy of doom2.wad](http://store.steampowered.com/app/2300/). 
-
-3. On Windows, open a command prompt to the survivalism directory and run:
-
-        make
-    
-    To compile and play it all at once, run:
-
-        play
-        
 
 ## Mapping
 
