@@ -35,7 +35,7 @@ This mod uses many third party art assets. Please see the [CREDITS](src/CREDITS)
 
   [ACC](http://www.github.com/rheit/acc)
 
-  [7-Zip](http://www.7-zip.org)
+  [P7ZIP](http://p7zip.sourceforge.net)
 
 - All
 
