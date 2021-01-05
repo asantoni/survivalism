@@ -9,16 +9,17 @@ ZIP := 7za
 ZANDRO := "../../Torr_Samaho/zandronum-stable/zandronum"
 endif
 
-OBJ_DIR := src/acs/*
+OBJ_DIR := src/acs/
+MKDIR := mkdir -p
 RM := rm
 OUTPUT_PK3 := doomz.pk3
-all: $(patsubst src/%.acs, src/acs/%.o, $(wildcard src/*.acs)) pk3
+all: $(patsubst src/%.acs, $(OBJ_DIR)/%.o, $(wildcard src/*.acs)) pk3
 
 
 #foo: $(OBJ_FILES)
 #	acc.exe -o $@ $^
-	
-src/acs/%.o: src/%.acs Makefile
+$(shell $(MKDIR) -p $(OBJ_DIR))
+$(OBJ_DIR)/%.o: src/%.acs Makefile
 	$(ACC) -i $(ACC_INC_DIR) $< $@ 
 
 pk3:
